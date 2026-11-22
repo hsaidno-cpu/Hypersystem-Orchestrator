@@ -147,7 +147,7 @@
     },
     {
       "plugin_key": "anatomi-prompt-v3-octa-prompt",
-      "instruction_path": "plugins/anatomi-prompt-strategis",
+      "instruction_path": "plugin-instructions/anatomi-prompt-v3-octa-prompt/README.md",
       "origin": "canonical_private_submodule",
       "skill_count": 9,
       "skills": [
@@ -200,7 +200,7 @@
     },
     {
       "plugin_key": "skill-analyzer",
-      "instruction_path": "plugins/skill-analyzer",
+      "instruction_path": "plugin-instructions/skill-analyzer/README.md",
       "origin": "canonical_submodule",
       "skill_count": 12,
       "skills": [
@@ -821,7 +821,7 @@
     },
     {
       "plugin_key": "asfree-canonical",
-      "instruction_path": "plugins/asfree",
+      "instruction_path": "plugin-instructions/asfree-canonical/README.md",
       "origin": "canonical_submodule",
       "skill_count": 13,
       "skills": [
