@@ -46,7 +46,7 @@ No confirmed mirror or prototype repository was found in the inspected set. Do n
 | Video Explainer Promkes | promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR | OFFICIAL_PUBLIC_SOURCE_LAGGING | 4.1.9 / f8f8c0f29ff9d851fa75eba764978c24bdd79416; deployment 4.1.12 | No root LICENSE found |
 | Skill Developer Orchestrator | promkespkmbinuang-coder/SPDO | OFFICIAL_PUBLIC_SOURCE | 0.1.0 / 9d3c4bc09179ff857df4f3819be83e1847571add | Apache-2.0 |
 
-The SDO source contains plugin.json version 0.1.0, README, the master SKILL.md, three reference files and tests/acceptance-cases.json. The exact main commit is signature-verified. Plugin Creator current package version is also 0.1.0. The parent pins this commit at plugins/skill-developer-orchestrator.
+The SDO source contains plugin.json version 0.1.0, README, the master SKILL.md, three reference files and tests/acceptance-cases.json. The exact main commit is signature-verified. Plugin Creator current package version is also 0.1.0. The parent pins this commit at plugins/skill-developer-orchestrator. **Important parity finding:** Plugin Creator master SKILL.md (23,651 characters) differs from Git source master SKILL.md (10,573 characters) after normalization. The repo identity, manifest and version are official, but instruction content is not yet synchronized. Keep the installed snapshot and Git source independent until an owner-reviewed reconciliation is completed.
 
 ## 4. Two candidate/incomplete repositories
 

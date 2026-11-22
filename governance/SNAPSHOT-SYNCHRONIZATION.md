@@ -63,3 +63,13 @@ The Video Explainer instruction bundle is captured from current Plugin Creator r
 - SDO source repository: promkespkmbinuang-coder/SPDO, commit 9d3c4bc09179ff857df4f3819be83e1847571add, source version 0.1.0, Apache-2.0, signature-verified. Its runtime snapshot remains for current Plugin Creator read-back; canonical source is the independent Git submodule. Compare content hashes before declaring exact instruction parity.
 - PVEE declared source pointer: promkespkmbinuang-coder/CL-VAEPPC, observed commit 1ab0c41081ccdbb91cc9dec0a2864acd0de00d54. It is registered as CANDIDATE_INCOMPLETE because the current tree does not contain a package manifest or skill source tree.
 - Counts: five official source submodules, two incomplete source candidates, twelve NOT_IDENTIFIED plugin sources, one legacy redirect and 238 skill records across 20 plugin identities.
+
+
+## SDO source/snapshot drift (2026-11-22)
+
+SDO is an official source submodule, but the canonical Git master SKILL.md and the current Plugin Creator master SKILL.md differ in content and length (10,573 vs 23,651 characters). Package manifests both report 0.1.0. This is version metadata match with instruction-content drift, not full source parity.
+
+- Keep the Plugin Creator snapshot and Git source submodule as separate evidence.
+- Do not overwrite either file automatically.
+- Have the SDO source owner review the semantic diff, decide the canonical body, update changelog/package version if required, and verify read-back before changing source_instruction_parity_status to MATCH.
+- Until then, source_sync_status remains SOURCE_INSTRUCTION_DRIFT_DETECTED.

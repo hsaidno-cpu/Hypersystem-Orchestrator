@@ -142,6 +142,15 @@ def validate():
             fail(f"{key}: SOURCE_AHEAD_OF_PLATFORM must contain differing versions")
         if alignment == "DEPLOYMENT_AHEAD_OF_SOURCE" and plugin["repository_version"] == plugin["platform_package_version"]:
             fail(f"{key}: DEPLOYMENT_AHEAD_OF_SOURCE must contain differing versions")
+        parity = plugin.get("source_instruction_parity_status")
+        if parity not in {"MATCH", "DRIFT_DETECTED", "NOT_COMPARED", "NOT_APPLICABLE"}:
+            fail(f"{key}: invalid source_instruction_parity_status")
+        if not plugin.get("source_instruction_parity_note"):
+            fail(f"{key}: source_instruction_parity_note is required")
+        if parity == "DRIFT_DETECTED" and plugin.get("source_sync_status") != "SOURCE_INSTRUCTION_DRIFT_DETECTED":
+            fail(f"{key}: instruction drift must remain explicitly open")
+        if parity == "MATCH" and plugin.get("source_sync_status") == "SOURCE_INSTRUCTION_DRIFT_DETECTED":
+            fail(f"{key}: matching instruction state conflicts with drift status")
         for related in plugin.get("related_plugins", []):
             if related not in plugin_key_set:
                 fail(f"{key}: unknown related plugin '{related}'")

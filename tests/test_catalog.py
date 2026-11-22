@@ -153,5 +153,15 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertNotIn("submodule_path", source)
         self.assertIsNone(pvee["repository_version"])
 
+    def test_sdo_version_match_does_not_hide_instruction_content_drift(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        sdo = next(p for p in catalog["plugins"] if p["plugin_key"] == "skill-developer-orchestrator")
+        self.assertEqual(sdo["repository_version"], "0.1.0")
+        self.assertEqual(sdo["platform_package_version"], "0.1.0")
+        self.assertEqual(sdo["version_alignment_state"], "SOURCE_AND_PLATFORM_MATCH")
+        self.assertEqual(sdo["source_instruction_parity_status"], "DRIFT_DETECTED")
+        self.assertEqual(sdo["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
+        self.assertIn("23,651", sdo["source_instruction_parity_note"])
+        self.assertIn("10,573", sdo["source_instruction_parity_note"])
 if __name__ == "__main__":
     unittest.main()

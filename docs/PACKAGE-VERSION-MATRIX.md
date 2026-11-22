@@ -19,7 +19,7 @@ An instruction snapshot records what was visible in the Plugin Creator release a
 | Plugin | Plugin Creator package | Git source version | Current classification | Adoption decision |
 |---|---:|---:|---|---|
 | Video Explainer Promkes | 4.1.12 | 4.1.9 | Official public source, behind deployment | Keep deployed target 4.1.12; source sync pending. M00 header v4.0.9 is an internal skill version and must not be overwritten mechanically. |
-| Skill Developer Orchestrator | 0.1.0 | 0.1.0 | Official public source, signed commit | Adopt 0.1.0; Git source, Plugin Creator package and manifest are aligned. Pinned at 9d3c4bc09179ff857df4f3819be83e1847571add under plugins/skill-developer-orchestrator. |
+| Skill Developer Orchestrator | 0.1.0 | 0.1.0 | Official public source, signed commit; instruction-content drift | Manifest/package versions match and source is pinned at 9d3c4bc09179ff857df4f3819be83e1847571add. However, Plugin Creator master SKILL.md (23,651 chars) differs from Git master SKILL.md (10,573 chars). Keep content parity DRIFT_DETECTED until a reviewed reconciliation is completed. |
 | Evaluator Team | 1.0.0 | Not identified | Platform release only | Preserve 1.0.0 as platform metadata; source repo onboarding pending. |
 | Master Photo Restoration | 1.0.0 | Not identified | Platform release only | Preserve 1.0.0 as platform metadata; source repo onboarding pending. |
 | Anatomi Prompt V3 — Octa-Prompt | 3.0.0 | 3.0.0 | Source and platform match | Adopt 3.0.0; private canonical source remains authoritative. |
@@ -111,3 +111,10 @@ No Plugin Creator package was republished by this parent-repository change.
 - Current PVEE package 2.0.2 has no matching source manifest or complete skill tree in that repository.
 
 **Decision:** retain as CANDIDATE_INCOMPLETE. Do not infer a Git source version, create a submodule or equate the historical README's Video Explainer V3.0 with current PVEE 2.0.2.
+
+
+## SDO instruction-content parity exception
+
+The Plugin Creator release and public Git repository both identify version 0.1.0, but a direct normalized comparison of the master SKILL.md files failed. The current Plugin Creator body is 23,651 characters; the Git source body is 10,573 characters. These are not interchangeable copies.
+
+**Decision:** retain the official Git repository submodule and retain the Plugin Creator current-release snapshot separately. Mark source_instruction_parity_status as DRIFT_DETECTED and source_sync_status as SOURCE_INSTRUCTION_DRIFT_DETECTED. Do not overwrite either body until the SDO source owner reviews the difference, chooses the intended canonical content, increments version if required, and verifies the package read-back.

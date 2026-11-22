@@ -54,7 +54,9 @@
       "version_alignment_state": "DEPLOYMENT_AHEAD_OF_SOURCE",
       "repository_version": "4.1.9",
       "version_alignment_note": "Current Plugin Creator deployment 4.1.12; official public GitHub source is 4.1.9. Embedded M00 header v4.0.9 is an internal skill version, not the package version. Source parity is pending.",
-      "version_authority": "SOURCE_MANIFEST_AND_PLUGIN_CREATOR_RELEASE_COMPARISON"
+      "version_authority": "SOURCE_MANIFEST_AND_PLUGIN_CREATOR_RELEASE_COMPARISON",
+      "source_instruction_parity_status": "NOT_COMPARED",
+      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
     },
     {
       "plugin_key": "skill-developer-orchestrator",
@@ -96,12 +98,14 @@
       "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
       "version_alignment_state": "SOURCE_AND_PLATFORM_MATCH",
       "repository_version": "0.1.0",
-      "version_alignment_note": "Canonical Git source manifest and current Plugin Creator package both identify 0.1.0. Submodule is pinned to the verified signed main commit.",
+      "version_alignment_note": "Canonical Git source manifest and current Plugin Creator package both identify 0.1.0, but their master SKILL.md bodies differ substantially. Version metadata is aligned; instruction-content synchronization remains pending.",
       "version_authority": "SOURCE_MANIFEST_AND_PLUGIN_CREATOR_RELEASE_COMPARISON",
       "deployed_plugin_version": "0.1.0",
       "target_version": null,
       "version_reconciliation_status": "SOURCE_VERIFIED_IN_SYNC",
-      "source_sync_status": "SOURCE_AND_PLATFORM_MATCH"
+      "source_sync_status": "SOURCE_INSTRUCTION_DRIFT_DETECTED",
+      "source_instruction_parity_status": "DRIFT_DETECTED",
+      "source_instruction_parity_note": "Direct comparison on 2026-11-22 found the Plugin Creator master SKILL.md at 23,651 characters and the canonical SPDO Git source master SKILL.md at 10,573 characters; normalized exact-content comparison failed. Package version and manifest match at 0.1.0, but instruction content is not byte/semantic parity. Keep both sources distinct until a reviewed reconciliation selects the intended canonical body."
     },
     {
       "plugin_key": "evaluator-team",
@@ -146,7 +150,9 @@
       "deployed_plugin_version": "1.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "master-photo-restoration",
@@ -188,7 +194,9 @@
       "deployed_plugin_version": "1.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "anatomi-prompt-v3-octa-prompt",
@@ -233,7 +241,9 @@
       "deployed_plugin_version": "3.0.0",
       "target_version": "3.0.0",
       "version_reconciliation_status": "SOURCE_VERIFIED_IN_SYNC",
-      "source_sync_status": "SOURCE_AND_PLATFORM_MATCH"
+      "source_sync_status": "SOURCE_AND_PLATFORM_MATCH",
+      "source_instruction_parity_status": "NOT_COMPARED",
+      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
     },
     {
       "plugin_key": "skill-analyzer",
@@ -279,7 +289,9 @@
       "deployed_plugin_version": "1.0.0",
       "target_version": "1.3.0",
       "version_reconciliation_status": "SOURCE_VERIFIED_PLATFORM_BEHIND",
-      "source_sync_status": "SOURCE_VERSION_AHEAD_PLATFORM_PACKAGE"
+      "source_sync_status": "SOURCE_VERSION_AHEAD_PLATFORM_PACKAGE",
+      "source_instruction_parity_status": "NOT_COMPARED",
+      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
     },
     {
       "plugin_key": "godex-motion-audio",
@@ -324,7 +336,9 @@
       "deployed_plugin_version": "2.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "ai-prompt-finder-creator",
@@ -370,7 +384,9 @@
       "deployed_plugin_version": "1.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "agent-jailbreak-skill-ds",
@@ -415,7 +431,9 @@
       "deployed_plugin_version": "0.2.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "motion-graphic-arifanara-v-01",
@@ -460,7 +478,9 @@
       "deployed_plugin_version": "0.2.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "plugin-agent-orchestrator",
@@ -506,7 +526,9 @@
       "deployed_plugin_version": "2.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "photo-fixer",
@@ -549,7 +571,9 @@
       "deployed_plugin_version": "1.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "CANDIDATE_SOURCE_INCOMPLETE"
+      "source_sync_status": "CANDIDATE_SOURCE_INCOMPLETE",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "asfree-canonical",
@@ -595,7 +619,9 @@
       "deployed_plugin_version": "0.3.2",
       "target_version": "0.5.0-rc.1",
       "version_reconciliation_status": "SOURCE_VERIFIED_PLATFORM_BEHIND",
-      "source_sync_status": "SOURCE_VERSION_AHEAD_PLATFORM_PACKAGE"
+      "source_sync_status": "SOURCE_VERSION_AHEAD_PLATFORM_PACKAGE",
+      "source_instruction_parity_status": "NOT_COMPARED",
+      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
     },
     {
       "plugin_key": "asfree-legacy",
@@ -636,7 +662,9 @@
       "deployed_plugin_version": "1.0.4",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "LEGACY_REDIRECT_ONLY"
+      "source_sync_status": "LEGACY_REDIRECT_ONLY",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "cortex-workbench",
@@ -680,7 +708,9 @@
       "deployed_plugin_version": "1.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "commandcraft-56",
@@ -723,7 +753,9 @@
       "deployed_plugin_version": "0.1.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "agent-skills-atlas",
@@ -767,7 +799,9 @@
       "deployed_plugin_version": "0.3.1",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "workflow-systems-orchestrator",
@@ -811,7 +845,9 @@
       "deployed_plugin_version": "0.2.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "growthforge-business-os",
@@ -855,7 +891,9 @@
       "deployed_plugin_version": "1.1.1",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     },
     {
       "plugin_key": "pvee-promkes-super-orchestrator",
@@ -900,7 +938,9 @@
       "deployed_plugin_version": "2.0.2",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "CANDIDATE_SOURCE_INCOMPLETE"
+      "source_sync_status": "CANDIDATE_SOURCE_INCOMPLETE",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
     }
   ]
 }

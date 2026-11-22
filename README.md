@@ -103,7 +103,7 @@ The repository records Plugin Creator package versions separately from canonical
 
 ## Source inventory
 
-The connected owner account exposes six repositories. Five official plugin source repositories are now pinned, including the externally owned SDO and Video Explainer sources. Twelve plugin identities remain NOT_IDENTIFIED and two repositories (Photo-Fixer and PVEE's CL-VAEPPC pointer) are CANDIDATE_INCOMPLETE. HSMART is a related platform. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md) and [SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md](roadmap/SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md). An instruction snapshot is not a canonical source repository.
+The connected owner account exposes six repositories. Five official plugin source repositories are now pinned, including the externally owned SDO and Video Explainer sources. SDO package versions match at 0.1.0, but its Plugin Creator and Git master SKILL.md contents differ and remain under source-parity review. Twelve plugin identities remain NOT_IDENTIFIED and two repositories (Photo-Fixer and PVEE's CL-VAEPPC pointer) are CANDIDATE_INCOMPLETE. HSMART is a related platform. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md) and [SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md](roadmap/SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md). An instruction snapshot is not a canonical source repository.
 
 ## Architecture principles
 

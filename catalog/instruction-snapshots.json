@@ -115,7 +115,8 @@
         "pinned_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
         "license": "Apache-2.0",
         "commit_signature_verified": true,
-        "snapshot_source_comparison": "NOT_YET_HASH_RECONCILED"
+        "snapshot_source_comparison": "DRIFT_DETECTED",
+        "snapshot_source_comparison_note": "Plugin Creator master SKILL.md (23,651 chars) differs from canonical SPDO Git source master SKILL.md (10,573 chars) after newline/edge-whitespace normalization. Manifest version 0.1.0 matches; instruction-content parity does not."
       }
     },
     {
