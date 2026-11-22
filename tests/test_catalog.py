@@ -42,13 +42,16 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertIn("independent", by_key["evaluator-team"]["purpose"].lower())
         self.assertIn("engineering lifecycle", by_key["skill-developer-orchestrator"]["purpose"].lower())
 
-    def test_video_explainer_target_version_is_not_misreported_as_released(self):
+    def test_video_explainer_deployment_and_source_versions_are_separate(self):
         catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
         item = next(p for p in catalog["plugins"] if p["plugin_key"] == "video-explainer-promkes-v4-1-12")
-        self.assertIsNone(item["release_version"])
+        self.assertEqual(item["release_version"], "4.1.12")
         self.assertEqual(item["target_version"], "4.1.12")
+        self.assertEqual(item["deployed_plugin_version"], "4.1.12")
+        self.assertEqual(item["source_repository_version"], "4.1.9")
         self.assertEqual(item["observed_skill_version"], "v4.0.9")
-        self.assertEqual(item["version_reconciliation_status"], "TARGET_SELECTED_SOURCE_SYNC_PENDING")
+        self.assertEqual(item["version_reconciliation_status"], "DEPLOYED_RELEASE_VERIFIED_SOURCE_BEHIND")
+        self.assertEqual(item["source_classification"], "OFFICIAL_PUBLIC_SOURCE_LAGGING")
 
 
 if __name__ == "__main__":
