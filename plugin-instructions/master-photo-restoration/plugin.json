@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "email": "harysaidno@gmail.com",
+    "name": "Hary Saidno"
+  },
+  "description": "Workflow restorasi dan peningkatan potret yang mengutamakan identitas asli, tekstur alami, detail realistis, dan pencahayaan yang seimbang.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [
+          "Image editing",
+          "Interactive"
+        ],
+        "category": "Creativity",
+        "defaultPrompt": [
+          "Restorasi foto yang saya unggah secara realistis dan pertahankan identitas subjek.",
+          "Pulihkan foto lama: bersihkan kerusakan, kurangi blur, dan koreksi pencahayaan alami.",
+          "Tingkatkan potret studio dengan detail alami, warna akurat, dan pakaian serta latar tetap asli."
+        ],
+        "developerName": "Hary Saidno",
+        "displayName": "Master Photo Restoration",
+        "longDescription": "Asisten restorasi foto untuk membersihkan noda, goresan, debu, jamur, noise, dan blur; memperbaiki pencahayaan serta warna; mempertahankan identitas wajah, ekspresi, tekstur kulit, pakaian, dan latar asli; serta meningkatkan potret menjadi hasil fotografis yang natural. Mendukung restorasi konservatif maupun peningkatan potret studio. Resolusi, format, dan kedalaman warna akhir mengikuti kemampuan editor yang digunakan dan tidak dijanjikan bila tidak tersedia.",
+        "shortDescription": "Restorasi foto profesional"
+      }
+    }
+  },
+  "keywords": [
+    "photo restoration",
+    "portrait enhancement",
+    "image editing",
+    "photo repair",
+    "restorasi foto"
+  ],
+  "name": "master-photo-restoration",
+  "version": "1.0.0"
+}

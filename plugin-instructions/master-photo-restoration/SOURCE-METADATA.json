@@ -1,0 +1,16 @@
+{
+  "plugin_key": "master-photo-restoration",
+  "plugin_creator_id": "plugins_6ae29cf104e8819195a90b3c2327d83a",
+  "package_name": "master-photo-restoration",
+  "package_version": "1.0.0",
+  "current_release_id": "pluginrel_6ae29cf38e4881918f892e746050891d",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/photo-restoration/SKILL.md"
+  ],
+  "instruction_file_count": 1,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

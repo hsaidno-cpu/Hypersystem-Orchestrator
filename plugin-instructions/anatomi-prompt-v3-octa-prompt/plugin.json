@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "email": "harysaidno@gmail.com",
+    "name": "Hary Saidno"
+  },
+  "description": "Arsitektur prompt berbasis intensi dengan satu Master Orchestrator dan delapan subskill spesialis. Mengubah ide menjadi master prompt Octa-Prompt yang terstruktur, terlacak, proporsional, aman, dapat divalidasi, dan adaptif tanpa menjalankan tugas sumber.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [],
+        "category": "Productivity",
+        "defaultPrompt": "Ubah ide atau prompt saya menjadi master prompt Octa-Prompt delapan pilar. Analisis intensi, kebutuhan, konteks, metode, batasan, edge cases, kriteria penyelesaian, dan kontrak output. Gunakan placeholder spesifik untuk variabel yang belum diketahui, validasi konsistensi lintas-pilar, dan jangan jalankan tugas sumber. Untuk BUILD/REFINE, keluarkan satu blok kode dengan delapan heading utama.",
+        "developerName": "Hary Saidno",
+        "displayName": "Anatomi Prompt V3.0 — Octa-Prompt",
+        "longDescription": "Intent-driven prompt architecture dengan M00 Master Orchestrator dan delapan spesialis: Role & Persona, Objective & Task, Context & Variables, Reasoning & Workflow, Constraints & Guardrails, Edge Cases & Recovery, Stop & Completion, serta Output Schema. Dilengkapi cross-pillar governance, traceability, readiness/security, exception recovery, schema validation, benchmark, dan compatibility mode enam pilar. Tidak mengeksekusi tugas sumber.",
+        "shortDescription": "Octa-Prompt 8 pilar strategis"
+      }
+    }
+  },
+  "keywords": [
+    "prompt engineering",
+    "octa-prompt",
+    "intent engineering",
+    "master prompt",
+    "requirements engineering",
+    "prompt orchestration",
+    "prompt audit",
+    "prompt validation",
+    "subskill architecture",
+    "indonesian"
+  ],
+  "name": "anatomi-prompt-v-1-0",
+  "version": "3.0.0"
+}

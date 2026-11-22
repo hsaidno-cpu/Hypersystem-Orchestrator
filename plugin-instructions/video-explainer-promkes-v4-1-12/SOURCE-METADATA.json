@@ -1,0 +1,31 @@
+{
+  "plugin_key": "video-explainer-promkes-v4-1-12",
+  "plugin_creator_id": "Plugin_2c5d40bf09dc8191baf81bad205c8e41",
+  "package_name": "video-explainer-promkes-renderer-engine",
+  "package_version": "4.1.12",
+  "current_release_id": "pluginrel_6b02a0f630208191b71ad994703aed68",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/animation-motion-design/SKILL.md",
+    "skills/audience-campaign-strategy/SKILL.md",
+    "skills/continuity-guardian/SKILL.md",
+    "skills/conversation-release-audit/SKILL.md",
+    "skills/executable-gate-engine/SKILL.md",
+    "skills/health-evidence-safety-auditor/SKILL.md",
+    "skills/prompt-reference-video-engineering/SKILL.md",
+    "skills/quality-assurance-controller/SKILL.md",
+    "skills/renderer-code-engineering/SKILL.md",
+    "skills/social-accessibility-distribution/SKILL.md",
+    "skills/source-asset-intelligence/SKILL.md",
+    "skills/story-screenplay-architect/SKILL.md",
+    "skills/storyboard-cinematography/SKILL.md",
+    "skills/video-explainer-promkes/SKILL.md",
+    "skills/visual-identity-art-direction/SKILL.md",
+    "skills/voice-audio-intelligence/SKILL.md"
+  ],
+  "instruction_file_count": 16,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

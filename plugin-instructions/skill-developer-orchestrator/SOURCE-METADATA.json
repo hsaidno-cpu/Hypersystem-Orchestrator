@@ -1,0 +1,16 @@
+{
+  "plugin_key": "skill-developer-orchestrator",
+  "plugin_creator_id": "Plugin_a5294996e38c8191b8e20b2d9f61447a",
+  "package_name": "skill-developer-orchestrator",
+  "package_version": "0.1.0",
+  "current_release_id": "pluginrel_6afdee10a5688191ad8fc37a9d0d827b",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/skill-developer-orchestrator/SKILL.md"
+  ],
+  "instruction_file_count": 1,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

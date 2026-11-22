@@ -1,0 +1,48 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "agent-jailbreak-skill-ds-v01",
+  "version": "0.2.0",
+  "description": "A modular defensive security orchestration toolkit for threat modeling, jailbreak and prompt-injection audits, agent action security, safe red-team testing, evidence-based evaluation, incident response, and defense architecture.",
+  "author": {
+    "name": "Hary Saidno",
+    "email": "harysaidno@gmail.com"
+  },
+  "keywords": [
+    "AI agent security",
+    "jailbreak defense",
+    "prompt injection",
+    "RAG security",
+    "memory integrity",
+    "tool authorization",
+    "red team",
+    "resilience evaluation",
+    "incident response",
+    "defense in depth"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [
+          "AI agent threat modeling",
+          "Jailbreak and prompt-injection analysis",
+          "RAG, memory and multimodal integrity review",
+          "Tool authorization security",
+          "Safe adversarial testing",
+          "Evidence-based resilience evaluation",
+          "Incident response and defense architecture"
+        ],
+        "category": "Security",
+        "defaultPrompt": [
+          "Audit this AI agent architecture for jailbreak and prompt-injection risks.",
+          "Design a safe, reproducible red-team and regression test plan for my agent.",
+          "Assess these agent traces and produce an evidence-backed resilience report."
+        ],
+        "developerName": "Hary Saidno",
+        "displayName": "Agent Jailbreak Skill DS",
+        "longDescription": "A modular defensive security orchestration toolkit for AI agents. It models threats, classifies jailbreak and prompt-injection patterns, audits untrusted context and multimodal inputs, reviews tool authorization boundaries, designs safe red-team tests, evaluates observed behavior, authenticates evidence, coordinates incident response, and architects layered defenses. It does not generate operational bypass payloads, reveal hidden instructions, disable safeguards, or execute tests against external systems.",
+        "shortDescription": "AI agent security & defense"
+      }
+    }
+  },
+  "skills": "./skills"
+}

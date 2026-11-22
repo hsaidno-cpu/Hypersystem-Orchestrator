@@ -1,0 +1,36 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "email": "harysaidno@gmail.com",
+    "name": "Hary Saidno"
+  },
+  "description": "A modular AI motion-graphics production system for voice-over analysis, narrative planning, visual art direction, motion design, captions and audio post, renderer-aware export, and quality assurance. MP4 generation depends on verified tools in the connected runtime.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [],
+        "category": "Creativity",
+        "defaultPrompt": [
+          "Ubah voice-over saya menjadi paket produksi motion graphic lengkap, lalu render MP4 bila alatnya tersedia."
+        ],
+        "developerName": "Hary Saidno",
+        "displayName": "GODEX Motion Audio",
+        "longDescription": "GODEX Motion Audio 2.0 is one modular plugin containing eight coordinated skills: an Orchestrator and seven specialists for audio intelligence, narrative and storyboard, visual art direction, motion design, audio post and captions, render and export, and quality assurance. Shared project contracts keep scene timing, assets, subtitles, visual rules, render settings, and review status consistent. It prepares production-ready handoffs and exports an MP4 only when the connected environment has a working renderer and the resulting file is verified.",
+        "shortDescription": "Voice-over to motion design"
+      }
+    }
+  },
+  "keywords": [
+    "voice-over",
+    "motion-graphics",
+    "storyboarding",
+    "video-production",
+    "subtitles",
+    "audio-direction",
+    "creative-workflow",
+    "modular-skills",
+    "quality-assurance"
+  ],
+  "name": "godex-motion-audio",
+  "version": "2.0.0"
+}

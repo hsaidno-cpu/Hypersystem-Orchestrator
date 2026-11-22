@@ -1,0 +1,27 @@
+{
+  "plugin_key": "skill-analyzer",
+  "plugin_creator_id": "plugins_6ae2a122f5c881919193c9b0ba51961e",
+  "package_name": "skill-analyzer",
+  "package_version": "1.0.0",
+  "current_release_id": "pluginrel_6af1a98cdbe881918f30895f5af93afc",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/analytical-collector/SKILL.md",
+    "skills/analyzer/SKILL.md",
+    "skills/comparative-analytic/SKILL.md",
+    "skills/evaluator/SKILL.md",
+    "skills/evidence-auditor/SKILL.md",
+    "skills/information-authenticator/SKILL.md",
+    "skills/komparator/SKILL.md",
+    "skills/negative-collector/SKILL.md",
+    "skills/platform-compatibility/SKILL.md",
+    "skills/positive-converter/SKILL.md",
+    "skills/skill-analyzer/SKILL.md",
+    "skills/strategic-foresight/SKILL.md"
+  ],
+  "instruction_file_count": 12,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

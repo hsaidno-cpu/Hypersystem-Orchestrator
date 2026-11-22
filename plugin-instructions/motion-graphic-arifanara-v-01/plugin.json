@@ -1,0 +1,40 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "motion-graphic-by-arifanara",
+  "version": "0.2.0",
+  "description": "Motion Graphic by arifanara V.01 adalah sistem produksi motion graphics modular berbasis brief dan voice-over. Memisahkan intake, tata kelola aset, audio, forensik referensi, ekstraksi Style Lock, narasi, storyboard, verifikasi klaim, art direction, continuity, choreography, tipografi, audio post, caption, timeline, render, QA, dan delivery.",
+  "author": {
+    "name": "Hary Saidno",
+    "email": "harysaidno@gmail.com"
+  },
+  "keywords": [
+    "motion graphics",
+    "explainer video",
+    "voice over",
+    "storyboard",
+    "visual direction",
+    "reference analysis",
+    "kinetic typography",
+    "sound design",
+    "video rendering",
+    "quality assurance",
+    "creative workflow"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Motion Graphic arifanara V.01",
+        "shortDescription": "Motion graphics VO-first",
+        "longDescription": "Motion Graphic by arifanara V.01 mengubah brief, voice-over, aset pengguna, dan referensi visual menjadi video motion graphics baru. Arsitektur modular memisahkan intake, audio intelligence, reference forensics, visual Style Lock, narrative architecture, storyboard, claim verification, art direction, asset continuity, motion choreography, kinetic typography, audio post, captions, timeline assembly, rendering, QA, dan platform delivery. Referensi mengarahkan bahasa visual, bukan isi yang disalin. Status MP4 dibedakan dari paket yang baru siap render.",
+        "developerName": "Hary Saidno",
+        "category": "Creativity",
+        "capabilities": [],
+        "defaultPrompt": [
+          "Buat video motion graphics baru dari brief dan voice-over saya.",
+          "Analisis video referensi saya sebagai inspirasi visual tanpa menyalin adegannya.",
+          "Audit hasil render motion graphics ini sebelum diserahkan."
+        ]
+      }
+    }
+  }
+}

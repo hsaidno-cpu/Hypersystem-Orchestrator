@@ -1,0 +1,22 @@
+{
+  "plugin_key": "ai-prompt-finder-creator",
+  "plugin_creator_id": "plugins_6ae57d424a2481918295d281919fbb7d",
+  "package_name": "ai-prompt-finder-creator",
+  "package_version": "1.0.0",
+  "current_release_id": "pluginrel_6ae57d451eac81918ae3d05fd7bb0a85",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/image-prompt-finder/SKILL.md",
+    "skills/long-video-engine/SKILL.md",
+    "skills/prompt-optimizer/SKILL.md",
+    "skills/prompt-orchestrator/SKILL.md",
+    "skills/prompt-quality-control/SKILL.md",
+    "skills/short-video-finder/SKILL.md",
+    "skills/universal-prompt-creator/SKILL.md"
+  ],
+  "instruction_file_count": 7,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

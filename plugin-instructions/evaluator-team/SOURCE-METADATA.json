@@ -1,0 +1,19 @@
+{
+  "plugin_key": "evaluator-team",
+  "plugin_creator_id": "Plugin_be5d3d62da24819189f807692271c1a2",
+  "package_name": "evaluator-team",
+  "package_version": "1.0.0",
+  "current_release_id": "pluginrel_6afdee5a10108191a38e1ee7f84f7524",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/evaluator-team/SKILL.md",
+    "skills/octa-prompt-architect/SKILL.md",
+    "skills/skill-analyzer-evaluator/SKILL.md",
+    "skills/skill-developer-orchestrator/SKILL.md"
+  ],
+  "instruction_file_count": 4,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

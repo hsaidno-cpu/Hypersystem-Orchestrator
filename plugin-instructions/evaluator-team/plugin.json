@@ -1,0 +1,39 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "email": "promkes.pkm.binuang@gmail.com",
+    "name": "Promkes pkm binuang"
+  },
+  "description": "A coordinated team for evidence-led skill evaluation, Octa-Prompt redesign, and controlled implementation to GitHub.",
+  "extensions": {
+    "com.openai": {
+      "apps": "./.app.json",
+      "interface": {
+        "capabilities": [
+          "GitHub integration",
+          "Skill evaluation",
+          "Prompt architecture"
+        ],
+        "category": "Productivity",
+        "defaultPrompt": [
+          "Audit the skill or plugin I provide, redesign it using the eight Octa-Prompt pillars, implement safe in-scope improvements in the specified GitHub repository, verify the changes, and open a pull request.",
+          "Run a comprehensive evidence-led evaluation of this skill. Identify root causes, risks, and missing acceptance tests, then provide a prioritized improvement plan.",
+          "Review this skill update for regressions, compatibility, security, and GitHub change quality. Verify the exact branch and commit before reporting completion."
+        ],
+        "developerName": "Promkes pkm binuang",
+        "displayName": "EVALUATOR TEAM",
+        "longDescription": "A three-specialist workflow that audits skills with evidence, redesigns their instructions across all eight Octa-Prompt pillars, then implements safe, traceable improvements in a GitHub working branch and opens a pull request. It distinguishes actual tool execution from procedure-based specialist handoffs and never merges or releases without separate authorization.",
+        "shortDescription": "Audit, refine & ship skills"
+      }
+    }
+  },
+  "keywords": [
+    "skill evaluation",
+    "prompt architecture",
+    "skill development",
+    "quality assurance",
+    "GitHub"
+  ],
+  "name": "evaluator-team",
+  "version": "1.0.0"
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "email": "harysaidno@gmail.com",
+    "name": "Hary Saidno"
+  },
+  "description": "A modular multimodal prompt-engineering system that analyzes accessible image and video references, reconstructs likely prompt specifications, maps video scenes, creates prompts for diverse content types, and audits prompt quality without claiming to recover hidden original prompts.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [],
+        "category": "Productivity",
+        "defaultPrompt": [
+          "Analisis gambar referensi ini dan buat prompt yang siap digunakan pada generator AI.",
+          "Uraikan video referensi maksimal 60 detik menjadi scene prompts dengan continuity karakter dan visual.",
+          "Audit dan optimalkan prompt saya agar lebih jelas, konsisten, dan sesuai generator AI tujuan."
+        ],
+        "developerName": "Hary Saidno",
+        "displayName": "AI Prompt Finder & Creator",
+        "longDescription": "Analyze accessible image or video references and turn their observable characteristics into structured, reusable prompts. Create scene-by-scene prompts for videos up to 60 seconds, build character and visual continuity specifications, generate prompts for writing, design, music, 3D and other content, and refine existing prompts. The plugin reconstructs likely instructions; it cannot recover hidden original prompts or guarantee identical outputs across generators.",
+        "shortDescription": "Find & Create AI Prompts"
+      }
+    }
+  },
+  "keywords": [
+    "ai",
+    "prompt-engineering",
+    "image-prompt",
+    "video-prompt",
+    "multimodal",
+    "creative-workflow",
+    "prompt-optimization"
+  ],
+  "name": "ai-prompt-finder-creator",
+  "version": "1.0.0"
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "email": "promkes.pkm.binuang@gmail.com",
+    "name": "Promkes pkm binuang"
+  },
+  "description": "Orchestrates evidence-led, adversarial audits and end-to-end improvement of AI skills and plugins, including controlled GitHub changes and verification.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [
+          "Interactive"
+        ],
+        "category": "Productivity",
+        "defaultPrompt": [
+          "Audit secara menyeluruh skill atau plugin ini, rumuskan perbaikannya, lalu implementasikan perubahan yang telah diotorisasi dan verifikasi hasilnya.",
+          "Bedah arsitektur prompt dan skill ini dengan SKILL ANALYZER serta Octa-Prompt, lakukan red-team, lalu buat patch dan regression test.",
+          "Periksa repository GitHub ini, identifikasi kelemahan utama, dan siapkan pembaruan melalui branch dan pull request yang dapat ditinjau."
+        ],
+        "developerName": "Promkes pkm binuang",
+        "displayName": "SKILL DEVELOPER ORCHESTRATOR",
+        "longDescription": "A full-cycle engineering orchestrator for AI skills and plugins. It coordinates SKILL ANALYZER and Octa-Prompt methods, performs evidence-based root-cause analysis and red-team risk discovery, converts findings into prioritized improvements, then applies authorized changes to plugin assets and GitHub through verified capabilities. It uses branch-and-pull-request workflows, regression gates, traceable evidence, and fail-closed release decisions. It never claims tests, tool calls, permissions, or deployments that were not actually observed.",
+        "shortDescription": "Audit, improve & ship skills"
+      }
+    }
+  },
+  "keywords": [
+    "skill development",
+    "plugin engineering",
+    "prompt engineering",
+    "systems audit",
+    "red team",
+    "GitHub",
+    "regression testing",
+    "quality assurance"
+  ],
+  "name": "skill-developer-orchestrator",
+  "version": "0.1.0"
+}

@@ -1,0 +1,24 @@
+{
+  "plugin_key": "anatomi-prompt-v3-octa-prompt",
+  "plugin_creator_id": "plugins_6ae56293e9508191a2149d7ac0fc8501",
+  "package_name": "anatomi-prompt-v-1-0",
+  "package_version": "3.0.0",
+  "current_release_id": "pluginrel_6af18ad1d81481919e4c6fa6d512d0ee",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/anatomi-prompt/SKILL.md",
+    "skills/p1-role-persona-architect/SKILL.md",
+    "skills/p2-objective-task-architect/SKILL.md",
+    "skills/p3-context-variable-architect/SKILL.md",
+    "skills/p4-reasoning-workflow-architect/SKILL.md",
+    "skills/p5-constraints-guardrails-architect/SKILL.md",
+    "skills/p6-edge-case-recovery-architect/SKILL.md",
+    "skills/p7-stop-completion-architect/SKILL.md",
+    "skills/p8-output-schema-architect/SKILL.md"
+  ],
+  "instruction_file_count": 9,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

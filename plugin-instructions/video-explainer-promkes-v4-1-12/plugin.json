@@ -1,0 +1,83 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "video-explainer-promkes-renderer-engine",
+  "version": "4.1.12",
+  "description": "Health-first evidence-gated Promkes production with canonical MCG, seven single-owner Guides, quantified motion, optional renderer-neutral Remotion motion patterns and independent QA. V2 adds universal handoff validation, externally rooted trust controls, domain procedures and the S10 two-lane contract.",
+  "author": {
+    "name": "Promkes pkm binuang",
+    "email": "promkes.pkm.binuang@gmail.com"
+  },
+  "keywords": [
+    "promkes",
+    "health promotion",
+    "video explainer",
+    "evidence governance",
+    "claim provenance",
+    "fail-closed gates",
+    "conversation audit",
+    "source parity",
+    "renderer engineering",
+    "accessibility",
+    "rights management",
+    "social accessibility",
+    "acceptance traceability",
+    "master continuity guide",
+    "adaptive continuity",
+    "motion specification",
+    "cinematic QA",
+    "AI video platform adapter",
+    "Remotion",
+    "GSAP",
+    "Lottie",
+    "approved formula ledger",
+    "model drift review",
+    "risk-proportional preflight",
+    "project outcome register",
+    "learning governance validator",
+    "remotion-motion-patterns",
+    "reduced-motion",
+    "encoded-media QA",
+    "universal handoff",
+    "trust registry",
+    "semantic validator",
+    "prompt quarantine",
+    "resource policy"
+  ],
+  "skills": "./skills",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Video Explainer Promkes V4.1.12",
+        "shortDescription": "Evidence-gated Promkes",
+        "longDescription": "Health-first evidence-gated Promkes production with canonical MCG, seven single-owner Guides, quantified motion, optional renderer-neutral Remotion motion patterns and independent QA. V2 adds universal handoff validation, externally rooted trust controls, domain procedures and the S10 two-lane contract.",
+        "developerName": "Promkes pkm binuang",
+        "category": "Productivity",
+        "capabilities": [],
+        "defaultPrompt": [
+          "Ubah poster/infografis, caption, audio/transkrip, naskah atau kombinasi sumber Promkes menjadi paket produksi explainer yang dapat ditelusuri dari sumber sampai QA.",
+          "Sebelum audit percakapan, upgrade, rekonsiliasi source tree, publikasi GitHub atau keputusan rilis, M00 wajib menerapkan preflight S14 dan menyatakan batas cakupan konteks.",
+          "Pisahkan instruksi eksplisit, preferensi, inferensi, usulan, unknown dan keputusan superseded. Konteks percakapan bukan bukti klinis, hak, persetujuan atau hasil tes.",
+          "Jaga spesifikasi desain statis dan kampanye tetap project-scoped; distribusi sosial bersifat opsional dan tidak menjanjikan reach/viral/FYP.",
+          "Jangan klaim engine parity, host runtime, AI/ASR, Remotion render, MP4 QA, lisensi atau persetujuan manusia tanpa bukti.",
+          "Bedakan suite acceptance privat 20 kasus dari suite GitHub 45 kasus; namespace-kan ID dan jangan gunakan ringkasan pytest untuk menutup kasus acceptance.",
+          "Pertahankan NOT_RUN pada setiap kasus tanpa eksekusi dan oracle bukti yang spesifik.",
+          "S02 is the sole authority for interpreting health claims and Fact Lock; formula reuse never transfers clinical approval to another project.",
+          "S14 mandatory cross-cutting preflight remains required for every version audit, source reconciliation, publication and release decision.",
+          "Preserve conservative R0/R1/R2/R3 routing: highest credible trigger wins, UNKNOWN material risk is at least R2, critical triggers force R3, and R2/R3 are never fast-tracked.",
+          "Use only APPROVED, rights-cleared, scope-matched Approved Formula Ledger records with provenance, exact model/version, tests and independent S12 QA.",
+          "Model drift creates an immutable review candidate; never auto-approve a capability or advance a human-accepted baseline after a hash change.",
+          "S08 model selection advice is non-authoritative and candidate-only; exact provider/model/version features require evidence, and the user/project owner remains the selector.",
+          "Project outcome records may contain privacy-minimized process metrics only; do not collect new audience/patient behavioral-health data or infer clinical effects.",
+          "Preserve traceability from approved source/claim through beat, scene/shot, motion, renderer layer and independent QA oracle; HOLD/NOT_RUN/NOT_VERIFIED/BLOCKED remain distinct.",
+          "Before validating or using AFL/MDS/MSA/POR/RPF records, follow skills/video-explainer-promkes/references/learning-governance-execution-v4.1.10.md and run the schema/semantic validator. A validator PASS never replaces S02, S12, S14 or human authority.",
+          "M00 must load skills/video-explainer-promkes/references/v2-enforcement-overlay.md for every project using V2 enforcement.",
+          "Every M00–S14 producer/receiver handoff must conform to schemas/v4/handoff-envelope.schema.json and pass both structural and semantic validation through scripts/promkes_v2/handoff.py.",
+          "Before dispatching S02, S03, S04, S05, S06, S07 or S13, load that skill folder’s references/v2-operational-protocol.md and preserve its sole domain ownership.",
+          "S10 is one identity with internal lanes S10-MP (Media Production) and S10-RE (Renderer Engineering); retain renderer-code-engineering as the existing private S10-RE slug alias. Do not add a second S10 skill.",
+          "FND-001 through FND-009 are addressed by the V2 enforcement modules; external trust roots, approver roles, artifact index and resource ceilings must be provisioned outside project payloads.",
+          "Keep the V2 44-case acceptance suite distinct from historical private and GitHub scenario inventories. Local tests, GitHub CI, live host, clinical approvals, renderer execution and human release approvals are separate evidence states."
+        ]
+      }
+    }
+  }
+}

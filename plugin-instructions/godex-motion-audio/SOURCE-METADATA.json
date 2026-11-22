@@ -1,0 +1,23 @@
+{
+  "plugin_key": "godex-motion-audio",
+  "plugin_creator_id": "plugins_6ae564da711c8191a4757bbc4cc20a5b",
+  "package_name": "godex-motion-audio",
+  "package_version": "2.0.0",
+  "current_release_id": "pluginrel_6ae56ef615688191ba0b357fc7b1fd32",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/godex-audio-intelligence/SKILL.md",
+    "skills/godex-audio-post-caption/SKILL.md",
+    "skills/godex-motion-audio/SKILL.md",
+    "skills/godex-motion-design/SKILL.md",
+    "skills/godex-narrative-storyboard/SKILL.md",
+    "skills/godex-quality-assurance/SKILL.md",
+    "skills/godex-render-export/SKILL.md",
+    "skills/godex-visual-art-direction/SKILL.md"
+  ],
+  "instruction_file_count": 8,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

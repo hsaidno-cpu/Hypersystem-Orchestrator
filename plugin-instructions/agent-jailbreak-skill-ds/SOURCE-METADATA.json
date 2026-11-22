@@ -1,0 +1,26 @@
+{
+  "plugin_key": "agent-jailbreak-skill-ds",
+  "plugin_creator_id": "plugins_6ae85f228fbc819185f07fe3f8216ea9",
+  "package_name": "agent-jailbreak-skill-ds-v01",
+  "package_version": "0.2.0",
+  "current_release_id": "pluginrel_6ae8691261c08191a69065ccbea28965",
+  "scope": "USER",
+  "discoverability": "PRIVATE",
+  "source_system": "ChatGPT Plugin Creator current release",
+  "captured_on": "2026-11-22",
+  "included_instruction_files": [
+    "skills/agent-jailbreak-ds/SKILL.md",
+    "skills/agent-threat-modeler/SKILL.md",
+    "skills/context-integrity-auditor/SKILL.md",
+    "skills/defense-architect/SKILL.md",
+    "skills/incident-response-orchestrator/SKILL.md",
+    "skills/jailbreak-pattern-atlas/SKILL.md",
+    "skills/prompt-injection-auditor/SKILL.md",
+    "skills/resilience-evaluator/SKILL.md",
+    "skills/safe-redteam-lab/SKILL.md",
+    "skills/security-evidence-authenticator/SKILL.md",
+    "skills/tool-action-security/SKILL.md"
+  ],
+  "instruction_file_count": 11,
+  "snapshot_semantics": "READ_ONLY_SOURCE_SNAPSHOT; canonical package remains in Plugin Creator or the verified GitHub source repository; do not edit this mirror as the release authority."
+}

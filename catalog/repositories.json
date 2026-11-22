@@ -23,15 +23,7 @@
       "status": "integrated_submodule",
       "pinned_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
       "submodule_path": "plugins/skill-analyzer",
-      "verified_artifact": "README.md identifies SKILL ANALYZER 1.3.0 and its modular architecture; inspected 2026-11-22.",
-      "source_classification": "OFFICIAL_PUBLIC_SOURCE",
-      "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
-      "license_note": "LICENSE path was not found during the 2026-11-22 inspection. Do not assume parent Apache-2.0 applies.",
-      "package_version": "1.3.0",
-      "package_version_evidence": [
-        "README.md",
-        "plugin.json"
-      ]
+      "verified_artifact": "README.md identifies SKILL ANALYZER 1.3.0 and its modular architecture; inspected 2026-11-22."
     },
     {
       "repository_id": "asfree",
@@ -43,13 +35,7 @@
       "status": "integrated_submodule",
       "pinned_commit": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
       "submodule_path": "plugins/asfree",
-      "verified_artifact": "README.md and plugin/plugin.json inspected 2026-11-22; package version 0.5.0-rc.1 is a release candidate.",
-      "source_classification": "OFFICIAL_PUBLIC_SOURCE",
-      "license_status": "POLYFORM_NONCOMMERCIAL_1_0_0",
-      "license_url": "https://polyformproject.org/licenses/noncommercial/1.0.0",
-      "required_notice": "Copyright (c) 2026 Hary Saidno and A.S.F.R.E.E contributors.",
-      "package_version": "0.5.0-rc.1",
-      "package_version_status": "RELEASE_CANDIDATE"
+      "verified_artifact": "README.md and plugin/plugin.json inspected 2026-11-22; package version 0.5.0-rc.1 is a release candidate."
     },
     {
       "repository_id": "anatomi-prompt-strategis",
@@ -61,15 +47,7 @@
       "status": "integrated_submodule_private",
       "pinned_commit": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
       "submodule_path": "plugins/anatomi-prompt-strategis",
-      "verified_artifact": "README.md identifies Anatomi Prompt V3.0 — Octa-Prompt; private repository access is required to initialize this submodule.",
-      "source_classification": "OFFICIAL_PRIVATE_SOURCE",
-      "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
-      "license_note": "Root LICENSE path was not found during the 2026-11-22 inspection; keep source private and do not infer a license.",
-      "package_version": "3.0.0",
-      "package_version_evidence": [
-        "README.md"
-      ],
-      "public_snapshot_allowed": false
+      "verified_artifact": "README.md identifies Anatomi Prompt V3.0 — Octa-Prompt; private repository access is required to initialize this submodule."
     },
     {
       "repository_id": "photo-fixer-candidate",
@@ -79,10 +57,7 @@
       "default_branch": "main",
       "role": "candidate_plugin_source",
       "status": "candidate_not_integrated",
-      "verified_artifact": "Repository exists but root currently contains only README.md and LICENSE. Its identity/content as a full Photo Fixer plugin source is not yet confirmed.",
-      "source_classification": "CANDIDATE_INCOMPLETE",
-      "license_status": "APACHE-2.0",
-      "candidate_reason": "The inspected root contains only README.md and LICENSE. A complete plugin source tree, manifest, skill instructions and tests were not found there."
+      "verified_artifact": "Repository exists but root currently contains only README.md and LICENSE. Its identity/content as a full Photo Fixer plugin source is not yet confirmed."
     },
     {
       "repository_id": "hsmart",
@@ -92,57 +67,7 @@
       "default_branch": "main",
       "role": "related_platform_repository",
       "status": "related_not_submodule",
-      "verified_artifact": "Existing Notion HSMART Project Headquarters identifies HSMART as a separate Universal AI Ecosystem Infrastructure Platform. It is not one of the 20 plugins in this registry.",
-      "source_classification": "RELATED_PLATFORM",
-      "notes": "Separate Universal AI Ecosystem Infrastructure Platform. Not one of the 20 plugins and not a plugin source repository."
-    },
-    {
-      "repository_id": "video-explainer-promkes",
-      "full_name": "promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
-      "url": "https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
-      "visibility": "public",
-      "default_branch": "main",
-      "role": "plugin_source",
-      "status": "integrated_submodule",
-      "source_classification": "OFFICIAL_PUBLIC_SOURCE_LAGGING",
-      "pinned_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
-      "submodule_path": "plugins/video-explainer-promkes",
-      "package_version": "4.1.9",
-      "package_version_evidence": [
-        "plugin.json at main",
-        "README.md at main"
-      ],
-      "deployed_plugin_creator_version": "4.1.12",
-      "plugin_creator_id": "Plugin_2c5d40bf09dc8191baf81bad205c8e41",
-      "plugin_creator_current_release_id": "pluginrel_6b02a0f630208191b71ad994703aed68",
-      "plugin_creator_visibility": "PRIVATE",
-      "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
-      "notes": "Current Plugin Creator deployment is 4.1.12 while public GitHub source is 4.1.9. Pinned as official source but explicitly marked behind. Parent contains only the 16 current SKILL.md instructions at owner's request; binaries and unrelated assets are excluded."
+      "verified_artifact": "Existing Notion HSMART Project Headquarters identifies HSMART as a separate Universal AI Ecosystem Infrastructure Platform. It is not one of the 20 plugins in this registry."
     }
-  ],
-  "search_scope": {
-    "inventory_date": "2026-11-22",
-    "owner": "hsaidno-cpu",
-    "visible_owned_repositories": 6,
-    "visible_repository_names": [
-      "Hypersystem-Orchestrator",
-      "HSMART",
-      "skill-analyzer",
-      "A.S.F.R.E.E",
-      "Photo-Fixer",
-      "anatomi-prompt-strategis"
-    ],
-    "result": "No additional official source repository was verified for the 15 plugins listed as NOT_IDENTIFIED.",
-    "classification_rule": "A name-similar repository, search result owned by another account, prototype or mirror is not accepted as canonical without identity, provenance, manifest, license and source-history evidence.",
-    "external_official_source_repositories": [
-      {
-        "repository_id": "video-explainer-promkes",
-        "full_name": "promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
-        "identity_evidence": "Plugin Creator release audit/source-tree parity documentation identifies this exact GitHub repository; README and plugin.json authors and package domain match the Promkes explainer.",
-        "source_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
-        "source_version": "4.1.9",
-        "deployed_plugin_creator_version": "4.1.12"
-      }
-    ]
-  }
+  ]
 }
