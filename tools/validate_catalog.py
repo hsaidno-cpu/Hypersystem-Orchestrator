@@ -126,6 +126,22 @@ def validate():
             fail(f"{key}: canonical redirect must use LEGACY_REDIRECT classification")
         if state == "integrated_submodule" and not plugin.get("source_classification", "").startswith("OFFICIAL_"):
             fail(f"{key}: integrated submodule must use an OFFICIAL source classification")
+        for platform_field in ["platform_package_version", "platform_current_release_id", "platform_scope", "platform_discoverability", "platform_source_authority", "version_alignment_state", "repository_version", "version_alignment_note", "version_authority", "version_reconciliation_status", "source_sync_status"]:
+            if platform_field not in plugin:
+                fail(f"{key}: missing version-plane field '{platform_field}'")
+        if not re.fullmatch(r"pluginrel_[A-Za-z0-9]+", plugin["platform_current_release_id"]):
+            fail(f"{key}: invalid Plugin Creator release ID")
+        if plugin["platform_scope"] != "USER" or plugin["platform_discoverability"] != "PRIVATE":
+            fail(f"{key}: Plugin Creator scope/discoverability metadata drift")
+        alignment = plugin["version_alignment_state"]
+        if alignment in {"SOURCE_AHEAD_OF_PLATFORM", "SOURCE_AND_PLATFORM_MATCH", "DEPLOYMENT_AHEAD_OF_SOURCE"} and not plugin.get("repository_version"):
+            fail(f"{key}: source-backed version alignment requires repository_version")
+        if alignment == "SOURCE_AND_PLATFORM_MATCH" and plugin["repository_version"] != plugin["platform_package_version"]:
+            fail(f"{key}: SOURCE_AND_PLATFORM_MATCH versions do not match")
+        if alignment == "SOURCE_AHEAD_OF_PLATFORM" and plugin["repository_version"] == plugin["platform_package_version"]:
+            fail(f"{key}: SOURCE_AHEAD_OF_PLATFORM must contain differing versions")
+        if alignment == "DEPLOYMENT_AHEAD_OF_SOURCE" and plugin["repository_version"] == plugin["platform_package_version"]:
+            fail(f"{key}: DEPLOYMENT_AHEAD_OF_SOURCE must contain differing versions")
         for related in plugin.get("related_plugins", []):
             if related not in plugin_key_set:
                 fail(f"{key}: unknown related plugin '{related}'")

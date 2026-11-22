@@ -54,5 +54,53 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(item["source_classification"], "OFFICIAL_PUBLIC_SOURCE_LAGGING")
 
 
+
+    def test_package_version_planes_are_recorded_without_collapsing_source_and_deployment(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        by_key = {p["plugin_key"]: p for p in catalog["plugins"]}
+        for item in catalog["plugins"]:
+            self.assertTrue(item["platform_package_version"])
+            self.assertTrue(item["platform_current_release_id"])
+            self.assertEqual(item["platform_scope"], "USER")
+            self.assertEqual(item["platform_discoverability"], "PRIVATE")
+        self.assertEqual(by_key["skill-analyzer"]["repository_version"], "1.3.0")
+        self.assertEqual(by_key["skill-analyzer"]["platform_package_version"], "1.0.0")
+        self.assertEqual(by_key["asfree-canonical"]["repository_version"], "0.5.0-rc.1")
+        self.assertEqual(by_key["asfree-canonical"]["platform_package_version"], "0.3.2")
+        self.assertEqual(by_key["video-explainer-promkes-v4-1-12"]["repository_version"], "4.1.9")
+        self.assertEqual(by_key["video-explainer-promkes-v4-1-12"]["platform_package_version"], "4.1.12")
+        self.assertEqual(by_key["anatomi-prompt-v3-octa-prompt"]["repository_version"], "3.0.0")
+        self.assertEqual(by_key["anatomi-prompt-v3-octa-prompt"]["platform_package_version"], "3.0.0")
+
+    def test_primary_responsibility_boundaries_are_distinct(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        by_key = {p["plugin_key"]: p for p in catalog["plugins"]}
+        self.assertIn("general analytical methodology", by_key["skill-analyzer"]["purpose"].lower())
+        self.assertIn("technical anatomy", by_key["asfree-canonical"]["purpose"].lower())
+        self.assertIn("independent", by_key["evaluator-team"]["purpose"].lower())
+        self.assertIn("engineering lifecycle", by_key["skill-developer-orchestrator"]["purpose"].lower())
+        self.assertIn("octa-prompt", by_key["anatomi-prompt-v3-octa-prompt"]["purpose"].lower())
+        self.assertIn("source-content-to-prompt", by_key["ai-prompt-finder-creator"]["purpose"].lower())
+        self.assertIn("general", by_key["photo-fixer"]["purpose"].lower())
+        self.assertIn("restoration", by_key["master-photo-restoration"]["purpose"].lower())
+
+    def test_media_plugin_owners_are_separated(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        by_key = {p["plugin_key"]: p for p in catalog["plugins"]}
+        self.assertIn("audio/voice-over-first", by_key["godex-motion-audio"]["purpose"].lower())
+        self.assertIn("visual-first", by_key["motion-graphic-arifanara-v-01"]["purpose"].lower())
+        self.assertIn("health", by_key["pvee-promkes-super-orchestrator"]["primary_domain"])
+        self.assertIn("renderer-neutral production engine", by_key["video-explainer-promkes-v4-1-12"]["purpose"].lower())
+
+    def test_photo_restoration_and_legacy_route_are_exclusive(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        by_key = {p["plugin_key"]: p for p in catalog["plugins"]}
+        fixer_negative = " ".join(by_key["photo-fixer"]["negative_triggers"]).lower()
+        restoration_positive = " ".join(by_key["master-photo-restoration"]["primary_triggers"]).lower()
+        self.assertIn("historical", fixer_negative)
+        self.assertIn("aged", restoration_positive)
+        self.assertEqual(by_key["asfree-legacy"]["source_classification"], "LEGACY_REDIRECT")
+        self.assertEqual(by_key["asfree-legacy"]["alias_of"], "asfree-canonical")
+
 if __name__ == "__main__":
     unittest.main()
