@@ -159,8 +159,8 @@ def validate():
                 fail(f"{repo['repository_id']}: .gitmodules URL does not match catalog URL")
             if not re.fullmatch(r"[0-9a-f]{40}", repo.get("pinned_commit", "")):
                 fail(f"{repo['repository_id']}: pinned_commit must be a 40-character SHA")
-    if len(submodules) != 4:
-        fail(f"Expected 4 verified source submodules at this stage, found {len(submodules)}")
+    if len(submodules) != 5:
+        fail(f"Expected 5 verified source submodules at this stage, found {len(submodules)}")
 
     snapshot_index = load_json(ROOT / "catalog" / "instruction-snapshots.json")
     if len(snapshot_index.get("plugins", [])) != len(plugins):

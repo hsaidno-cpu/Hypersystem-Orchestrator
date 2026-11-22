@@ -20,13 +20,15 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 The registry contains **20 plugin identities** supplied for this ecosystem.
 
-Four verified source repositories are pinned as Git submodules (one public source remains behind its current Plugin Creator deployment):
+Five verified official plugin source repositories are pinned as Git submodules (Video Explainer remains behind its current Plugin Creator deployment):
 
 | Plugin / source | Repository | Visibility | Pinned source |
 |---|---|---|---|
 | SKILL ANALYZER | [skill-analyzer](https://github.com/hsaidno-cpu/skill-analyzer) | Public | plugins/skill-analyzer |
 | A.S.F.R.E.E (Canonical) | [A.S.F.R.E.E](https://github.com/hsaidno-cpu/A.S.F.R.E.E) | Public | plugins/asfree |
 | Anatomi Prompt V3.0 — Octa-Prompt | [anatomi-prompt-strategis](https://github.com/hsaidno-cpu/anatomi-prompt-strategis) | Private | plugins/anatomi-prompt-strategis |
+| Video Explainer Promkes | [VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR](https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR) | Public | plugins/video-explainer-promkes (source 4.1.9; deployment 4.1.12) |
+| Skill Developer Orchestrator | [SPDO](https://github.com/promkespkmbinuang-coder/SPDO) | Public | plugins/skill-developer-orchestrator (0.1.0) |
 
 The Anatomi Prompt submodule requires permission to the private source repository. Public readers can inspect this parent repository's registry and architecture but cannot clone the private submodule without access.
 
@@ -74,9 +76,11 @@ The machine-readable identities and statuses are in [catalog/plugins.json](catal
 
 The parent now includes an isolated instruction boundary for every registered plugin:
 
-- 16 complete runtime instruction bundles for packages whose canonical Git source repository has not yet been verified or whose repository is an incomplete candidate.
-- 4 official source repositories are pinned as Git submodules; the Video Explainer source pin is explicitly marked behind its current 4.1.12 deployment.
+- 14 isolated runtime instruction snapshots cover 12 NOT_IDENTIFIED packages plus the two CANDIDATE_INCOMPLETE packages (Photo Fixer and PVEE).
+- 2 Plugin Creator release snapshots (Video Explainer 4.1.12 and SDO 0.1.0) are retained alongside their independently pinned official Git submodules.
+- 3 source-pointer entries refer to the canonical submodules for SKILL ANALYZER, A.S.F.R.E.E and Anatomi Prompt.
 - 1 A.S.F.R.E.E Legacy redirect-only snapshot points to the canonical package.
+- Five official source repositories are pinned; Video Explainer is explicitly marked behind its 4.1.12 deployment.
 - The machine-readable index records **238 skill definitions** across the 20 plugin identities.
 
 Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect the [instruction snapshot index](catalog/instruction-snapshots.json). Each bundle is kept in its own plugin directory. These snapshots do not merge source ownership or replace the canonical plugin repository. See [snapshot synchronization governance](governance/SNAPSHOT-SYNCHRONIZATION.md).
@@ -99,7 +103,7 @@ The repository records Plugin Creator package versions separately from canonical
 
 ## Source inventory
 
-The connected owner account exposes six repositories; four canonical plugin sources are verified/pinned, including the externally owned official Video Explainer source. Photo-Fixer remains an incomplete candidate, HSMART is a related platform, and 14 plugin source repositories remain unidentified at GitHub-source level. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md) and [SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md](roadmap/SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md). An instruction snapshot is not a canonical source repository.
+The connected owner account exposes six repositories. Five official plugin source repositories are now pinned, including the externally owned SDO and Video Explainer sources. Twelve plugin identities remain NOT_IDENTIFIED and two repositories (Photo-Fixer and PVEE's CL-VAEPPC pointer) are CANDIDATE_INCOMPLETE. HSMART is a related platform. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md) and [SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md](roadmap/SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md). An instruction snapshot is not a canonical source repository.
 
 ## Architecture principles
 

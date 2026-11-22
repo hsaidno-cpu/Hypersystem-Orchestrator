@@ -97,7 +97,7 @@
     {
       "plugin_key": "skill-developer-orchestrator",
       "instruction_path": "plugin-instructions/skill-developer-orchestrator/INSTRUCTIONS-BUNDLE.md",
-      "origin": "runtime_snapshot",
+      "origin": "runtime_snapshot_with_canonical_source_submodule",
       "skill_count": 1,
       "skills": [
         {
@@ -105,7 +105,18 @@
           "source_uri": "skills://plugins/skill-developer-orchestrator/skill-developer-orchestrator",
           "description": "Gunakan ketika pengguna ingin membuat, membedah, mengaudit, memperbaiki, merekonstruksi, mengembangkan, menguji, atau memperbarui AI skill, prompt system, plugin, workflow agent, atau repository sumbernya. Jalankan siklus audit berbasis bukti, red-team, rekayasa solusi, implementasi terkontrol, regression testing, dan verifikasi rilis."
         }
-      ]
+      ],
+      "canonical_source": {
+        "repository_id": "skill-developer-orchestrator",
+        "repository": "promkespkmbinuang-coder/SPDO",
+        "path": "plugins/skill-developer-orchestrator/skills/skill-developer-orchestrator/SKILL.md",
+        "manifest_path": "plugins/skill-developer-orchestrator/plugin.json",
+        "source_version": "0.1.0",
+        "pinned_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
+        "license": "Apache-2.0",
+        "commit_signature_verified": true,
+        "snapshot_source_comparison": "NOT_YET_HASH_RECONCILED"
+      }
     },
     {
       "plugin_key": "evaluator-team",
@@ -1354,7 +1365,14 @@
           "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-visual-continuity",
           "description": "Fase 05 pipeline promkes. (S05) Master Visual Style Guide - gaya seni, palet, bahasa bentuk, karakter, kostum, ekspresi, pose, lingkungan, properti, pencahayaan, tekstur; (S13) Master Continuity Guide, ID kanonis, version lock, tujuh Guide, dan change-impact. Gunakan untuk mengunci identitas visual dan kontinuitas karakter/lingkungan video explainer kesehatan, atau ketika aset kanonis berubah. English - visual identity, canonical IDs, and continuity locking."
         }
-      ]
+      ],
+      "candidate_source": {
+        "repository_id": "pvee-promkes-candidate",
+        "repository": "promkespkmbinuang-coder/CL-VAEPPC",
+        "observed_commit": "1ab0c41081ccdbb91cc9dec0a2864acd0de00d54",
+        "classification": "CANDIDATE_INCOMPLETE",
+        "reason": "Manifest pointer verified; complete package source absent from observed repository tree."
+      }
     }
   ]
 }

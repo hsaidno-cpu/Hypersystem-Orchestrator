@@ -19,7 +19,7 @@ class CatalogValidationTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
         self.assertIn("PASS: 20 unique plugin identities", result.stdout)
-        self.assertIn("PASS: 4 declared and pinned source submodules", result.stdout)
+        self.assertIn("PASS: 5 declared and pinned source submodules", result.stdout)
         self.assertIn("PASS: 238 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):
@@ -125,6 +125,33 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(by_id["INT-EVALUATOR-SDO-001"]["consumer_plugin"], "skill-developer-orchestrator")
         self.assertEqual(by_id["INT-PHOTO-RESTORE-ROUTE-001"]["handoff_type"], "ROUTING_OVERRIDE")
         self.assertEqual(by_id["INT-GODEX-MOTION-001"]["canonical_truth_owner"], "godex-motion-audio")
+
+
+    def test_sdo_official_source_submodule_and_version_are_reconciled(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        repositories = json.loads((ROOT / "catalog" / "repositories.json").read_text(encoding="utf-8"))
+        sdo = next(p for p in catalog["plugins"] if p["plugin_key"] == "skill-developer-orchestrator")
+        source = next(r for r in repositories["repositories"] if r["repository_id"] == "skill-developer-orchestrator")
+        self.assertEqual(sdo["source_state"], "integrated_submodule")
+        self.assertEqual(sdo["source_classification"], "OFFICIAL_SUBMODULE")
+        self.assertEqual(sdo["release_version"], "0.1.0")
+        self.assertEqual(sdo["repository_version"], "0.1.0")
+        self.assertEqual(sdo["platform_package_version"], "0.1.0")
+        self.assertEqual(sdo["version_alignment_state"], "SOURCE_AND_PLATFORM_MATCH")
+        self.assertEqual(source["pinned_commit"], "9d3c4bc09179ff857df4f3819be83e1847571add")
+        self.assertEqual(source["license_status"], "APACHE-2.0")
+        self.assertTrue(source["commit_signature_verified"])
+
+    def test_pvee_repository_is_candidate_not_canonical_submodule(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        repositories = json.loads((ROOT / "catalog" / "repositories.json").read_text(encoding="utf-8"))
+        pvee = next(p for p in catalog["plugins"] if p["plugin_key"] == "pvee-promkes-super-orchestrator")
+        source = next(r for r in repositories["repositories"] if r["repository_id"] == "pvee-promkes-candidate")
+        self.assertEqual(pvee["source_state"], "candidate_repository")
+        self.assertEqual(pvee["source_classification"], "CANDIDATE_INCOMPLETE")
+        self.assertEqual(source["status"], "candidate_not_integrated")
+        self.assertNotIn("submodule_path", source)
+        self.assertIsNone(pvee["repository_version"])
 
 if __name__ == "__main__":
     unittest.main()

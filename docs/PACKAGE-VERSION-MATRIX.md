@@ -19,7 +19,7 @@ An instruction snapshot records what was visible in the Plugin Creator release a
 | Plugin | Plugin Creator package | Git source version | Current classification | Adoption decision |
 |---|---:|---:|---|---|
 | Video Explainer Promkes | 4.1.12 | 4.1.9 | Official public source, behind deployment | Keep deployed target 4.1.12; source sync pending. M00 header v4.0.9 is an internal skill version and must not be overwritten mechanically. |
-| Skill Developer Orchestrator | 0.1.0 | Not identified | Platform release only | Preserve 0.1.0 as platform metadata; source repo onboarding pending. |
+| Skill Developer Orchestrator | 0.1.0 | 0.1.0 | Official public source, signed commit | Adopt 0.1.0; Git source, Plugin Creator package and manifest are aligned. Pinned at 9d3c4bc09179ff857df4f3819be83e1847571add under plugins/skill-developer-orchestrator. |
 | Evaluator Team | 1.0.0 | Not identified | Platform release only | Preserve 1.0.0 as platform metadata; source repo onboarding pending. |
 | Master Photo Restoration | 1.0.0 | Not identified | Platform release only | Preserve 1.0.0 as platform metadata; source repo onboarding pending. |
 | Anatomi Prompt V3 — Octa-Prompt | 3.0.0 | 3.0.0 | Source and platform match | Adopt 3.0.0; private canonical source remains authoritative. |
@@ -37,7 +37,7 @@ An instruction snapshot records what was visible in the Plugin Creator release a
 | Agent Skills Atlas | 0.3.1 | Not identified | Platform release only | Preserve 0.3.1; source repo onboarding pending. |
 | AI Workflow Systems Orchestrator | 0.2.0 | Not identified | Platform release only | Preserve 0.2.0; source repo onboarding pending. |
 | GrowthForge Business OS | 1.1.1 | Not identified | Platform release only | Preserve 1.1.1; source repo onboarding pending. |
-| PVEE Promkes Super Orchestrator | 2.0.2 | Not identified | Platform release only | Preserve 2.0.2; source repo onboarding pending. |
+| PVEE Promkes Super Orchestrator | 2.0.2 | Unknown | Candidate source incomplete | Preserve 2.0.2 as Plugin Creator package metadata. Its declared CL-VAEPPC repository is an incomplete legacy/source shell with no current manifest or skill tree; no Git source version can be asserted. |
 
 ## 3. Three substantive mismatches
 
@@ -87,3 +87,27 @@ An instruction snapshot records what was visible in the Plugin Creator release a
 4. Reconcile the other 14 GitHub source gaps before publishing parent source pins.
 
 No Plugin Creator package was republished by this parent-repository change.
+
+
+## 4. Additional source discovery (2026-11-22)
+
+### Skill Developer Orchestrator
+
+- Canonical repository: promkespkmbinuang-coder/SPDO
+- Manifest: plugin.json, package skill-developer-orchestrator, version 0.1.0
+- Plugin Creator ID: Plugin_a5294996e38c8191b8e20b2d9f61447a; current package 0.1.0
+- Pinned commit: 9d3c4bc09179ff857df4f3819be83e1847571add
+- Commit signature: verified by GitHub
+- LICENSE: Apache-2.0
+- The master skill, references, README, manifest and acceptance-case specification are present.
+
+**Decision:** adopt 0.1.0 as source and platform version. No version mismatch remains for SDO. Acceptance cases are specifications; their presence is not evidence of target-host runtime tests.
+
+### PVEE Promkes Super Orchestrator
+
+- Current Plugin Creator manifest explicitly declares promkespkmbinuang-coder/CL-VAEPPC.
+- Observed main commit: 1ab0c41081ccdbb91cc9dec0a2864acd0de00d54, signature verified.
+- Observed tree: README.md, Apache-2.0 LICENSE and an empty one-byte .claude-plugin marker only.
+- Current PVEE package 2.0.2 has no matching source manifest or complete skill tree in that repository.
+
+**Decision:** retain as CANDIDATE_INCOMPLETE. Do not infer a Git source version, create a submodule or equate the historical README's Video Explainer V3.0 with current PVEE 2.0.2.

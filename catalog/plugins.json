@@ -64,10 +64,10 @@
       "purpose": "Owns the engineering lifecycle for AI skills and plugins: intake, capability readiness, baseline, accepted architecture, controlled implementation, regression, independent verification, repository handoff and release preparation.",
       "responsibility_owner": "Owns the end-to-end engineering lifecycle and integration of skill/plugin source changes.",
       "boundary": "Does not own independent evaluation judgement or final scoring of its own work. Use Evaluator Team for an independent assessment; SDO receives accepted findings and drives the engineering lifecycle.",
-      "source_repository_id": null,
-      "source_state": "pending_repository",
-      "release_version": null,
-      "version_evidence": "Not inspected in an independently identified source repository.",
+      "source_repository_id": "skill-developer-orchestrator",
+      "source_state": "integrated_submodule",
+      "release_version": "0.1.0",
+      "version_evidence": "Canonical public source promkespkmbinuang-coder/SPDO README and plugin.json identify Skill Developer Orchestrator 0.1.0. Plugin Creator exact-ID package metadata also reports 0.1.0. Source commit 9d3c4bc09179ff857df4f3819be83e1847571add is signature-verified; Apache-2.0 LICENSE inspected.",
       "related_plugins": [
         "skill-analyzer",
         "anatomi-prompt-v3-octa-prompt",
@@ -84,24 +84,24 @@
         "Independent evaluation of a skill without implementation intent",
         "Forensic plugin anatomy when no development/change lifecycle is requested"
       ],
-      "source_classification": "NOT_IDENTIFIED",
+      "source_classification": "OFFICIAL_SUBMODULE",
       "instruction_snapshot_path": "plugin-instructions/skill-developer-orchestrator/INSTRUCTIONS-BUNDLE.md",
       "instruction_skill_count": 1,
       "instruction_capture_date": "2026-11-22",
-      "instruction_source_authority": "RUNTIME_INSTRUCTION_SNAPSHOT",
+      "instruction_source_authority": "CANONICAL_REPOSITORY_SOURCE",
       "platform_package_version": "0.1.0",
       "platform_current_release_id": "pluginrel_6afdee10a5688191ad8fc37a9d0d827b",
       "platform_scope": "USER",
       "platform_discoverability": "PRIVATE",
       "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
-      "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
-      "repository_version": null,
-      "version_alignment_note": "Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.",
-      "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
+      "version_alignment_state": "SOURCE_AND_PLATFORM_MATCH",
+      "repository_version": "0.1.0",
+      "version_alignment_note": "Canonical Git source manifest and current Plugin Creator package both identify 0.1.0. Submodule is pinned to the verified signed main commit.",
+      "version_authority": "SOURCE_MANIFEST_AND_PLUGIN_CREATOR_RELEASE_COMPARISON",
       "deployed_plugin_version": "0.1.0",
       "target_version": null,
-      "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "version_reconciliation_status": "SOURCE_VERIFIED_IN_SYNC",
+      "source_sync_status": "SOURCE_AND_PLATFORM_MATCH"
     },
     {
       "plugin_key": "evaluator-team",
@@ -865,10 +865,10 @@
       "purpose": "Health-promotion communication authority for source dossier, health-claim evidence, Health Truth Registry/Fact Lock, audience and behavior objectives, campaign integrity, risk/ethics/accessibility governance and evaluation of audience outcomes.",
       "responsibility_owner": "Owns what health information may be communicated, how it is framed for audience/behavior goals, and whether health communication is evidence-safe.",
       "boundary": "Does not own generic motion-graphics production or specialist audio post. After content approval it hands off a Fact-Locked Production Brief to Video Explainer, Motion Graphic and/or GODEX as required.",
-      "source_repository_id": null,
-      "source_state": "pending_repository",
+      "source_repository_id": "pvee-promkes-candidate",
+      "source_state": "candidate_repository",
       "release_version": null,
-      "version_evidence": "No dedicated source repository identified.",
+      "version_evidence": "The current Plugin Creator manifest explicitly declares https://github.com/promkespkmbinuang-coder/CL-VAEPPC as repository/homepage. The repository exists, but its inspected main tree at commit 1ab0c41081ccdbb91cc9dec0a2864acd0de00d54 contains only README.md, LICENSE and an empty .claude-plugin marker; the plugin manifest and skill/source tree are absent. README identifies an older Video Explainer Promkes V3.0 line, not a verifiable PVEE 2.0.2 source release.",
       "related_plugins": [
         "video-explainer-promkes-v4-1-12",
         "godex-motion-audio",
@@ -883,7 +883,7 @@
         "Generic non-health motion-graphics production",
         "Audio-only inspection/mix without Promkes claim or campaign context"
       ],
-      "source_classification": "NOT_IDENTIFIED",
+      "source_classification": "CANDIDATE_INCOMPLETE",
       "instruction_snapshot_path": "plugin-instructions/pvee-promkes-super-orchestrator/INSTRUCTIONS-BUNDLE.md",
       "instruction_skill_count": 14,
       "instruction_capture_date": "2026-11-22",
@@ -893,14 +893,14 @@
       "platform_scope": "USER",
       "platform_discoverability": "PRIVATE",
       "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
-      "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
+      "version_alignment_state": "CANDIDATE_SOURCE_INCOMPLETE",
       "repository_version": null,
-      "version_alignment_note": "Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.",
+      "version_alignment_note": "A declared repository pointer is verified, but the repository is an incomplete legacy/source stub. Do not assign a Git source version or integrate as a submodule until the complete PVEE 2.0.2 source package is restored.",
       "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
       "deployed_plugin_version": "2.0.2",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED"
+      "source_sync_status": "CANDIDATE_SOURCE_INCOMPLETE"
     }
   ]
 }
