@@ -1,0 +1,1360 @@
+{
+  "schema_version": "1.0.0",
+  "capture_date": "2026-11-22",
+  "total_skill_records": 238,
+  "plugins": [
+    {
+      "plugin_key": "video-explainer-promkes-v4-1-12",
+      "instruction_path": "plugin-instructions/video-explainer-promkes-v4-1-12/INSTRUCTIONS-BUNDLE.md",
+      "origin": "official_plugin_creator_release_snapshot",
+      "skill_count": 16,
+      "skills": [
+        {
+          "skill_name": "animation-motion-design",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/animation-motion-design",
+          "description": "Use when merancang gerak karakter/objek, prinsip animasi, timing, motion path, transisi dan feasibility animasi secara renderer-neutral dan terukur."
+        },
+        {
+          "skill_name": "audience-campaign-strategy",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/audience-campaign-strategy",
+          "description": "Use when defining Promkes audience, behavior objective, communication message, cultural context, hook and CTA."
+        },
+        {
+          "skill_name": "continuity-guardian",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/continuity-guardian",
+          "description": "Use when maintaining the canonical Master Continuity Guide, seven single-owner Guide references, continuity locks, scene-in/out ledger, dependency graph and change impact across Promkes production."
+        },
+        {
+          "skill_name": "conversation-release-audit",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/conversation-release-audit",
+          "description": "Use before updating, extending, auditing or publishing Video Explainer Promkes releases when requirements, preferences, decisions or blockers are distributed across current and prior project conversations."
+        },
+        {
+          "skill_name": "executable-gate-engine",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/executable-gate-engine",
+          "description": "Use when M00 must execute, test, evaluate, report, or troubleshoot the Promkes V4 evidence-contract validator and production gates."
+        },
+        {
+          "skill_name": "health-evidence-safety-auditor",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/health-evidence-safety-auditor",
+          "description": "Use when validating health claims, health terminology, public-health evidence, safe wording and Promkes fact locks."
+        },
+        {
+          "skill_name": "prompt-reference-video-engineering",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/prompt-reference-video-engineering",
+          "description": "Use when compiling renderer-neutral reference prompts, optional AI video prompts and evidence-bound target-model adapters for Promkes scenes."
+        },
+        {
+          "skill_name": "quality-assurance-controller",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/quality-assurance-controller",
+          "description": "Use when independently auditing Promkes content integrity, health facts, references, motion/cinematic contracts, continuity, audio/subtitle timing, renderer handoff, actual media and release readiness."
+        },
+        {
+          "skill_name": "renderer-code-engineering",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/renderer-code-engineering",
+          "description": "Use when approved Promkes storyboard, assets, motion, audio and subtitles need renderer mapping, project assembly, rendering, export or renderer-ready handoff."
+        },
+        {
+          "skill_name": "social-accessibility-distribution",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/social-accessibility-distribution",
+          "description": "Use when preparing accessible Promkes titles, captions, hooks, hashtags, subtitles notes, alt text and platform distribution materials."
+        },
+        {
+          "skill_name": "source-asset-intelligence",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/source-asset-intelligence",
+          "description": "Use when extracting Promkes poster, infographic, caption, script, audio references and brand/source assets into a traceable source dossier."
+        },
+        {
+          "skill_name": "story-screenplay-architect",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/story-screenplay-architect",
+          "description": "Use when turning an approved Promkes message into creative treatment, screenplay, scene beats, dialogue and voice-over wording."
+        },
+        {
+          "skill_name": "storyboard-cinematography",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/storyboard-cinematography",
+          "description": "Use when translating approved screenplay into timed scenes, storyboard, shot list, composition and camera reference contracts."
+        },
+        {
+          "skill_name": "video-explainer-promkes",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes",
+          "description": "Use when orchestrating evidence-controlled Promkes explainer production, and always invoke S14 before conversation audits, versioned changes, source reconciliation, GitHub publication or release decisions."
+        },
+        {
+          "skill_name": "visual-identity-art-direction",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/visual-identity-art-direction",
+          "description": "Use when defining canonical visual style, character, environment, prop and art-direction references for a Promkes explainer."
+        },
+        {
+          "skill_name": "voice-audio-intelligence",
+          "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/voice-audio-intelligence",
+          "description": "Use when inspecting supplied Promkes audio, transcript, timing, VO performance, subtitle cues, SFX, music or audio post requirements."
+        }
+      ],
+      "plugin_creator_release_id": "pluginrel_6b02a0f630208191b71ad994703aed68",
+      "package_version": "4.1.12",
+      "git_source_version": "4.1.9"
+    },
+    {
+      "plugin_key": "skill-developer-orchestrator",
+      "instruction_path": "plugin-instructions/skill-developer-orchestrator/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 1,
+      "skills": [
+        {
+          "skill_name": "skill-developer-orchestrator",
+          "source_uri": "skills://plugins/skill-developer-orchestrator/skill-developer-orchestrator",
+          "description": "Gunakan ketika pengguna ingin membuat, membedah, mengaudit, memperbaiki, merekonstruksi, mengembangkan, menguji, atau memperbarui AI skill, prompt system, plugin, workflow agent, atau repository sumbernya. Jalankan siklus audit berbasis bukti, red-team, rekayasa solusi, implementasi terkontrol, regression testing, dan verifikasi rilis."
+        }
+      ]
+    },
+    {
+      "plugin_key": "evaluator-team",
+      "instruction_path": "plugin-instructions/evaluator-team/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 4,
+      "skills": [
+        {
+          "skill_name": "evaluator-team",
+          "source_uri": "skills://plugins/evaluator-team/evaluator-team",
+          "description": "Use when the user wants a skill, prompt system, or skill repository evaluated, redesigned, improved, and applied to GitHub through a controlled, evidence-traceable workflow."
+        },
+        {
+          "skill_name": "octa-prompt-architect",
+          "source_uri": "skills://plugins/evaluator-team/octa-prompt-architect",
+          "description": "Use when translating skill audit findings into a coherent revised instruction architecture using the eight Octa-Prompt pillars."
+        },
+        {
+          "skill_name": "skill-analyzer-evaluator",
+          "source_uri": "skills://plugins/evaluator-team/skill-analyzer-evaluator",
+          "description": "Use as the evaluation specialist when dissecting a skill's architecture, evidence, root causes, risks, effectiveness, and measurable acceptance conditions."
+        },
+        {
+          "skill_name": "skill-developer-orchestrator",
+          "source_uri": "skills://plugins/evaluator-team/skill-developer-orchestrator",
+          "description": "Use when applying an accepted skill evaluation or Octa-Prompt design to source files and a GitHub repository, then verifying and handing off the change."
+        }
+      ]
+    },
+    {
+      "plugin_key": "master-photo-restoration",
+      "instruction_path": "plugin-instructions/master-photo-restoration/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 1,
+      "skills": [
+        {
+          "skill_name": "photo-restoration",
+          "source_uri": "skills://plugins/master-photo-restoration/photo-restoration",
+          "description": "Gunakan ketika pengguna meminta restorasi, deblur, perbaikan kerusakan, retouch, peningkatan kualitas, atau penyempurnaan potret/foto lama."
+        }
+      ]
+    },
+    {
+      "plugin_key": "anatomi-prompt-v3-octa-prompt",
+      "instruction_path": "plugin-instructions/anatomi-prompt-v3-octa-prompt/README.md",
+      "origin": "canonical_private_submodule",
+      "skill_count": 9,
+      "skills": [
+        {
+          "skill_name": "anatomi-prompt",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/anatomi-prompt",
+          "description": "Gunakan sebagai master orchestrator ketika pengguna meminta membangun, memperbaiki, mengaudit, membandingkan, atau menjelaskan prompt. Mengkoordinasikan delapan spesialis Octa-Prompt, menjaga intensi, mengelola handoff, menyelesaikan konflik lintas-pilar, dan memvalidasi master prompt. Jangan menjalankan tugas sumber yang hanya diminta untuk dibuatkan prompt-nya."
+        },
+        {
+          "skill_name": "p1-role-persona-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p1-role-persona-architect",
+          "description": "Aktifkan sebagai spesialis P1 ketika prompt memerlukan desain role, persona, matriks keahlian multidisiplin, prioritas perspektif, tingkat tanggung jawab, atau batas otoritas AI."
+        },
+        {
+          "skill_name": "p2-objective-task-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p2-objective-task-architect",
+          "description": "Aktifkan sebagai spesialis P2 ketika ide perlu diterjemahkan menjadi purpose, objective hierarchy, requirements, task matrix, prioritas, dependensi, dan acceptance criteria."
+        },
+        {
+          "skill_name": "p3-context-variable-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p3-context-variable-architect",
+          "description": "Aktifkan sebagai spesialis P3 ketika prompt membutuhkan context map, klasifikasi sumber, definisi istilah, pengelolaan data, variable registry, placeholder terstruktur, dan validasi variabel."
+        },
+        {
+          "skill_name": "p4-reasoning-workflow-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p4-reasoning-workflow-architect",
+          "description": "Aktifkan sebagai spesialis P4 untuk memilih metode berpikir, strategi analisis, kerangka keputusan, urutan tugas, dependensi, branching, paralelisasi, dan kontrak handoff."
+        },
+        {
+          "skill_name": "p5-constraints-guardrails-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p5-constraints-guardrails-architect",
+          "description": "Aktifkan sebagai spesialis P5 untuk mengekstrak dan mengelola hard/soft constraints, larangan, negative guardrails, hierarki instruksi, keamanan, privasi, integritas sumber, dan batas otoritas."
+        },
+        {
+          "skill_name": "p6-edge-case-recovery-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p6-edge-case-recovery-architect",
+          "description": "Aktifkan sebagai spesialis P6 untuk merancang penanganan edge case, exception taxonomy, error response, bounded retry, fallback, recovery, rollback, partial success, dan eskalasi."
+        },
+        {
+          "skill_name": "p7-stop-completion-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p7-stop-completion-architect",
+          "description": "Aktifkan sebagai spesialis P7 untuk merancang readiness gates, stop conditions, acceptance aggregation, Definition of Done, dan status handoff/penyelesaian yang berbasis bukti."
+        },
+        {
+          "skill_name": "p8-output-schema-architect",
+          "source_uri": "skills://plugins/anatomi-prompt-v-1-0/p8-output-schema-architect",
+          "description": "Aktifkan sebagai spesialis P8 untuk menentukan deliverable, format, struktur visual, machine-readable schema, field/type/validation rules, serialization, citation layout, dan kontrak keluaran."
+        }
+      ]
+    },
+    {
+      "plugin_key": "skill-analyzer",
+      "instruction_path": "plugin-instructions/skill-analyzer/README.md",
+      "origin": "canonical_submodule",
+      "skill_count": 12,
+      "skills": [
+        {
+          "skill_name": "analytical-collector",
+          "source_uri": "skills://plugins/skill-analyzer/analytical-collector",
+          "description": "Gunakan saat pengguna meminta mengumpulkan, mencari, membandingkan, atau memilih metode dan metodologi analisis; pemicu langsung: \"Analytical Collector\", \"Kumpulkan Metode\", atau \"Pilih Metode Analisis\"."
+        },
+        {
+          "skill_name": "analyzer",
+          "source_uri": "skills://plugins/skill-analyzer/analyzer",
+          "description": "Gunakan saat pengguna meminta membedah atau menganalisis masalah secara mendalam, menguji asumsi dan sebab-akibat, atau menemukan kandidat akar masalah; pemicu langsung: \"Analyzer\", \"Bedah Masalah\", atau \"Analisis Akar\"."
+        },
+        {
+          "skill_name": "comparative-analytic",
+          "source_uri": "skills://plugins/skill-analyzer/comparative-analytic",
+          "description": "Gunakan hanya ketika pengguna secara eksplisit meminta analisis komparatif lintas metode atau kerangka, menggabungkan beberapa framework untuk mengkaji satu objek/kebijakan, atau membandingkan keluaran antar-kerangka. Pemicu langsung: \"Comparative Analytic\", \"Analisis Komparatif\", \"Gabungkan Kerangka Analisis\", atau instruksi eksplisit seperti \"gunakan SWOT + PESTLE + IPOLEKSOSBUDHANKAM\"."
+        },
+        {
+          "skill_name": "evaluator",
+          "source_uri": "skills://plugins/skill-analyzer/evaluator",
+          "description": "Gunakan saat pengguna meminta mengevaluasi hasil, kinerja, dampak, efektivitas, efisiensi, keberhasilan program/kebijakan/strategi/solusi, menyusun KPI, monitoring, evaluasi ex-ante atau ex-post, atau audit outcome. Pemicu: Evaluator, Evaluasi Hasil, Ukur Efektivitas, Audit Kinerja."
+        },
+        {
+          "skill_name": "evidence-auditor",
+          "source_uri": "skills://plugins/skill-analyzer/evidence-auditor",
+          "description": "Gunakan saat pengguna meminta audit bukti, pemeriksaan sumber, validasi kutipan/statistik/dataset, penelusuran provenance, triangulasi, atau penilaian mutu data. Juga aktif otomatis ketika analisis bergantung pada bukti eksternal/internal yang material. Pemicu: Evidence Auditor, Audit Bukti, Periksa Sumber, Verifikasi Data, Claim-Evidence Audit."
+        },
+        {
+          "skill_name": "information-authenticator",
+          "source_uri": "skills://plugins/skill-analyzer/information-authenticator",
+          "description": "Gerbang verifikasi wajib untuk keluaran analitis SKILL ANALYZER. Memeriksa klaim, evidence provenance, registry, unknowns, trace graph, rekonstruksi, cakupan, dan status rilis pada Gate 1 dan Gate 2. Pemicu: Information Authenticator, Verifikasi Klaim, Audit Bukti, Autentikasi Informasi, Cek Halusinasi."
+        },
+        {
+          "skill_name": "komparator",
+          "source_uri": "skills://plugins/skill-analyzer/komparator",
+          "description": "Gunakan hanya ketika pengguna meminta membandingkan atau mengomparasikan dua objek, pilihan, entitas, sistem, kebijakan, strategi, produk, atau topik lebih. Pemicu langsung: \"Komparator\", \"Komparasikan A dan B\", \"Bandingkan A, B, dan C\", atau \"Buat klasifikasi perbandingan\". Saat aktif, Komparator mengendalikan seluruh pipeline empat sub-skill inti SKILL ANALYZER untuk objek yang dibandingkan."
+        },
+        {
+          "skill_name": "negative-collector",
+          "source_uri": "skills://plugins/skill-analyzer/negative-collector",
+          "description": "Gunakan saat pengguna meminta mencari kelemahan, kekurangan, sisi negatif, kerugian, ancaman, dampak buruk, risiko tersembunyi, skenario terburuk, atau red-team review; pemicu langsung: \"Negative Collector\", \"Cari Kelemahan\", atau \"Bedah Risiko\"."
+        },
+        {
+          "skill_name": "platform-compatibility",
+          "source_uri": "skills://plugins/skill-analyzer/platform-compatibility",
+          "description": "Gunakan saat memaketkan, memindahkan, mengintegrasikan, atau menguji SKILL ANALYZER pada platform AI lain; termasuk Agent Skills, GitHub, Codex, Claude Code, GitHub Copilot, Gemini CLI, VS Code, dan Cursor."
+        },
+        {
+          "skill_name": "positive-converter",
+          "source_uri": "skills://plugins/skill-analyzer/positive-converter",
+          "description": "Gunakan saat pengguna meminta merumuskan atau mengonversi temuan menjadi solusi, perbaikan, mitigasi, tindakan preventif dan antisipatif, optimasi, roadmap implementasi, atau evaluasi; pemicu langsung: \"Positive Converter\", \"Rumuskan Solusi\", atau \"Konversi Temuan\"."
+        },
+        {
+          "skill_name": "skill-analyzer",
+          "source_uri": "skills://plugins/skill-analyzer/skill-analyzer",
+          "description": "Gunakan sebagai pintu masuk utama untuk analisis full-cycle, audit sistem, keputusan strategis, evaluasi, rekonstruksi, implementasi terverifikasi, atau persoalan kompleks yang memerlukan bukti, risiko, dampak manusia, dan solusi. Memilih sub-skill serta engine secara kondisional; pemicu langsung: SKILL ANALYZER, Analisis Menyeluruh, Full-cycle Analysis."
+        },
+        {
+          "skill_name": "strategic-foresight",
+          "source_uri": "skills://plugins/skill-analyzer/strategic-foresight",
+          "description": "Gunakan saat pengguna meminta analisis masa depan, horizon scanning, tren dan weak signals, scenario planning, backcasting, antisipasi perubahan, ketahanan strategi, atau keputusan jangka panjang di bawah ketidakpastian. Pemicu: Strategic Foresight, Analisis Masa Depan, Buat Skenario, Antisipasi Perubahan."
+        }
+      ]
+    },
+    {
+      "plugin_key": "godex-motion-audio",
+      "instruction_path": "plugin-instructions/godex-motion-audio/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 8,
+      "skills": [
+        {
+          "skill_name": "godex-audio-intelligence",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-audio-intelligence",
+          "description": "Use when a user needs voice-over inspection, audio metadata, speech transcription, transcript correction against audio, speaker segmentation, speech timing, pause or pace analysis, or an audio evidence report for a GODEX project."
+        },
+        {
+          "skill_name": "godex-audio-post-caption",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-audio-post-caption",
+          "description": "Use when a motion-graphic project needs subtitle segmentation, SRT/VTT, on-screen caption timing, sound-effects planning, music and ambience cues, voice-first mixing guidance, ducking, fades, or audio-post quality checks."
+        },
+        {
+          "skill_name": "godex-motion-audio",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-motion-audio",
+          "description": "Use when a user wants a complete voice-over-to-motion-graphic workflow, end-to-end production coordination, or integration of audio analysis, storytelling, visual design, motion, captions, rendering, and QA. For one isolated stage, use its dedicated GODEX specialist skill instead."
+        },
+        {
+          "skill_name": "godex-motion-design",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-motion-design",
+          "description": "Use when approved storyboard scenes and a visual system need animation choreography, kinetic typography, keyframe plans, transitions, easing, pacing, parallax, camera movement, shape animation, or motion-graphic implementation specifications."
+        },
+        {
+          "skill_name": "godex-narrative-storyboard",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-narrative-storyboard",
+          "description": "Use when a verified voice-over transcript needs message analysis, narrative structure, storytelling, emotional arc, semantic segmentation, scene planning, storyboard writing, or a timed motion-graphic scene breakdown."
+        },
+        {
+          "skill_name": "godex-quality-assurance",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-quality-assurance",
+          "description": "Use when a storyboard, render, caption file, audio mix, asset package, or complete GODEX project needs systematic review, failure-mode analysis, technical checks, accessibility checks, release gating, defect triage, or correction-loop planning."
+        },
+        {
+          "skill_name": "godex-render-export",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-render-export",
+          "description": "Use when a motion-graphic production package needs renderer capability checks, project assembly, video composition, MP4 export, codec and frame-rate configuration, render troubleshooting, or a renderer-ready handoff."
+        },
+        {
+          "skill_name": "godex-visual-art-direction",
+          "source_uri": "skills://plugins/godex-motion-audio/godex-visual-art-direction",
+          "description": "Use when a motion-graphic project needs creative direction, visual identity, design tokens, typography, color palette, composition rules, illustration/icon direction, layout systems, reusable graphic components, or asset-generation briefs."
+        }
+      ]
+    },
+    {
+      "plugin_key": "ai-prompt-finder-creator",
+      "instruction_path": "plugin-instructions/ai-prompt-finder-creator/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 7,
+      "skills": [
+        {
+          "skill_name": "image-prompt-finder",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/image-prompt-finder",
+          "description": "Use when a user uploads or references a still image and wants a reconstructed AI image prompt, visual breakdown, image-to-image instruction, or a starting frame prompt for video generation."
+        },
+        {
+          "skill_name": "long-video-engine",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/long-video-engine",
+          "description": "Use when a user wants a scene-by-scene reconstructed prompt for an accessible reference video longer than 10 seconds and up to 60 seconds, with character continuity and a reusable visual bible."
+        },
+        {
+          "skill_name": "prompt-optimizer",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/prompt-optimizer",
+          "description": "Use when a user provides an existing prompt and wants it audited, debugged, shortened, expanded, translated, modularized, or adapted to a target AI generator."
+        },
+        {
+          "skill_name": "prompt-orchestrator",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/prompt-orchestrator",
+          "description": "Use as the main entry point when a user wants to find, reconstruct, create, or improve an AI prompt from an uploaded reference, a concept, or an existing prompt. Routes image, short video, long video, universal content, optimization, and quality-control work to the appropriate workflow."
+        },
+        {
+          "skill_name": "prompt-quality-control",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/prompt-quality-control",
+          "description": "Use to validate a generated or supplied AI prompt for accuracy to reference evidence, completeness, internal consistency, controllability, platform compatibility, safety, and usability before delivery."
+        },
+        {
+          "skill_name": "short-video-finder",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/short-video-finder",
+          "description": "Use when a user wants to reconstruct an AI video prompt from an accessible reference clip with a duration of 10 seconds or less, including action, camera movement, timing, and transitions."
+        },
+        {
+          "skill_name": "universal-prompt-creator",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/universal-prompt-creator",
+          "description": "Use when a user wants an AI prompt created from an idea, brief, text, or reference for any content type beyond a simple still-image or short/long-video reconstruction, including writing, graphic design, branding, marketing, music, audio, 3D, animation, and education."
+        }
+      ]
+    },
+    {
+      "plugin_key": "agent-jailbreak-skill-ds",
+      "instruction_path": "plugin-instructions/agent-jailbreak-skill-ds/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 11,
+      "skills": [
+        {
+          "skill_name": "agent-jailbreak-ds",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/agent-jailbreak-ds",
+          "description": "Use as the master orchestrator for comprehensive defensive AI-agent security audits, jailbreak and prompt-injection reviews, red-team planning, resilience evaluation, remediation, or security lifecycle work."
+        },
+        {
+          "skill_name": "agent-threat-modeler",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/agent-threat-modeler",
+          "description": "Use when scoping an AI agent security review, mapping assets and trust boundaries, identifying attack surfaces, threat actors, abuse cases, and credible attack paths."
+        },
+        {
+          "skill_name": "context-integrity-auditor",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/context-integrity-auditor",
+          "description": "Use when reviewing RAG, vector retrieval, memory, long conversations, multimodal inputs, transformations, summaries, or cross-agent handoffs for context and provenance integrity risks."
+        },
+        {
+          "skill_name": "defense-architect",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/defense-architect",
+          "description": "Use when designing or improving layered AI-agent defenses, trust boundaries, prompt architecture, retrieval and memory controls, tool authorization, monitoring, or secure workflow design."
+        },
+        {
+          "skill_name": "incident-response-orchestrator",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/incident-response-orchestrator",
+          "description": "Use when an AI agent may have followed malicious instructions, exposed data, performed an unauthorized action, suffered context or memory poisoning, or requires security incident triage and recovery planning."
+        },
+        {
+          "skill_name": "jailbreak-pattern-atlas",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/jailbreak-pattern-atlas",
+          "description": "Use when classifying or explaining jailbreak, prompt-injection, instruction-conflict, context-poisoning, and agent-manipulation patterns in supplied material."
+        },
+        {
+          "skill_name": "prompt-injection-auditor",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/prompt-injection-auditor",
+          "description": "Use when auditing prompts, attachments, webpages, code, emails, retrieval results, logs, or tool outputs for untrusted embedded instructions and trust-boundary failures."
+        },
+        {
+          "skill_name": "resilience-evaluator",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/resilience-evaluator",
+          "description": "Use when evaluating supplied agent outputs, transcripts, tool traces, benchmark records, or regression results for jailbreak and prompt-injection resilience."
+        },
+        {
+          "skill_name": "safe-redteam-lab",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/safe-redteam-lab",
+          "description": "Use when creating safe, authorized, reproducible adversarial test cases, fixtures, benchmark matrices, or regression suites for AI-agent security."
+        },
+        {
+          "skill_name": "security-evidence-authenticator",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/security-evidence-authenticator",
+          "description": "Use as an independent verification gate for security findings, test results, scores, claims, source provenance, and release decisions in AI-agent security work."
+        },
+        {
+          "skill_name": "tool-action-security",
+          "source_uri": "skills://plugins/agent-jailbreak-skill-ds-v01/tool-action-security",
+          "description": "Use when assessing AI-agent tools, APIs, browser actions, code execution, file operations, transactions, credentials, permissions, or externally visible side effects."
+        }
+      ]
+    },
+    {
+      "plugin_key": "motion-graphic-arifanara-v-01",
+      "instruction_path": "plugin-instructions/motion-graphic-arifanara-v-01/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 19,
+      "skills": [
+        {
+          "skill_name": "motion-asset-continuity",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-asset-continuity",
+          "description": "Use when a motion-graphics project needs original asset briefs or generation prompts, recurring character/product identity, visual bible, prop consistency, scene continuity, or asset replacement tracking."
+        },
+        {
+          "skill_name": "motion-asset-governance",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-asset-governance",
+          "description": "Use when a motion-graphics project contains user uploads, stock media, logos, fonts, music, voice recordings, characters, product imagery, footage, or other assets requiring classification, provenance, rights, privacy, or dependency checks."
+        },
+        {
+          "skill_name": "motion-audio-intelligence",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-audio-intelligence",
+          "description": "Use when a motion-graphics project needs voice-over or audio inspection, metadata, transcript provenance, speech segmentation, speaker labels, pause/emphasis analysis, duration, or timing evidence."
+        },
+        {
+          "skill_name": "motion-audio-post",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-audio-post",
+          "description": "Use when a motion-graphics video needs music selection guidance, sound-effect design, ambience, voice-first mixing, ducking, fades, loudness/peak checks, audio cleanup, or final audio synchronization."
+        },
+        {
+          "skill_name": "motion-caption-engineering",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-caption-engineering",
+          "description": "Use when a motion-graphics project requires subtitles, captions, SRT/VTT files, word/phrase segmentation, translation/localization, speaker labels, safe-area placement, or caption timing and QA."
+        },
+        {
+          "skill_name": "motion-claim-verification",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-claim-verification",
+          "description": "Use when a motion-graphics or explainer video contains material factual claims, statistics, dates, quotations, scientific explanations, product claims, public-interest assertions, or high-stakes health, legal, financial, or safety content that must be checked before visualization."
+        },
+        {
+          "skill_name": "motion-graphic-orchestrator",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-graphic-orchestrator",
+          "description": "Use as the master entry point for complete motion-graphics or explainer production. Routes the project to focused specialist skills for intake, assets, voice-over, reference analysis, narrative, design, motion, audio, captions, timeline, rendering, QA, and delivery."
+        },
+        {
+          "skill_name": "motion-kinetic-typography",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-kinetic-typography",
+          "description": "Use when a motion-graphics project needs kinetic typography, on-screen text, data visualization, diagrams, labels, equations, charts, or animated information graphics with accurate and readable text."
+        },
+        {
+          "skill_name": "motion-motion-choreography",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-motion-choreography",
+          "description": "Use when approved scenes and design tokens need detailed animation choreography, keyframe intent, timing, easing, camera movement, transitions, parallax, morphing, motion hierarchy, or continuity specifications."
+        },
+        {
+          "skill_name": "motion-narrative-architecture",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-narrative-architecture",
+          "description": "Use when an explainer or motion-graphics brief needs message hierarchy, audience adaptation, narrative arc, educational logic, emotional progression, persuasion structure, or call-to-action planning before storyboarding."
+        },
+        {
+          "skill_name": "motion-narrative-storyboard",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-narrative-storyboard",
+          "description": "Use when a verified voice-over or approved brief must be translated into semantic beats, new visual scene concepts, a scene-by-scene storyboard, and traceable timing without copying reference-video content."
+        },
+        {
+          "skill_name": "motion-platform-delivery",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-platform-delivery",
+          "description": "Use when an approved motion-graphics master needs platform-specific versions, aspect-ratio adaptations, safe-area variants, output packaging, version labeling, source/project handoff, thumbnails, or publication-ready delivery checks."
+        },
+        {
+          "skill_name": "motion-project-intake",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-project-intake",
+          "description": "Use when a motion-graphics project needs its brief, audience, message, goals, target platform, output specifications, constraints, or project manifest structured before production."
+        },
+        {
+          "skill_name": "motion-quality-assurance",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-quality-assurance",
+          "description": "Use when a storyboard, timeline, audio mix, captions, rendered media, or final motion-graphics package needs independent semantic, visual, motion, audio, rights, accessibility, technical, or release review."
+        },
+        {
+          "skill_name": "motion-reference-intelligence",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-reference-intelligence",
+          "description": "Use when a user supplies a video reference that needs technical media inspection, metadata capture, sample coverage, shot/scene change mapping, or bounded frame/audio review before visual-style extraction."
+        },
+        {
+          "skill_name": "motion-render-export",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-render-export",
+          "description": "Use when an approved motion-graphics timeline needs real renderer capability checks, project execution, proof/full render, MP4/MOV/GIF export, troubleshooting, metadata inspection, or verified file delivery."
+        },
+        {
+          "skill_name": "motion-timeline-assembly",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-timeline-assembly",
+          "description": "Use when approved storyboard, design, motion, asset, caption, and audio specifications need to be assembled into a consistent renderer-neutral timeline or project structure with tracks, dependencies, and frame-accurate timing where supported."
+        },
+        {
+          "skill_name": "motion-visual-language-style-lock",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-visual-language-style-lock",
+          "description": "Use when a motion-graphics project needs visual-language extraction from one or more references and a reusable Reference Style Lock covering composition, color, texture, lighting, motion grammar, transitions, typography, pacing, and finishing without copying expressive content."
+        },
+        {
+          "skill_name": "motion-visual-motion-design",
+          "source_uri": "skills://plugins/motion-graphic-by-arifanara/motion-visual-motion-design",
+          "description": "Use when an approved storyboard and Style Lock need an art direction system, design tokens, visual hierarchy, color, typography foundations, composition, grids, lighting, materials, and reusable graphic components."
+        }
+      ]
+    },
+    {
+      "plugin_key": "plugin-agent-orchestrator",
+      "instruction_path": "plugin-instructions/plugin-agent-orchestrator/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 44,
+      "skills": [
+        {
+          "skill_name": "agent-build-operations-orchestrator",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-build-operations-orchestrator",
+          "description": "Gunakan sebagai sub-orchestrator Tier 2 untuk mengubah Agent Definition Package menjadi implementasi, runtime, integrasi, pengujian, deployment, dan operasi yang terverifikasi."
+        },
+        {
+          "skill_name": "agent-ci-cd-release-engineer",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-ci-cd-release-engineer",
+          "description": "Gunakan untuk merancang atau mengimplementasikan CI/CD, artifact build, test pipelines, signing/provenance, environment promotion, canary, release approvals, and rollback."
+        },
+        {
+          "skill_name": "agent-code-engineer",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-code-engineer",
+          "description": "Gunakan ketika pengguna memilih jalur code-first untuk membuat atau memperbaiki implementasi AI agent beserta struktur proyek, interfaces, testing, dan error handling."
+        },
+        {
+          "skill_name": "agent-cost-performance",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-cost-performance",
+          "description": "Gunakan untuk mengestimasi dan mengoptimalkan biaya, token, latency, throughput, kapasitas, quota, dan efisiensi AI agent."
+        },
+        {
+          "skill_name": "agent-data-governance",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-data-governance",
+          "description": "Gunakan untuk mengelola klasifikasi, asal-usul, kualitas, hak akses, retensi, penghapusan, lokasi, dan siklus hidup data yang digunakan agent."
+        },
+        {
+          "skill_name": "agent-deployment-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-deployment-architect",
+          "description": "Gunakan ketika AI agent perlu dipaketkan, dipublikasikan, di-host, atau dirilis ke development, staging, maupun production dengan kontrol rollout dan rollback."
+        },
+        {
+          "skill_name": "agent-design-orchestrator",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-design-orchestrator",
+          "description": "Gunakan sebagai sub-orchestrator Tier 1 untuk mengubah ide, masalah, dan kebutuhan menjadi Agent Definition Package yang tervalidasi sebelum implementasi."
+        },
+        {
+          "skill_name": "agent-ecosystem-orchestrator",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-ecosystem-orchestrator",
+          "description": "Gunakan sebagai sub-orchestrator Tier 3 untuk mengelola katalog, tenant/workspace, versioning, release lifecycle, metering, entitlement, marketplace, monetisasi, dan scale-out ekosistem AI agent."
+        },
+        {
+          "skill_name": "agent-evaluation-observability",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-evaluation-observability",
+          "description": "Gunakan untuk merancang evaluasi berkelanjutan, metrics, tracing, logging, dashboards, drift detection, feedback loop, dan audit runtime AI agent."
+        },
+        {
+          "skill_name": "agent-evidence-authenticator",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-evidence-authenticator",
+          "description": "Gunakan untuk memeriksa provenance, keterkinian, kualitas sumber, dukungan klaim, dokumentasi vendor, serta batas antara fakta, asumsi, inferensi, dan unknown."
+        },
+        {
+          "skill_name": "agent-idea-strategist",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-idea-strategist",
+          "description": "Gunakan ketika pengguna ingin menemukan, menyaring, atau memvalidasi peluang produk atau use case AI agent berdasarkan masalah, pengguna, nilai, kelayakan, dan potensi bisnis."
+        },
+        {
+          "skill_name": "agent-improvement-analyst",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-improvement-analyst",
+          "description": "Gunakan untuk menganalisis performa atau kegagalan AI agent dan menyusun prioritas perbaikan berbasis evidence, eksperimen, dan regression test."
+        },
+        {
+          "skill_name": "agent-integration-platform-engineer",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-integration-platform-engineer",
+          "description": "Gunakan untuk merancang integration platform dan connector registry yang menyatukan API/MCP adapters, webhooks, event schemas, versioning, health, and lifecycle."
+        },
+        {
+          "skill_name": "agent-knowledge-base-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-knowledge-base-architect",
+          "description": "Gunakan ketika agent membutuhkan knowledge base, document retrieval, RAG, pencarian semantik, atau grounding berbasis sumber eksternal/internal."
+        },
+        {
+          "skill_name": "agent-marketplace-distribution",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-marketplace-distribution",
+          "description": "Gunakan untuk menyiapkan agent untuk marketplace, app directory, partner channel, direct distribution, publishing review, licensing, onboarding and support."
+        },
+        {
+          "skill_name": "agent-memory-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-memory-architect",
+          "description": "Gunakan saat agent perlu menyimpan, mengambil, memperbarui, atau menghapus state dan memory percakapan atau interaksi dengan aturan privasi dan consent."
+        },
+        {
+          "skill_name": "agent-model-provider-gateway",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-model-provider-gateway",
+          "description": "Gunakan untuk membangun abstraction layer model providers, adapters, model routing, structured outputs, tool calling, fallback, and provider-specific capability normalization."
+        },
+        {
+          "skill_name": "agent-monetization-strategist",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-monetization-strategist",
+          "description": "Gunakan untuk mengubah AI agent menjadi penawaran komersial dengan model bisnis, pricing, validasi pelanggan, unit economics, distribusi, dan layanan pendukung."
+        },
+        {
+          "skill_name": "agent-no-code-builder",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-no-code-builder",
+          "description": "Gunakan ketika pengguna memilih platform no-code atau low-code untuk merancang dan mengonfigurasi AI agent tanpa membangun seluruh sistem melalui kode."
+        },
+        {
+          "skill_name": "agent-orchestrator",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-orchestrator",
+          "description": "Gunakan sebagai satu-satunya master orchestrator ketika pengguna ingin merancang, membangun, mengoperasikan, mengomersialkan, menskalakan, atau mengaudit AI agent. Merutekan pekerjaan ke tiga tier orchestrator dan 43 spesialis dengan kontrak handoff, access governance, readiness gates, dan bukti penyelesaian."
+        },
+        {
+          "skill_name": "agent-registry-catalog-manager",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-registry-catalog-manager",
+          "description": "Gunakan untuk mengelola registry dan catalog AI agents, metadata, ownership, discoverability, search, classification, dependencies, status, and provenance."
+        },
+        {
+          "skill_name": "agent-release-lifecycle-manager",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-release-lifecycle-manager",
+          "description": "Gunakan untuk mengelola immutable agent versions, release channels, compatibility, promotion, rollout, deprecation, rollback, and release audit across the ecosystem."
+        },
+        {
+          "skill_name": "agent-reliability-recovery",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-reliability-recovery",
+          "description": "Gunakan untuk merancang penanganan kegagalan, retry terbatas, timeout, circuit breaker, fallback, rollback, incident response, dan pemulihan AI agent."
+        },
+        {
+          "skill_name": "agent-requirements-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-requirements-architect",
+          "description": "Gunakan untuk menerjemahkan ide AI agent menjadi kebutuhan bisnis, fungsi, kualitas, data, integrasi, batasan, task, dan acceptance criteria yang dapat diuji."
+        },
+        {
+          "skill_name": "agent-runtime-engineer",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-runtime-engineer",
+          "description": "Gunakan untuk merancang atau membangun execution runtime yang menjalankan agent definitions, mengelola session/job state, tool execution boundaries, concurrency, cancellation, and lifecycle."
+        },
+        {
+          "skill_name": "agent-scaling-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-scaling-architect",
+          "description": "Gunakan untuk merencanakan scaling AI agent dari prototipe atau produk awal ke volume, pelanggan, tim, dan lingkungan operasi yang lebih besar."
+        },
+        {
+          "skill_name": "agent-security-governance",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-security-governance",
+          "description": "Gunakan untuk merancang keamanan, privacy, identitas, otorisasi, least privilege, human oversight, prompt-injection defense, dan tata kelola AI agent."
+        },
+        {
+          "skill_name": "agent-solution-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-solution-architect",
+          "description": "Gunakan untuk merancang arsitektur teknis AI agent, memilih model/provider, menentukan komponen dan batas sistem, serta memutuskan single-agent, multi-agent, atau otomasi deterministik."
+        },
+        {
+          "skill_name": "agent-state-storage-engineer",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-state-storage-engineer",
+          "description": "Gunakan untuk merancang persistent state, execution history, memory, knowledge metadata, relational/object/cache/vector storage, consistency, backup and retention."
+        },
+        {
+          "skill_name": "agent-system-prompt-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-system-prompt-architect",
+          "description": "Gunakan ketika AI agent memerlukan system prompt, developer instruction, tool-use policy, role contract, response policy, atau prompt modular yang konsisten."
+        },
+        {
+          "skill_name": "agent-task-automation",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-task-automation",
+          "description": "Gunakan untuk mengotomasi pekerjaan berulang melalui jadwal, event, queue, webhook, task runner, atau trigger berbasis kondisi."
+        },
+        {
+          "skill_name": "agent-template-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-template-architect",
+          "description": "Gunakan untuk membuat template AI agent yang reusable, configurable, terdokumentasi, dan memiliki default serta acceptance tests yang aman."
+        },
+        {
+          "skill_name": "agent-tenant-workspace-manager",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-tenant-workspace-manager",
+          "description": "Gunakan untuk merancang dan mengelola tenant, workspace, organization, membership, roles, isolation, quotas, provisioning, suspension and deletion."
+        },
+        {
+          "skill_name": "agent-test-engineer",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-test-engineer",
+          "description": "Gunakan untuk menyusun strategi pengujian, test cases, test data, expected results, test oracle, dan laporan hasil aktual AI agent."
+        },
+        {
+          "skill_name": "agent-tool-integration",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-tool-integration",
+          "description": "Gunakan ketika agent harus memakai API, MCP server, browser, database, aplikasi, file system, atau tools eksternal dan memerlukan kontrak integrasi yang aman."
+        },
+        {
+          "skill_name": "agent-usage-metering-billing",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-usage-metering-billing",
+          "description": "Gunakan untuk merancang usage-event metering, entitlement checks, quota, pricing units, invoice/payment integration, reconciliation, and billing audit for AI agent products."
+        },
+        {
+          "skill_name": "agent-workflow-architect",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/agent-workflow-architect",
+          "description": "Gunakan untuk merancang workflow AI agent berbasis state machine, task graph, branching, event, approval, handoff, dan kontrol manusia."
+        },
+        {
+          "skill_name": "api-key-manager",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/api-key-manager",
+          "description": "Gunakan untuk lifecycle API key: generate, validate, list metadata, rotate, expire, revoke, scope, quota association, and audit."
+        },
+        {
+          "skill_name": "credential-vault",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/credential-vault",
+          "description": "Gunakan untuk desain dan pengelolaan penyimpanan, retrieval, versioning, rotation, revocation, and audit secret melalui vault/KMS eksternal."
+        },
+        {
+          "skill_name": "custom-api-connector",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/custom-api-connector",
+          "description": "Gunakan untuk mendaftarkan dan mengintegrasikan external REST/HTTP APIs dengan schema, authentication, scopes, data controls, rate limits, and recovery contract."
+        },
+        {
+          "skill_name": "custom-mcp-connector",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/custom-mcp-connector",
+          "description": "Gunakan untuk mendaftarkan, menghubungkan, menguji, atau mengelola koneksi ke external MCP server dengan transport, auth, capabilities, and trust boundaries yang tervalidasi."
+        },
+        {
+          "skill_name": "identity-policy-engine",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/identity-policy-engine",
+          "description": "Gunakan untuk merancang dan mengevaluasi principal identity, RBAC/ABAC, tenant isolation, action/resource scopes, quota, policy decision, and authorization audit."
+        },
+        {
+          "skill_name": "mcp-access-manager",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/mcp-access-manager",
+          "description": "Gunakan untuk merancang atau mengelola autentikasi, identitas client/server, authorization, OAuth scopes, and permission controls pada MCP."
+        },
+        {
+          "skill_name": "universal-access-manager",
+          "source_uri": "skills://plugins/plugin-agent-orchestrator/universal-access-manager",
+          "description": "Gunakan sebagai access-control orchestrator ketika mengelola API keys, MCP authentication/authorization, custom MCP/API connectors, credentials, identity, scopes, permissions, quotas, atau access policies."
+        }
+      ]
+    },
+    {
+      "plugin_key": "photo-fixer",
+      "instruction_path": "plugin-instructions/photo-fixer/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot_candidate_source",
+      "skill_count": 12,
+      "skills": [
+        {
+          "skill_name": "photo-fixer",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer",
+          "description": "Pengatur utama untuk menilai, memperbaiki, memulihkan, dan mengolah foto. Gunakan saat pengguna meminta retouch potret, restorasi foto lama, koreksi cahaya atau warna, penghapusan objek, penggantian latar, komposisi, foto produk, peningkatan detail, atau persiapan media sosial."
+        },
+        {
+          "skill_name": "photo-fixer-background-object-editing",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-background-object-editing",
+          "description": "Menghapus objek, membersihkan latar, mengganti latar, dan membuat blur atau depth of field tanpa merusak subjek utama."
+        },
+        {
+          "skill_name": "photo-fixer-color-correction",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-color-correction",
+          "description": "Memperbaiki white balance, exposure, highlight, shadow, kontras, saturasi, warna pudar, color grading, dan HDR secara terkendali."
+        },
+        {
+          "skill_name": "photo-fixer-detail-upscaling",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-detail-upscaling",
+          "description": "Meningkatkan kejernihan, ketajaman, mengurangi noise, dan memperbesar gambar secara terkendali tanpa mengarang detail sumber."
+        },
+        {
+          "skill_name": "photo-fixer-image-assessment",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-image-assessment",
+          "description": "Menilai kondisi foto sebelum diedit. Gunakan untuk memeriksa fokus, resolusi, cahaya, warna, kerusakan, komposisi, area sensitif, dan bagian yang harus dikunci."
+        },
+        {
+          "skill_name": "photo-fixer-lighting-film",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-lighting-film",
+          "description": "Mengatur arah cahaya, bayangan, suasana, dan tampilan film seperti golden hour, neon, studio, low-key, high-key, hitam-putih, analog, atau sinematik."
+        },
+        {
+          "skill_name": "photo-fixer-photo-restoration",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-photo-restoration",
+          "description": "Memulihkan foto lama atau rusak, termasuk goresan, debu, noda, pudar, sobekan, dan perubahan warna dengan menjaga susunan asli."
+        },
+        {
+          "skill_name": "photo-fixer-portrait-retouch",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-portrait-retouch",
+          "description": "Retouch kulit, wajah, headshot, dan potret dengan hasil alami tanpa menggeser ciri visual subjek."
+        },
+        {
+          "skill_name": "photo-fixer-product-vehicle-photography",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-product-vehicle-photography",
+          "description": "Mengolah foto produk, mobil, dan motor untuk katalog, promosi, studio, flat lay, gaya premium, atau sinematik dengan menjaga identitas barang."
+        },
+        {
+          "skill_name": "photo-fixer-quality-control",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-quality-control",
+          "description": "Memeriksa hasil edit foto sebelum diserahkan, termasuk kesesuaian instruksi, wajah, tangan, logo, teks, tepi, cahaya, warna, dan artefak."
+        },
+        {
+          "skill_name": "photo-fixer-scene-compositing",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-scene-compositing",
+          "description": "Menggabungkan subjek dengan latar atau lokasi baru untuk foto perjalanan, alam, kota, arsitektur, musim, hujan, dan komposisi sinematik."
+        },
+        {
+          "skill_name": "photo-fixer-social-formatting",
+          "source_uri": "skills://plugins/photo-fixer/photo-fixer-social-formatting",
+          "description": "Menyiapkan foto untuk Instagram, Story, Reels, LinkedIn, YouTube thumbnail, foto profil, dan publikasi digital melalui crop dan penataan komposisi."
+        }
+      ]
+    },
+    {
+      "plugin_key": "asfree-canonical",
+      "instruction_path": "plugin-instructions/asfree-canonical/README.md",
+      "origin": "canonical_submodule",
+      "skill_count": 13,
+      "skills": [
+        {
+          "skill_name": "asfree-master-orchestrator",
+          "source_uri": "skills://plugins/asfree/asfree-master-orchestrator",
+          "description": "Use as the master controller for authorized forensic analysis, architecture decomposition, evidence-led evaluation, comparison, diagnosis, supervised remediation, reconstruction, tool adaptation, validation, and end-to-end assurance of AI systems and software."
+        },
+        {
+          "skill_name": "o01-artifact-intelligence",
+          "source_uri": "skills://plugins/asfree/o01-artifact-intelligence",
+          "description": "Use when files, repositories, packages, manifests, versions, dependencies, provenance, or artifact integrity must be inventoried before analysis."
+        },
+        {
+          "skill_name": "o02-anatomy-decomposition",
+          "source_uri": "skills://plugins/asfree/o02-anatomy-decomposition",
+          "description": "Use when the target system must be decomposed into components, responsibilities, interfaces, data/control flows, dependencies, or architecture layers."
+        },
+        {
+          "skill_name": "o03-positive-intelligence",
+          "source_uri": "skills://plugins/asfree/o03-positive-intelligence",
+          "description": "Use when the user needs a balanced assessment of strengths, verified capabilities, feature value, innovation, differentiation, reusable patterns, or value preservation."
+        },
+        {
+          "skill_name": "o04-negative-intelligence",
+          "source_uri": "skills://plugins/asfree/o04-negative-intelligence",
+          "description": "Use when weaknesses, deficiencies, defects, risks, vulnerabilities, failure modes, misuse paths, or worst credible scenarios must be red-teamed."
+        },
+        {
+          "skill_name": "o05-comparative-intelligence",
+          "source_uri": "skills://plugins/asfree/o05-comparative-intelligence",
+          "description": "Use when comparing versions, architectures, systems, tools, policies, methods, solutions, or current state against a baseline or target."
+        },
+        {
+          "skill_name": "o06-bug-detection-diagnosis",
+          "source_uri": "skills://plugins/asfree/o06-bug-detection-diagnosis",
+          "description": "Use when suspected or observed bugs, logic errors, runtime failures, configuration problems, contract violations, anomalies, or root causes must be diagnosed."
+        },
+        {
+          "skill_name": "o07-remediation-bug-fixing",
+          "source_uri": "skills://plugins/asfree/o07-remediation-bug-fixing",
+          "description": "Use when a verified or accepted finding needs a corrective plan, controlled patch, configuration repair, refactoring, optimization, mitigation, or rollback design."
+        },
+        {
+          "skill_name": "o08-reconstruction-adaptation",
+          "source_uri": "skills://plugins/asfree/o08-reconstruction-adaptation",
+          "description": "Use when reconstructing architecture, workflow, prompt, plugin, skill, orchestrator, tool definition, schema, adapter, protocol, or compatibility layer."
+        },
+        {
+          "skill_name": "o09-integration-runtime-lab",
+          "source_uri": "skills://plugins/asfree/o09-integration-runtime-lab",
+          "description": "Use when actual tools, APIs, MCP servers, repositories, local filesystems, containers, sandboxes, dependencies, or runtime execution are required."
+        },
+        {
+          "skill_name": "o10-validation-qa",
+          "source_uri": "skills://plugins/asfree/o10-validation-qa",
+          "description": "Use when designing or executing unit, integration, contract, system, regression, fuzz, security, performance, compatibility, or acceptance tests."
+        },
+        {
+          "skill_name": "o11-security-governance",
+          "source_uri": "skills://plugins/asfree/o11-security-governance",
+          "description": "Use whenever a task touches authorization, credentials, personal or sensitive data, repositories, tools, network access, code execution, security testing, external side effects, or production changes."
+        },
+        {
+          "skill_name": "o12-evaluation-intelligence",
+          "source_uri": "skills://plugins/asfree/o12-evaluation-intelligence",
+          "description": "Use when criteria, indicators, measurement, scoring, evaluation validity, impact, trade-offs, acceptance judgments, evaluator bias, or meta-evaluation are required."
+        }
+      ]
+    },
+    {
+      "plugin_key": "asfree-legacy",
+      "instruction_path": "plugin-instructions/asfree-legacy/INSTRUCTIONS-BUNDLE.md",
+      "origin": "legacy_redirect_snapshot",
+      "skill_count": 1,
+      "skills": [
+        {
+          "skill_name": "asfree-master-orchestrator",
+          "source_uri": "skills://plugins/asfree-master-orchestrator/asfree-master-orchestrator",
+          "description": "Legacy compatibility redirect only. Use to identify the canonical A.S.F.R.E.E plugin and explain manual migration; never execute new forensic or engineering workflows from this package."
+        }
+      ]
+    },
+    {
+      "plugin_key": "cortex-workbench",
+      "instruction_path": "plugin-instructions/cortex-workbench/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 8,
+      "skills": [
+        {
+          "skill_name": "code-workflows",
+          "source_uri": "skills://plugins/cortex-workbench/code-workflows",
+          "description": "Use when the user wants code explained, debugged, reviewed, tested, structured as XML, scoped as an interactive artifact, or iteratively improved. Own the seven Code & Build Workflows commands."
+        },
+        {
+          "skill_name": "cortex-orchestrator",
+          "source_uri": "skills://plugins/cortex-workbench/cortex-orchestrator",
+          "description": "Use as the master router for Cortex Workbench. Activate when the user invokes a slash command, asks which command or workflow to use, chains multiple tasks, or gives a cross-domain knowledge-work request spanning learning, writing, research, decisions, productivity, or coding."
+        },
+        {
+          "skill_name": "ideas-productivity",
+          "source_uri": "skills://plugins/cortex-workbench/ideas-productivity",
+          "description": "Use when the user wants creative ideas, structured ideation, role simulation, task decomposition, action planning, decision scoring, or extraction of decisions from notes. Own the seven Ideas & Productivity commands."
+        },
+        {
+          "skill_name": "research-fact-check",
+          "source_uri": "skills://plugins/cortex-workbench/research-fact-check",
+          "description": "Use when the user asks to verify claims, research sources, cite evidence, summarize supplied documents, identify contradictions or research gaps, or present balanced arguments. Own the seven Research & Fact-Check commands."
+        },
+        {
+          "skill_name": "study-remember",
+          "source_uri": "skills://plugins/cortex-workbench/study-remember",
+          "description": "Use when the user wants to learn, retrieve, practice, memorize, revise, or prepare for an exam. Own the seven Study & Remember commands and maintain interaction state within the available conversation context."
+        },
+        {
+          "skill_name": "think-smarter",
+          "source_uri": "skills://plugins/cortex-workbench/think-smarter",
+          "description": "Use when the user wants to decompose a problem, prioritize effort, compare trade-offs, challenge assumptions, stress-test an idea, or conduct a premortem. Own the seven Think Smarter commands."
+        },
+        {
+          "skill_name": "understand-anything",
+          "source_uri": "skills://plugins/cortex-workbench/understand-anything",
+          "description": "Use when the user wants a topic, concept, process, technical subject, or comparison explained clearly at a chosen level. Own the seven Understand Anything commands."
+        },
+        {
+          "skill_name": "writing-studio",
+          "source_uri": "skills://plugins/cortex-workbench/writing-studio",
+          "description": "Use when the user wants to rewrite, humanize, retune, shorten, expand, or create stronger hooks and headlines for existing or new writing. Own the seven Write Like a Pro commands."
+        }
+      ]
+    },
+    {
+      "plugin_key": "commandcraft-56",
+      "instruction_path": "plugin-instructions/commandcraft-56/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 14,
+      "skills": [
+        {
+          "skill_name": "business-negotiation",
+          "source_uri": "skills://plugins/commandcraft-56/business-negotiation",
+          "description": "Use for /MONEYIDEAS or /NEGOTIATIONCOACH when the user needs business ideas, monetization models, commercial validation, or negotiation preparation."
+        },
+        {
+          "skill_name": "career-development",
+          "source_uri": "skills://plugins/commandcraft-56/career-development",
+          "description": "Use for /SKILLBUILDER, /JOBINTERVIEWER, /CAREERCOACH, /RESUMEWRITER, /COVERLETTERGEN, /LINKEDINBOOSTER, /PERSONALDEVELOPER, or /HABITTRACKER."
+        },
+        {
+          "skill_name": "command-router",
+          "source_uri": "skills://plugins/commandcraft-56/command-router",
+          "description": "Use as the master orchestrator whenever the user enters one or more of the 56 slash-style commands, asks for a command mode, or gives a multi-domain request that needs routing and conflict resolution."
+        },
+        {
+          "skill_name": "content-growth",
+          "source_uri": "skills://plugins/commandcraft-56/content-growth",
+          "description": "Use for /VIRAL, /SEO, /COPYWRITER, /CONTENTOPTIMIZER, /SOCIALMEDIAAI, /STORYTELLER, /PERSUASIVEMODE, /GROWTHHACK, /CONTENTRECYCLER, /CTAEXPERT, /PSYCHOWORDS, /BRANDSTORY, or /VIRALHOOK."
+        },
+        {
+          "skill_name": "finance-budget",
+          "source_uri": "skills://plugins/commandcraft-56/finance-budget",
+          "description": "Use for /BUDGETPLANNER or /FINANCETIPS requests involving household budgets, saving habits, debt organization, or general financial education."
+        },
+        {
+          "skill_name": "health-fitness",
+          "source_uri": "skills://plugins/commandcraft-56/health-fitness",
+          "description": "Use for /HEALTHCOACH, /MEALPLANNER, or /WORKOUTBUDDY requests about general wellness, meals, physical activity, and healthy routines."
+        },
+        {
+          "skill_name": "learning-knowledge",
+          "source_uri": "skills://plugins/commandcraft-56/learning-knowledge",
+          "description": "Use for /BOOKSUMMARY or /EXAMPLEWIZARD requests, or when the user wants complex concepts converted into examples and learning material."
+        },
+        {
+          "skill_name": "productivity-automation",
+          "source_uri": "skills://plugins/commandcraft-56/productivity-automation",
+          "description": "Use for /PRODUCTIVITYBOOST or /AUTOMATEIT when the user wants to improve a workflow, reduce friction, prioritize tasks, or design an automation."
+        },
+        {
+          "skill_name": "professional-writing",
+          "source_uri": "skills://plugins/commandcraft-56/professional-writing",
+          "description": "Use for /EMAILWIZARD or when the user needs a professional email, business message, memo, or other ready-to-send communication."
+        },
+        {
+          "skill_name": "prompt-engineering",
+          "source_uri": "skills://plugins/commandcraft-56/prompt-engineering",
+          "description": "Use for /PROMPTENGINEER or /PROMPTIMPROVER when the user wants a prompt designed, debugged, optimized, or evaluated."
+        },
+        {
+          "skill_name": "research-analysis",
+          "source_uri": "skills://plugins/commandcraft-56/research-analysis",
+          "description": "Use for /RESEARCH, /DATAINTERPRETER, /TRENDPREDICTOR, /COMPETITORROAST, or /FRAMEWORKIFY requests involving evidence, datasets, trends, competitors, or analytical frameworks."
+        },
+        {
+          "skill_name": "response-style",
+          "source_uri": "skills://plugins/commandcraft-56/response-style",
+          "description": "Use when the user invokes /HUMAN, /EXPERT, /CRITIC, /TEACHER, /ELI5, /BRIEF, /DEEPTHINK, /UNPOPULAROPINION, or /TLDR, or asks to change explanation style or depth."
+        },
+        {
+          "skill_name": "strategy-decision",
+          "source_uri": "skills://plugins/commandcraft-56/strategy-decision",
+          "description": "Use for /CEO, /STRATEGY, /BRAINSTORM, /PROBLEMSOLVER, or /DECISIONHELPER requests involving strategy, ideation, problem-solving, prioritization, or consequential choices."
+        },
+        {
+          "skill_name": "travel-planning",
+          "source_uri": "skills://plugins/commandcraft-56/travel-planning",
+          "description": "Use for /TRAVELPLANNER requests that need an itinerary, destination choice, travel logistics, route planning, or budget-aware trip design."
+        }
+      ]
+    },
+    {
+      "plugin_key": "agent-skills-atlas",
+      "instruction_path": "plugin-instructions/agent-skills-atlas/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 17,
+      "skills": [
+        {
+          "skill_name": "ai-agent-systems",
+          "source_uri": "skills://plugins/agent-skills-atlas/ai-agent-systems",
+          "description": "Use for LLM applications, agentic workflows, RAG, MCP, tool orchestration, model selection, AI product architecture, evaluation, and guardrails. Do not use for generic software tasks without AI-system elements."
+        },
+        {
+          "skill_name": "atlas-orchestrator",
+          "source_uri": "skills://plugins/agent-skills-atlas/atlas-orchestrator",
+          "description": "Use as the master router for cross-domain tasks and staged adoption of a large modular skill library; choose the smallest useful set of workflows, distinguish mapped capabilities from installed/executable ones, and preserve source coverage and provenance."
+        },
+        {
+          "skill_name": "business-operations",
+          "source_uri": "skills://plugins/agent-skills-atlas/business-operations",
+          "description": "Use for operating models, SOPs, service delivery, process improvement, capacity planning, vendor operations, and business execution systems. Do not use as the sole owner for board-level corporate strategy or a detailed financial model."
+        },
+        {
+          "skill_name": "capability-inventory",
+          "source_uri": "skills://plugins/agent-skills-atlas/capability-inventory",
+          "description": "Use when building or refreshing a forensic inventory of a large skill/agent repository, reconciling skill counts, mapping dependencies, identifying generated mirrors and aliases, auditing license notices, or preparing a staged migration into ChatGPT/Agent Plugins."
+        },
+        {
+          "skill_name": "creative-production",
+          "source_uri": "skills://plugins/agent-skills-atlas/creative-production",
+          "description": "Use for visual/brand direction, graphic design briefs, creative systems, content production, video concepts, visual prompting, and creative quality review. Do not claim a rendered asset exists unless an image/video/design tool actually produced it."
+        },
+        {
+          "skill_name": "data-analytics",
+          "source_uri": "skills://plugins/agent-skills-atlas/data-analytics",
+          "description": "Use for analytics design, KPI definitions, dashboards, data quality, statistical analysis, experimentation measurement, BI, and data pipeline reasoning. Do not infer causality from correlation or invent values for absent data."
+        },
+        {
+          "skill_name": "engineering-architecture",
+          "source_uri": "skills://plugins/agent-skills-atlas/engineering-architecture",
+          "description": "Use for software engineering, system architecture, technical design, code review, refactoring plans, reliability, DevOps, and implementation quality. Do not use as a substitute for an available code execution or security testing tool."
+        },
+        {
+          "skill_name": "executive-advisory",
+          "source_uri": "skills://plugins/agent-skills-atlas/executive-advisory",
+          "description": "Use for CEO/C-suite decisions, enterprise strategy, board preparation, governance, portfolio choices, organizational design, and high-level scenario planning. Do not use for low-level task execution or as a substitute for accountable executives."
+        },
+        {
+          "skill_name": "finance-analysis",
+          "source_uri": "skills://plugins/agent-skills-atlas/finance-analysis",
+          "description": "Use for budgeting, forecasting, cash flow, unit economics, SaaS metrics, investment analysis, valuation, pricing economics, and financial scenario modeling. Do not present output as audited assurance or personalized regulated investment advice."
+        },
+        {
+          "skill_name": "marketing-growth",
+          "source_uri": "skills://plugins/agent-skills-atlas/marketing-growth",
+          "description": "Use for positioning, messaging, SEO/AEO, content strategy, demand generation, acquisition, conversion, retention, and growth experiments. Do not use as the primary owner for negotiated account deals or financial reporting."
+        },
+        {
+          "skill_name": "product-management",
+          "source_uri": "skills://plugins/agent-skills-atlas/product-management",
+          "description": "Use for product discovery, user problems, product requirements, roadmap, prioritization, UX research, experimentation, and product metrics. Do not use as the primary owner for campaign execution or engineering implementation."
+        },
+        {
+          "skill_name": "productivity-workflows",
+          "source_uri": "skills://plugins/agent-skills-atlas/productivity-workflows",
+          "description": "Use for personal/team productivity systems, task capture, meeting design, email workflows, weekly review, knowledge organization, and focus routines. Do not claim calendar, inbox, or task-system changes unless a real connector performed them."
+        },
+        {
+          "skill_name": "project-delivery",
+          "source_uri": "skills://plugins/agent-skills-atlas/project-delivery",
+          "description": "Use for project plans, agile delivery, sprint planning, dependency management, critical path, delivery recovery, scope control, and retrospectives. Do not use as the primary owner for product-market discovery or enterprise operating model design."
+        },
+        {
+          "skill_name": "research-intelligence",
+          "source_uri": "skills://plugins/agent-skills-atlas/research-intelligence",
+          "description": "Use for research questions, literature reviews, source synthesis, market or technology research, evidence mapping, and hypothesis formation. Do not use as a substitute for current-source browsing when freshness matters or for primary data collection that has not occurred."
+        },
+        {
+          "skill_name": "risk-compliance-quality",
+          "source_uri": "skills://plugins/agent-skills-atlas/risk-compliance-quality",
+          "description": "Use for risk assessment, security governance, privacy, regulatory/compliance mapping, quality management, audit readiness, CAPA, and control design. Do not claim legal advice, certification, or completed compliance without evidence and qualified review."
+        },
+        {
+          "skill_name": "sales-commercial",
+          "source_uri": "skills://plugins/agent-skills-atlas/sales-commercial",
+          "description": "Use for B2B/B2C sales process, prospecting, qualification, account strategy, pipeline, negotiation preparation, offer packaging, and commercial deal design. Do not use for generic brand campaigns or audited financial statements."
+        },
+        {
+          "skill_name": "skill-engineering",
+          "source_uri": "skills://plugins/agent-skills-atlas/skill-engineering",
+          "description": "Use when creating, adapting, auditing, packaging, versioning, or evaluating reusable AI skills, prompts, plugin workflows, or agent instructions. Do not use to pretend instructions are executable tools or to change a live plugin without authorization."
+        }
+      ]
+    },
+    {
+      "plugin_key": "workflow-systems-orchestrator",
+      "instruction_path": "plugin-instructions/workflow-systems-orchestrator/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 9,
+      "skills": [
+        {
+          "skill_name": "automation-systems-architect",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/automation-systems-architect",
+          "description": "Use when stable recurring work should be automated or when designing an integrated AI operating system with triggers, actions, monitoring, approvals, and recovery."
+        },
+        {
+          "skill_name": "context-knowledge-engineer",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/context-knowledge-engineer",
+          "description": "Use when a workflow depends on context engineering, files, source classification, project history, structured folders, durable knowledge, retrieval, a knowledge library, or cross-project reuse."
+        },
+        {
+          "skill_name": "modular-skill-project-architect",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/modular-skill-project-architect",
+          "description": "Use when designing reusable skills, multi-skill systems, projects/workspaces, specialist roles, agent orchestration, modular architecture, or cross-project composition."
+        },
+        {
+          "skill_name": "prompt-instruction-engineer",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/prompt-instruction-engineer",
+          "description": "Use when creating, auditing, refining, versioning, or standardizing prompts, prompt libraries, reusable templates, examples, constraints, or instruction sets."
+        },
+        {
+          "skill_name": "quality-evaluation-lifecycle",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/quality-evaluation-lifecycle",
+          "description": "Use when reviewing, critiquing, testing, measuring, refining, documenting, versioning, or governing the quality and lifecycle of AI prompts, skills, workflows, integrations, or automations."
+        },
+        {
+          "skill_name": "research-task-role-architect",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/research-task-role-architect",
+          "description": "Use when a task needs clearer intent, specialist roles, responsibility boundaries, audience, output definitions, decision options, requirements, or acceptance criteria."
+        },
+        {
+          "skill_name": "research-tool-integration-architect",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/research-tool-integration-architect",
+          "description": "Use when complex work needs external knowledge, source verification, GitHub/repository review, MCP servers, APIs, connectors, or an explicit separation between research and execution."
+        },
+        {
+          "skill_name": "workflow-sop-architect",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/workflow-sop-architect",
+          "description": "Use when complex or recurring work must be broken into phases, mapped as a workflow, converted into an SOP, saved as a repeatable process, or coordinated through explicit handoffs."
+        },
+        {
+          "skill_name": "workflow-systems-orchestrator",
+          "source_uri": "skills://plugins/workflow-systems-orchestrator/workflow-systems-orchestrator",
+          "description": "Use as the master controller when a user wants to design, audit, modularize, standardize, integrate, automate, or improve AI prompts, skills, projects, knowledge systems, workflows, or repeatable AI operations."
+        }
+      ]
+    },
+    {
+      "plugin_key": "growthforge-business-os",
+      "instruction_path": "plugin-instructions/growthforge-business-os/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 18,
+      "skills": [
+        {
+          "skill_name": "brand-positioning",
+          "source_uri": "skills://plugins/growthforge-business-os/brand-positioning",
+          "description": "Use when the user needs a brand kit, brand story, brand positioning, differentiation, naming direction, visual identity brief, or brand voice."
+        },
+        {
+          "skill_name": "business-documents-presentations",
+          "source_uri": "skills://plugins/growthforge-business-os/business-documents-presentations",
+          "description": "Use when the user needs client proposals, case studies, insight reports, pitch decks, portfolios, or investor pitches."
+        },
+        {
+          "skill_name": "business-strategy",
+          "source_uri": "skills://plugins/growthforge-business-os/business-strategy",
+          "description": "Use when the user needs business plans, idea validation, business models, long-term strategy, growth roadmaps, scaling plans, SWOT, or a prioritized business action plan."
+        },
+        {
+          "skill_name": "content-studio",
+          "source_uri": "skills://plugins/growthforge-business-os/content-studio",
+          "description": "Use when the user needs content ideas, scripts, calendars, newsletter plans, SEO outlines, short-form ideas, repurposing, distribution, batching, content series, or content audits."
+        },
+        {
+          "skill_name": "copywriting-conversion",
+          "source_uri": "skills://plugins/growthforge-business-os/copywriting-conversion",
+          "description": "Use when the user needs persuasive copy for landing pages, websites, email sequences, product descriptions, ads, FAQs, testimonials, or sales pages."
+        },
+        {
+          "skill_name": "customer-experience-community",
+          "source_uri": "skills://plugins/growthforge-business-os/customer-experience-community",
+          "description": "Use when the user needs customer support systems, onboarding, community plans, retention strategies, or customer experience improvements."
+        },
+        {
+          "skill_name": "customer-lifecycle-crm",
+          "source_uri": "skills://plugins/growthforge-business-os/customer-lifecycle-crm",
+          "description": "Use when the user needs CRM architecture, lead/customer lifecycle stages, segmentation, lifecycle messaging, lead routing, customer data structure, CRM automation specifications, activation, retention, win-back, or expansion journeys."
+        },
+        {
+          "skill_name": "data-decision-intelligence",
+          "source_uri": "skills://plugins/growthforge-business-os/data-decision-intelligence",
+          "description": "Use when the user needs data analysis, product/tool comparison, trend analysis, research summaries, content gap analysis, or growth metric design."
+        },
+        {
+          "skill_name": "financial-modeling-unit-economics",
+          "source_uri": "skills://plugins/growthforge-business-os/financial-modeling-unit-economics",
+          "description": "Use when a business decision depends on financial projections, pricing economics, cash flow, contribution margin, break-even, CAC, LTV, payback period, runway, profitability, or scenario/sensitivity analysis."
+        },
+        {
+          "skill_name": "growth-experimentation-optimization",
+          "source_uri": "skills://plugins/growthforge-business-os/growth-experimentation-optimization",
+          "description": "Use when the user needs growth experiments, A/B testing, conversion-rate optimization, landing-page or funnel diagnosis, hypothesis prioritization, product activation tests, or a structured experimentation program."
+        },
+        {
+          "skill_name": "growthforge-orchestrator",
+          "source_uri": "skills://plugins/growthforge-business-os/growthforge-orchestrator",
+          "description": "Use as the single master router when a user needs business strategy, research, finance, branding, product, marketing, content, copywriting, sales, customer lifecycle, operations, analytics, learning products, business documents, or personal growth. Selects the smallest sufficient specialist set, coordinates dependencies, integrates outputs, and applies evidence and quality gates."
+        },
+        {
+          "skill_name": "learning-knowledge-products",
+          "source_uri": "skills://plugins/growthforge-business-os/learning-knowledge-products",
+          "description": "Use when the user wants tutoring, a course outline, course content, a webinar plan, a mini-course, or structured Q&A learning materials."
+        },
+        {
+          "skill_name": "market-customer-intelligence",
+          "source_uri": "skills://plugins/growthforge-business-os/market-customer-intelligence",
+          "description": "Use when the user needs market research, customer personas, audience research, competitor analysis, competitor-content analysis, or niche opportunity discovery."
+        },
+        {
+          "skill_name": "marketing-campaigns",
+          "source_uri": "skills://plugins/growthforge-business-os/marketing-campaigns",
+          "description": "Use when the user needs a marketing plan, channel growth strategy, YouTube strategy, launch plan, affiliate strategy, or paid-ad campaign plan."
+        },
+        {
+          "skill_name": "operations-automation",
+          "source_uri": "skills://plugins/growthforge-business-os/operations-automation",
+          "description": "Use when the user needs SOPs, hiring plans, project plans, productivity systems, AI tool stacks, automation plans, AI workflows, assistant setup, or app/MVP planning."
+        },
+        {
+          "skill_name": "personal-growth",
+          "source_uri": "skills://plugins/growthforge-business-os/personal-growth",
+          "description": "Use when the user needs a personal growth plan, self-development roadmap, habit system, or reflective action plan."
+        },
+        {
+          "skill_name": "product-offer-innovation",
+          "source_uri": "skills://plugins/growthforge-business-os/product-offer-innovation",
+          "description": "Use when the user needs product ideas, product roadmaps, offer creation, pricing strategy, product concept development, or product innovation."
+        },
+        {
+          "skill_name": "sales-revenue-growth",
+          "source_uri": "skills://plugins/growthforge-business-os/sales-revenue-growth",
+          "description": "Use when the user needs a sales funnel, lead magnet, revenue or monetization strategy, lead generation, objection handling, upsell/cross-sell, or funnel optimization."
+        }
+      ]
+    },
+    {
+      "plugin_key": "pvee-promkes-super-orchestrator",
+      "instruction_path": "plugin-instructions/pvee-promkes-super-orchestrator/INSTRUCTIONS-BUNDLE.md",
+      "origin": "runtime_snapshot",
+      "skill_count": 14,
+      "skills": [
+        {
+          "skill_name": "promkes-audio-subtitle",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-audio-subtitle",
+          "description": "Fase 09 dan 11 pipeline promkes (S09, S11). Rekayasa audio - pemeriksaan audio/transkrip dan provenance, kelas presisi timing (WORD/PHRASE/SEGMENT/ESTIMATED/NONE), arahan VO, pelafalan, jeda, SFX, BGM, ambience, subtitle, dan status hak; serta materi aksesibilitas/distribusi opsional (judul, caption, alt text, catatan subtitle). Gunakan untuk audio, voice-over, dan subtitle video kesehatan. English - audio, VO, subtitle timing provenance, and optional distribution copy."
+        },
+        {
+          "skill_name": "promkes-campaign-screenplay",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-campaign-screenplay",
+          "description": "Fase 03-04 pipeline promkes. (S03) Arsitektur kampanye - audiens, tujuan pengetahuan/sikap/perilaku, satu pesan inti, hook, arah emosi, CTA; (S04) treatment, logline, struktur naratif, screenplay, naskah VO, dialog, on-screen copy, subtitle transcript dengan estimasi kata-ke-durasi dan setiap pernyataan faktual terhubung claim ID. Gunakan setelah Fact Lock untuk menulis brief, naskah, atau VO video promosi kesehatan. English - campaign brief and screenplay/VO for health-promotion explainers."
+        },
+        {
+          "skill_name": "promkes-evaluation-learning",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-evaluation-learning",
+          "description": "Gunakan ketika pengguna ingin mengukur efektivitas, kualitas, efisiensi, outcome, dampak, KPI, pilot, atau perbaikan berkelanjutan dari produksi maupun kampanye video promosi kesehatan; bedakan QA artefak dari evaluasi perubahan pada audiens."
+        },
+        {
+          "skill_name": "promkes-orchestrator",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-orchestrator",
+          "description": "Master Orchestrator M00 untuk PVEE: mengendalikan seluruh pipeline produksi video explainer promosi kesehatan dari intake sumber dan fact lock hingga screenplay, visual, storyboard, motion, prompt, audio, manifest, QA, governance, evaluasi, dan handoff. Gunakan sebagai pintu utama untuk proyek baru, kelanjutan, audit, perbaikan, atau integrasi produksi video promkes."
+        },
+        {
+          "skill_name": "promkes-prompt-reference",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-prompt-reference",
+          "description": "Fase 08 pipeline promkes (S08). Kompilasi prompt gambar-diam untuk referensi (style, karakter, ekspresi, pose, lingkungan, properti, scene keyframe, overlay art), prompt video-generation opsional (text-to-video/image-to-video), serta adapter dan preflight prompt per platform/model target, lengkap dengan Reference ID, negative constraints, dan lifecycle yang jujur. Gunakan setelah storyboard dan motion terkunci untuk membuat paket prompt-to-reference video kesehatan. English - prompt-to-reference compilers with preflight and platform adapter."
+        },
+        {
+          "skill_name": "promkes-qa",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-qa",
+          "description": "Gunakan ketika pengguna meminta QA, audit, validasi manifest, self-test, pemeriksaan defect, atau status kesiapan handoff paket produksi PVEE. Fokus pada pengujian berbasis artefak dan bukti, bukan klaim mutu yang tidak diamati."
+        },
+        {
+          "skill_name": "promkes-qa-handoff",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-qa-handoff",
+          "description": "Fase 12 pipeline promkes (S12). QA independen lima level - paket prompt/referensi, aset referensi hasil generasi, integrasi renderer, artefak media hasil render, persetujuan manusia - dengan matriks uji, defect register (DEF-ID, severity, bukti, pemilik, retest), targeted retest, dan laporan handoff teknis. Gunakan untuk memeriksa, mengaudit, atau menyerahterimakan paket produksi video kesehatan, atau untuk menjalankan validator. English - independent QA, defect management, and technical handoff."
+        },
+        {
+          "skill_name": "promkes-renderer-manifest",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-renderer-manifest",
+          "description": "Fase 10 pipeline promkes (S10). Kompilasi manifest renderer-neutral dengan satu sumber timing dalam frames, adapter renderer, validasi dengan skrip, dan - hanya bila diminta dan target diketahui - kode renderer (mis. Remotion/React) serta kesiapan render. Gunakan untuk membuat atau memvalidasi scene manifest, menghitung frame, atau menyiapkan kode renderer video kesehatan. English - renderer-neutral manifest, validation, and renderer adapter/code."
+        },
+        {
+          "skill_name": "promkes-resume",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-resume",
+          "description": "Gunakan ketika pengguna ingin melanjutkan proyek PVEE yang terhenti, memeriksa status, memulihkan checkpoint, atau membuat resume packet dari project_state.json, RESUME.md, dan artefak fase yang tersedia."
+        },
+        {
+          "skill_name": "promkes-risk-governance",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-risk-governance",
+          "description": "Gunakan sebagai audit lintas fase untuk risiko keselamatan informasi kesehatan, privasi dan consent, hak cipta/lisensi, penggunaan identitas/brand, aksesibilitas, stigma, dampak audiens, distribusi, dan persetujuan manusia; wajib sebelum publikasi atau pengiriman eksternal yang material."
+        },
+        {
+          "skill_name": "promkes-source-health",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-source-health",
+          "description": "Fase 01-02 pipeline promkes. (S01) Inventaris dan ekstraksi poster, infografis, caption, naskah, audio menjadi Source Material Dossier tanpa menebak teks yang tak terbaca; (S02) atomisasi klaim kesehatan, Source Registry, Claim-Evidence Matrix, Health Truth Registry, Safe Wording, dan Fact Lock. Gunakan sebelum menulis screenplay atau visual video kesehatan, atau untuk memeriksa/memverifikasi klaim pada poster, caption, atau naskah kesehatan. English - source extraction and health-claim verification with fact lock for health-promotion videos."
+        },
+        {
+          "skill_name": "promkes-start",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-start",
+          "description": "Gunakan ketika pengguna ingin memulai proyek video explainer promosi kesehatan baru dari poster, infografis, caption, naskah, voice-over, atau audio; lakukan intake, pilih kedalaman dan rute produksi, inventaris variabel, lalu bentuk project brief dan state awal."
+        },
+        {
+          "skill_name": "promkes-storyboard-motion",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-storyboard-motion",
+          "description": "Fase 06-07 pipeline promkes. (S06) Storyboard dan sinematografi - scene contract, shot list, framing, angle, komposisi, fokus, pencahayaan, kontinuitas masuk/keluar, hitung frame dengan FPS dan pembulatan eksplisit; (S07) spesifikasi motion renderer-neutral - state awal, key pose, jalur gerak, timing, easing, transisi, dipisah per kelas (karakter, objek, lingkungan, kamera, transisi). Gunakan setelah screenplay dan style guide terkunci. English - storyboard, scene contracts, and motion specification."
+        },
+        {
+          "skill_name": "promkes-visual-continuity",
+          "source_uri": "skills://plugins/pvee-promkes-super-orchestrator/promkes-visual-continuity",
+          "description": "Fase 05 pipeline promkes. (S05) Master Visual Style Guide - gaya seni, palet, bahasa bentuk, karakter, kostum, ekspresi, pose, lingkungan, properti, pencahayaan, tekstur; (S13) Master Continuity Guide, ID kanonis, version lock, tujuh Guide, dan change-impact. Gunakan untuk mengunci identitas visual dan kontinuitas karakter/lingkungan video explainer kesehatan, atau ketika aset kanonis berubah. English - visual identity, canonical IDs, and continuity locking."
+        }
+      ]
+    }
+  ]
+}

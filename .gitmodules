@@ -1,0 +1,12 @@
+[submodule "plugins/skill-analyzer"]
+	path = plugins/skill-analyzer
+	url = https://github.com/hsaidno-cpu/skill-analyzer.git
+[submodule "plugins/asfree"]
+	path = plugins/asfree
+	url = https://github.com/hsaidno-cpu/A.S.F.R.E.E.git
+[submodule "plugins/anatomi-prompt-strategis"]
+	path = plugins/anatomi-prompt-strategis
+	url = https://github.com/hsaidno-cpu/anatomi-prompt-strategis.git
+[submodule "plugins/video-explainer-promkes"]
+	path = plugins/video-explainer-promkes
+	url = https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR.git
