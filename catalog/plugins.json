@@ -1,0 +1,370 @@
+{
+  "schema_version": "1.0.0",
+  "catalog_revision": "2026-11-22",
+  "expected_plugin_count": 20,
+  "plugins": [
+    {
+      "plugin_key": "video-explainer-promkes-v4-1-12",
+      "display_name": "Video Explainer Promkes V4.1.12",
+      "plugin_creator_id": "Plugin_2c5d40bf09dc8191baf81bad205c8e41",
+      "primary_domain": "health-promotion-video-production",
+      "purpose": "Evidence-controlled health-promotion explainer production, including source and claim control, campaign, screenplay, visual continuity, storyboard, motion, prompt reference, audio, renderer manifest, QA and release gates.",
+      "responsibility_owner": "Owns the end-to-end production pipeline for this product/version.",
+      "boundary": "Does not replace clinical, legal or institutional human approval or guarantee renderer/runtime availability.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": "4.1.12",
+      "version_evidence": "User-supplied plugin identifier; source repository not yet reconciled.",
+      "related_plugins": [
+        "pvee-promkes-super-orchestrator",
+        "godex-motion-audio",
+        "motion-graphic-arifanara-v-01",
+        "ai-prompt-finder-creator"
+      ],
+      "observed_skill_version": "v4.0.9",
+      "version_reconciliation": "Plugin display/identifier supplied as V4.1.12; inspected M00 skill header says v4.0.9. Reconcile against the authoritative source repository before asserting source parity."
+    },
+    {
+      "plugin_key": "skill-developer-orchestrator",
+      "display_name": "Skill Developer Orchestrator",
+      "plugin_creator_id": "Plugin_a5294996e38c8191b8e20b2d9f61447a",
+      "primary_domain": "skill-plugin-lifecycle-engineering",
+      "purpose": "Governed lifecycle for creating, auditing, improving, reconstructing, implementing, testing and releasing AI skills and plugins.",
+      "responsibility_owner": "Owns plugin/skill lifecycle coordination and implementation handoff.",
+      "boundary": "Uses specialist capabilities but does not replace each specialist source-of-truth or claim unavailable runtime invocation.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "Not inspected in an independently identified source repository.",
+      "related_plugins": [
+        "skill-analyzer",
+        "anatomi-prompt-v3-octa-prompt",
+        "evaluator-team",
+        "asfree-canonical",
+        "workflow-systems-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "evaluator-team",
+      "display_name": "Evaluator Team",
+      "plugin_creator_id": "Plugin_be5d3d62da24819189f807692271c1a2",
+      "primary_domain": "independent-skill-evaluation-and-redesign",
+      "purpose": "Coordinated skill evaluation, evidence-led scoring, Octa-Prompt redesign and controlled implementation handoff.",
+      "responsibility_owner": "Owns independent evaluation and accepted redesign assessment.",
+      "boundary": "Does not become a second unrestricted lifecycle controller; source changes must have one implementation owner and an auditable approval path.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated repository identified during this audit.",
+      "related_plugins": [
+        "skill-developer-orchestrator",
+        "skill-analyzer",
+        "anatomi-prompt-v3-octa-prompt"
+      ]
+    },
+    {
+      "plugin_key": "master-photo-restoration",
+      "display_name": "Master Photo Restoration",
+      "plugin_creator_id": "plugins_6ae29cf104e8819195a90b3c2327d83a",
+      "primary_domain": "portrait-photo-restoration",
+      "purpose": "Conservative, identity-preserving portrait restoration and enhancement, including damage cleanup, clarity, tone and natural retouch.",
+      "responsibility_owner": "Owns restoration-specific quality and identity-preservation behavior.",
+      "boundary": "Does not silently change subject identity, age, expression, pose or documentary meaning; reconstructed details remain uncertain.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No matching source repository confirmed.",
+      "related_plugins": [
+        "photo-fixer"
+      ]
+    },
+    {
+      "plugin_key": "anatomi-prompt-v3-octa-prompt",
+      "display_name": "Anatomi Prompt V3.0 — Octa-Prompt",
+      "plugin_creator_id": "plugins_6ae56293e9508191a2149d7ac0fc8501",
+      "primary_domain": "prompt-instruction-architecture",
+      "purpose": "Translate user intent into structured, testable, eight-pillar prompt specifications with authority boundaries, context anchors, workflows, guardrails, recovery, completion and output contracts.",
+      "responsibility_owner": "Owns prompt architecture and Octa-Prompt pillar design.",
+      "boundary": "Designs the prompt; does not execute the downstream task described by the prompt.",
+      "source_repository_id": "anatomi-prompt-strategis",
+      "source_state": "integrated_submodule",
+      "release_version": "3.0.0",
+      "version_evidence": "Private repository README.md, inspected on 2026-11-22.",
+      "related_plugins": [
+        "skill-developer-orchestrator",
+        "evaluator-team",
+        "ai-prompt-finder-creator"
+      ]
+    },
+    {
+      "plugin_key": "skill-analyzer",
+      "display_name": "SKILL ANALYZER",
+      "plugin_creator_id": "plugins_6ae2a122f5c881919193c9b0ba51961e",
+      "primary_domain": "cross-domain-analysis-and-evaluation",
+      "purpose": "Evidence-led analytical system coordinating methodology selection, decomposition, risk review, positive conversion, evidence audit, foresight, evaluation and comparative analysis.",
+      "responsibility_owner": "Owns analytical methods, analytical dossiers, cross-skill evaluation procedures and evidence gates.",
+      "boundary": "Does not claim external research, persistent knowledge services, autonomous agents or runtime tests unless actually available and observed.",
+      "source_repository_id": "skill-analyzer",
+      "source_state": "integrated_submodule",
+      "release_version": "1.3.0",
+      "version_evidence": "Public repository README.md, inspected on 2026-11-22.",
+      "related_plugins": [
+        "asfree-canonical",
+        "skill-developer-orchestrator",
+        "evaluator-team",
+        "agent-skills-atlas"
+      ]
+    },
+    {
+      "plugin_key": "godex-motion-audio",
+      "display_name": "GODEX Motion Audio",
+      "plugin_creator_id": "plugins_6ae564da711c8191a4757bbc4cc20a5b",
+      "primary_domain": "voiceover-to-motion-graphics-production",
+      "purpose": "End-to-end voice-over-to-motion-graphics workflow covering audio intelligence, narrative, art direction, motion design, captions, audio post, rendering and QA.",
+      "responsibility_owner": "Owns integrated voice-over-led motion-graphics production workflow.",
+      "boundary": "Does not itself guarantee ASR, image generation, renderer, cloud execution or MP4 export.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "video-explainer-promkes-v4-1-12",
+        "pvee-promkes-super-orchestrator",
+        "motion-graphic-arifanara-v-01"
+      ]
+    },
+    {
+      "plugin_key": "ai-prompt-finder-creator",
+      "display_name": "AI Prompt Finder & Creator",
+      "plugin_creator_id": "plugins_6ae57d424a2481918295d281919fbb7d",
+      "primary_domain": "reference-to-prompt-engineering",
+      "purpose": "Reconstruct approximate prompts from accessible image/video references and create, optimize or quality-check prompts for target generators.",
+      "responsibility_owner": "Owns reference-driven prompt reconstruction and prompt optimization.",
+      "boundary": "Does not claim to recover hidden original prompts, seeds, models or inaccessible video details.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "anatomi-prompt-v3-octa-prompt",
+        "godex-motion-audio",
+        "motion-graphic-arifanara-v-01",
+        "video-explainer-promkes-v4-1-12"
+      ]
+    },
+    {
+      "plugin_key": "agent-jailbreak-skill-ds",
+      "display_name": "Agent Jailbreak Skill DS",
+      "plugin_creator_id": "plugins_6ae85f228fbc819185f07fe3f8216ea9",
+      "primary_domain": "defensive-agent-security",
+      "purpose": "Defensive AI-agent security orchestration for threat modeling, prompt injection, jailbreak resilience, tool/action authorization, safe red-team fixtures, remediation and incident response.",
+      "responsibility_owner": "Owns defensive agent security and trust-boundary assessment.",
+      "boundary": "Does not provide bypass guidance, live unauthorized testing or guarantees that safeguards can be overridden.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "asfree-canonical",
+        "plugin-agent-orchestrator",
+        "skill-developer-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "motion-graphic-arifanara-v-01",
+      "display_name": "Motion Graphic by arifanara V.01",
+      "plugin_creator_id": "plugins_6ae9780e0f5481919ce74d7db24a6870",
+      "primary_domain": "motion-graphics-production",
+      "purpose": "Complete explainer and motion-graphics production orchestration across brief, assets, voice-over, narrative, visual language, motion, sound, captions, timeline, rendering and QA.",
+      "responsibility_owner": "Owns general motion-graphics project routing and delivery handoff.",
+      "boundary": "Does not replace specialist tools or claim assets/render outputs without evidence.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": "V.01",
+      "version_evidence": "Version label is user-supplied in plugin name; source manifest not inspected.",
+      "related_plugins": [
+        "godex-motion-audio",
+        "video-explainer-promkes-v4-1-12",
+        "pvee-promkes-super-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "plugin-agent-orchestrator",
+      "display_name": "Plugin Agent Orchestrator",
+      "plugin_creator_id": "plugins_6afdf05931ec8191ac2379c848d4ca10",
+      "primary_domain": "ai-agent-lifecycle-and-ecosystem",
+      "purpose": "Agent design, build/operations, ecosystem management, access governance, integration, deployment and scaling orchestration.",
+      "responsibility_owner": "Owns AI-agent product/system lifecycle, separate from general plugin prompt authoring.",
+      "boundary": "Does not provision infrastructure, deploy production, issue billing or publish listings without tools, permissions and approval.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": "2.0",
+      "version_evidence": "Skill content identifies version 2.0; not independently verified against a source repository.",
+      "related_plugins": [
+        "workflow-systems-orchestrator",
+        "asfree-canonical",
+        "agent-jailbreak-skill-ds",
+        "skill-developer-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "photo-fixer",
+      "display_name": "Photo Fixer",
+      "plugin_creator_id": "plugins_6afeb1f444d081918e5e191e062b82ad",
+      "primary_domain": "general-photo-editing",
+      "purpose": "General photo assessment, localized retouch, color/light correction, background/object editing, compositing, product photography, upscaling and quality control.",
+      "responsibility_owner": "Owns general-purpose photo editing orchestration.",
+      "boundary": "Preserves unrequested regions and documentary meaning; editing capability depends on actual image tools.",
+      "source_repository_id": "photo-fixer-candidate",
+      "source_state": "candidate_repository",
+      "release_version": null,
+      "version_evidence": "Repository name matches but its root currently contains only README.md and LICENSE; not verified as full source.",
+      "related_plugins": [
+        "master-photo-restoration"
+      ]
+    },
+    {
+      "plugin_key": "asfree-canonical",
+      "display_name": "A.S.F.R.E.E",
+      "plugin_creator_id": "plugins_6aff3f4ff7d48191a411f6efb0cc435a",
+      "primary_domain": "technical-forensics-and-supervised-engineering",
+      "purpose": "Authorized, evidence-driven technical forensics, architecture decomposition, diagnosis, remediation design, reconstruction, tool adaptation, validation and independent assurance.",
+      "responsibility_owner": "Owns technical case-level forensic orchestration and engineering assurance.",
+      "boundary": "Read-only by default; implementation requires scoped authority; no production readiness or runtime claim without evidence.",
+      "source_repository_id": "asfree",
+      "source_state": "integrated_submodule",
+      "release_version": "0.5.0-rc.1",
+      "version_evidence": "plugin/plugin.json at public repository main, inspected on 2026-11-22; candidate release, not production release.",
+      "related_plugins": [
+        "skill-analyzer",
+        "skill-developer-orchestrator",
+        "agent-jailbreak-skill-ds",
+        "plugin-agent-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "asfree-legacy",
+      "display_name": "A.S.F.R.E.E Legacy",
+      "plugin_creator_id": "plugins_6aff3ad51a408191a8d49b1c6003195b",
+      "primary_domain": "legacy-compatibility-redirect",
+      "purpose": "Compatibility redirect to the canonical A.S.F.R.E.E plugin and its repository.",
+      "responsibility_owner": "Owns redirect-only migration guidance; no new product behavior.",
+      "boundary": "Must not act as a second M00, execute forensics or engineering, maintain parallel schemas, or become a fallback if canonical is unavailable.",
+      "source_repository_id": "asfree",
+      "source_state": "canonical_redirect",
+      "release_version": "1.0.4",
+      "version_evidence": "Legacy redirect skill package metadata; its 1.x version is not the canonical A.S.F.R.E.E product version.",
+      "related_plugins": [
+        "asfree-canonical"
+      ],
+      "alias_of": "asfree-canonical"
+    },
+    {
+      "plugin_key": "cortex-workbench",
+      "display_name": "Cortex Workbench",
+      "plugin_creator_id": "plugins_6aff5719a40081919b30cffcfa7f949e",
+      "primary_domain": "command-driven-knowledge-work",
+      "purpose": "Command-driven workbench for learning, explanation, research, writing, critical thinking, productivity and coding workflows.",
+      "responsibility_owner": "Owns broad knowledge-work command routing and task contracts.",
+      "boundary": "Does not provide native slash-command UI, external APIs or background automation merely through text aliases.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "commandcraft-56",
+        "skill-analyzer",
+        "workflow-systems-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "commandcraft-56",
+      "display_name": "CommandCraft 56",
+      "plugin_creator_id": "plugins_6aff58549e288191a4564e2940493a3b",
+      "primary_domain": "slash-command-workflows",
+      "purpose": "A library of 56 text-based command aliases and specialist work profiles for writing, research, business, career and productivity.",
+      "responsibility_owner": "Owns the 56-alias command registry and resolution rules.",
+      "boundary": "Text aliases are not native platform commands, tools, persistent workflows or background processes.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "cortex-workbench",
+        "growthforge-business-os"
+      ]
+    },
+    {
+      "plugin_key": "agent-skills-atlas",
+      "display_name": "Agent Skills Atlas",
+      "plugin_creator_id": "plugins_6aff5be096648191b70b95d7494684bd",
+      "primary_domain": "cross-domain-skill-catalog-and-adoption",
+      "purpose": "Framework-first capability catalog and staged adoption system with source coverage, domain routing, provenance and lifecycle states.",
+      "responsibility_owner": "Owns capability inventory, skill taxonomy, adoption maturity and provenance.",
+      "boundary": "A mapped/discovered skill is not automatically installed, packaged, host-tested, executable or deployed.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "skill-analyzer",
+        "workflow-systems-orchestrator",
+        "plugin-agent-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "workflow-systems-orchestrator",
+      "display_name": "AI Workflow Systems Orchestrator",
+      "plugin_creator_id": "plugins_6b014289e4208191bbaa159e5ecf2a22",
+      "primary_domain": "workflow-and-project-system-architecture",
+      "purpose": "Design, audit, modularize, standardize, integrate and automate reusable prompts, skills, projects, knowledge systems and operational workflows.",
+      "responsibility_owner": "Owns platform-neutral workflow architecture, module boundaries, handoffs and repeatable operating design.",
+      "boundary": "Does not provision APIs, MCP, databases, schedulers, GitHub permissions or persistent storage merely by describing a workflow.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "plugin-agent-orchestrator",
+        "cortex-workbench",
+        "skill-developer-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "growthforge-business-os",
+      "display_name": "GrowthForge Business OS",
+      "plugin_creator_id": "plugins_6b01ce5f6c388191816eaee46f4598a2",
+      "primary_domain": "business-growth-and-operations",
+      "purpose": "Business strategy, research, finance, brand, product, marketing, sales, customer lifecycle, operations, analytics and learning-product orchestration.",
+      "responsibility_owner": "Owns business-domain analysis and operational deliverables.",
+      "boundary": "Does not provide live CRM, ad buying, payment processing, data feeds or external integrations without connected services.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "commandcraft-56",
+        "cortex-workbench",
+        "workflow-systems-orchestrator"
+      ]
+    },
+    {
+      "plugin_key": "pvee-promkes-super-orchestrator",
+      "display_name": "PVEE Promkes Super Orchestrator",
+      "plugin_creator_id": "plugins_6b029d31109c8191b34f7d50723971cb",
+      "primary_domain": "health-promotion-video-production",
+      "purpose": "Health-first, fact-lock-gated Promkes production orchestration from source dossier and claim verification through screenplay, visual continuity, storyboard/motion, prompt references, audio/subtitles, renderer manifest, QA, governance, evaluation and handoff.",
+      "responsibility_owner": "Owns health-promotion evidence and production lifecycle as the PVEE-specific system.",
+      "boundary": "Not a clinical authority, legal approver or guaranteed video renderer; human institutional and publication decisions remain with authorized people.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "No dedicated source repository identified.",
+      "related_plugins": [
+        "video-explainer-promkes-v4-1-12",
+        "godex-motion-audio",
+        "motion-graphic-arifanara-v-01"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+name: Catalog validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out parent repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate catalog and submodule declarations
+        run: python tools/validate_catalog.py
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v

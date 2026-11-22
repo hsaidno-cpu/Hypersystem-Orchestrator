@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/contracts/plugin-catalog.schema.json",
+  "title": "Hypersystem Plugin Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "catalog_revision", "expected_plugin_count", "plugins"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "catalog_revision": {"type": "string", "format": "date"},
+    "expected_plugin_count": {"type": "integer", "minimum": 1},
+    "plugins": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["plugin_key", "display_name", "plugin_creator_id", "primary_domain", "purpose", "responsibility_owner", "boundary", "source_repository_id", "source_state", "release_version", "version_evidence", "related_plugins"],
+        "properties": {
+          "plugin_key": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+          "display_name": {"type": "string", "minLength": 1},
+          "plugin_creator_id": {"type": "string", "minLength": 1},
+          "primary_domain": {"type": "string", "minLength": 1},
+          "purpose": {"type": "string", "minLength": 1},
+          "responsibility_owner": {"type": "string", "minLength": 1},
+          "boundary": {"type": "string", "minLength": 1},
+          "source_repository_id": {"type": ["string", "null"]},
+          "source_state": {"enum": ["integrated_submodule", "candidate_repository", "pending_repository", "canonical_redirect"]},
+          "release_version": {"type": ["string", "null"]},
+          "version_evidence": {"type": "string"},
+          "observed_skill_version": {"type": "string"},
+          "version_reconciliation": {"type": "string"},
+          "alias_of": {"type": "string"},
+          "related_plugins": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}
