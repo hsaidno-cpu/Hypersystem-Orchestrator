@@ -46,7 +46,7 @@
       "display_name": "Skill Developer Orchestrator",
       "plugin_creator_id": "Plugin_a5294996e38c8191b8e20b2d9f61447a",
       "primary_domain": "skill-plugin-lifecycle-engineering",
-      "purpose": "Lifecycle engineering controller for AI skills and plugins: intake, capability readiness, baseline, accepted architecture, controlled implementation, regression, independent verification, repository handoff and release preparation.",
+      "purpose": "Owns the engineering lifecycle for AI skills and plugins: intake, capability readiness, baseline, accepted architecture, controlled implementation, regression, independent verification, repository handoff and release preparation.",
       "responsibility_owner": "Owns the end-to-end engineering lifecycle and integration of skill/plugin source changes.",
       "boundary": "Does not own independent evaluation judgement or final scoring of its own work. Use Evaluator Team for an independent assessment; SDO receives accepted findings and drives the engineering lifecycle.",
       "source_repository_id": null,
