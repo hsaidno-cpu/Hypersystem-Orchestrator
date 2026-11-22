@@ -80,7 +80,9 @@ def validate():
         required = [
             "display_name", "plugin_creator_id", "primary_domain", "purpose",
             "responsibility_owner", "boundary", "source_state",
-            "version_evidence", "related_plugins",
+            "version_evidence", "related_plugins", "source_classification",
+            "instruction_snapshot_path", "instruction_capture_date",
+            "instruction_source_authority",
         ]
         for field in required:
             if not plugin.get(field):
@@ -109,6 +111,21 @@ def validate():
                 fail(f"{key}: canonical redirect must point to a registered alias_of target")
             if alias == key:
                 fail(f"{key}: alias cannot point to itself")
+        if not plugin.get("primary_triggers") or not plugin.get("negative_triggers"):
+            fail(f"{key}: positive and negative routing triggers are required")
+        if not isinstance(plugin.get("instruction_skill_count"), int) or plugin["instruction_skill_count"] < 1:
+            fail(f"{key}: instruction_skill_count must be a positive integer")
+        snapshot_path = ROOT / plugin["instruction_snapshot_path"]
+        if not snapshot_path.is_file():
+            fail(f"{key}: instruction snapshot path is missing: {plugin['instruction_snapshot_path']}")
+        if state == "pending_repository" and plugin.get("source_classification") != "NOT_IDENTIFIED":
+            fail(f"{key}: pending repository must use NOT_IDENTIFIED classification")
+        if state == "candidate_repository" and plugin.get("source_classification") != "CANDIDATE_INCOMPLETE":
+            fail(f"{key}: candidate source must use CANDIDATE_INCOMPLETE classification")
+        if state == "canonical_redirect" and plugin.get("source_classification") != "LEGACY_REDIRECT":
+            fail(f"{key}: canonical redirect must use LEGACY_REDIRECT classification")
+        if state == "integrated_submodule" and not plugin.get("source_classification", "").startswith("OFFICIAL_"):
+            fail(f"{key}: integrated submodule must use an OFFICIAL source classification")
         for related in plugin.get("related_plugins", []):
             if related not in plugin_key_set:
                 fail(f"{key}: unknown related plugin '{related}'")
@@ -129,11 +146,30 @@ def validate():
     if len(submodules) != 3:
         fail(f"Expected 3 verified source submodules at this stage, found {len(submodules)}")
 
+    snapshot_index = load_json(ROOT / "catalog" / "instruction-snapshots.json")
+    if len(snapshot_index.get("plugins", [])) != len(plugins):
+        fail("Instruction snapshot index must contain all 20 plugin identities")
+    if snapshot_index.get("total_skill_records") != sum(p["instruction_skill_count"] for p in plugins):
+        fail("Instruction snapshot skill total does not match the plugin catalog")
+    index_by_key = {p["plugin_key"]: p for p in snapshot_index["plugins"]}
+    for plugin in plugins:
+        indexed = index_by_key.get(plugin["plugin_key"])
+        if not indexed:
+            fail(f"{plugin['plugin_key']}: missing instruction snapshot index record")
+        if indexed.get("skill_count") != plugin["instruction_skill_count"]:
+            fail(f"{plugin['plugin_key']}: instruction snapshot skill count mismatch")
+        if indexed.get("instruction_path") != plugin["instruction_snapshot_path"]:
+            fail(f"{plugin['plugin_key']}: instruction snapshot path mismatch")
+    if snapshot_index["total_skill_records"] != 238:
+        fail("Expected 238 instruction skill records in the current snapshot")
+
     print(f"PASS: {len(plugins)} unique plugin identities")
     print(f"PASS: {len(repositories)} repository records")
     print(f"PASS: {len(submodules)} declared and pinned source submodules")
     print("PASS: source-state, alias, relationship and repository URL consistency")
-    print("NOTE: static catalog validation does not prove host activation or runtime execution")
+    print("PASS: every plugin has a segregated instruction snapshot/pointer and explicit routing boundaries")
+    print(f"PASS: {snapshot_index['total_skill_records']} indexed skill instruction records across {len(plugins)} plugins")
+    print("NOTE: static checks do not prove host activation or runtime execution")
 
 
 if __name__ == "__main__":

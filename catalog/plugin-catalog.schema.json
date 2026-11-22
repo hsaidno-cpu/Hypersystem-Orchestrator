@@ -4,34 +4,180 @@
   "title": "Hypersystem Plugin Catalog",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "catalog_revision", "expected_plugin_count", "plugins"],
+  "required": [
+    "schema_version",
+    "catalog_revision",
+    "expected_plugin_count",
+    "plugins"
+  ],
   "properties": {
-    "schema_version": {"type": "string"},
-    "catalog_revision": {"type": "string", "format": "date"},
-    "expected_plugin_count": {"type": "integer", "minimum": 1},
+    "schema_version": {
+      "type": "string"
+    },
+    "catalog_revision": {
+      "type": "string",
+      "format": "date"
+    },
+    "expected_plugin_count": {
+      "type": "integer",
+      "minimum": 1
+    },
     "plugins": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["plugin_key", "display_name", "plugin_creator_id", "primary_domain", "purpose", "responsibility_owner", "boundary", "source_repository_id", "source_state", "release_version", "version_evidence", "related_plugins"],
+        "required": [
+          "plugin_key",
+          "display_name",
+          "plugin_creator_id",
+          "primary_domain",
+          "purpose",
+          "responsibility_owner",
+          "boundary",
+          "source_repository_id",
+          "source_state",
+          "release_version",
+          "version_evidence",
+          "related_plugins",
+          "source_classification",
+          "primary_triggers",
+          "negative_triggers",
+          "instruction_snapshot_path",
+          "instruction_skill_count",
+          "instruction_capture_date",
+          "instruction_source_authority"
+        ],
         "properties": {
-          "plugin_key": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
-          "display_name": {"type": "string", "minLength": 1},
-          "plugin_creator_id": {"type": "string", "minLength": 1},
-          "primary_domain": {"type": "string", "minLength": 1},
-          "purpose": {"type": "string", "minLength": 1},
-          "responsibility_owner": {"type": "string", "minLength": 1},
-          "boundary": {"type": "string", "minLength": 1},
-          "source_repository_id": {"type": ["string", "null"]},
-          "source_state": {"enum": ["integrated_submodule", "candidate_repository", "pending_repository", "canonical_redirect"]},
-          "release_version": {"type": ["string", "null"]},
-          "version_evidence": {"type": "string"},
-          "observed_skill_version": {"type": "string"},
-          "version_reconciliation": {"type": "string"},
-          "alias_of": {"type": "string"},
-          "related_plugins": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+          "plugin_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "display_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "plugin_creator_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "primary_domain": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "responsibility_owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "boundary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_repository_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_state": {
+            "enum": [
+              "integrated_submodule",
+              "candidate_repository",
+              "pending_repository",
+              "canonical_redirect"
+            ]
+          },
+          "release_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version_evidence": {
+            "type": "string"
+          },
+          "observed_skill_version": {
+            "type": "string"
+          },
+          "version_reconciliation": {
+            "type": "string"
+          },
+          "alias_of": {
+            "type": "string"
+          },
+          "related_plugins": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_classification": {
+            "enum": [
+              "OFFICIAL_SUBMODULE",
+              "OFFICIAL_SUBMODULE_LICENSE_NOT_FOUND",
+              "OFFICIAL_SUBMODULE_POLYFORM_NONCOMMERCIAL",
+              "OFFICIAL_PRIVATE_SUBMODULE",
+              "OFFICIAL_PRIVATE_SUBMODULE_LICENSE_NOT_FOUND",
+              "CANDIDATE_INCOMPLETE",
+              "NOT_IDENTIFIED",
+              "LEGACY_REDIRECT"
+            ]
+          },
+          "primary_triggers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "negative_triggers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "instruction_snapshot_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instruction_skill_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "instruction_capture_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "instruction_source_authority": {
+            "enum": [
+              "CANONICAL_REPOSITORY_SOURCE",
+              "RUNTIME_INSTRUCTION_SNAPSHOT",
+              "LEGACY_RUNTIME_REDIRECT_SNAPSHOT"
+            ]
+          },
+          "target_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version_reconciliation_status": {
+            "enum": [
+              "TARGET_SELECTED_SOURCE_SYNC_PENDING",
+              "SOURCE_VERIFIED_IN_SYNC",
+              "NO_CONFLICT",
+              "NOT_VERIFIED"
+            ]
+          }
         }
       }
     }

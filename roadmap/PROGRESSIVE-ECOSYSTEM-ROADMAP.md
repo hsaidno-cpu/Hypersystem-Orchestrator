@@ -90,3 +90,25 @@ This roadmap is staged by evidence and dependencies, not by arbitrary calendar p
 ## Progress semantics
 
 Use PLANNED, IN_PROGRESS, BLOCKED, PARTIAL, VERIFIED and ACCEPTED with evidence. A roadmap item is not complete because a document was written. Each stage requires its own exit evidence and accountable human acceptance.
+
+
+## E0.1 — Instruction vault and responsibility positioning
+
+**Status:** Central design and snapshot capture implemented in the working branch; PR review pending.
+
+- Twenty plugin identities have explicit positioning and primary/negative routing triggers.
+- A segregated instruction vault now has one directory per plugin.
+- 238 installed skill definitions are indexed. Sixteen packages have complete runtime instruction bundles; three source-backed packages remain represented by canonical submodules; A.S.F.R.E.E Legacy is redirect-only.
+- The catalog distinguishes canonical source, runtime snapshot, incomplete candidate and legacy redirect.
+- Static validation now checks snapshot paths, counts, source classifications and routing boundaries.
+
+**Exit evidence:** complete instruction snapshot index, per-plugin isolation, catalog validation and unit tests. This does not establish host/runtime activation.
+
+## E1.1 — Positioning-to-source alignment
+
+Use [PLUGIN-SOURCE-ALIGNMENT-BACKLOG.md](PLUGIN-SOURCE-ALIGNMENT-BACKLOG.md) as the single prioritized backlog. The central responsibility decisions are accepted as the parent baseline, but source-level alignment remains pending until each canonical child repository is identified and changed.
+
+## E1.2 — Version source reconciliation
+
+Video Explainer V4.1.12 is the target selected over installed M00 header v4.0.9. Source synchronization remains pending because the canonical V4.1.12 repository and manifest are not verified. See [VERSION-RECONCILIATION.md](../docs/VERSION-RECONCILIATION.md).
+

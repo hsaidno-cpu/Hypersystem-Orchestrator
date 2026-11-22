@@ -68,6 +68,38 @@ The machine-readable identities and statuses are in [catalog/plugins.json](catal
 - tools/ — repository-local validation scripts.
 - tests/ — standard-library checks for catalog integrity.
 - .github/workflows/ — automated static catalog checks.
+- plugin-instructions/ — one isolated instruction bundle or source pointer per plugin (20 plugin folders, 238 skill records indexed).
+
+## Complete plugin instruction vault
+
+The parent now includes an isolated instruction boundary for every registered plugin:
+
+- 16 complete runtime instruction bundles for packages whose canonical Git source repository has not yet been verified or whose repository is an incomplete candidate.
+- 3 canonical source-backed packages are represented by their own Git submodules and per-plugin source-of-truth records.
+- 1 A.S.F.R.E.E Legacy redirect-only snapshot points to the canonical package.
+- The machine-readable index records **238 skill definitions** across the 20 plugin identities.
+
+Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect the [instruction snapshot index](catalog/instruction-snapshots.json). Each bundle is kept in its own plugin directory. These snapshots do not merge source ownership or replace the canonical plugin repository. See [snapshot synchronization governance](governance/SNAPSHOT-SYNCHRONIZATION.md).
+
+## Distinct plugin positioning
+
+The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architecture/PLUGIN-POSITIONING.md). Core separations:
+
+- SKILL ANALYZER owns general analytical methodology; A.S.F.R.E.E owns forensic anatomy of AI plugins and controlled reconstruction.
+- Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
+- Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and turns it into a prompt.
+- Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
+- GODEX owns audio/voice-over truth and post; Motion Graphic owns general visual-first animation; PVEE owns health communication truth/governance; Video Explainer owns the technical production engine after PVEE approval.
+
+The central catalog includes positive and negative routing triggers for all 20 plugins. Overlap is resolved by a single owner for each final decision and explicit handoffs.
+
+## Version reconciliation
+
+Video Explainer Promkes V4.1.12 is selected as the target version because it is higher than the installed M00 header v4.0.9. The canonical source repository and manifest for V4.1.12 have not yet been identified. The catalog therefore records target_version 4.1.12 and leaves release_version unset until source verification and tests are complete. See [VERSION-RECONCILIATION.md](docs/VERSION-RECONCILIATION.md).
+
+## Source inventory
+
+The owner account currently exposes six repositories. Three plugin source repositories are verified/pinned, Photo-Fixer remains an incomplete candidate, HSMART is a related platform, and 15 plugin source repositories remain unidentified. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). A runtime instruction snapshot is not an official source repository.
 
 ## Architecture principles
 
