@@ -61,10 +61,10 @@ The machine-readable identities and statuses are in [catalog/plugins.json](catal
 
 - catalog/ — plugin identity, source repository inventory and lifecycle state.
 - plugins/ — pinned Git submodules; source code remains in each independent repository.
-- architecture/ — system boundary, responsibility matrix, dependency and integration topology.
+- architecture/ — system boundary, responsibility matrix, positioning, routing and integration topology.
 - contracts/ — registration schema and standard handoff expectations.
 - governance/ — contribution, authority, security, versioning and release rules.
-- roadmap/ — progressive stages and evidence-based exit criteria.
+- roadmap/ — progressive stages, source-repository onboarding backlog and evidence-based exit criteria.
 - tools/ — repository-local validation scripts.
 - tests/ — standard-library checks for catalog integrity.
 - .github/workflows/ — automated static catalog checks.
@@ -75,7 +75,7 @@ The machine-readable identities and statuses are in [catalog/plugins.json](catal
 The parent now includes an isolated instruction boundary for every registered plugin:
 
 - 16 complete runtime instruction bundles for packages whose canonical Git source repository has not yet been verified or whose repository is an incomplete candidate.
-- 3 canonical source-backed packages are represented by their own Git submodules and per-plugin source-of-truth records.
+- 4 official source repositories are pinned as Git submodules; the Video Explainer source pin is explicitly marked behind its current 4.1.12 deployment.
 - 1 A.S.F.R.E.E Legacy redirect-only snapshot points to the canonical package.
 - The machine-readable index records **238 skill definitions** across the 20 plugin identities.
 
@@ -83,7 +83,7 @@ Start at [plugin-instructions/README.md](plugin-instructions/README.md) and insp
 
 ## Distinct plugin positioning
 
-The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architecture/PLUGIN-POSITIONING.md). Core separations:
+The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architecture/PLUGIN-POSITIONING.md) and [ROUTING-AND-NON-DUPLICATION-OVERRIDES.md](architecture/ROUTING-AND-NON-DUPLICATION-OVERRIDES.md). Core separations:
 
 - SKILL ANALYZER owns general analytical methodology; A.S.F.R.E.E owns forensic anatomy of AI plugins and controlled reconstruction.
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
@@ -95,11 +95,11 @@ The central catalog includes positive and negative routing triggers for all 20 p
 
 ## Version reconciliation
 
-Video Explainer Promkes V4.1.12 is selected as the target version because it is higher than the installed M00 header v4.0.9. The canonical source repository and manifest for V4.1.12 have not yet been identified. The catalog therefore records target_version 4.1.12 and leaves release_version unset until source verification and tests are complete. See [VERSION-RECONCILIATION.md](docs/VERSION-RECONCILIATION.md).
+The repository records Plugin Creator package versions separately from canonical Git source versions and embedded skill-header versions. Verified mismatches: Video Explainer deployment 4.1.12 vs Git source 4.1.9 (M00 internal header v4.0.9); SKILL ANALYZER Git source 1.3.0 vs Plugin Creator package 1.0.0; A.S.F.R.E.E Git source 0.5.0-rc.1 vs Plugin Creator package 0.3.2. Anatomi Prompt is aligned at 3.0.0. See [PACKAGE-VERSION-MATRIX.md](docs/PACKAGE-VERSION-MATRIX.md) and [VERSION-RECONCILIATION.md](docs/VERSION-RECONCILIATION.md).
 
 ## Source inventory
 
-The owner account currently exposes six repositories. Three plugin source repositories are verified/pinned, Photo-Fixer remains an incomplete candidate, HSMART is a related platform, and 15 plugin source repositories remain unidentified. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). A runtime instruction snapshot is not an official source repository.
+The connected owner account exposes six repositories; four canonical plugin sources are verified/pinned, including the externally owned official Video Explainer source. Photo-Fixer remains an incomplete candidate, HSMART is a related platform, and 14 plugin source repositories remain unidentified at GitHub-source level. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md) and [SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md](roadmap/SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md). An instruction snapshot is not a canonical source repository.
 
 ## Architecture principles
 
