@@ -110,7 +110,7 @@ The workflow validates JSON syntax, unique identities, repository references, so
 
 ## Notion project documentation
 
-The detailed project architecture, plugin inventory, source-state register, ownership matrix, decisions, roadmap and integration procedures are documented in the associated Notion project documentation. GitHub remains authoritative for versioned engineering artifacts; Notion is the project knowledge and navigation layer.
+Read the [Notion project documentation](docs/NOTION-DOCUMENTATION.md) for the detailed ecosystem architecture, plugin inventory, source-state register, responsibility matrix, decisions, roadmap and operational procedures. The detailed Notion knowledge page is a private draft in the connected workspace. GitHub remains authoritative for versioned engineering artifacts; Notion is the project knowledge and navigation layer.
 
 ## Status language
 
