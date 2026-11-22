@@ -102,5 +102,29 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(by_key["asfree-legacy"]["source_classification"], "LEGACY_REDIRECT")
         self.assertEqual(by_key["asfree-legacy"]["alias_of"], "asfree-canonical")
 
+
+    def test_compatibility_matrix_has_unique_edges_and_no_runtime_overclaim(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        matrix = json.loads((ROOT / "catalog" / "compatibility-matrix.json").read_text(encoding="utf-8"))
+        keys = {p["plugin_key"] for p in catalog["plugins"]}
+        edges = matrix["integrations"]
+        ids = [e["integration_id"] for e in edges]
+        self.assertEqual(len(edges), matrix["integration_count"])
+        self.assertEqual(len(ids), len(set(ids)))
+        for edge in edges:
+            self.assertIn(edge["producer_plugin"], keys)
+            self.assertIn(edge["consumer_plugin"], keys)
+            self.assertIn(edge["canonical_truth_owner"], keys)
+            self.assertTrue(edge["input_artifacts"])
+            self.assertTrue(edge["output_artifact"])
+            self.assertEqual(edge["contract_version"], "1.0.0")
+            self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
+            self.assertEqual(edge["host_activation_test"], "NOT_RUN")
+        by_id = {e["integration_id"]: e for e in edges}
+        self.assertEqual(by_id["INT-PVEE-VIDEO-001"]["canonical_truth_owner"], "pvee-promkes-super-orchestrator")
+        self.assertEqual(by_id["INT-EVALUATOR-SDO-001"]["consumer_plugin"], "skill-developer-orchestrator")
+        self.assertEqual(by_id["INT-PHOTO-RESTORE-ROUTE-001"]["handoff_type"], "ROUTING_OVERRIDE")
+        self.assertEqual(by_id["INT-GODEX-MOTION-001"]["canonical_truth_owner"], "godex-motion-audio")
+
 if __name__ == "__main__":
     unittest.main()

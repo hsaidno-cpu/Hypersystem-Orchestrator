@@ -185,6 +185,26 @@ def validate():
     print("PASS: source-state, alias, relationship and repository URL consistency")
     print("PASS: every plugin has a segregated instruction snapshot/pointer and explicit routing boundaries")
     print(f"PASS: {snapshot_index['total_skill_records']} indexed skill instruction records across {len(plugins)} plugins")
+
+    compatibility = load_json(ROOT / "catalog" / "compatibility-matrix.json")
+    integration_edges = compatibility.get("integrations")
+    if not isinstance(integration_edges, list) or len(integration_edges) != compatibility.get("integration_count"):
+        fail("Compatibility matrix integration_count does not match entries")
+    integration_ids = [edge.get("integration_id") for edge in integration_edges]
+    if len(integration_ids) != len(set(integration_ids)):
+        fail("Duplicate compatibility integration_id detected")
+    for edge in integration_edges:
+        for field in ["producer_plugin","consumer_plugin","canonical_truth_owner","purpose","input_artifacts","output_artifact","contract_version","handoff_type","runtime_execution_test","host_activation_test"]:
+            if not edge.get(field):
+                fail(f"Compatibility edge {edge.get('integration_id')}: missing {field}")
+        for owner_field in ["producer_plugin","consumer_plugin","canonical_truth_owner"]:
+            if edge[owner_field] not in plugin_key_set:
+                fail(f"Compatibility edge {edge['integration_id']}: unknown {owner_field}")
+        if edge["runtime_execution_test"] not in {"NOT_RUN","PASS","FAIL"} or edge["host_activation_test"] not in {"NOT_RUN","PASS","FAIL"}:
+            fail(f"Compatibility edge {edge['integration_id']}: invalid test state")
+    if len(integration_edges) != 14:
+        fail("Expected 14 defined compatibility edges for the current matrix")
+    print(f"PASS: {len(integration_edges)} cross-plugin compatibility edges with explicit ownership and test states")
     print("NOTE: static checks do not prove host activation or runtime execution")
 
 
