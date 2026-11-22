@@ -191,7 +191,7 @@ The remaining plugins retain the bounded positions documented in PLUGIN-POSITION
 
 The parent now includes a segregated instruction vault under plugin-instructions/. Its directory boundary is one plugin per folder. It does not convert the ecosystem into a monorepo and does not transfer the source repository's ownership.
 
-- 16 runtime instruction bundles cover the 15 NOT_IDENTIFIED plugins plus Photo Fixer, whose repository is an incomplete candidate.
+- 15 runtime instruction bundles plus one current Plugin Creator release snapshot cover the 15 NOT_IDENTIFIED plugins plus Photo Fixer, whose repository is an incomplete candidate.
 - Three source-backed plugins are represented by their own pinned submodules and source-pointer records.
 - A.S.F.R.E.E Legacy has one redirect-only snapshot.
 - The catalog/instruction-snapshots.json index contains 238 skill instruction records.

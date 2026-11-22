@@ -11,10 +11,10 @@
       "purpose": "Renderer-neutral production engine for health-promotion explainer media. Converts an approved PVEE health-truth/campaign handoff into visual identity, storyboard, motion, prompt references, audio/scene timing, renderer manifest, production QA and technical delivery.",
       "responsibility_owner": "Owns the technical media-production compiler and renderer-ready package after PVEE content approval.",
       "boundary": "Does not own the final health-truth registry, clinical judgement, behavior-change strategy or institutional publication approval; those belong to PVEE and authorized humans. Production source version 4.1.12 is the selected target, but source parity remains pending.",
-      "source_repository_id": null,
-      "source_state": "pending_repository",
-      "release_version": null,
-      "version_evidence": "User identified V4.1.12 as the highest target; installed M00 skill header inspected on 2026-11-22 reports v4.0.9. Source repository/manifest for 4.1.12 not yet identified, so do not claim release synchronization complete.",
+      "source_repository_id": "video-explainer-promkes",
+      "source_state": "integrated_submodule",
+      "release_version": "4.1.12",
+      "version_evidence": "Plugin Creator exact-ID metadata/current release list verify current deployment 4.1.12, release pluginrel_6b02a0f630208191b71ad994703aed68 created 2026-11-22T07:59:50.188086Z. Public GitHub source plugin.json and README at pinned main commit confirm 4.1.9. Installed M00 header v4.0.9 is an older runtime observation.",
       "related_plugins": [
         "pvee-promkes-super-orchestrator",
         "godex-motion-audio",
@@ -33,13 +33,19 @@
         "Set clinical policy or institutional publication approval",
         "Produce generic non-health motion graphics without a Promkes scope"
       ],
-      "source_classification": "NOT_IDENTIFIED",
+      "source_classification": "OFFICIAL_PUBLIC_SOURCE_LAGGING",
       "instruction_snapshot_path": "plugin-instructions/video-explainer-promkes-v4-1-12/INSTRUCTIONS-BUNDLE.md",
       "instruction_skill_count": 16,
       "instruction_capture_date": "2026-11-22",
-      "instruction_source_authority": "RUNTIME_INSTRUCTION_SNAPSHOT",
+      "instruction_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT",
       "target_version": "4.1.12",
-      "version_reconciliation_status": "TARGET_SELECTED_SOURCE_SYNC_PENDING"
+      "version_reconciliation_status": "DEPLOYED_RELEASE_VERIFIED_SOURCE_BEHIND",
+      "source_repository_version": "4.1.9",
+      "deployed_plugin_version": "4.1.12",
+      "plugin_creator_current_release_id": "pluginrel_6b02a0f630208191b71ad994703aed68",
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE",
+      "source_sync_status": "SOURCE_BEHIND_DEPLOYED_RELEASE"
     },
     {
       "plugin_key": "skill-developer-orchestrator",

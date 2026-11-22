@@ -46,3 +46,8 @@ DISCOVER → IDENTIFY → CLASSIFY → VERIFY MANIFEST/LICENSE/VERSION/COMMIT �
 ## Parent repository ownership boundary
 
 The parent owns only the catalog, routing matrix, contracts, governance, integration compatibility and snapshot index. Child plugin repositories keep their own package implementation, internal architecture and version/release lifecycle.
+
+
+## Video Explainer version exception
+
+Video Explainer's current Plugin Creator release is 4.1.12; the public GitHub source submodule is pinned at 4.1.9 and marked as lagging. A 16-skill instruction-only snapshot from the exact current Plugin Creator release is stored in its dedicated plugin folder. This is not a complete package mirror.

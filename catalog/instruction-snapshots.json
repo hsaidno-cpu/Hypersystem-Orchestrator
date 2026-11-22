@@ -6,7 +6,7 @@
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
       "instruction_path": "plugin-instructions/video-explainer-promkes-v4-1-12/INSTRUCTIONS-BUNDLE.md",
-      "origin": "runtime_snapshot",
+      "origin": "official_plugin_creator_release_snapshot",
       "skill_count": 16,
       "skills": [
         {
@@ -89,7 +89,10 @@
           "source_uri": "skills://plugins/video-explainer-promkes-renderer-engine/voice-audio-intelligence",
           "description": "Use when inspecting supplied Promkes audio, transcript, timing, VO performance, subtitle cues, SFX, music or audio post requirements."
         }
-      ]
+      ],
+      "plugin_creator_release_id": "pluginrel_6b02a0f630208191b71ad994703aed68",
+      "package_version": "4.1.12",
+      "git_source_version": "4.1.9"
     },
     {
       "plugin_key": "skill-developer-orchestrator",

@@ -19,7 +19,7 @@ class CatalogValidationTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
         self.assertIn("PASS: 20 unique plugin identities", result.stdout)
-        self.assertIn("PASS: 3 declared and pinned source submodules", result.stdout)
+        self.assertIn("PASS: 4 declared and pinned source submodules", result.stdout)
         self.assertIn("PASS: 238 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):

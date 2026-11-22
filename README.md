@@ -20,7 +20,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 The registry contains **20 plugin identities** supplied for this ecosystem.
 
-Three verified source repositories are pinned as Git submodules:
+Four verified source repositories are pinned as Git submodules (one public source remains behind its current Plugin Creator deployment):
 
 | Plugin / source | Repository | Visibility | Pinned source |
 |---|---|---|---|

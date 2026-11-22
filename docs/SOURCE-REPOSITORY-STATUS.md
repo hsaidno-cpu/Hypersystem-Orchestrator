@@ -43,13 +43,12 @@ This is an inventory of repositories visible through the current connection, not
 | HSMART | RELATED_PLATFORM | Separate repository and existing HSMART project headquarters | Keep outside the 20-plugin registry and do not mix as a plugin submodule |
 | Hypersystem-Orchestrator | CENTRAL_ECOSYSTEM | Current parent repository | Owns central catalog, contracts, positioning, governance and roadmap |
 
-No confirmed mirror or prototype repository was found in the inspected set. Do not invent those classifications for unidentified sources.
+Video Explainer is classified OFFICIAL_PUBLIC_SOURCE_LAGGING because the public source remains 4.1.9 and the deployment is 4.1.12. No confirmed mirror or prototype repository was found in the inspected set. Do not invent those classifications for unidentified sources.
 
-## 4. Fifteen plugin sources still not identified
+## 4. Fourteen plugin sources still not identified
 
-The following plugin identities remain NOT_IDENTIFIED at repository-source level:
+The following fourteen plugin identities remain NOT_IDENTIFIED at repository-source level:
 
-1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
 3. Evaluator Team
 4. Master Photo Restoration
@@ -65,12 +64,12 @@ The following plugin identities remain NOT_IDENTIFIED at repository-source level
 14. GrowthForge Business OS
 15. PVEE Promkes Super Orchestrator
 
-The parent includes a complete isolated instruction snapshot for the currently installed package of each. These snapshots are useful for inspection and continuity; they are **not** official Git source repositories or source-released packages.
+Video Explainer has a verified public GitHub source pinned at 4.1.9 and a current Plugin Creator deployment verified at 4.1.12. The parent includes 16 current SKILL.md instructions from that release. The fourteen NOT_IDENTIFIED packages plus the Photo Fixer candidate have runtime instruction snapshots; these do not replace canonical source.
 
 ## 5. Instruction snapshot inventory
 
 - 16 isolated runtime-snapshot bundles cover the 15 NOT_IDENTIFIED plugins plus Photo Fixer (candidate/incomplete source).
-- Three canonical source plugins are represented by their own submodules and per-plugin source-pointer records.
+- Four source-backed plugins are represented by their own submodules and per-plugin source-pointer records.
 - A.S.F.R.E.E Legacy is captured as one redirect-only snapshot.
 - 238 skill records are indexed in catalog/instruction-snapshots.json.
 - No snapshot merges two plugin packages or changes their independent identity.

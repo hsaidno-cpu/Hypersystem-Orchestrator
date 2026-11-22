@@ -95,6 +95,29 @@
       "verified_artifact": "Existing Notion HSMART Project Headquarters identifies HSMART as a separate Universal AI Ecosystem Infrastructure Platform. It is not one of the 20 plugins in this registry.",
       "source_classification": "RELATED_PLATFORM",
       "notes": "Separate Universal AI Ecosystem Infrastructure Platform. Not one of the 20 plugins and not a plugin source repository."
+    },
+    {
+      "repository_id": "video-explainer-promkes",
+      "full_name": "promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
+      "url": "https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
+      "visibility": "public",
+      "default_branch": "main",
+      "role": "plugin_source",
+      "status": "integrated_submodule",
+      "source_classification": "OFFICIAL_PUBLIC_SOURCE_LAGGING",
+      "pinned_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
+      "submodule_path": "plugins/video-explainer-promkes",
+      "package_version": "4.1.9",
+      "package_version_evidence": [
+        "plugin.json at main",
+        "README.md at main"
+      ],
+      "deployed_plugin_creator_version": "4.1.12",
+      "plugin_creator_id": "Plugin_2c5d40bf09dc8191baf81bad205c8e41",
+      "plugin_creator_current_release_id": "pluginrel_6b02a0f630208191b71ad994703aed68",
+      "plugin_creator_visibility": "PRIVATE",
+      "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
+      "notes": "Current Plugin Creator deployment is 4.1.12 while public GitHub source is 4.1.9. Pinned as official source but explicitly marked behind. Parent contains only the 16 current SKILL.md instructions at owner's request; binaries and unrelated assets are excluded."
     }
   ],
   "search_scope": {
@@ -110,6 +133,16 @@
       "anatomi-prompt-strategis"
     ],
     "result": "No additional official source repository was verified for the 15 plugins listed as NOT_IDENTIFIED.",
-    "classification_rule": "A name-similar repository, search result owned by another account, prototype or mirror is not accepted as canonical without identity, provenance, manifest, license and source-history evidence."
+    "classification_rule": "A name-similar repository, search result owned by another account, prototype or mirror is not accepted as canonical without identity, provenance, manifest, license and source-history evidence.",
+    "external_official_source_repositories": [
+      {
+        "repository_id": "video-explainer-promkes",
+        "full_name": "promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
+        "identity_evidence": "Plugin Creator release audit/source-tree parity documentation identifies this exact GitHub repository; README and plugin.json authors and package domain match the Promkes explainer.",
+        "source_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
+        "source_version": "4.1.9",
+        "deployed_plugin_creator_version": "4.1.12"
+      }
+    ]
   }
 }

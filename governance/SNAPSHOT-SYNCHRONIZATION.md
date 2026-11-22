@@ -50,3 +50,8 @@ The index contains 238 skill records across 20 plugin identities:
 - 1 skill document represents the A.S.F.R.E.E Legacy redirect.
 
 This is a complete snapshot of the skill definitions visible to the current connected registry at capture time, not proof that hidden, inaccessible, unpublished or future package files are included.
+
+
+## Video Explainer current release exception
+
+The Video Explainer instruction bundle is captured from current Plugin Creator release 4.1.12 (release ID pluginrel_6b02a0f630208191b71ad994703aed68). Scope USER and discoverability PRIVATE. At the owner's explicit request, the parent contains only 16 SKILL.md instruction files, not binary assets or unrelated package files. The public GitHub source is pinned at 4.1.9; source/deployment parity is not claimed.

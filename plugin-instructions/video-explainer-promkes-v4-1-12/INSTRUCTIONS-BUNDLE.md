@@ -1,17 +1,27 @@
-# video-explainer-promkes-v4-1-12 — Instruction Snapshot
+# Video Explainer Promkes — Instruction Snapshot 4.1.12
 
-- Snapshot date: 2026-11-22
-- Snapshot origin: installed plugin skill registry
-- Skills captured: 16
-- Authority: read-only snapshot. This is not a verified Git source mirror.
-- Version reconciliation: plugin label is V4.1.12; retrieved M00 header reports v4.0.9. The target version is V4.1.12, but source/package parity remains unverified.
+- Plugin Creator ID: Plugin_2c5d40bf09dc8191baf81bad205c8e41
+- Plugin name: video-explainer-promkes-renderer-engine
+- Current release ID: pluginrel_6b02a0f630208191b71ad994703aed68
+- Verified current Plugin Creator version: 4.1.12
+- Release created: 2026-11-22T07:59:50.188086Z
+- Scope: USER
+- Discoverability: PRIVATE at source platform
+- Capture date: 2026-11-22
+- Skills included: 16
+- Provenance: complete SKILL.md instruction bodies retrieved from the current Plugin Creator release 4.1.12.
+- Publication note: this instruction-only snapshot is included in the public parent repository at the owner's explicit request. Binary media, runtime state, secrets and unrelated source assets are not copied.
+- GitHub source repository: https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR
+- GitHub source manifest version: 4.1.9 at pinned commit f8f8c0f29ff9d851fa75eba764978c24bdd79416.
+- Source synchronization status: deployed Plugin Creator release 4.1.12 is verified; public GitHub source remains at 4.1.9 and requires a separate reviewed source alignment.
+- License: no root LICENSE file was found in the inspected GitHub source. Do not infer or apply the parent repository license to the source project.
 
 
 ---
 
 ## Skill: animation-motion-design
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/animation-motion-design
+Source package path: skills/animation-motion-design/SKILL.md
 
 ---
 name: animation-motion-design
@@ -99,20 +109,12 @@ Stop or mark the affected component `HOLD/BLOCKED` when a critical missing fact,
 For Remotion-targeted work, read `references/remotion-pattern-adoption-v4.1.11.md` before selecting or specifying reusable visual patterns. The catalogue is a set of optional design candidates, not mandatory style rules. Keep S05 visual tokens, S06 camera ownership, S09 timing provenance, S13 locks and reduced-motion/readability constraints. Do not assume a pattern is executable on a target renderer until S10 verifies its exact capability and mapping.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/animation-motion-design/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/animation-motion-design/references/remotion-pattern-adoption-v4.1.11.md
-skills://plugins/video-explainer-promkes-renderer-engine/animation-motion-design/references/v2-operational-protocol.md
-skills://plugins/video-explainer-promkes-renderer-engine/animation-motion-design/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: audience-campaign-strategy
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/audience-campaign-strategy
+Source package path: skills/audience-campaign-strategy/SKILL.md
 
 ---
 name: audience-campaign-strategy
@@ -137,19 +139,12 @@ Campaign Strategy Blueprint: audience, assumptions, objective, behavior, barrier
 Message and CTA are actionable, coherent, source-faithful and non-preachy. No invented local demographic or stereotype.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/audience-campaign-strategy/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/audience-campaign-strategy/references/v2-operational-protocol.md
-skills://plugins/video-explainer-promkes-renderer-engine/audience-campaign-strategy/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: continuity-guardian
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/continuity-guardian
+Source package path: skills/continuity-guardian/SKILL.md
 
 ---
 name: continuity-guardian
@@ -218,19 +213,12 @@ Canonical MCG manifest; exactly seven Guide refs; exactly three protocol refs; o
 No duplicate canonical source; exactly one owner per Guide; no dependency cycle or broken reference; no stale lock on a scene; no health-fact mutation; post-storyboard gate before S08; immutable/controlled/scene-dependent rules enforced; capability and human approval evidence explicit; no PASS without execution evidence.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/continuity-guardian/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/continuity-guardian/references/v2-operational-protocol.md
-skills://plugins/video-explainer-promkes-renderer-engine/continuity-guardian/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: conversation-release-audit
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/conversation-release-audit
+Source package path: skills/conversation-release-audit/SKILL.md
 
 ---
 name: conversation-release-audit
@@ -280,18 +268,12 @@ Report separately: conversation coverage; requirement/context completeness; priv
 `NOT_RUN`, `BLOCKED`, `NOT_VERIFIED`, `UNKNOWN`, `PARTIAL`, `STALE` and `INVALIDATED` are never `PASS`. Production/public release remains `HOLD` while mandatory external or human gates are open.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/conversation-release-audit/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/conversation-release-audit/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: executable-gate-engine
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/executable-gate-engine
+Source package path: skills/executable-gate-engine/SKILL.md
 
 ---
 name: executable-gate-engine
@@ -332,18 +314,12 @@ The private package's `tests/acceptance-cases.json` contains 20 records. GitHub 
 Public/production distribution remains HOLD until independent engine review, exact-head CI, reviewed parity, actual runtime/media evidence and authorized human approvals are complete.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/executable-gate-engine/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/executable-gate-engine/references/v2-enforcement-interop.md
-
 
 ---
 
 ## Skill: health-evidence-safety-auditor
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/health-evidence-safety-auditor
+Source package path: skills/health-evidence-safety-auditor/SKILL.md
 
 ---
 name: health-evidence-safety-auditor
@@ -368,19 +344,12 @@ VERIFIED, PARTIALLY_SUPPORTED, MIXED_OR_CONTESTED, BELUM_DIVERIFIKASI, CONTRADIC
 No invented clinical detail; no correlation-to-causation leap; no cure/prevention guarantee; no stigma/fear manipulation. Output Claim-Evidence Matrix, safe wording, fact locks and open verification items.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/health-evidence-safety-auditor/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/health-evidence-safety-auditor/references/v2-operational-protocol.md
-skills://plugins/video-explainer-promkes-renderer-engine/health-evidence-safety-auditor/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: prompt-reference-video-engineering
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/prompt-reference-video-engineering
+Source package path: skills/prompt-reference-video-engineering/SKILL.md
 
 ---
 name: prompt-reference-video-engineering
@@ -456,18 +425,12 @@ PASS only if each prompt is self-contained for its intended asset/task; each ref
 If target unknown or unverified, use provider-neutral output and adapter `NOT_CHECKED`. Do not treat prompt generation as model execution or a generated asset as approved. Any health-claim modification returns to S02; camera conflicts return to S06; motion conflicts return to S07; MCG continuity changes return to S13.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/prompt-reference-video-engineering/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/prompt-reference-video-engineering/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: quality-assurance-controller
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/quality-assurance-controller
+Source package path: skills/quality-assurance-controller/SKILL.md
 
 ---
 name: quality-assurance-controller
@@ -560,18 +523,12 @@ Do not pass health claims without evidence; do not claim actual inspection from 
 For Remotion pattern adoption, use `skills/animation-motion-design/references/remotion-pattern-adoption-v4.1.11.md` as the pattern-specific acceptance reference. Check pattern purpose, units, half-open frame ranges, easing intent, reduced-motion/readability, source timing precision and target mapping. Report composition-frame QA separately from encoded-MP4 QA; a source `still` does not validate the encoded export. Missing actual media or inspection capability remains `NOT_RUN`/`NOT_VERIFIED`.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/quality-assurance-controller/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/quality-assurance-controller/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: renderer-code-engineering
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/renderer-code-engineering
+Source package path: skills/renderer-code-engineering/SKILL.md
 
 ---
 name: renderer-code-engineering
@@ -641,19 +598,12 @@ Never invent commands, dependencies, APIs, codecs or paths. Do not install depen
 For Remotion-targeted projects, read `skills/animation-motion-design/references/remotion-pattern-adoption-v4.1.11.md`. Verify exact installed package/runtime versions and supported features before mapping S07 patterns. The current Promkes adapter profile is deliberately limited; unsupported audio, subtitles, crossfades, arbitrary paths and multiple composited references must remain fail-closed or use a separately tested adapter. Report mapping loss and distinguish composition-frame inspection from encoded-MP4 inspection.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/renderer-code-engineering/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/renderer-code-engineering/references/s10-two-lane-contract.md
-skills://plugins/video-explainer-promkes-renderer-engine/renderer-code-engineering/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: social-accessibility-distribution
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/social-accessibility-distribution
+Source package path: skills/social-accessibility-distribution/SKILL.md
 
 ---
 name: social-accessibility-distribution
@@ -679,18 +629,12 @@ Requested platform-neutral or platform-specific publication package with a conci
 Copy is fact-locked, audience-fit, actionable, non-stigmatizing, accessible and rights-aware. Performance is never guaranteed; publishing authority remains with the user.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/social-accessibility-distribution/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/social-accessibility-distribution/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: source-asset-intelligence
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/source-asset-intelligence
+Source package path: skills/source-asset-intelligence/SKILL.md
 
 ---
 name: source-asset-intelligence
@@ -715,18 +659,12 @@ Source Material Dossier: source register; literal text; visual/brand cues; asset
 Every material number/date/name/location/CTA is preserved or explicitly UNKNOWN/CONFLICTED. No invented extraction or claimed verification without access.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/source-asset-intelligence/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/source-asset-intelligence/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: story-screenplay-architect
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/story-screenplay-architect
+Source package path: skills/story-screenplay-architect/SKILL.md
 
 ---
 name: story-screenplay-architect
@@ -752,19 +690,12 @@ Master Story & Screenplay with version, VO script, dialogue, scene purpose, timi
 One dominant message, no invented health fact, plausible pacing and complete source traceability.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/story-screenplay-architect/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/story-screenplay-architect/references/v2-operational-protocol.md
-skills://plugins/video-explainer-promkes-renderer-engine/story-screenplay-architect/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: storyboard-cinematography
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/storyboard-cinematography
+Source package path: skills/storyboard-cinematography/SKILL.md
 
 ---
 name: storyboard-cinematography
@@ -785,19 +716,12 @@ Storyboard Script, Shot List and Scene Contract.
 Scene arithmetic reconciles to project duration; every shot has narrative purpose; exact text is separate overlay data; movement mechanics remain with S07.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/storyboard-cinematography/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/storyboard-cinematography/references/v2-operational-protocol.md
-skills://plugins/video-explainer-promkes-renderer-engine/storyboard-cinematography/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: video-explainer-promkes
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes
+Source package path: skills/video-explainer-promkes/SKILL.md
 
 ---
 name: video-explainer-promkes
@@ -986,32 +910,12 @@ Use Bahasa Indonesia unless requested otherwise. Distinguish verified fact, user
 **M00 v4.0.9 is not a claim that every hard validator, integration, runtime, render or approval mechanism already exists.** If enforcement is instruction-only or manual, say so. Production readiness requires implemented schemas/validators, tested gates, red-team coverage, dependency invalidation, role-authorized approvals, deterministic CI and actual target/runtime/artifact evidence.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/change-management.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/executable-gate-engine-v4.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/handoff-envelope.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/learning-asset-drift-outcome-contract-v4.1.9.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/learning-governance-execution-v4.1.10.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/m00-s14-mandate.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/m00-v4-governance-contract.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/platform-compatibility-matrix.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/production-manifest-v3.schema.json
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/production-risk-routing-v4.1.7.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/qa-and-release-gates.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/remotion-adapter-contract.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/s14-integration-contract.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/scene-and-renderer-contract.md
-skills://plugins/video-explainer-promkes-renderer-engine/video-explainer-promkes/references/v2-enforcement-overlay.md
-
 
 ---
 
 ## Skill: visual-identity-art-direction
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/visual-identity-art-direction
+Source package path: skills/visual-identity-art-direction/SKILL.md
 
 ---
 name: visual-identity-art-direction
@@ -1032,19 +936,12 @@ Master Visual Style Guide; Character Guide; Environment Guide; Prop Registry; re
 Every recurring entity has a stable ID and canonical description/version. No unauthorized logos, likeness claims or implied perfect identity lock from text prompts.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
-
-skills://plugins/video-explainer-promkes-renderer-engine/visual-identity-art-direction/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/visual-identity-art-direction/references/v2-operational-protocol.md
-skills://plugins/video-explainer-promkes-renderer-engine/visual-identity-art-direction/references/v2-universal-handoff-contract.md
-
 
 ---
 
 ## Skill: voice-audio-intelligence
 
-Source URI: skills://plugins/video-explainer-promkes-renderer-engine/voice-audio-intelligence
+Source package path: skills/voice-audio-intelligence/SKILL.md
 
 ---
 name: voice-audio-intelligence
@@ -1065,8 +962,10 @@ Preserve user transcript verbatim; label it unverified until checked against aud
 No invented speech, speaker identity, exact timestamp, rights clearance, loudness correction or audio processing. Retain original and processed asset identities where applicable.
 
 
----
-Available file URIs for this installed plugin skill. Use these exact URIs when reading files:
+## Authority and compatibility boundary
 
-skills://plugins/video-explainer-promkes-renderer-engine/voice-audio-intelligence/skill.md
-skills://plugins/video-explainer-promkes-renderer-engine/voice-audio-intelligence/references/v2-universal-handoff-contract.md
+The current Plugin Creator release metadata and manifest establish the active deployment package version as 4.1.12. The connected runtime skill registry previously exposed an M00 header labelled v4.0.9; that is an older runtime-registry observation, not the current Plugin Creator release version.
+
+The GitHub repository remains the public source tree, but its manifest is 4.1.9. It is pinned as the official public source reference with an explicit version-lag status. This snapshot does not falsely claim that the public source repository has been synchronized to 4.1.12.
+
+Do not update the GitHub source submodule to a later commit until the source diff, package parity, license/provenance, tests and compatibility evidence have been reviewed.

@@ -20,10 +20,10 @@
 
 Do not create repository URLs by slug guessing or adopt name-similar repositories owned by unrelated users.
 
-### SRC-002 — Reconcile Video Explainer Promkes V4.1.12
-**Status:** TARGET_SELECTED_SOURCE_SYNC_PENDING  
-**Decision:** V4.1.12 is the selected target because it is higher than installed M00 header v4.0.9.  
-**Blocker:** V4.1.12 canonical repository and manifest are not yet verified.
+### SRC-002 — Reconcile Video Explainer public source with current deployment V4.1.12
+**Status:** SOURCE_REPOSITORY_IDENTIFIED_DEPLOYMENT_VERIFIED_SOURCE_BEHIND  
+**Decision:** Plugin Creator release 4.1.12 is verified by exact plugin ID and release ID; the public GitHub source is pinned at 4.1.9. Installed M00 header v4.0.9 is a stale runtime observation.  
+**Blocker:** GitHub source tree/manifest remains 4.1.9; full parity with private 4.1.12 deployment is not established.
 
 **Acceptance**
 - Official source and package manifest for V4.1.12 found.

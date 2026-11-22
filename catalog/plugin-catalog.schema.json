@@ -126,7 +126,8 @@
               "OFFICIAL_PRIVATE_SUBMODULE_LICENSE_NOT_FOUND",
               "CANDIDATE_INCOMPLETE",
               "NOT_IDENTIFIED",
-              "LEGACY_REDIRECT"
+              "LEGACY_REDIRECT",
+              "OFFICIAL_PUBLIC_SOURCE_LAGGING"
             ]
           },
           "primary_triggers": {
@@ -161,7 +162,8 @@
             "enum": [
               "CANONICAL_REPOSITORY_SOURCE",
               "RUNTIME_INSTRUCTION_SNAPSHOT",
-              "LEGACY_RUNTIME_REDIRECT_SNAPSHOT"
+              "LEGACY_RUNTIME_REDIRECT_SNAPSHOT",
+              "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT"
             ]
           },
           "target_version": {
@@ -175,8 +177,27 @@
               "TARGET_SELECTED_SOURCE_SYNC_PENDING",
               "SOURCE_VERIFIED_IN_SYNC",
               "NO_CONFLICT",
-              "NOT_VERIFIED"
+              "NOT_VERIFIED",
+              "DEPLOYED_RELEASE_VERIFIED_SOURCE_BEHIND"
             ]
+          },
+          "source_repository_version": {
+            "type": "string"
+          },
+          "deployed_plugin_version": {
+            "type": "string"
+          },
+          "plugin_creator_current_release_id": {
+            "type": "string"
+          },
+          "plugin_creator_scope": {
+            "type": "string"
+          },
+          "plugin_creator_discoverability": {
+            "type": "string"
+          },
+          "source_sync_status": {
+            "type": "string"
           }
         }
       }
