@@ -75,7 +75,9 @@
         "next_actions": [
           "Source owner must publish a licence/notice or grant written distribution permission; reconcile public source 4.1.9 with deployed private USER release 4.1.12 and approve any source update."
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "skill-developer-orchestrator",
@@ -123,7 +125,9 @@
         "next_actions": [
           "Retain Apache-2.0 text and applicable notices; resolve instruction-content parity drift (10,573 vs 23,651 characters) and produce a signed package/host adapter before eligibility."
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "evaluator-team",
@@ -175,7 +179,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "master-photo-restoration",
@@ -227,7 +233,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "anatomi-prompt-v3-octa-prompt",
@@ -247,7 +255,7 @@
       },
       "rights": {
         "license_id": null,
-        "license_status": "NOT_DECLARED",
+        "license_status": "PRIVATE_NO_LICENSE",
         "license_file_path": null,
         "license_evidence_url": null,
         "required_notice_path": null,
@@ -276,7 +284,9 @@
         "next_actions": [
           "Keep repository private. Choose a licence and obtain explicit owner approval for any redistribution outside authorized collaborators; preserve access controls."
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "skill-analyzer",
@@ -324,7 +334,9 @@
         "next_actions": [
           "Choose and publish a licence or provide a separate written distribution grant; keep blocked until licence and attribution are pinned."
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "godex-motion-audio",
@@ -376,7 +388,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "ai-prompt-finder-creator",
@@ -428,7 +442,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "agent-jailbreak-skill-ds",
@@ -480,7 +496,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "motion-graphic-arifanara-v-01",
@@ -532,7 +550,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "plugin-agent-orchestrator",
@@ -584,7 +604,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "photo-fixer",
@@ -631,7 +653,9 @@
         "next_actions": [
           "Restore plugin manifest, master/subskill tree, references, tests and release history; then have owner confirm canonical promotion and retain Apache-2.0 notices."
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "asfree-canonical",
@@ -679,7 +703,9 @@
         "next_actions": [
           "Retain LICENSE and NOTICE; assess actual commercial purpose; obtain separate written commercial permission for commercial hosting/enterprise use; preserve the historical Apache-2.0 licence/grant history and trademark restrictions; legal review remains open."
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "asfree-legacy",
@@ -705,7 +731,7 @@
         "head": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
         "pinned": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
         "license": "PolyForm-Noncommercial-1.0.0",
-        "license_status": "REVIEW_REQUIRED_NONCOMMERCIAL",
+        "license_status": "INHERITED_CANONICAL_RESTRICTED",
         "license_path": "LICENSE",
         "license_url": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/blob/a5eb55db0f6c2c6126a7fbcba645caf44c660c93/LICENSE",
         "notice_path": "NOTICE",
@@ -740,7 +766,9 @@
           "Preserve alias mapping to asfree-canonical",
           "Do not publish a second installation artifact"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "cortex-workbench",
@@ -792,7 +820,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "commandcraft-56",
@@ -844,7 +874,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "agent-skills-atlas",
@@ -896,7 +928,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "people-business-competency-academy",
@@ -950,7 +984,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "workflow-systems-orchestrator",
@@ -1002,7 +1038,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "growthforge-business-os",
@@ -1054,7 +1092,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "pvee-promkes-super-orchestrator",
@@ -1101,7 +1141,9 @@
         "next_actions": [
           "Restore current PVEE 2.0.2 manifest, skill tree, scripts, tests and release history; verify package identity and retain Apache-2.0 notices."
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "progressive-roadmap-evaluator",
@@ -1155,7 +1197,9 @@
           "Add tests, manifest, changelog and immutable first release",
           "Verify parity, then add a parent submodule"
         ]
-      }
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     }
   ]
 }
