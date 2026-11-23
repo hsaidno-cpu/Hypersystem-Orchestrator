@@ -1,44 +1,40 @@
 # Modular Distribution Architecture
 
-**Status:** Architecture and static registry baseline; no production installer or runtime gateway is claimed.  
-**Revision:** 1.0.0 — 23 November 2026
+**Status:** Architecture and static registry baseline. No production installer or runtime gateway is claimed.  
+**Revision:** 1.0.0 — 23 November 2026.
 
-## 1. Decision
+## Decision
 
 Hypersystem uses a **central registry with selective distribution and independently addressable plugin modules**.
 
 > One ecosystem. Multiple plugins. Selective installation. Unified access. Independent execution.
 
-The parent repository owns identity, distribution eligibility, package contracts, platform adapter declarations, governance and compatibility evidence. Each plugin source repository remains canonical for its own implementation and release lifecycle.
+The parent repository owns identity, distribution eligibility, package contracts, platform adapter declarations, governance and compatibility evidence. Each child repository remains canonical for its own implementation and release lifecycle. Packaging convenience never transfers source ownership, authority, versioning or runtime boundaries.
 
-A single repository or bundle must never be interpreted as one merged plugin. Packaging convenience does not transfer ownership, authority, versioning or internal runtime boundaries.
+## Distribution modes
 
-## 2. Required distribution modes
-
-| Mode | Request shape | Resolution rule |
+| Mode | Request shape | Resolution |
 |---|---|---|
-| Single | Exactly one plugin key | Resolve only that plugin and its declared requirements |
-| Multi | Two or more explicit plugin keys | Resolve the selected set independently; do not silently add adjacent plugins |
-| Full suite | No explicit plugin keys | Dynamically select all packages currently eligible for the target platform |
-| Custom bundle | Named profile or explicit set | Resolve the exact versioned profile; retain per-plugin identity |
+| Single | Exactly one plugin key | Resolve only that plugin and declared hard dependencies |
+| Multi | Two or more explicit keys | Resolve each selected plugin independently |
+| Full Suite | Empty explicit plugin list | Dynamically select all packages eligible for the target platform |
+| Custom Bundle | Explicit profile or set | Resolve a versioned profile; retain per-plugin identity |
 
-**Full suite does not mean all catalog rows.** It means all packages that pass the current source, license, artifact, compatibility and host-adapter gates at resolution time. Snapshot-only, candidate, blocked, private-restricted and legacy redirect identities are excluded. When no plugin is eligible, the resolver must return a blocked plan; it must not pretend to install the 20 registered identities.
+**Full Suite does not mean all catalog rows.** It means every package that passes source, version/parity, license, artifact, dependency, security and host-adapter gates at resolution time. Snapshots, candidates, blocked packages, private-restricted packages and legacy redirects are excluded. If none is eligible, resolution must be BLOCKED.
 
-The distribution registry is the eligibility authority. The plugin identity catalog remains the identity and responsibility authority. Neither file is itself an installer.
+The plugin catalog is the identity/ownership authority. The distribution registry is the eligibility authority. Neither is an installer.
 
-## 3. Two different hierarchies
+## Package hierarchy versus runtime hierarchy
 
-### 3.1 Distribution/package hierarchy
+Distribution hierarchy:
 
-- **Ecosystem:** Hypersystem Orchestrator.
-- **Package envelope:** a single plugin, a custom multi-plugin bundle or a dynamic full-suite selection.
-- **Plugin package:** an independently versioned, licensed, integrity-checked artifact.
-- **Platform adapter:** maps the package to a target host's supported integration format.
-- **Installation manifest / lock:** records requested selection and exact resolved plugin versions, source commits, artifact digests and exclusions.
+- Ecosystem: Hypersystem Orchestrator.
+- Package envelope: one plugin, custom bundle or dynamic Full Suite.
+- Plugin package: independently versioned, licensed and integrity-checked artifact.
+- Platform adapter: maps the package into a host's supported format.
+- Installation manifest/lock: records request and exact resolved versions, source commits, digests and exclusions.
 
-A bundle is an installation envelope, not a source-code merger.
-
-### 3.2 Runtime hierarchy
+Runtime hierarchy:
 
 ~~~text
 AI Host
@@ -47,121 +43,112 @@ AI Host
             └── Identity + Entitlement + Authorization
                  └── Plugin Router
                       ├── Plugin A Runtime (isolated identity/version)
-                      │    └── skills / tools / references / internal workflows
+                      │    └── skills / tools / references / workflows
                       ├── Plugin B Runtime (isolated identity/version)
-                      │    └── skills / tools / references / internal workflows
+                      │    └── skills / tools / references / workflows
                       └── Plugin N Runtime (isolated identity/version)
-                           └── skills / tools / references / internal workflows
+                           └── skills / tools / references / workflows
 ~~~
 
-For a host that supports a single application connection, the gateway may expose multiple namespaced plugin tools through one logical connection. For a host that expects separate MCP servers or plugin installations, the adapter may expose separate logical endpoints or host packages. The physical connection count is a host-adapter decision; plugin identity remains separate in either case.
+One host-visible application may contain several plugin modules if the host supports that shape. Another host may require separate MCP server registrations or native package entries. The adapter decides the physical connection shape. Plugin identity must remain separate.
 
-## 4. One gateway, multiple logical plugin surfaces
+## Unified gateway, logical plugin surfaces
 
-The preferred service topology is one managed gateway with independently addressable plugin routes:
+Preferred topology: one managed gateway service with independently addressable plugin surfaces. Proposed routes (not deployed):
 
-- **/mcp/<plugin-key>** — one logical plugin surface.
-- **/mcp/bundles/<bundle-id>** — explicitly selected bundle surface.
-- **/mcp/full-suite** — dynamically resolved eligible suite surface.
+- /mcp/plugin-key
+- /mcp/bundles/bundle-id
+- /mcp/full-suite
 
-These paths are proposed route conventions, not deployed endpoints. The production gateway must enforce authorization on the server for every route and tool call. Hiding a tool in the client UI is not an access-control boundary.
+A unified endpoint is optional, not mandatory. Use it only if the host supports safe tool namespacing, discovery and authorization context. Otherwise expose several logical servers behind the same gateway service.
 
-A unified endpoint is optional, not mandatory. Use it only when the target host can safely represent tool namespaces, authorization context and discovery behavior. Otherwise expose separate logical servers behind the same service.
+Authorization must be enforced server-side during discovery and each tool call. Hiding a tool in client UI is not a security boundary.
 
-## 5. Keep four runtime states separate
+## Four separate runtime states
 
-| State | Meaning | What it does not imply |
-|---|---|---|
-| Installed | A package artifact is present in a host/workspace installation | It is enabled or authorized |
-| Enabled | The user/workspace has activated the package | Every tool call is permitted |
-| Authorized | An active entitlement and policy grant permit defined actions | The host can currently execute it |
-| Runtime available | The target host and service can discover and invoke the verified capability | That a particular request has succeeded |
+| State | Meaning |
+|---|---|
+| Installed | Package artifact is present in the host/workspace |
+| Enabled | User/workspace activated the package |
+| Authorized | Principal has valid entitlement and action scopes |
+| Runtime available | Host/backend can discover and invoke the verified capability |
 
-The registry must not infer one state from another. Each state needs its own source of truth and evidence.
+No state implies another. Each requires its own source of truth and evidence.
 
-## 6. Package eligibility gates
+## Initial eligibility baseline
 
-A plugin becomes **installable_public** or **installable_private** only when all required gates are satisfied:
+As of 23 November 2026 the 20 plugin identities map to these distribution states:
 
-1. Canonical source repository and immutable source commit are verified.
-2. Source/package version and instruction-content parity are reconciled.
-3. License and redistribution rights are explicitly cleared for the target distribution model.
-4. A package manifest and release artifact exist, with SHA-256 integrity evidence.
-5. Declared dependencies and compatibility ranges are complete and acyclic.
-6. Security review and least-privilege tool/permission declarations pass.
-7. A platform adapter exists and has host-activation evidence for the named host/version.
-8. Installation, update, disable, uninstall and rollback behavior is tested.
+| State | Count |
+|---|---:|
+| review_required | 2 |
+| blocked | 2 |
+| private_source_restricted | 1 |
+| snapshot_only | 12 |
+| candidate_incomplete | 2 |
+| legacy_redirect | 1 |
+| **Installable** | **0** |
 
-Current state on 23 November 2026: **zero plugin packages are marked installable** in the initial distribution registry. Five source submodules are pinned, but source pinning alone is insufficient for redistribution. The hold states and reasons are recorded per plugin.
+Five source submodules are pinned, but source pinning alone is insufficient for redistribution. Examples: SKILL ANALYZER has no root license identified; A.S.F.R.E.E has PolyForm Noncommercial terms requiring distribution review; Anatomi Prompt is private and has no license cleared; Video Explainer source 4.1.9 lags deployment 4.1.12; SDO has instruction-content drift despite package version 0.1.0 matching.
 
-### Eligibility state vocabulary
+Eligibility states:
+- installable_public / installable_private: all gates pass.
+- review_required: rights, parity or package-release gate remains open.
+- blocked: concrete source/version/rights/package blocker.
+- private_source_restricted: private source not cleared for requested distribution.
+- snapshot_only: instructions only, no canonical source package.
+- candidate_incomplete: candidate repository is not a complete canonical package.
+- legacy_redirect: redirect only; do not install as a second plugin.
 
-- **installable_public:** all release, rights and target gates pass for public distribution.
-- **installable_private:** all gates pass for private distribution and access is scoped.
-- **review_required:** source exists, but a rights, parity or package-release gate remains open.
-- **blocked:** a concrete source, version, rights or package blocker prevents distribution.
-- **private_source_restricted:** source access is private and is not cleared for the requested distribution.
-- **snapshot_only:** an instruction snapshot exists but no accepted canonical source package exists.
-- **candidate_incomplete:** a possible source repository is incomplete and not canonical.
-- **legacy_redirect:** compatibility alias only; resolve to its canonical product and never install as a second plugin.
+## Required release gates
 
-## 7. Platform adapter strategy
+1. Canonical source identity and immutable commit verified.
+2. Source/package version and instruction-content parity reconciled.
+3. License and redistribution rights cleared for the target distribution model.
+4. Package manifest and release artifact published with SHA-256 digest.
+5. Dependencies complete, version-constrained and acyclic.
+6. Security review and least-privilege permissions pass.
+7. Platform adapter exists and has named host/version activation evidence.
+8. Install, update, disable, uninstall and rollback tested.
 
-The platform registry lists ChatGPT, Claude, Gemini CLI, VS Code/GitHub Copilot and generic MCP-compatible hosts as adapter targets. They are targets, not claims of existing adapters.
+## Platform adapter strategy
 
-Each adapter must declare supported package and transport formats, tool naming, authentication and authorization model, host limitations, exact host/version evidence and lifecycle tests. Its support state is **planned**, **adapter_implemented**, **host_tested** or **runtime_verified**.
+Targets recorded in the platform registry: ChatGPT, Claude, Gemini CLI, VS Code/GitHub Copilot and generic MCP hosts. All are currently PLANNED; host activation and runtime execution are NOT_RUN.
 
-MCP is a useful common tool transport, not a universal plugin packaging format. Platform-specific skills, agent manifests, UI affordances, OAuth policies and execution models still require adapters. Never assume that one host's import workflow works on another host.
+MCP is a common tool transport where supported, not a universal plugin package format. Native skills, agent manifests, hooks, UI, auth policies and lifecycle still need host-specific adapters. Adapter records must specify supported formats/transports, exact host/version, tool namespace mapping, auth/entitlement policy, secret references, lifecycle operations and test evidence.
 
-## 8. Authentication, entitlement and authorization
+## Authentication, entitlement and authorization
 
-Treat these as separate controls:
+- Authentication identifies a user, workspace, tenant or service account.
+- Entitlement determines which plugin products a principal may access.
+- Authorization determines which tools/actions/scopes are allowed for a plugin/resource.
+- Quota/policy controls rate, usage, environment and risk boundaries.
 
-- **Authentication:** establish which user, workspace, tenant or service account is calling.
-- **Entitlement:** determine which plugin products the subject is allowed to access.
-- **Authorization:** determine which tools/actions/scopes that subject may invoke for a specific plugin and resource.
-- **Quota/policy:** enforce rate, usage, environment and risk limits.
+Use OAuth/OIDC or host-managed credentials where supported. API keys are scoped service credentials, not user entitlements. Secrets belong in a secret manager or credential vault, never in Git manifests or documentation.
 
-Use OAuth/OIDC or host-managed credentials where supported. API keys are scoped service credentials, not user entitlements. Store secrets only in a credential vault or host secret manager. Never place access tokens, API keys, OAuth refresh tokens or private credentials in Git manifests, installation files, examples or Notion documentation.
-
-## 9. Dependency, version and change control
+## Version and lifecycle rules
 
 - Child plugin versions remain independent from the ecosystem version.
-- Bundles use a lockfile that pins plugin version, source commit and artifact digest.
-- A parent catalog change does not silently upgrade an installed child.
-- Updates are per plugin unless a dependency or compatibility rule requires a coordinated bundle update.
-- Rollback is per plugin and must restore a known artifact plus its matching manifest.
-- Dependencies must be explicit, version-constrained and acyclic.
-- Related-plugin routing and optional handoffs are not automatically hard installation dependencies.
-- Removing a plugin must not silently remove another plugin's data or configuration.
+- Bundle lockfiles pin child version, source commit and artifact digest.
+- Parent catalog changes do not silently upgrade installed children.
+- Updates and rollbacks are per plugin unless a hard dependency requires coordinated change.
+- Compatibility handoffs are not automatically hard installation dependencies.
+- Uninstalling one plugin must not silently remove another plugin's data/configuration.
 
-## 10. Resolver baseline
+## Resolver baseline
 
-The initial CLI resolver is intentionally a **plan generator**, not an installer:
+The new resolver generates a dry-run plan only. It does not download, install, enable, authorize or execute packages.
 
 ~~~bash
 python tools/validate_distribution.py
 python tools/resolve_distribution.py --manifest distribution/manifests/manifest.example.json
+python -m unittest discover -s tests -v
 ~~~
 
-The example manifest is a dry-run multi-selection. The resolver reports each plugin's eligibility, target adapter blockers, excluded catalog rows and whether the request is ready for a future installer. It does not download, install, enable, authorize or execute anything.
+A blocked result is expected until installable package artifacts and host-tested adapters exist.
 
-A blocked result is expected today because no platform adapter has host-tested status and no plugin package has a released artifact.
+## Acceptance and governance
 
-## 11. Governance and acceptance
+Reject installing a legacy alias as an independent plugin; treating snapshots as canonical releases; distributing rights-uncleared or incomplete source; merging plugin instructions/authority; claiming host activation from registry presence; or claiming runtime verification from static CI.
 
-The distribution owner must reject installing an alias as an independent plugin; treating snapshots as canonical package releases; installing candidate or rights-uncleared source; merging independent plugin instructions or authority; claiming host activation based on registry presence; claiming runtime verification based on static CI; selecting every catalog identity as a Full Suite shortcut; or cross-tenant credential/entitlement leakage.
-
-A release is accepted only with source provenance, rights evidence, immutable artifact digest, platform host/version evidence, test results, rollback instructions and a clear support owner.
-
-## 12. Related engineering artifacts
-
-- [Plugin identity catalog](../catalog/plugins.json)
-- [Distribution eligibility registry](../catalog/distribution-registry.json)
-- [Platform adapter registry](../catalog/platform-registry.json)
-- [Installation manifest schema](../contracts/installation-manifest.schema.json)
-- [Plugin package schema](../contracts/plugin-package.schema.json)
-- [Entitlement grant schema](../contracts/entitlement-grant.schema.json)
-- [Distribution resolver lock schema](../contracts/distribution-lock.schema.json)
-- [Installation and runtime hierarchy](INSTALLATION-AND-RUNTIME-HIERARCHY.md)
-- [Platform adapter matrix](PLATFORM-ADAPTER-MATRIX.md)
+Release acceptance requires provenance, rights evidence, immutable artifact digest, exact host/version evidence, tests, rollback procedure and accountable support ownership.
