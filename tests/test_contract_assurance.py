@@ -155,5 +155,13 @@ class HandoffContractAssuranceTests(unittest.TestCase):
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
 
 
+    def test_matrix_records_c2_c3_pass_without_claiming_c4_c5(self):
+        for edge in self.matrix["integrations"]:
+            self.assertEqual(edge["status"], "CONTRACT_TESTED")
+            self.assertEqual(edge["schema_contract_test"], "PASS")
+            self.assertEqual(edge["contract_behavior_test"], "PASS")
+            self.assertEqual(edge["host_activation_test"], "NOT_RUN")
+            self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
+
 if __name__ == "__main__":
     unittest.main()

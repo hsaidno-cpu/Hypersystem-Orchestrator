@@ -4,36 +4,161 @@
   "title": "Hypersystem Plugin Compatibility Matrix",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version","matrix_revision","contract_schema","integration_count","integrations"],
+  "required": [
+    "schema_version",
+    "matrix_revision",
+    "contract_schema",
+    "integration_count",
+    "integrations"
+  ],
   "properties": {
-    "schema_version": {"type":"string"},
-    "matrix_revision": {"type":"string"},
-    "contract_schema": {"type":"string"},
-    "integration_count": {"type":"integer"},
+    "schema_version": {
+      "type": "string"
+    },
+    "matrix_revision": {
+      "type": "string"
+    },
+    "contract_schema": {
+      "type": "string"
+    },
+    "integration_count": {
+      "type": "integer"
+    },
     "integrations": {
-      "type":"array","minItems":1,
+      "type": "array",
+      "minItems": 1,
       "items": {
-        "type":"object","additionalProperties":false,
-        "required": ["integration_id","producer_plugin","consumer_plugin","handoff_type","purpose","input_artifacts","output_artifact","producer_artifact_owner","consumer_artifact_owner","canonical_truth_owner","contract_version","dependency","status","static_routing_test","schema_contract_test","host_activation_test","runtime_execution_test","acceptance_criteria"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "integration_id",
+          "producer_plugin",
+          "consumer_plugin",
+          "handoff_type",
+          "purpose",
+          "input_artifacts",
+          "output_artifact",
+          "producer_artifact_owner",
+          "consumer_artifact_owner",
+          "canonical_truth_owner",
+          "contract_version",
+          "dependency",
+          "status",
+          "static_routing_test",
+          "schema_contract_test",
+          "contract_behavior_test",
+          "host_activation_test",
+          "runtime_execution_test",
+          "acceptance_criteria"
+        ],
         "properties": {
-          "integration_id":{"type":"string"},
-          "producer_plugin":{"type":"string"},
-          "consumer_plugin":{"type":"string"},
-          "handoff_type":{"enum":["SOFT_HANDOFF","CONTROLLED_IMPLEMENTATION_HANDOFF","INDEPENDENT_RETEST_HANDOFF","ROUTING_OVERRIDE","DOMAIN_TO_PRODUCTION_HANDOFF","OPTIONAL_VISUAL_HANDOFF","ASSURANCE_AND_LEARNING_HANDOFF","SECURITY_CONTROL_HANDOFF","ARCHITECTURE_HANDOFF"]},
-          "purpose":{"type":"string"},
-          "input_artifacts":{"type":"array","items":{"type":"string"}},
-          "output_artifact":{"type":"string"},
-          "producer_artifact_owner":{"type":"string"},
-          "consumer_artifact_owner":{"type":"string"},
-          "canonical_truth_owner":{"type":"string"},
-          "contract_version":{"type":"string"},
-          "dependency":{"enum":["OPTIONAL","SOFT","DOMAIN_GATE","ROUTING_ONLY"]},
-          "status":{"enum":["INTERFACE_DEFINED_NOT_EXECUTED","CONTRACT_TESTED","HOST_ACTIVATION_TESTED","RUNTIME_VERIFIED","BLOCKED","DEPRECATED"]},
-          "static_routing_test":{"enum":["DEFINED","PASS","FAIL","NOT_RUN"]},
-          "schema_contract_test":{"enum":["PASS","FAIL","NOT_RUN"]},
-          "host_activation_test":{"enum":["PASS","FAIL","NOT_RUN"]},
-          "runtime_execution_test":{"enum":["PASS","FAIL","NOT_RUN"]},
-          "acceptance_criteria":{"type":"array","minItems":1,"items":{"type":"string"}}
+          "integration_id": {
+            "type": "string"
+          },
+          "producer_plugin": {
+            "type": "string"
+          },
+          "consumer_plugin": {
+            "type": "string"
+          },
+          "handoff_type": {
+            "enum": [
+              "SOFT_HANDOFF",
+              "CONTROLLED_IMPLEMENTATION_HANDOFF",
+              "INDEPENDENT_RETEST_HANDOFF",
+              "ROUTING_OVERRIDE",
+              "DOMAIN_TO_PRODUCTION_HANDOFF",
+              "OPTIONAL_VISUAL_HANDOFF",
+              "ASSURANCE_AND_LEARNING_HANDOFF",
+              "SECURITY_CONTROL_HANDOFF",
+              "ARCHITECTURE_HANDOFF"
+            ]
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "input_artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "output_artifact": {
+            "type": "string"
+          },
+          "producer_artifact_owner": {
+            "type": "string"
+          },
+          "consumer_artifact_owner": {
+            "type": "string"
+          },
+          "canonical_truth_owner": {
+            "type": "string"
+          },
+          "contract_version": {
+            "type": "string"
+          },
+          "dependency": {
+            "enum": [
+              "OPTIONAL",
+              "SOFT",
+              "DOMAIN_GATE",
+              "ROUTING_ONLY"
+            ]
+          },
+          "status": {
+            "enum": [
+              "INTERFACE_DEFINED_NOT_EXECUTED",
+              "CONTRACT_TESTED",
+              "HOST_ACTIVATION_TESTED",
+              "RUNTIME_VERIFIED",
+              "BLOCKED",
+              "DEPRECATED"
+            ]
+          },
+          "static_routing_test": {
+            "enum": [
+              "DEFINED",
+              "PASS",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          },
+          "schema_contract_test": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          },
+          "host_activation_test": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          },
+          "runtime_execution_test": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "contract_behavior_test": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          }
         }
       }
     }

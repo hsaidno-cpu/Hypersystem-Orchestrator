@@ -200,14 +200,23 @@ def validate():
     if len(integration_ids) != len(set(integration_ids)):
         fail("Duplicate compatibility integration_id detected")
     for edge in integration_edges:
-        for field in ["producer_plugin","consumer_plugin","canonical_truth_owner","purpose","input_artifacts","output_artifact","contract_version","handoff_type","runtime_execution_test","host_activation_test"]:
-            if not edge.get(field):
+        for field in ["producer_plugin","consumer_plugin","canonical_truth_owner","purpose","input_artifacts","output_artifact","contract_version","handoff_type","status","schema_contract_test","contract_behavior_test","runtime_execution_test","host_activation_test"]:
+            if field not in edge or edge[field] in (None, ""):
                 fail(f"Compatibility edge {edge.get('integration_id')}: missing {field}")
         for owner_field in ["producer_plugin","consumer_plugin","canonical_truth_owner"]:
             if edge[owner_field] not in plugin_key_set:
                 fail(f"Compatibility edge {edge['integration_id']}: unknown {owner_field}")
-        if edge["runtime_execution_test"] not in {"NOT_RUN","PASS","FAIL"} or edge["host_activation_test"] not in {"NOT_RUN","PASS","FAIL"}:
-            fail(f"Compatibility edge {edge['integration_id']}: invalid test state")
+        allowed_status = {"INTERFACE_DEFINED_NOT_EXECUTED","CONTRACT_TESTED","HOST_ACTIVATION_TESTED","RUNTIME_VERIFIED","BLOCKED","DEPRECATED"}
+        test_states = {"NOT_RUN","PASS","FAIL"}
+        if edge["status"] not in allowed_status:
+            fail(f"Compatibility edge {edge['integration_id']}: invalid status")
+        for field in ["schema_contract_test","contract_behavior_test","host_activation_test","runtime_execution_test"]:
+            if edge[field] not in test_states:
+                fail(f"Compatibility edge {edge['integration_id']}: invalid {field} state")
+        if edge["status"] == "CONTRACT_TESTED" and not (edge["schema_contract_test"] == "PASS" and edge["contract_behavior_test"] == "PASS"):
+            fail(f"Compatibility edge {edge['integration_id']}: CONTRACT_TESTED requires C2 and C3 PASS")
+        if edge["status"] == "CONTRACT_TESTED" and (edge["host_activation_test"] != "NOT_RUN" or edge["runtime_execution_test"] != "NOT_RUN"):
+            fail(f"Compatibility edge {edge['integration_id']}: C4/C5 must remain independent from C2/C3")
     if len(integration_edges) != 14:
         fail("Expected 14 defined compatibility edges for the current matrix")
     print(f"PASS: {len(integration_edges)} cross-plugin compatibility edges with explicit ownership and test states")
