@@ -132,3 +132,17 @@ class FailPackage(StrictModel):
 
 class OutboxAck(StrictModel):
     worker_id: str = Field(min_length=1, max_length=160)
+
+
+class VerificationDecision(StrictModel):
+    disposition: Literal["PASS", "PASS_WITH_CAVEATS", "REJECT"]
+    evidence_reference: str = Field(min_length=1, max_length=1000)
+    notes: str | None = Field(default=None, max_length=4000)
+
+
+class CapabilityHostVerification(StrictModel):
+    host: str = Field(min_length=1, max_length=240)
+    host_version: str = Field(min_length=1, max_length=120)
+    adapter_version: str = Field(min_length=1, max_length=120)
+    disposition: Literal["PASS", "FAIL"]
+    evidence_reference: str = Field(min_length=1, max_length=1000)
