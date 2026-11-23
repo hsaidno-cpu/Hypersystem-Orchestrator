@@ -157,14 +157,9 @@ class HandoffContractAssuranceTests(unittest.TestCase):
 
     def test_matrix_records_c2_c3_pass_without_claiming_c4_c5(self):
         for edge in self.matrix["integrations"]:
-            if edge["integration_id"] == "INT-PONYTAIL-SDO-001":
-                self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
-                self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
-                self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
-            else:
-                self.assertEqual(edge["status"], "CONTRACT_TESTED")
-                self.assertEqual(edge["schema_contract_test"], "PASS")
-                self.assertEqual(edge["contract_behavior_test"], "PASS")
+            self.assertEqual(edge["status"], "CONTRACT_TESTED")
+            self.assertEqual(edge["schema_contract_test"], "PASS")
+            self.assertEqual(edge["contract_behavior_test"], "PASS")
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
 
