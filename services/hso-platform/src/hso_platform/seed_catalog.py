@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 from .database import build_engine, build_session_factory
@@ -56,7 +57,11 @@ def seed_catalog(repository_root: Path, session_factory) -> dict:
 def main() -> int:
     settings = Settings.from_env()
     settings.validate()
-    root = Path(__file__).resolve().parents[4]
+    catalog_dir = Path(os.environ.get(
+        "HSO_CATALOG_DIR",
+        str(Path(__file__).resolve().parents[4] / "catalog"),
+    ))
+    root = catalog_dir.parent
     engine = build_engine(settings)
     try:
         result = seed_catalog(root, build_session_factory(engine))
