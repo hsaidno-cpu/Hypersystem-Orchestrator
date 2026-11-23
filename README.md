@@ -129,7 +129,7 @@ Five official source repositories are pinned, two candidate/incomplete sources a
 
 The date-bound, evidence-backed migration baseline is documented in [SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md](docs/SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md). It separates catalog coverage, canonical source onboarding, source-content parity, compatibility testing and distribution readiness. An indexed instruction is not proof of canonical source synchronization.
 
-The ecosystem-level operating model, route arbitration, authority boundaries and execution gates are specified in [SUPER-ORCHESTRATOR-CONTROL-PLANE.md](architecture/SUPER-ORCHESTRATOR-CONTROL-PLANE.md). This is a design/control-plane contract, not a claim that a hosted runtime or automatic plugin dispatcher is deployed.\n\n## Architecture principles
+The ecosystem-level operating model, route arbitration, authority boundaries and execution gates are specified in [SUPER-ORCHESTRATOR-CONTROL-PLANE.md](architecture/SUPER-ORCHESTRATOR-CONTROL-PLANE.md). This is a design/control-plane contract, not a claim that a hosted runtime or automatic plugin dispatcher is deployed. The portable eight-pillar operating instruction is [HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md](prompts/HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md); it remains a draft until target-host testing and owner release.\n\n## Architecture principles
 
 1. **Single source of truth:** plugin implementation stays in its own repository; the parent records exact source URL, branch, version and pinned commit.
 2. **One owner per concern:** each plugin retains a bounded responsibility; overlapping capabilities are resolved by explicit primary ownership and handoff contracts.
