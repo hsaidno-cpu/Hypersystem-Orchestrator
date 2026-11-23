@@ -37,6 +37,16 @@ This roadmap is staged by evidence and dependencies, not by arbitrary calendar p
 
 **Exit criteria:** each declared integration has an owner, contract version, dependency classification and acceptance test. No unowned final decision or unresolved dependency cycle.
 
+### CP-05 — Deterministic plan-only workflow compiler
+
+**Status:** IMPLEMENTED_ON_PR_BRANCH / NOT_MERGED / NO_RUNTIME_DISPATCH
+
+A bounded planner converts an explicitly declared work-package graph into a deterministic topological order and readiness report. It checks catalog owner identity, legacy redirects, duplicate/unknown dependencies, dependency cycles, supplied capability state/evidence, authority level and approval requirements. Upstream blockers propagate to dependent work packages.
+
+**Artifacts:** `contracts/hso-workflow-plan.schema.json`, `tools/plan_hso_workflow.py`, `examples/hso-workflow-plan.example.json`, `docs/HSO-PLAN-ONLY-ORCHESTRATOR.md` and `tests/test_hso_workflow_planner.py`.
+
+**Boundary:** no natural-language route inference, specialist invocation, capability probe, persistent queue/state, host adapter, runtime dispatch or side effect. The planner is a plan-validation tool, not an operational service. It remains in the open PR branch until reviewed and merged.
+
 ## Stage E3 — Compatibility and integration assurance
 
 **Objective:** Prove what can interoperate and where, without confusing static metadata with live capability.

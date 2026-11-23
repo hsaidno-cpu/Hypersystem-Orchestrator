@@ -101,13 +101,25 @@ The following are **logical responsibilities**, not separate deployed microservi
 | CP-02 Catalog & Provenance Resolver | Resolve plugin identity, source state, version, commit, license and instruction provenance | Capability/source record | Catalog, repository registry and snapshots exist |
 | CP-03 Eligibility & Capability Gate | Check actual source, rights, artifact, dependency, host, permission and runtime availability | Eligibility/capability decision | Static distribution registry and dry-run resolver exist |
 | CP-04 Route Arbitration | Choose one primary plugin owner and narrowly scoped supporting owners | Route decision and ownership map | Responsibility matrix and routing overrides exist |
-| CP-05 Plan & Dependency Coordinator | Build a directed acyclic work plan with handoff dependencies and acceptance criteria | Work-package DAG | Architecture-level design; no persistent execution scheduler |
+| CP-05 Plan & Dependency Coordinator | Build and validate a directed acyclic work plan with declared owners, approvals, capabilities, dependencies and acceptance criteria | Deterministic plan-only DAG compiler | Implemented on PR branch via `tools/plan_hso_workflow.py`; no persistent scheduler, state store or dispatch |
 | CP-06 Handoff & State Manager | Validate payload contracts, capability status, epistemic status, and completion states | Versioned handoff receipt | JSON Schemas and fixtures exist; no shared service state store |
 | CP-07 Evidence & Quality Gate | Aggregate provenance, schema/behavior evidence, independent evaluation, and residual risk | Evidence dossier and gate result | C0–C3 evidence exists; C4/C5 remain open |
 | CP-08 Roadmap & Change Bridge | Hand longitudinal progress and adaptation decisions to PRE; hand source changes to SDO | Roadmap update / engineering change manifest | Procedural integration only; no cross-plugin event service |
 | CP-09 Governance & Observability | Record actor, authority, approvals, audit trail, failures, recovery and release state | Traceable execution record | Parent governance and CI exist; production observability is not deployed |
 
 Do not split these logical responsibilities into independent agents, services, or subskills until an observable bottleneck, repeated use case, clear interface, owner, and acceptance test justify the additional failure domains.
+
+### CP-05 implementation: plan-only workflow compiler
+
+The parent now includes a deterministic plan-only workflow planner, its versioned JSON input contract, a worked example and regression tests:
+
+- `contracts/hso-workflow-plan.schema.json` defines the declared work-package input shape.
+- `tools/plan_hso_workflow.py` validates plugin ownership against the catalog, rejects legacy redirects and unknown owners, checks dependency references/cycles, computes a stable topological order, checks declared capability evidence, action-authority level and approval state, and propagates upstream blockers.
+- `examples/hso-workflow-plan.example.json` demonstrates an explicitly declared three-stage plan.
+- `tests/test_hso_workflow_planner.py` covers schema shape, routing identity, dependency integrity, authority, approval and dispatch boundaries.
+
+This closes the planning/compiler gap only. It does not select owners from free text, invoke specialist skills, probe host capability, persist run state, call a plugin, or perform dispatch. A `READY_FOR_REVIEW` result is a planning disposition, not an execution authorization or runtime proof. The implementation is on this PR branch and is not merged to `main`.
+
 
 ## 5. Canonical operating workflow
 
