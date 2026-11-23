@@ -9,7 +9,7 @@
 - Canonical Git source: NOT_IDENTIFIED. Upstream Ponytail is provenance only; it is not added as a child source submodule for this derivative.
 - Distribution: `snapshot_only`; package-level license clearance, public artifact and tested host adapter are not established.
 - HSO route: `plugin.engineering_method` selects Ponytail as primary, SDO and Evaluator Team as bounded supporting owners; `plugin.skill.invoke` is still NOT_CONFIGURED, so dispatch is blocked.
-- New Ponytail → SDO Engineering Dossier interface and C2/C3 fixture passed schema/mock-receiver tests in CI run #45200131387. The full workflow failed only because one catalog regression assertion did not yet expect the new edge to be CONTRACT_TESTED; that assertion has been corrected for rerun. C4/C5 remain NOT_RUN.
+- New Ponytail → SDO Engineering Dossier schema, synthetic example, and Ponytail → SDO C2/C3 contract passed on PR head `4474dc0aff727605bc53a6b02c161419ed272b06`, CI [run #45201188300](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45201188300): 103 tests passed, including 15 handoff fixtures and four dossier schema/authority tests. C4/C5 remain NOT_RUN.
 
 Historical checkpoints below are retained as records of the earlier 22-plugin baseline.
 
