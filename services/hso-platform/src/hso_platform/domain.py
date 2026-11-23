@@ -458,6 +458,18 @@ def claim_next_package(session: Session, worker_id: str, settings: Settings):
             package.blockers = ["CAPABILITY_NOT_VERIFIED"]
             continue
 
+        primary_capability = session.scalar(
+            select(Capability).where(
+                Capability.plugin_key == package.primary_owner,
+                Capability.enabled.is_(True),
+                Capability.last_health_status == "C4_PASS",
+            ).order_by(Capability.created_at.desc()).limit(1)
+        )
+        if primary_capability is None:
+            package.state = "BLOCKED"
+            package.blockers = ["NO_ENABLED_C4_VERIFIED_PRIMARY_CAPABILITY"]
+            continue
+
         assignments = session.scalars(
             select(SpecialistAssignment).where(
                 SpecialistAssignment.work_package_id == package.id,
@@ -479,6 +491,15 @@ def claim_next_package(session: Session, worker_id: str, settings: Settings):
                 or not assignment.capability_evidence
             ):
                 specialist_blockers.append(f"SPECIALIST_CAPABILITY_NOT_READY:{assignment.plugin_key}")
+            specialist_capability = session.scalar(
+                select(Capability).where(
+                    Capability.plugin_key == assignment.plugin_key,
+                    Capability.enabled.is_(True),
+                    Capability.last_health_status == "C4_PASS",
+                ).order_by(Capability.created_at.desc()).limit(1)
+            )
+            if specialist_capability is None:
+                specialist_blockers.append(f"SPECIALIST_NO_ENABLED_C4_CAPABILITY:{assignment.plugin_key}")
         if specialist_blockers:
             package.state = "BLOCKED"
             package.blockers = specialist_blockers
@@ -528,8 +549,26 @@ def complete_package(
         ).with_for_update()
     )
     _assert_lease(package, worker_id)
+    required_runtime_evidence = (
+        "output_locator", "runtime_trace_reference", "host",
+        "host_version", "adapter_version",
+    )
+    missing_runtime_evidence = [
+        field for field in required_runtime_evidence
+        if not isinstance(result.get(field), str) or not result[field].strip()
+    ]
+    if missing_runtime_evidence:
+        raise DomainError(
+            422,
+            "C5 result is missing runtime evidence: " + ", ".join(missing_runtime_evidence),
+        )
     package.state = "AWAITING_VERIFICATION"
     package.result_json = result
+    package.output_locator = result["output_locator"]
+    package.runtime_trace_reference = result["runtime_trace_reference"]
+    package.runtime_host = result["host"]
+    package.runtime_host_version = result["host_version"]
+    package.runtime_adapter_version = result["adapter_version"]
     package.lease_owner = None
     package.lease_expires_at = None
     append_audit(session, "work_package.output_submitted", worker_id, package.id, {

@@ -110,6 +110,11 @@ class WorkPackage(Base):
     verification_evidence: Mapped[str | None] = mapped_column(String(1000))
     verified_by: Mapped[str | None] = mapped_column(String(240))
     verification_notes: Mapped[str | None] = mapped_column(Text)
+    output_locator: Mapped[str | None] = mapped_column(String(1000))
+    runtime_trace_reference: Mapped[str | None] = mapped_column(String(1000))
+    runtime_host: Mapped[str | None] = mapped_column(String(240))
+    runtime_host_version: Mapped[str | None] = mapped_column(String(120))
+    runtime_adapter_version: Mapped[str | None] = mapped_column(String(120))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
 

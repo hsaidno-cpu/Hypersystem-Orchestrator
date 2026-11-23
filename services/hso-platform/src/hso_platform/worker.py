@@ -10,7 +10,7 @@ from sqlalchemy import select
 
 from .database import build_engine, build_session_factory
 from .domain import block_package, claim_next_package, complete_package, fail_package
-from .models import Capability
+from .models import Capability, SpecialistAssignment
 from .settings import Settings
 
 logger = logging.getLogger("hso.worker")
@@ -54,6 +54,39 @@ def run_once(session_factory, settings: Settings, worker_id: str, broker: Runtim
             )
             return True
 
+        specialist_rows = session.scalars(
+            select(SpecialistAssignment).where(
+                SpecialistAssignment.work_package_id == package.id,
+                SpecialistAssignment.required.is_(True),
+            ).order_by(SpecialistAssignment.plugin_key.asc())
+        ).all()
+        specialist_capabilities = []
+        for assignment in specialist_rows:
+            specialist_capability = session.scalar(
+                select(Capability).where(
+                    Capability.plugin_key == assignment.plugin_key,
+                    Capability.enabled.is_(True),
+                    Capability.last_health_status == "C4_PASS",
+                ).order_by(Capability.created_at.desc()).limit(1)
+            )
+            if specialist_capability is None:
+                block_package(
+                    session, package.workflow_id, package.package_id,
+                    worker_id, f"SPECIALIST_CAPABILITY_NOT_AVAILABLE:{assignment.plugin_key}",
+                )
+                return True
+            specialist_capabilities.append({
+                "plugin_key": assignment.plugin_key,
+                "expected_contribution": assignment.expected_contribution,
+                "capability_id": specialist_capability.capability_id,
+                "capability_key": specialist_capability.capability_key,
+                "version": specialist_capability.version,
+                "contract_version": specialist_capability.contract_version,
+                "protocol": specialist_capability.protocol,
+                "endpoint": specialist_capability.endpoint,
+                "permission_scopes": specialist_capability.permission_scopes,
+            })
+
         adapter = broker.resolve(capability.protocol)
         if adapter is None:
             block_package(
@@ -74,6 +107,7 @@ def run_once(session_factory, settings: Settings, worker_id: str, broker: Runtim
             "capability_version": capability.version,
             "contract_version": capability.contract_version,
             "permission_scopes": capability.permission_scopes,
+            "specialist_capabilities": specialist_capabilities,
         }
 
     # At-least-once delivery is assumed. The exact same idempotency key is reused
