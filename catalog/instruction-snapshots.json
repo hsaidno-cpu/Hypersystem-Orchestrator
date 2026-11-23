@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "capture_date": "2026-11-23",
-  "total_skill_records": 256,
+  "total_skill_records": 265,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1485,6 +1485,54 @@
       "plugin_creator_release_id": "pluginrel_6b0385d7a4488191a681997c0d9ae531",
       "package_version": "0.1.1",
       "git_source_version": null
+    },
+    {
+      "plugin_key": "ponytail-engineering-optimizer",
+      "instruction_path": "plugin-instructions/ponytail-engineering-optimizer/SOURCE-POINTER.md",
+      "origin": "private_plugin_creator_release_pointer",
+      "skill_count": 9,
+      "skills": [
+        {
+          "skill_name": "ponytail-engineering-orchestrator",
+          "description": "Coordinates intake, task-mode selection, bounded specialist routing, authority gates and truthful completion reporting."
+        },
+        {
+          "skill_name": "scope-and-change-impact",
+          "description": "Defines scope, non-goals, affected paths and callers, compatibility risks and change blast radius."
+        },
+        {
+          "skill_name": "codebase-cartographer",
+          "description": "Maps repository entry points, data flow, dependencies, load assumptions and inspection limits."
+        },
+        {
+          "skill_name": "minimal-change-architect",
+          "description": "Selects the smallest complete solution that preserves correctness, security, reliability and maintainability."
+        },
+        {
+          "skill_name": "repository-auditor",
+          "description": "Conducts read-only repository audits with concrete, ranked and reproducible findings."
+        },
+        {
+          "skill_name": "change-reviewer",
+          "description": "Reviews a concrete diff in context, including callers, tests, behavior and residual risk."
+        },
+        {
+          "skill_name": "test-regression-assurer",
+          "description": "Builds risk-based test matrices and records actual evidence without overstating execution."
+        },
+        {
+          "skill_name": "security-reliability-gate",
+          "description": "Reviews trust boundaries, authorization, data integrity, privacy, retries and recovery."
+        },
+        {
+          "skill_name": "debt-and-efficiency-ledger",
+          "description": "Tracks intentional shortcut debt and measures efficiency only against comparable observed baselines."
+        }
+      ],
+      "plugin_creator_id": "plugins_6b044f34a5a481919ffc95eadee4383b",
+      "plugin_creator_release_id": "pluginrel_6b044f37640081918df7f449298d72cf",
+      "package_version": "0.1.0",
+      "public_mirror_status": "POINTER_AND_METADATA_ONLY"
     }
   ]
 }
