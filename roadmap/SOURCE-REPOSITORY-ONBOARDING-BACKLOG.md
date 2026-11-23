@@ -33,8 +33,8 @@
 
 | Plugin / relation | Repository | Classification | Next action |
 |---|---|---|---|
-| Photo Fixer | hsaidno-cpu/Photo-Fixer | CANDIDATE_INCOMPLETE | Add full manifest, master/subskill tree, references and tests; root currently only has README/LICENSE |
-| PVEE Promkes Super Orchestrator | promkespkmbinuang-coder/CL-VAEPPC | CANDIDATE_INCOMPLETE | Restore complete current PVEE 2.0.2 source tree, manifest, scripts, tests and release history; current tree contains only README/LICENSE/empty marker |
+| Photo Fixer | hsaidno-cpu/Photo-Fixer | CANDIDATE_INCOMPLETE | Head `95339901f84cdae861efcebd9820cb2e1efdc27d`; root Apache-2.0 is present, but current package source is only README/LICENSE. Restore manifest, master/subskill tree, references and tests before canonical promotion |
+| PVEE Promkes Super Orchestrator | promkespkmbinuang-coder/CL-VAEPPC | CANDIDATE_INCOMPLETE | Head `1ab0c41081ccdbb91cc9dec0a2864acd0de00d54`; root Apache-2.0 is present, but current tree contains README/LICENSE/empty marker. Restore complete PVEE 2.0.2 source tree, manifest, scripts, tests and release history |
 | HSMART | hsaidno-cpu/HSMART | RELATED_PLATFORM | Keep outside the plugin source registry |
 | Agent Skills Atlas upstream dataset | alirezarezvani/claude-skills | RELATED_UPSTREAM_DATASET | Preserve pinned dataset provenance; do not register as Agent Skills Atlas plugin source |
 | CL2-VAEPPC | promkespkmbinuang-coder/CL2-VAEPPC | UNVERIFIED_PLACEHOLDER | Not accepted; only README/LICENSE and no package identity or source tree |
@@ -88,6 +88,25 @@ The parent may register and pin a child source only after:
 - A minimal README/LICENSE or placeholder repository stays candidate/incomplete.
 - A private source remains private and is not copied into a public parent without explicit authorization.
 - An upstream dataset used by a package is not automatically that package's canonical repository.
+
+
+## 8. Redistribution-rights evidence refresh (2026-11-23)
+
+The machine-readable companion register is `catalog/source-rights-registry.json`; validate it with `python tools/validate_source_rights.py`.
+
+| Source | Current evidence | Rights conclusion | Distribution gate |
+|---|---|---|---|
+| SKILL ANALYZER | Public repository, pinned at `c469af7977c9bf6dcb3f5ab7b085a6de20d87004`; no LICENSE/COPYING/NOTICE found | No express redistribution licence located | Blocked until owner adds a licence or grants written permission |
+| A.S.F.R.E.E Canonical | Public repository, pinned at `a5eb55db0f6c2c6126a7fbcba645caf44c660c93`; PolyForm Noncommercial 1.0.0, NOTICE and licence strategy present | Noncommercial use only under the current baseline; separate written permission for commercial purpose; branding is separately restricted. The documented historical Apache-2.0 snapshot and prior grants need legal review | Review required; do not treat as unrestricted open source |
+| Anatomi Prompt V3 | Private repository, pinned at `06b46b88ed7eddc437792fae715f255cbe4eb13d`; no licence file found | Private access plus no declared licence | Keep private; written owner permission and licence decision required for broader distribution |
+| Video Explainer | Public repository, pinned at `f8f8c0f29ff9d851fa75eba764978c24bdd79416`; no LICENSE/COPYING/NOTICE found; Git 4.1.9 vs deployed 4.1.12 | Public visibility is not a redistribution grant | Blocked until licence/permission and source parity are resolved |
+| Skill Developer Orchestrator | Public repository, pinned at `9d3c4bc09179ff857df4f3819be83e1847571add`; Apache-2.0 root LICENSE | Conditional redistribution permitted under Apache-2.0 obligations | Rights basis cleared; parity drift, signed artifact and host adapter still block distribution |
+| Photo Fixer candidate | Public candidate at `95339901f84cdae861efcebd9820cb2e1efdc27d`; Apache-2.0 root LICENSE; source package incomplete | Apache-2.0 applies to repository contents, not proof of complete plugin package identity | Candidate only; no installable package |
+| PVEE candidate | Public candidate at `1ab0c41081ccdbb91cc9dec0a2864acd0de00d54`; Apache-2.0 root LICENSE; source package incomplete | Apache-2.0 applies to repository contents, not proof of complete plugin package identity | Candidate only; no installable package |
+
+The remaining 14 NOT_IDENTIFIED Plugin Creator package identities have no accepted canonical Git source or independent redistribution licence in this baseline. Their USER/PRIVATE platform scope is evidence of access/discoverability, not permission to export or republish. Keep them snapshot-only and private-restricted until each owner approves a source repository, visibility, licence and distribution scope. The parent Apache-2.0 licence must not be used as a substitute for child-plugin permission.
+
+**Current verified baseline:** 22 identities; 5 pinned official sources; 14 source identities not identified; 2 incomplete candidates; 1 legacy redirect; 0 installable packages. Source pinning and licence evidence are separate gates.
 
 ## 7. Cross-plugin source-alignment tasks
 
