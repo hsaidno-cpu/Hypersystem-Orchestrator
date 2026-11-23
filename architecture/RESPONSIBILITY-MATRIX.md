@@ -31,6 +31,7 @@ For the intended operating sequence and maturity gates, see [SUPER-ORCHESTRATOR-
 | Forensic anatomy and reconstruction of an AI plugin/skill/agent | A.S.F.R.E.E Canonical | SKILL ANALYZER for methods; Agent Jailbreak DS for security; SDO for engineering lifecycle | A.S.F.R.E.E Legacy |
 | Independent skill/plugin evaluation, scoring, ranking or redesign | Evaluator Team | SKILL ANALYZER for analytical methods; Anatomi Prompt for eight-pillar structure | SDO as independent judge of its own implementation |
 | Build, modify, reconstruct, test or release an AI skill/plugin | Skill Developer Orchestrator | A.S.F.R.E.E, Evaluator Team, Anatomi Prompt | Multiple simultaneous write owners |
+| Design the minimum complete software change, audit a codebase, review a diff, or produce a risk-based engineering dossier | Ponytail Engineering System | SDO for source engineering; Evaluator Team for independent acceptance; A.S.F.R.E.E only when the target is plugin/system anatomy | Generic analysis, source writes/releases without SDO, or treating a skill as an execution runtime |
 | Audit or construct a prompt using eight Octa-Prompt pillars | Anatomi Prompt V3 — Octa-Prompt | AI Prompt Finder before it when a prompt must first be reconstructed from content | Prompt Finder as a substitute for eight-pillar structural audit |
 | Analyze image/video/document/design/content and turn it into a prompt | AI Prompt Finder & Creator | Anatomi Prompt for optional eight-pillar hardening | Anatomi Prompt alone when the source content itself must be analyzed |
 | General photo edit, retouch, object/background, product photo or visual enhancement | Photo Fixer | Master Photo Restoration only when restoration is the actual task | Master Photo Restoration for ordinary editing |
@@ -56,6 +57,7 @@ For the intended operating sequence and maturity gates, see [SUPER-ORCHESTRATOR-
 | General analytical method selection | SKILL ANALYZER | Method Blueprint with question, assumptions, evidence needs and method limits |
 | Plugin/package anatomy and forensic reconstruction case | A.S.F.R.E.E | Evidence dossier, component map, dependency/permission map and change assurance |
 | Independent evaluation score and acceptance recommendation | Evaluator Team | Scoring rubric, findings, evidence, severity, recommendation and acceptance criteria |
+| Minimal-complete software change method, read-only repository audit/review and engineering risk/test dossier | Ponytail Engineering System | Engineering Change Dossier to SDO; no repository write authority |
 | Integrated skill/plugin engineering lifecycle | SDO | Requirement trace, change manifest, tests, read-back, PR and release evidence |
 | Eight-pillar prompt architecture | Anatomi Prompt | Octa-Prompt master prompt and structural validation |
 | Source-content analysis and reconstructed prompt | AI Prompt Finder & Creator | Observation/inference/unknown map and target-generator prompt package |
@@ -121,3 +123,11 @@ For the intended operating sequence and maturity gates, see [SUPER-ORCHESTRATOR-
 ## 5. Unresolved source-alignment work
 
 The positions above are the central ecosystem's accepted responsibility baseline. Some installed plugin instruction bundles still contain broad orchestrator scopes that overlap adjacent systems. Until their canonical source repositories are identified and their source instructions are reconciled, record those as POSITIONING_ACCEPTED_SOURCE_ALIGNMENT_PENDING. Do not claim each child plugin has already been rewritten.
+
+## Ponytail vs SDO vs Evaluator Team vs A.S.F.R.E.E
+
+- **Ponytail Engineering System** owns the engineering method: understand affected code, map blast radius, choose the smallest complete solution, perform read-only audit/review, define risk-based tests and track intentional shortcut debt.
+- **Skill Developer Orchestrator (SDO)** owns accepted source engineering: edits, target-environment tests, repository writes, commits, pull requests, release preparation and source read-back. Ponytail's dossier is an input to SDO, not permission to mutate a repository.
+- **Evaluator Team** owns independent quality judgement and acceptance recommendation. It must not be replaced by Ponytail's self-assessment or SDO's implementation report.
+- **A.S.F.R.E.E** handles forensic anatomy and supervised reconstruction when the target is an AI plugin, skill, agent or system. It is not the default owner for ordinary software coding tasks.
+- **HSO** remains the ecosystem control plane. It selects the registered specialist for a work package and validates declared handoffs; it does not execute the specialist or imply runtime dispatch.
