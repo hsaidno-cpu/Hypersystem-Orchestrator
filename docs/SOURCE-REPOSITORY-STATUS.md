@@ -2,11 +2,19 @@
 
 **Inventory date:** 2026-11-23
 **Platform package-source attestation:** 14/14 formerly NOT_IDENTIFIED Git sources have a verified current Plugin Creator USER/PRIVATE package manifest and full file inventory. Git child repository status remains NOT_IDENTIFIED until an immutable repository source is accepted.  
-**Plugin identities:** 22  
+**Plugin identities:** 23  
 **Verified official plugin source repositories pinned:** 5  
 **Candidate/incomplete source repositories:** 2  
-**Plugin identities with no accepted GitHub source:** 14  
+**Plugin identities with no accepted GitHub source:** 15  
 **Legacy redirect identities:** 1 (A.S.F.R.E.E Legacy; not a second product)
+
+## 1.2 Ponytail Engineering System registration — 23 November 2026
+
+The new `ponytail-engineering-optimizer` identity is a private Plugin Creator package, version 0.1.0, release `pluginrel_6b044f37640081918df7f449298d72cf`, scope USER / PRIVATE. Its nine subskills are indexed in the catalog, but the full instruction files remain inside the private package. The public parent stores only a source pointer and concise metadata.
+
+The upstream [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) project was inspected at v5.3.3 and is an external methodology-provenance reference only. It is **not** the canonical Git source for the derivative package, is not added as a submodule, and does not supply a blanket package-license or redistribution grant. The derivative package has no accepted canonical Git repository, so its source state remains `pending_repository / NOT_IDENTIFIED`.
+
+The source count therefore moves from 14 to 15 plugin identities without an accepted canonical Git source. No new official source pin is added. Distribution remains `snapshot_only` because the Plugin Creator package is USER/PRIVATE, no independent package-license clearance or public artifact exists, and no host adapter is tested.
 
 ## 1. Search scope and evidence
 
