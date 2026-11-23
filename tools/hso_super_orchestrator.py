@@ -198,22 +198,23 @@ def discover_capabilities(include_test: bool = False) -> dict[str, Any]:
             if item.get("enabled") and (not test_only or include_test) and name in registry:
                 try:
                     expected = (f"hso-probe:{cap_id}\n").encode("utf-8")
+                    target_rel = "probe/" + cap_id.replace(".", "-") + ".txt"
                     if name == "verify_sha256":
-                        target = _safe_target(probe_root, "probe/target.txt")
+                        target = _safe_target(probe_root, target_rel)
                         target.parent.mkdir(parents=True, exist_ok=True)
                         target.write_bytes(expected)
-                        result = registry[name](probe_root, "probe/target.txt",
+                        result = registry[name](probe_root, target_rel,
                             {"expected_sha256": sha256_bytes(expected)}, {})
                     elif name == "flaky_write_text":
                         args = {"content": expected.decode("utf-8")}
                         context = {"idempotency_key": "probe-" + cap_id}
-                        try: registry[name](probe_root, "probe/target.txt", args, context)
+                        try: registry[name](probe_root, target_rel, args, context)
                         except RetryableActionError: pass
-                        result = registry[name](probe_root, "probe/target.txt", args, context)
+                        result = registry[name](probe_root, target_rel, args, context)
                     else:
-                        result = registry[name](probe_root, "probe/target.txt",
+                        result = registry[name](probe_root, target_rel,
                             {"content": expected.decode("utf-8")}, {"idempotency_key": "probe-" + cap_id})
-                    observed = _safe_target(probe_root, "probe/target.txt").read_bytes()
+                    observed = _safe_target(probe_root, target_rel).read_bytes()
                     if observed != expected or result.get("sha256", result.get("observed_sha256")) != sha256_bytes(expected):
                         raise RuntimeErrorBase("write/read-back or digest probe did not match")
                     status, evidence = "READY", "live temporary-file action plus independent read-back probe passed"

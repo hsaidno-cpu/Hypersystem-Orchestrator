@@ -39,7 +39,7 @@ class HsoRuntimeTests(unittest.TestCase):
 
     def test_route_has_exactly_one_primary_owner_and_minimal_specialist(self):
         _, routes, _, catalog = hso._load_registries()
-        route = hso.resolve_route("artifact.create_and_verify", routes, catalog)
+        route = hso.resolve_route("artifact.create", routes, catalog)
         self.assertEqual(route["primary_owner"], "HSO.CP-05")
         self.assertEqual(route["supporting_specialists"], ["HSO.CP-07"])
 
@@ -67,7 +67,7 @@ class HsoRuntimeTests(unittest.TestCase):
     def test_duplicate_idempotency_keys_rejected(self):
         data = self.workflow()
         data["work_packages"].append(copy.deepcopy(data["work_packages"][0]))
-        data["work_packages"][1]["package_id"] = "WP-ARTIFACT-002"
+        data["work_packages"][-1]["package_id"] = "WP-ARTIFACT-002"
         with self.assertRaisesRegex(hso.RuntimeErrorBase, "idempotency_key values must be unique"):
             hso._validate_workflow(data)
 
@@ -108,7 +108,7 @@ class HsoRuntimeTests(unittest.TestCase):
         with patch.dict(os.environ, {"HSO_ENABLE_TEST_ADAPTERS":"1"}):
             result = self.run_workflow(data, include_test=True)
         outcome = result["package_outcomes"]["WP-RECOVERY-001"]
-        self.assertEqual(result["status"], "SUCCEEDED")
+        self.assertEqual(result["status"], "SUCCEEDED", result["package_outcomes"])
         self.assertEqual(outcome["attempts"], 2)
         events = [json.loads(line)["event_type"] for line in self.audit.read_text(encoding="utf-8").splitlines()]
         self.assertIn("RETRY_SCHEDULED", events)
