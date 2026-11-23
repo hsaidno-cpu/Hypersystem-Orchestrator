@@ -18,9 +18,9 @@ class CatalogValidationTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
-        self.assertIn("PASS: 22 unique plugin identities", result.stdout)
+        self.assertIn("PASS: 23 unique plugin identities", result.stdout)
         self.assertIn("PASS: 5 declared and pinned source submodules", result.stdout)
-        self.assertIn("PASS: 256 indexed skill instruction records", result.stdout)
+        self.assertIn("PASS: 265 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):
         gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
@@ -195,8 +195,8 @@ class CatalogValidationTests(unittest.TestCase):
         snapshots = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
         pre = next(p for p in catalog["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
         indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
-        self.assertEqual(catalog["expected_plugin_count"], 22)
-        self.assertEqual(len(catalog["plugins"]), 22)
+        self.assertEqual(catalog["expected_plugin_count"], 23)
+        self.assertEqual(len(catalog["plugins"]), 23)
         self.assertEqual(pre["plugin_creator_id"], "plugins_6b038580bc488191ac56d9e586071bfc")
         self.assertEqual(pre["platform_package_version"], "0.1.1")
         self.assertEqual(pre["platform_current_release_id"], "pluginrel_6b0385d7a4488191a681997c0d9ae531")
@@ -204,7 +204,24 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertIsNone(pre["source_repository_id"])
         self.assertEqual(pre["instruction_skill_count"], 9)
         self.assertEqual(indexed["skill_count"], 9)
-        self.assertEqual(snapshots["total_skill_records"], 256)
+        self.assertEqual(snapshots["total_skill_records"], 265)
+
+
+    def test_ponytail_is_private_method_specialist_not_canonical_source(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        item = next(p for p in catalog["plugins"] if p["plugin_key"] == "ponytail-engineering-optimizer")
+        self.assertEqual(item["plugin_creator_id"], "plugins_6b044f34a5a481919ffc95eadee4383b")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertIsNone(item["source_repository_id"])
+        self.assertEqual(item["source_classification"], "NOT_IDENTIFIED")
+        self.assertEqual(item["platform_package_version"], "0.1.0")
+        self.assertEqual(item["platform_current_release_id"], "pluginrel_6b044f37640081918df7f449298d72cf")
+        self.assertEqual(item["platform_scope"], "USER")
+        self.assertEqual(item["platform_discoverability"], "PRIVATE")
+        self.assertEqual(item["instruction_skill_count"], 9)
+        pointer = ROOT / item["instruction_snapshot_path"]
+        self.assertTrue(pointer.is_file())
+        self.assertIn("not mirrored", pointer.read_text(encoding="utf-8").lower())
 
 if __name__ == "__main__":
     unittest.main()
