@@ -56,7 +56,7 @@
       "version_alignment_note": "Current Plugin Creator deployment 4.1.12; official public GitHub source is 4.1.9. Embedded M00 header v4.0.9 is an internal skill version, not the package version. Source parity is pending.",
       "version_authority": "SOURCE_MANIFEST_AND_PLUGIN_CREATOR_RELEASE_COMPARISON",
       "source_instruction_parity_status": "NOT_COMPARED",
-      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
+      "source_instruction_parity_note": "The Plugin Creator USER/PRIVATE archive is verified at 4.1.12, but its complete file inventory exposes no SKILL.md files for a direct file-level comparison against the 14 Git source skill files at 4.1.9. Plugin Creator plugin.json reports 4.1.12 while its README heading is V4.1.11; Git plugin.json and README report 4.1.9. Keep source_instruction_parity_status NOT_COMPARED and source sync blocked until the actual deployment skill files, package assets, manifest and source are mapped one-to-one."
     },
     {
       "plugin_key": "skill-developer-orchestrator",
@@ -105,7 +105,7 @@
       "version_reconciliation_status": "SOURCE_VERIFIED_IN_SYNC",
       "source_sync_status": "SOURCE_INSTRUCTION_DRIFT_DETECTED",
       "source_instruction_parity_status": "DRIFT_DETECTED",
-      "source_instruction_parity_note": "Direct comparison on 2026-11-22 found the Plugin Creator master SKILL.md at 23,651 characters and the canonical SPDO Git source master SKILL.md at 10,573 characters; normalized exact-content comparison failed. Package version and manifest match at 0.1.0, but instruction content is not byte/semantic parity. Keep both sources distinct until a reviewed reconciliation selects the intended canonical body."
+      "source_instruction_parity_note": "Full 4-file instruction/reference comparison against Plugin Creator USER/PRIVATE v0.1.0 and pinned Git source v0.1.0: 0/4 files match exactly. Master SKILL.md is 23,651 vs 10,573 chars; audit-matrix.md 4,874 vs 3,111; github-change-protocol.md 4,596 vs 2,497; regression-and-release-gates.md 4,500 vs 3,030. Plugin Creator bodies are longer; package and source versions match but content does not. Preserve both until the source owner selects the canonical body and updates/tests the other side."
     },
     {
       "plugin_key": "evaluator-team",
@@ -242,8 +242,8 @@
       "target_version": "3.0.0",
       "version_reconciliation_status": "SOURCE_VERIFIED_IN_SYNC",
       "source_sync_status": "SOURCE_AND_PLATFORM_MATCH",
-      "source_instruction_parity_status": "NOT_COMPARED",
-      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
+      "source_instruction_parity_status": "MATCH",
+      "source_instruction_parity_note": "Full 9-file SKILL.md comparison against Plugin Creator USER/PRIVATE v3.0.0 and pinned private Git source 3.0.0: master anatomi-prompt plus all eight Octa-Prompt specialist skills are exact after CRLF normalization. This certifies instruction-file parity only; distribution rights remain uncleared because the private source has no root LICENSE."
     },
     {
       "plugin_key": "skill-analyzer",
@@ -289,9 +289,9 @@
       "deployed_plugin_version": "1.0.0",
       "target_version": "1.3.0",
       "version_reconciliation_status": "SOURCE_VERIFIED_PLATFORM_BEHIND",
-      "source_sync_status": "SOURCE_VERSION_AHEAD_PLATFORM_PACKAGE",
-      "source_instruction_parity_status": "NOT_COMPARED",
-      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
+      "source_sync_status": "SOURCE_INSTRUCTION_DRIFT_DETECTED",
+      "source_instruction_parity_status": "DRIFT_DETECTED",
+      "source_instruction_parity_note": "Full 12-file skill comparison against Plugin Creator USER/PRIVATE v1.0.0 release and pinned Git source 1.3.0: 11/12 SKILL.md files are exact after CRLF normalization. The only mismatch is skills/platform-compatibility/SKILL.md: Plugin Creator has 71 lines; Git source has 81 lines and appends a HOSTED GATEWAY PROFILE section. Git source is ahead; do not auto-overwrite or relabel the package. Version alignment remains SOURCE_AHEAD_OF_PLATFORM."
     },
     {
       "plugin_key": "godex-motion-audio",
@@ -619,9 +619,9 @@
       "deployed_plugin_version": "0.3.2",
       "target_version": "0.5.0-rc.1",
       "version_reconciliation_status": "SOURCE_VERIFIED_PLATFORM_BEHIND",
-      "source_sync_status": "SOURCE_VERSION_AHEAD_PLATFORM_PACKAGE",
-      "source_instruction_parity_status": "NOT_COMPARED",
-      "source_instruction_parity_note": "Source/snapshot content parity has not yet been compared."
+      "source_sync_status": "SOURCE_INSTRUCTION_DRIFT_DETECTED",
+      "source_instruction_parity_status": "DRIFT_DETECTED",
+      "source_instruction_parity_note": "Full 13-file skill comparison against Plugin Creator USER/PRIVATE v0.3.2 and pinned Git source 0.5.0-rc.1: 5/13 SKILL.md files match exactly; 8/13 differ, including the master orchestrator and O03/O04/O05/O06/O09/O11/O12. The Git source is materially longer in every differing file and is a release candidate. Treat the platform package as behind; do not promote RC or overwrite without owner review and release decision."
     },
     {
       "plugin_key": "asfree-legacy",
