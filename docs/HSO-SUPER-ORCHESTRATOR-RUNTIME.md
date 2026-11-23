@@ -43,7 +43,7 @@ The runtime uses explicit task_type rules rather than keyword guessing. Each pac
 
 ### Authorization and approvals
 
-The checked-in policy is the source of truth, not fields in the request. Sandbox writes require S3 and are restricted to SANDBOX. Unknown actions, staging, production, external HTTP, child-repository writes, remote MCP and plugin invocation are not enabled. Where a future action is marked approval_required, a scoped HMAC-SHA256 approval receipt must match case, action, target, authority, approver, nonce and expiry; missing key, invalid signature or expired receipt fails closed.
+The checked-in policy is the source of truth, not fields in the request. Sandbox writes require S3 and are restricted to SANDBOX. Unknown actions, staging, production, external HTTP, child-repository writes, remote MCP and plugin invocation are not enabled. Where a future action is marked approval_required, a scoped HMAC-SHA256 approval receipt must match case, action, target, authority, approver, nonce and expiry; missing key, invalid signature or expired receipt fails closed. The current allow-list contains no approval-gated external action and no central approval issuer or replay-resistant nonce service; this verifier is a local control primitive, not a complete enterprise approval workflow.
 
 Never put approval secrets or API keys in workflow JSON, issue text, audit events or Git. Supply HSO_APPROVAL_HMAC_KEY through a secret manager only when a separately reviewed adapter actually needs signed approval.
 

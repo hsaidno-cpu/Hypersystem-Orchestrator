@@ -116,6 +116,11 @@ HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
     "write_text": _write_text, "verify_sha256": _verify_sha256,
 }
 TEST_HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {"flaky_write_text": _flaky_write_text}
+TRUSTED_ADAPTERS = {
+    "write_text": "builtin.python.sandbox",
+    "verify_sha256": "builtin.python.verifier",
+    "flaky_write_text": "builtin.python.test-fault-injector",
+}
 
 class AuditLog:
     """Hash-chained JSONL audit events. Hash chaining detects edits; it is not a digital signature."""
@@ -195,7 +200,11 @@ def discover_capabilities(include_test: bool = False) -> dict[str, Any]:
             test_only = bool(item.get("test_only", False))
             registry = TEST_HANDLERS if test_only else HANDLERS
             status, evidence = "NOT_CONFIGURED", item.get("unavailable_reason")
-            if item.get("enabled") and (not test_only or include_test) and name in registry:
+            if item.get("enabled") and (not test_only or include_test) and (
+                name not in registry or item.get("adapter_id") != TRUSTED_ADAPTERS.get(name)
+            ):
+                status, evidence = "UNAVAILABLE", "capability registry handler/adapter does not match the runtime trusted allow-list"
+            elif item.get("enabled") and (not test_only or include_test) and name in registry:
                 try:
                     expected = (f"hso-probe:{cap_id}\n").encode("utf-8")
                     target_rel = "probe/" + cap_id.replace(".", "-") + ".txt"
@@ -442,9 +451,16 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
             outcomes[package_id] = {"status": "REJECTED_POLICY", "reason": str(exc)}
             audit.emit("PACKAGE_REJECTED", package_id, reason=str(exc)); continue
         registry = TEST_HANDLERS if action_policy.get("test_only") else HANDLERS
-        handler_name = next((item["handler"] for item in capability_config["capabilities"]
-                             if item["capability_id"] == package["action_id"]), None)
-        handler = registry.get(handler_name)
+        capability_entry = next((item for item in capability_config["capabilities"]
+                                 if item["capability_id"] == package["action_id"]), None)
+        handler_name = capability_entry.get("handler") if capability_entry else None
+        adapter_is_trusted = bool(
+            capability_entry
+            and handler_name in registry
+            and TRUSTED_ADAPTERS.get(handler_name) == action_policy.get("adapter_id")
+            and capability_entry.get("adapter_id") == action_policy.get("adapter_id")
+        )
+        handler = registry.get(handler_name) if adapter_is_trusted else None
         if not handler:
             outcomes[package_id] = {"status": "BLOCKED_ADAPTER", "reason": "trusted handler not registered"}
             audit.emit("PACKAGE_BLOCKED", package_id, reason="HANDLER_NOT_REGISTERED"); continue

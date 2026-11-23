@@ -28,6 +28,35 @@ class HsoRuntimeTests(unittest.TestCase):
         return hso.execute_workflow(data, self.workspace, self.ledger, self.audit,
                                     self.receipt, **kwargs)
 
+    def test_capability_registry_cannot_alias_untrusted_adapter(self):
+        registry = json.loads(hso.CAPABILITIES_PATH.read_text(encoding="utf-8"))
+        entry = next(item for item in registry["capabilities"] if item["capability_id"] == "sandbox.write_text")
+        entry["adapter_id"] = "attacker.untrusted"
+        modified = self.root / "modified-capabilities.json"
+        modified.write_text(json.dumps(registry), encoding="utf-8")
+        with patch.object(hso, "CAPABILITIES_PATH", modified):
+            result = hso.discover_capabilities()
+        status = next(item["status"] for item in result["capabilities"]
+                      if item["capability_id"] == "sandbox.write_text")
+        self.assertEqual(status, "UNAVAILABLE")
+
+    def test_valid_scoped_approval_receipt_is_accepted_and_wrong_scope_rejected(self):
+        import datetime, hashlib, hmac
+        now = datetime.datetime.now(datetime.timezone.utc)
+        unsigned = {
+            "case_id":"CASE-VALID", "action_id":"approved.action", "target_path":"safe/target.txt",
+            "authority":"S4", "approver":"reviewer@example.test", "nonce":"single-use-test-nonce",
+            "issued_at":(now-datetime.timedelta(seconds=5)).isoformat(),
+            "expires_at":(now+datetime.timedelta(minutes=5)).isoformat()
+        }
+        secret = "unit-test-approval-key"
+        signature = hmac.new(secret.encode(), hso.canonical_json(unsigned).encode(), hashlib.sha256).hexdigest()
+        receipt = {**unsigned, "signature":signature}
+        with patch.dict(os.environ, {"HSO_APPROVAL_HMAC_KEY":secret}):
+            hso.verify_approval(receipt, "CASE-VALID", "approved.action", "safe/target.txt", "S4")
+            with self.assertRaisesRegex(hso.PolicyDenied, "scope"):
+                hso.verify_approval(receipt, "CASE-VALID", "approved.action", "other/target.txt", "S4")
+
     def test_live_capability_discovery_only_marks_probed_adapters_ready(self):
         result = hso.discover_capabilities()
         states = {item["capability_id"]: item["status"] for item in result["capabilities"]}
