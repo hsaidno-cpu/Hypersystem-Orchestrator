@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "purpose": "Deterministic synthetic fixtures for C2 JSON Schema validation and C3 mocked receiver-contract behavior. These do not assert host activation or runtime execution.",
   "matrix_revision": "2026-11-22",
-  "count": 14,
+  "count": 15,
   "fixtures": [
     {
       "fixture_id": "INT-ANALYZER-ASFREE-001",
@@ -784,6 +784,82 @@
         ],
         "risk_and_unknowns": [
           "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-PONYTAIL-SDO-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-PONYTAIL-SDO-001/v1",
+        "case_id": "case/INT-PONYTAIL-SDO-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "ponytail-engineering-optimizer",
+          "version_or_commit": "plugin_creator_release:0.1.0:pluginrel_6b044f37640081918df7f449298d72cf"
+        },
+        "recipient_plugin": {
+          "plugin_key": "skill-developer-orchestrator",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Transfer a minimal-complete engineering dossier to SDO for separately authorized implementation.",
+        "scope": [
+          "Synthetic handoff contract assurance only",
+          "Use the dossier as an implementation brief, not as permission to write"
+        ],
+        "non_goals": [
+          "No source write or commit",
+          "No PR merge or release",
+          "No host activation or runtime dispatch"
+        ],
+        "inputs": [
+          {
+            "locator": "catalog/plugins.json#ponytail-engineering-optimizer",
+            "provenance": "Hypersystem-Orchestrator catalog",
+            "sensitivity": "public_metadata"
+          },
+          {
+            "locator": "plugin-instructions/ponytail-engineering-optimizer/SOURCE-POINTER.md",
+            "provenance": "Private Plugin Creator package metadata pointer",
+            "sensitivity": "private_package_pointer_only"
+          }
+        ],
+        "findings": [
+          {
+            "id": "PONY-001",
+            "status": "VERIFIED_SOURCE",
+            "summary": "The private Plugin Creator package and release metadata were read back."
+          },
+          {
+            "id": "PONY-002",
+            "status": "OBSERVED",
+            "summary": "The upstream Ponytail repository is methodology provenance, not the derivative package canonical Git source."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED",
+          "VERIFIED_SOURCE",
+          "ASSUMPTION"
+        ],
+        "capability_status": "NOT_CHECKED",
+        "authority": {
+          "level": "DESIGN_HANDOFF_ONLY",
+          "approval_reference": "NOT_GRANTED"
+        },
+        "dependencies": [
+          "skill-developer-orchestrator"
+        ],
+        "expected_output": "engineering_change_dossier",
+        "acceptance_criteria": [
+          "Ponytail produces a bounded engineering dossier; SDO is the only source-write lifecycle owner.",
+          "The handoff carries target identity, scope/non-goals, baseline status, design rationale, risks, acceptance criteria and test plan.",
+          "The handoff does not authorize repository writes, pull-request merge, release or production deployment.",
+          "Independent quality judgement remains with Evaluator Team; HSO controls ecosystem-level planning and routing."
+        ],
+        "risk_and_unknowns": [
+          "No canonical Git source exists for the derivative package.",
+          "Full package instructions remain USER/PRIVATE and are not mirrored in the public parent repository.",
+          "C4 host activation and C5 runtime execution remain NOT_RUN."
         ],
         "completion_status": "READY_FOR_HANDOFF"
       }
