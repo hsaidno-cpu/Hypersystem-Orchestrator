@@ -1,7 +1,7 @@
 # Source and Instruction Parity Reconciliation
 
 **Checkpoint:** 23 November 2026  
-**Parent baseline:** `hsaidno-cpu/Hypersystem-Orchestrator` main @ `b29a6378381628761d93ead6af352cc004afe39d`  
+**Parent baseline:** `hsaidno-cpu/Hypersystem-Orchestrator` main @ `e5242797a2481018a9758f7cf8689856015b3083`  
 **Method:** compare every corresponding `SKILL.md` file available in the current Plugin Creator USER/PRIVATE package against the exact pinned Git source. Normalize CRLF to LF and compare trimmed UTF-8 text. Exactness is reported per file; it does not imply license clearance or runtime compatibility.
 
 ## 1. Results
@@ -13,6 +13,7 @@
 | A.S.F.R.E.E Canonical | 0.3.2 | 0.5.0-rc.1 | **5/13 exact**; 8 files differ (master + O03/O04/O05/O06/O09/O11/O12) | RC source ahead; parity DRIFT_DETECTED |
 | Skill Developer Orchestrator | 0.1.0 | 0.1.0 | **0/4 exact** (master + 3 references) | Same version label, different content; DRIFT_DETECTED |
 | Video Explainer Promkes | 4.1.12 | 4.1.9 | Not directly comparable at skill-file level: Plugin Creator archive inventory contains no `SKILL.md` files while Git source has 14 | Deployment ahead; parity NOT_COMPARED |
+| Progressive Roadmap Evaluator (PRE) | 0.1.1 | Not identified | No canonical Git source | Package verified; parity NOT_COMPARED |
 
 ## 2. Detailed findings
 
