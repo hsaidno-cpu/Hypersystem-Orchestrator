@@ -1,6 +1,6 @@
 # Portfolio Routing and Non-Duplication Contract
 
-**Normative scope:** ecosystem-level routing, domain ownership and handoff boundaries for all 20 plugin identities.
+**Normative scope:** ecosystem-level routing, domain ownership and handoff boundaries for all 21 plugin identities.
 
 **Core principle:** related work is not duplicated work. Plugins may touch the same object only when they own different questions, artifacts, decisions or technical layers.
 
@@ -100,6 +100,18 @@ Supporting handoffs:
 
 **Important:** PVEE's current master skill still orchestrates a broad Promkes pipeline. The ecosystem contract narrows its final ownership to health truth, communication governance, campaign decision and evaluation. Its technical production handoff to Video Explainer is a source-alignment requirement, not a claim that the Plugin Creator source has already been modified.
 
+
+### 2.6 People & Business Competency Academy vs Agent Skills Atlas vs GrowthForge
+
+| Dimension | People & Business Competency Academy | Agent Skills Atlas | GrowthForge Business OS |
+|---|---|---|---|
+| Primary object | Human learner/team capability and observable behavior | AI skills, plugins, tools, agents and capability-library records | Business context, commercial decisions and operating deliverables |
+| Owns | Competency baseline, learning pathway, deliberate practice, simulation, workplace transfer and learner outcome evidence | Discovery, inventory, taxonomy, provenance, dependencies and adoption maturity of AI capabilities | Business strategy, market/customer decisions, brand/product, finance, marketing, sales, operations and commercial execution |
+| Does not own | AI package/source engineering, portfolio inventory, business decision ownership, therapy or regulated professional advice | Human learner coaching or proof of real-world behavior transfer | Generic learner assessment or the engineering lifecycle of AI skill packages |
+| Routing test | “Can this person/team perform this behavior better in a real context?” | “What AI capability exists, where is its source, and how ready is it?” | “What should the business decide, build, sell, finance or operate?” |
+
+The Academy may use a real business task as a transfer context, but the learning objective and learner evidence remain its responsibility. A commercial recommendation remains GrowthForge's responsibility. A mapped AI skill remains Atlas inventory data, not an executable learning intervention.
+
 ## 3. Remaining portfolio positioning
 
 | Plugin | Sole primary responsibility | Explicit non-ownership |
@@ -110,9 +122,10 @@ Supporting handoffs:
 | Cortex Workbench | General knowledge-work routing for understanding, learning, research, writing, thinking, productivity and code workflows | Business OS ownership or native slash-command UI |
 | CommandCraft 56 | Registry and resolution of 56 text-command aliases/task profiles | Native platform command menu, case-level orchestration or persistent automation |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy, compatibility mapping and staged adoption | Claiming mapped/discovered assets are installed, callable or executable |
+| People & Business Competency Academy | Human competency development: diagnose, learn, practise, simulate, transfer to workplace/business behavior and evaluate evidence | AI-skill inventory, generic workflow architecture, business consulting deliverables, therapy or reading-completion-as-mastery claims |
 | GrowthForge Business OS | Business strategy, market, finance, brand, product, marketing, sales, lifecycle and operations | Generic knowledge work, technical plugin anatomy or engineering source lifecycle |
 | A.S.F.R.E.E Legacy | Redirect and migration identity only | New execution, analysis, engineering or fallback authority |
-| HSMART | Separate ecosystem infrastructure platform | Not a plugin in the 20-record catalog and not a child source of this portfolio |
+| HSMART | Separate ecosystem infrastructure platform | Not a plugin in the 21-record catalog and not a child source of this portfolio |
 
 ## 4. Central routing decision matrix
 
@@ -136,6 +149,7 @@ Supporting handoffs:
 | General learning/research/writing/critical thinking/coding | Cortex Workbench | CommandCraft for explicit alias workflows |
 | Use a specific text command profile | CommandCraft 56 | Cortex or GrowthForge only where a distinct domain output is required |
 | Inventory and stage skill/capability adoption | Agent Skills Atlas | A.S.F.R.E.E for technical verification |
+| Develop a human competency through a measured learning/practice/transfer path | People & Business Competency Academy | GrowthForge only for a separate business-domain decision/deliverable; Agent Skills Atlas only for AI capability inventory |
 | Business model, finance, market, marketing, brand, sales or operations | GrowthForge | Cortex or CommandCraft for separate work products |
 | Access legacy A.S.F.R.E.E identity | A.S.F.R.E.E Canonical | Legacy redirect only |
 

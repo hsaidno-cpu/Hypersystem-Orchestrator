@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "capture_date": "2026-11-22",
-  "total_skill_records": 238,
+  "capture_date": "2026-11-23",
+  "total_skill_records": 247,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1138,6 +1138,61 @@
           "description": "Use when creating, adapting, auditing, packaging, versioning, or evaluating reusable AI skills, prompts, plugin workflows, or agent instructions. Do not use to pretend instructions are executable tools or to change a live plugin without authorization."
         }
       ]
+    },
+    {
+      "plugin_key": "people-business-competency-academy",
+      "instruction_path": "plugin-instructions/people-business-competency-academy/INSTRUCTIONS-BUNDLE.md",
+      "origin": "plugin_creator_current_release_snapshot",
+      "skill_count": 9,
+      "skills": [
+        {
+          "skill_name": "academy-orchestrator",
+          "source_uri": "skills://plugins/people-business-competency-academy/academy-orchestrator",
+          "description": "Use as the primary orchestrator when a person wants to diagnose, learn, practice, apply, and evaluate one or more of the 20 People and Business Skills competencies using a structured development pathway."
+        },
+        {
+          "skill_name": "competency-diagnostic",
+          "source_uri": "skills://plugins/people-business-competency-academy/competency-diagnostic",
+          "description": "Use when establishing a learner's baseline, strengths, development gaps, role context, and evidence quality across People or Business Skills."
+        },
+        {
+          "skill_name": "curriculum-path-architect",
+          "source_uri": "skills://plugins/people-business-competency-academy/curriculum-path-architect",
+          "description": "Use when converting selected competencies and goals into a staged learning pathway with source references, practice, milestones, and realistic workload."
+        },
+        {
+          "skill_name": "people-skills-coach",
+          "source_uri": "skills://plugins/people-business-competency-academy/people-skills-coach",
+          "description": "Use when coaching observable interpersonal behaviors across the 12 People Skills competencies in communication, empathy, influence, negotiation, leadership, and related areas."
+        },
+        {
+          "skill_name": "business-skills-coach",
+          "source_uri": "skills://plugins/people-business-competency-academy/business-skills-coach",
+          "description": "Use when developing practical business capabilities in sales, marketing, entrepreneurship, strategy, finance, execution, product innovation, management, and hiring."
+        },
+        {
+          "skill_name": "simulation-roleplay-lab",
+          "source_uri": "skills://plugins/people-business-competency-academy/simulation-roleplay-lab",
+          "description": "Use when the learner needs realistic conversation, negotiation, sales, leadership, conflict, hiring, presentation, or business-decision simulations with feedback."
+        },
+        {
+          "skill_name": "deliberate-practice-designer",
+          "source_uri": "skills://plugins/people-business-competency-academy/deliberate-practice-designer",
+          "description": "Use when converting a skill gap into repeated, measurable practice with feedback, increasing difficulty, reflection, and retention checks."
+        },
+        {
+          "skill_name": "workplace-transfer-coach",
+          "source_uri": "skills://plugins/people-business-competency-academy/workplace-transfer-coach",
+          "description": "Use when turning acquired knowledge into a real workplace or business behavior, experiment, deliverable, feedback loop, and evidence of transfer."
+        },
+        {
+          "skill_name": "progress-evaluation-engine",
+          "source_uri": "skills://plugins/people-business-competency-academy/progress-evaluation-engine",
+          "description": "Use when defining learner progress indicators, formative checkpoints, milestone acceptance, outcomes, impact, and evidence-led adaptation of a competency development plan."
+        }
+      ],
+      "plugin_creator_release_id": "pluginrel_6b039efc6dfc81919fffbe265e8f84c9",
+      "package_version": "0.1.0"
     },
     {
       "plugin_key": "workflow-systems-orchestrator",

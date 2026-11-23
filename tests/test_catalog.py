@@ -18,9 +18,9 @@ class CatalogValidationTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
-        self.assertIn("PASS: 20 unique plugin identities", result.stdout)
+        self.assertIn("PASS: 21 unique plugin identities", result.stdout)
         self.assertIn("PASS: 5 declared and pinned source submodules", result.stdout)
-        self.assertIn("PASS: 238 indexed skill instruction records", result.stdout)
+        self.assertIn("PASS: 247 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):
         gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
@@ -163,5 +163,29 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(sdo["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
         self.assertIn("23,651", sdo["source_instruction_parity_note"])
         self.assertIn("10,573", sdo["source_instruction_parity_note"])
+    def test_people_business_competency_academy_is_snapshot_only_and_scoped(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        item = next(p for p in catalog["plugins"] if p["plugin_key"] == "people-business-competency-academy")
+        self.assertEqual(item["plugin_creator_id"], "plugins_6b039ef9d14c81918f521f6fe56a8ddc")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertIsNone(item["source_repository_id"])
+        self.assertEqual(item["source_classification"], "NOT_IDENTIFIED")
+        self.assertEqual(item["instruction_skill_count"], 9)
+        self.assertEqual(item["platform_package_version"], "0.1.0")
+        self.assertEqual(item["source_sync_status"], "GITHUB_SOURCE_NOT_IDENTIFIED")
+
+        snapshot = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        indexed = next(p for p in snapshot["plugins"] if p["plugin_key"] == "people-business-competency-academy")
+        self.assertEqual(indexed["skill_count"], 9)
+        self.assertEqual(indexed["plugin_creator_release_id"], "pluginrel_6b039efc6dfc81919fffbe265e8f84c9")
+
+        book_catalog = json.loads((ROOT / "plugin-instructions" / "people-business-competency-academy" / "assets" / "competency-and-reading-catalog.json").read_text(encoding="utf-8"))
+        self.assertEqual(book_catalog["totals"]["competencies"], 20)
+        self.assertEqual(book_catalog["totals"]["people_skills_competencies"], 12)
+        self.assertEqual(book_catalog["totals"]["business_skills_competencies"], 8)
+        self.assertEqual(book_catalog["totals"]["book_references"], 100)
+        self.assertEqual(sum(len(d["books"]) for d in book_catalog["domains"]), 100)
+        self.assertTrue(all(b["bibliographic_verification"] == "NOT_INDEPENDENTLY_VERIFIED" for d in book_catalog["domains"] for b in d["books"]))
+
 if __name__ == "__main__":
     unittest.main()

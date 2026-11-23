@@ -1,0 +1,787 @@
+{
+  "catalog_id": "PBCA-SOURCE-BOOKLIST-001",
+  "catalog_version": "1.0.0",
+  "source_provenance": {
+    "type": "USER_SUPPLIED_IMAGE",
+    "filename": "image(9).png",
+    "captured_on": "2026-11-23",
+    "transcription_method": "VISUAL_TRANSCRIPTION",
+    "coverage": "20 competency categories and 100 title-author references",
+    "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED",
+    "rights_boundary": "Titles and author labels only; no book text, excerpts, chapter summaries, or substitute copies are included."
+  },
+  "interpretation_rules": [
+    "Source numbering preserves the order shown in the image; it is not a verified ranking, quality rating, or prerequisite sequence.",
+    "Each group of five books is associated with the competency heading shown in the image.",
+    "Author labels are preserved as displayed and may be incomplete or abbreviated.",
+    "Do not invent publication year, edition, ISBN, chapter structure, quotations, or contents."
+  ],
+  "totals": {
+    "people_skills_competencies": 12,
+    "business_skills_competencies": 8,
+    "competencies": 20,
+    "book_references": 100
+  },
+  "domains": [
+    {
+      "competency_id": "P01",
+      "family": "People Skills",
+      "competency": "Communication",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 1,
+          "title": "Crucial Conversations",
+          "author_as_shown": "Patterson et al.",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 2,
+          "title": "Nonviolent Communication",
+          "author_as_shown": "Marshall B. Rosenberg",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 3,
+          "title": "Supercommunicators",
+          "author_as_shown": "Charles Duhigg",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 4,
+          "title": "Made to Stick",
+          "author_as_shown": "Chip Heath & Dan Heath",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 5,
+          "title": "Thanks for the Feedback",
+          "author_as_shown": "Stone & Heen",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P02",
+      "family": "People Skills",
+      "competency": "Emotional Intelligence",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 6,
+          "title": "Emotional Intelligence",
+          "author_as_shown": "Daniel Goleman",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 7,
+          "title": "Emotional Intelligence 2.0",
+          "author_as_shown": "Bradberry & Greaves",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 8,
+          "title": "Permission to Feel",
+          "author_as_shown": "Marc Brackett",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 9,
+          "title": "Emotional Agility",
+          "author_as_shown": "Susan David",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 10,
+          "title": "Atlas of the Heart",
+          "author_as_shown": "Brené Brown",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P03",
+      "family": "People Skills",
+      "competency": "Listening & Empathy",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 11,
+          "title": "Just Listen",
+          "author_as_shown": "Mark Goulston",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 12,
+          "title": "The Lost Art of Listening",
+          "author_as_shown": "Michael P. Nichols",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 13,
+          "title": "You're Not Listening",
+          "author_as_shown": "Kate Murphy",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 14,
+          "title": "The Empathy Effect",
+          "author_as_shown": "Helen Riess",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 15,
+          "title": "Humble Inquiry",
+          "author_as_shown": "Edgar H. Schein",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P04",
+      "family": "People Skills",
+      "competency": "Persuasion & Influence",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 16,
+          "title": "Influence",
+          "author_as_shown": "Robert Cialdini",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 17,
+          "title": "Pre-Suasion",
+          "author_as_shown": "Robert Cialdini",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 18,
+          "title": "Contagious",
+          "author_as_shown": "Jonah Berger",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 19,
+          "title": "Words That Change Minds",
+          "author_as_shown": "Shelle Rose Charvet",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 20,
+          "title": "Thank You for Arguing",
+          "author_as_shown": "Jay Heinrichs",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P05",
+      "family": "People Skills",
+      "competency": "Negotiation",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 21,
+          "title": "Never Split the Difference",
+          "author_as_shown": "Chris Voss",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 22,
+          "title": "Getting to Yes",
+          "author_as_shown": "Fisher & Ury",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 23,
+          "title": "Bargaining for Advantage",
+          "author_as_shown": "G. Richard Shell",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 24,
+          "title": "Ask for More",
+          "author_as_shown": "Alexandra Carter",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 25,
+          "title": "Negotiation Genius",
+          "author_as_shown": "Malhotra & Bazerman",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P06",
+      "family": "People Skills",
+      "competency": "Public Speaking",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 26,
+          "title": "Talk Like TED",
+          "author_as_shown": "Carmine Gallo",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 27,
+          "title": "TED Talks",
+          "author_as_shown": "Chris Anderson",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 28,
+          "title": "Resonate",
+          "author_as_shown": "Nancy Duarte",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 29,
+          "title": "Steal the Show",
+          "author_as_shown": "Michael Port",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 30,
+          "title": "Speaking Up Without Freaking Out",
+          "author_as_shown": "Matt Abrahams",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P07",
+      "family": "People Skills",
+      "competency": "Networking",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 31,
+          "title": "Never Eat Alone",
+          "author_as_shown": "Keith Ferrazzi",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 32,
+          "title": "Give and Take",
+          "author_as_shown": "Adam Grant",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 33,
+          "title": "Superconnector",
+          "author_as_shown": "Gerber & Paugh",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 34,
+          "title": "The Fine Art of Small Talk",
+          "author_as_shown": "Debra Fine",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 35,
+          "title": "How to Win Friends and Influence People",
+          "author_as_shown": "Dale Carnegie",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P08",
+      "family": "People Skills",
+      "competency": "Conflict Resolution",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 36,
+          "title": "Difficult Conversations",
+          "author_as_shown": "Stone, Patton & Heen",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 37,
+          "title": "Getting Past No",
+          "author_as_shown": "William Ury",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 38,
+          "title": "Fierce Conversations",
+          "author_as_shown": "Susan Scott",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 39,
+          "title": "Dealing with People You Can't Stand",
+          "author_as_shown": "Brinkman & Kirschner",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 40,
+          "title": "Crucial Accountability",
+          "author_as_shown": "Patterson et al.",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P09",
+      "family": "People Skills",
+      "competency": "Leadership",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 41,
+          "title": "Leaders Eat Last",
+          "author_as_shown": "Simon Sinek",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 42,
+          "title": "Extreme Ownership",
+          "author_as_shown": "Willink & Babin",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 43,
+          "title": "Dare to Lead",
+          "author_as_shown": "Brené Brown",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 44,
+          "title": "The 21 Irrefutable Laws of Leadership",
+          "author_as_shown": "John C. Maxwell",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 45,
+          "title": "Turn the Ship Around!",
+          "author_as_shown": "L. David Marquet",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P10",
+      "family": "People Skills",
+      "competency": "Body Language",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 46,
+          "title": "What Every BODY Is Saying",
+          "author_as_shown": "Joe Navarro",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 47,
+          "title": "The Definitive Book of Body Language",
+          "author_as_shown": "Allan & Barbara Pease",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 48,
+          "title": "Presence",
+          "author_as_shown": "Amy Cuddy",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 49,
+          "title": "Cues",
+          "author_as_shown": "Vanessa Van Edwards",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 50,
+          "title": "Telling Lies",
+          "author_as_shown": "Paul Ekman",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P11",
+      "family": "People Skills",
+      "competency": "Charisma & Confidence",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 51,
+          "title": "The Charisma Myth",
+          "author_as_shown": "Olivia Fox Cabane",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 52,
+          "title": "Captivate",
+          "author_as_shown": "Vanessa Van Edwards",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 53,
+          "title": "The Confidence Code",
+          "author_as_shown": "Kay & Shipman",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 54,
+          "title": "Feel the Fear and Do It Anyway",
+          "author_as_shown": "Susan Jeffers",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 55,
+          "title": "How to Talk to Anyone",
+          "author_as_shown": "Leil Lowndes",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "P12",
+      "family": "People Skills",
+      "competency": "Boundaries & Assertiveness",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 56,
+          "title": "Boundaries",
+          "author_as_shown": "Cloud & Townsend",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 57,
+          "title": "Set Boundaries, Find Peace",
+          "author_as_shown": "Nedra Glover Tawwab",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 58,
+          "title": "The Assertiveness Workbook",
+          "author_as_shown": "Randy J. Paterson",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 59,
+          "title": "When I Say No, I Feel Guilty",
+          "author_as_shown": "Manuel J. Smith",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 60,
+          "title": "The Power of a Positive No",
+          "author_as_shown": "William Ury",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B13",
+      "family": "Business Skills",
+      "competency": "Sales",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 61,
+          "title": "To Sell Is Human",
+          "author_as_shown": "Daniel H. Pink",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 62,
+          "title": "SPIN Selling",
+          "author_as_shown": "Neil Rackham",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 63,
+          "title": "The Challenger Sale",
+          "author_as_shown": "Dixon & Adamson",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 64,
+          "title": "Pitch Anything",
+          "author_as_shown": "Oren Klaff",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 65,
+          "title": "Fanatical Prospecting",
+          "author_as_shown": "Jeb Blount",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B14",
+      "family": "Business Skills",
+      "competency": "Marketing",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 66,
+          "title": "This Is Marketing",
+          "author_as_shown": "Seth Godin",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 67,
+          "title": "Building a StoryBrand",
+          "author_as_shown": "Donald Miller",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 68,
+          "title": "Hooked",
+          "author_as_shown": "Nir Eyal",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 69,
+          "title": "Purple Cow",
+          "author_as_shown": "Seth Godin",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 70,
+          "title": "Jab, Jab, Jab, Right Hook",
+          "author_as_shown": "Gary Vaynerchuk",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B15",
+      "family": "Business Skills",
+      "competency": "Entrepreneurship",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 71,
+          "title": "The Lean Startup",
+          "author_as_shown": "Eric Ries",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 72,
+          "title": "Zero to One",
+          "author_as_shown": "Peter Thiel",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 73,
+          "title": "The $100 Startup",
+          "author_as_shown": "Chris Guillebeau",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 74,
+          "title": "Shoe Dog",
+          "author_as_shown": "Phil Knight",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 75,
+          "title": "The E-Myth Revisited",
+          "author_as_shown": "Michael E. Gerber",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B16",
+      "family": "Business Skills",
+      "competency": "Strategy",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 76,
+          "title": "Good Strategy Bad Strategy",
+          "author_as_shown": "Richard Rumelt",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 77,
+          "title": "Blue Ocean Strategy",
+          "author_as_shown": "Kim & Mauborgne",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 78,
+          "title": "Playing to Win",
+          "author_as_shown": "Lafley & Martin",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 79,
+          "title": "The Art of War",
+          "author_as_shown": "Sun Tzu",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 80,
+          "title": "Competitive Strategy",
+          "author_as_shown": "Michael E. Porter",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B17",
+      "family": "Business Skills",
+      "competency": "Finance & Accounting",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 81,
+          "title": "Financial Intelligence for Entrepreneurs",
+          "author_as_shown": "Berman & Knight",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 82,
+          "title": "Accounting Made Simple",
+          "author_as_shown": "Mike Piper",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 83,
+          "title": "The Intelligent Investor",
+          "author_as_shown": "Benjamin Graham",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 84,
+          "title": "Profit First",
+          "author_as_shown": "Mike Michalowicz",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 85,
+          "title": "The Psychology of Money",
+          "author_as_shown": "Morgan Housel",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B18",
+      "family": "Business Skills",
+      "competency": "Productivity & Execution",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 86,
+          "title": "Getting Things Done",
+          "author_as_shown": "David Allen",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 87,
+          "title": "Deep Work",
+          "author_as_shown": "Cal Newport",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 88,
+          "title": "Atomic Habits",
+          "author_as_shown": "James Clear",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 89,
+          "title": "Essentialism",
+          "author_as_shown": "Greg McKeown",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 90,
+          "title": "The 12 Week Year",
+          "author_as_shown": "Moran & Lennington",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B19",
+      "family": "Business Skills",
+      "competency": "Innovation & Product",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 91,
+          "title": "The Innovator's Dilemma",
+          "author_as_shown": "Clayton Christensen",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 92,
+          "title": "Inspired",
+          "author_as_shown": "Marty Cagan",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 93,
+          "title": "The Design of Everyday Things",
+          "author_as_shown": "Don Norman",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 94,
+          "title": "Sprint",
+          "author_as_shown": "Jake Knapp",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 95,
+          "title": "Creativity, Inc.",
+          "author_as_shown": "Ed Catmull",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    },
+    {
+      "competency_id": "B20",
+      "family": "Business Skills",
+      "competency": "Management & Hiring",
+      "source_book_count": 5,
+      "books": [
+        {
+          "source_order": 96,
+          "title": "High Output Management",
+          "author_as_shown": "Andrew S. Grove",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 97,
+          "title": "The Hard Thing About Hard Things",
+          "author_as_shown": "Ben Horowitz",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 98,
+          "title": "Multipliers",
+          "author_as_shown": "Liz Wiseman",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 99,
+          "title": "Who",
+          "author_as_shown": "Smart & Street",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        },
+        {
+          "source_order": 100,
+          "title": "The Five Dysfunctions of a Team",
+          "author_as_shown": "Patrick Lencioni",
+          "bibliographic_verification": "NOT_INDEPENDENTLY_VERIFIED"
+        }
+      ]
+    }
+  ]
+}

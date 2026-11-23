@@ -6,7 +6,7 @@ This roadmap is staged by evidence and dependencies, not by arbitrary calendar p
 
 **Objective:** Establish the central repository, identity catalog, source provenance, responsibility matrix, governance and roadmap.
 
-**Deliverables:** 20 plugin records; source registry; initial verified submodule pins; architecture and overlap arbitration; JSON schema; local validator; CI catalog gate; Notion documentation.
+**Deliverables:** 21 plugin records; source registry; initial verified submodule pins; architecture and overlap arbitration; JSON schema; local validator; CI catalog gate; Notion documentation.
 
 **Exit criteria:** unique plugin IDs and keys; every source reference has a real URL and status; all current submodule SHAs are immutable; private repository access is clearly documented; static checks pass.
 
@@ -96,9 +96,9 @@ Use PLANNED, IN_PROGRESS, BLOCKED, PARTIAL, VERIFIED and ACCEPTED with evidence.
 
 **Status:** Central design and snapshot capture implemented in the working branch; PR review pending.
 
-- Twenty plugin identities have explicit positioning and primary/negative routing triggers.
+- Twenty-one plugin identities have explicit positioning and primary/negative routing triggers.
 - A segregated instruction vault now has one directory per plugin.
-- 238 installed skill definitions are indexed. Sixteen packages have complete runtime instruction bundles; three source-backed packages remain represented by canonical submodules; A.S.F.R.E.E Legacy is redirect-only.
+- 247 installed skill definitions are indexed. Seventeen packages have complete runtime instruction bundles; three source-backed packages remain represented by canonical submodules; A.S.F.R.E.E Legacy is redirect-only.
 - The catalog distinguishes canonical source, runtime snapshot, incomplete candidate and legacy redirect.
 - Static validation now checks snapshot paths, counts, source classifications and routing boundaries.
 
@@ -112,3 +112,15 @@ Use [PLUGIN-SOURCE-ALIGNMENT-BACKLOG.md](PLUGIN-SOURCE-ALIGNMENT-BACKLOG.md) as 
 
 Video Explainer V4.1.12 is the target selected over installed M00 header v4.0.9. Source synchronization remains pending because the canonical V4.1.12 repository and manifest are not verified. See [VERSION-RECONCILIATION.md](../docs/VERSION-RECONCILIATION.md).
 
+
+## E0.2 — People & Business Competency Academy registration
+
+**Status:** PACKAGE_CREATED / PLUGIN_CREATOR_READBACK_VERIFIED / PARENT_REGISTRY_BRANCH_UPDATED / PR_AND_CI_PENDING
+
+- Private Plugin Creator package People & Business Competency Academy version 0.1.0; exact release pluginrel_6b039efc6dfc81919fffbe265e8f84c9.
+- Nine skill procedures and a source-labelled catalog of 20 competency domains / 100 title-author references are captured in a segregated parent instruction bundle.
+- Catalog and index totals advance to 21 plugin identities and 247 skill records. The plugin is explicitly pending_repository; no canonical child source repository or license decision is inferred.
+- This snapshot preserves the user's requested public parent-repository inventory but is not a source-of-truth repository, installable bundle from the parent, host activation proof or persistent learner tracker.
+- Agent Skills Atlas remains owner of AI-capability inventory; GrowthForge remains owner of business decisions/deliverables; the Academy owns human competency development and learning-to-work transfer.
+
+**Exit evidence:** branch content read-back, central catalog validator, unit tests and PR CI checks. Host activation, production integrations and learning outcomes require separate evidence.

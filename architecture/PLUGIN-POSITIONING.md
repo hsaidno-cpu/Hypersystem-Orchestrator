@@ -186,6 +186,7 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 | Cortex Workbench | General knowledge-work command workbench | Business-specific OS or specialized command alias catalog |
 | CommandCraft 56 | 56 text command aliases and compact task profiles | Native slash-command UI or general case orchestration |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy and adoption maturity | Claiming every mapped skill is executable |
+| People & Business Competency Academy | Human competency diagnosis, learning pathways, deliberate practice, simulation, workplace transfer and evidence-led learner progress | AI capability inventory/adoption, commercial business decisions/deliverables, psychotherapy or claims of competence based only on reading/self-rating |
 | GrowthForge Business OS | Business strategy, commercial, marketing, finance and operating work | General non-business knowledge work or technical plugin engineering |
 | A.S.F.R.E.E Legacy | Redirect/migration identity only | Any new execution, analysis or engineering |
 | HSMART | Separate ecosystem infrastructure/platform project | Not a 21st plugin in this catalog |

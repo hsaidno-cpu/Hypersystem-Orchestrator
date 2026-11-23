@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "catalog_revision": "2026-11-22",
-  "expected_plugin_count": 20,
+  "catalog_revision": "2026-11-23",
+  "expected_plugin_count": 21,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -802,6 +802,61 @@
       "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
       "source_instruction_parity_status": "NOT_APPLICABLE",
       "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
+    },
+    {
+      "plugin_key": "people-business-competency-academy",
+      "display_name": "People & Business Competency Academy",
+      "plugin_creator_id": "plugins_6b039ef9d14c81918f521f6fe56a8ddc",
+      "primary_domain": "people-and-business-competency-development",
+      "purpose": "Competency-development system that helps individuals and teams diagnose, learn, practice, simulate, apply and evaluate 12 People Skills and 8 Business Skills. Its reference catalogue contains 100 title-author entries transcribed from a user-supplied image.",
+      "responsibility_owner": "Owns human competency development pathways, observable behavior practice, simulations and evidence-led transfer from learning into workplace and business behavior.",
+      "boundary": "Does not own AI-agent skill inventory or adoption maturity (Agent Skills Atlas), business operating decisions and commercial deliverables (GrowthForge), reusable workflow architecture (AI Workflow Systems Orchestrator), independent evaluation of AI skill/plugin quality (Evaluator Team), or plugin source engineering (SDO). Reading completion and self-ratings do not prove competence. The current package has no persistent learner database, automated reminders, live integrations or verified host/runtime behavior.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "Plugin Creator private USER-scope release 0.1.0 verified on 2026-11-23, release pluginrel_6b039efc6dfc81919fffbe265e8f84c9. A dedicated canonical Git source repository and source license decision have not been established.",
+      "related_plugins": [
+        "agent-skills-atlas",
+        "growthforge-business-os",
+        "workflow-systems-orchestrator",
+        "evaluator-team"
+      ],
+      "primary_triggers": [
+        "Diagnose or develop observable human competencies across the 12 People Skills and 8 Business Skills domains",
+        "Build a staged learning pathway with curated references, deliberate practice, realistic simulations and real-world transfer tasks",
+        "Evaluate whether learning changed behavior or work outcomes using explicit evidence, feedback and milestone criteria"
+      ],
+      "negative_triggers": [
+        "Inventory, classify or migrate AI agent skills and plugin capabilities as software assets; route that work to Agent Skills Atlas",
+        "Produce business strategy, financial models, marketing, sales or operating deliverables as the primary outcome; route that work to GrowthForge",
+        "Provide psychotherapy, clinical diagnosis, regulated financial or investment advice, legal advice or compliance certification",
+        "Infer deception, intent, personality or truthfulness from body-language cues alone",
+        "Claim persistent learner records, real-time progress tracking, automated reminders, host activation or workplace outcomes without actual integrations and evidence",
+        "Implement or release plugin source code as the primary task; route engineering lifecycle work to SDO"
+      ],
+      "source_classification": "NOT_IDENTIFIED",
+      "instruction_snapshot_path": "plugin-instructions/people-business-competency-academy/INSTRUCTIONS-BUNDLE.md",
+      "instruction_skill_count": 9,
+      "instruction_capture_date": "2026-11-23",
+      "instruction_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT",
+      "platform_package_version": "0.1.0",
+      "platform_current_release_id": "pluginrel_6b039efc6dfc81919fffbe265e8f84c9",
+      "platform_scope": "USER",
+      "platform_discoverability": "PRIVATE",
+      "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
+      "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
+      "repository_version": null,
+      "version_alignment_note": "Plugin Creator package version 0.1.0 and release are verified. No independent canonical Git repository/version exists; the parent repository can store a read-only instruction snapshot and catalog record but is not the child source of truth.",
+      "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
+      "version_reconciliation_status": "NOT_VERIFIED",
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent Git source exists for a source/snapshot parity comparison. Reassess after a canonical child repository and license are established.",
+      "deployed_plugin_version": "0.1.0",
+      "target_version": null,
+      "plugin_creator_current_release_id": "pluginrel_6b039efc6dfc81919fffbe265e8f84c9",
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     },
     {
       "plugin_key": "workflow-systems-orchestrator",
