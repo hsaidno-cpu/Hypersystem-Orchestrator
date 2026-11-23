@@ -395,6 +395,10 @@ def _decode_tool_output(raw: Any) -> dict[str, Any]:
 
 
 def _validate_gateway_result(result: dict[str, Any], result_schema: dict[str, Any]) -> None:
+    if not isinstance(result, dict):
+        raise RemoteMCPError("SKILL ANALYZER result must be a JSON object")
+    if result.get("tool_execution_status") != "NOT_CONFIGURED":
+        raise RemoteMCPError("P0 requires the analysis-only Gateway with no downstream tool execution")
     try:
         from jsonschema import Draft202012Validator
         Draft202012Validator(result_schema).validate(result)
@@ -633,8 +637,8 @@ def invoke_remote_mcp_skill(
     usage = {}
     for key in ("input_tokens", "output_tokens", "total_tokens"):
         values = []
-        for source in (initial_usage, final_usage):
-            value = source.get(key)
+        for usage_block in (initial_usage, final_usage):
+            value = usage_block.get(key)
             if isinstance(value, int) and value >= 0:
                 values.append(value)
         if values:

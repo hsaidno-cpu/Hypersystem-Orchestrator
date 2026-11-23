@@ -137,6 +137,7 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
         receipt["signature"] = "0" * 64
         with self.assertRaisesRegex(SystemExit, "signature is invalid"):
             self.prepare_workflow(receipt)
+        self.approval.unlink()
         receipt = self.issue_receipt()
         self.output.write_text("protected", encoding="utf-8")
         with self.assertRaisesRegex(SystemExit, "refusing overwrite"):
