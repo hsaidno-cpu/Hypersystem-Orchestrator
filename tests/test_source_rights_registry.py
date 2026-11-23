@@ -44,7 +44,8 @@ class SourceRightsRegistryTests(unittest.TestCase):
     def test_public_repo_without_license_is_not_assumed_redistributable(self):
         for key in ("video-explainer-promkes-v4-1-12", "skill-analyzer"):
             item = self.records[key]
-            self.assertEqual(item["rights"]["license_status"], "NOT_DECLARED")
+            self.assertEqual(item["rights"]["license_status"], "PRIVATE_NO_LICENSE")
+        self.assertEqual(item["plugin_creator_discoverability"], "PRIVATE")
             self.assertFalse(item["distribution"]["eligible_for_redistribution"])
 
     def test_private_anatomi_source_remains_private_and_unlicensed(self):
