@@ -1,0 +1,69 @@
+services:
+  database:
+    image: postgres:18.7-alpine
+    environment:
+      POSTGRES_DB: hso
+      POSTGRES_USER: hso
+      POSTGRES_PASSWORD: "${HSO_DB_PASSWORD:-hso-local-only-change-me}"
+    volumes:
+      - hso-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hso -d hso"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../..
+      dockerfile: services/hso-platform/Dockerfile
+    environment:
+      HSO_ENV: "${HSO_ENV:-development}"
+      HSO_DATABASE_URL: "postgresql+psycopg://hso:${HSO_DB_PASSWORD:-hso-local-only-change-me}@database:5432/hso"
+      HSO_AUTH_MODE: "${HSO_AUTH_MODE:-disabled}"
+      HSO_API_KEY_PEPPER: "${HSO_API_KEY_PEPPER:-local-only-change-me-change-before-production}"
+      HSO_OIDC_ISSUER: "${HSO_OIDC_ISSUER:-}"
+      HSO_OIDC_AUDIENCE: "${HSO_OIDC_AUDIENCE:-}"
+      HSO_OIDC_JWKS_URL: "${HSO_OIDC_JWKS_URL:-}"
+      HSO_MCP_ALLOWED_HOSTS: "${HSO_MCP_ALLOWED_HOSTS:-localhost:*,127.0.0.1:*,[::1]:*}"
+      HSO_MCP_ALLOWED_ORIGINS: "${HSO_MCP_ALLOWED_ORIGINS:-http://localhost:*,http://127.0.0.1:*}"
+      HSO_RELEASE_PUBLIC_KEY_PEM: "${HSO_RELEASE_PUBLIC_KEY_PEM:-}"
+      HSO_RELEASE_PUBLIC_KEY_ID: "${HSO_RELEASE_PUBLIC_KEY_ID:-}"
+    command: >
+      sh -c "alembic upgrade head &&
+      python -m hso_platform.seed_catalog &&
+      uvicorn hso_platform.app:app --host 0.0.0.0 --port 8000 --proxy-headers"
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: services/hso-platform/Dockerfile
+    environment:
+      HSO_ENV: "${HSO_ENV:-development}"
+      HSO_DATABASE_URL: "postgresql+psycopg://hso:${HSO_DB_PASSWORD:-hso-local-only-change-me}@database:5432/hso"
+      HSO_AUTH_MODE: "${HSO_AUTH_MODE:-disabled}"
+      HSO_API_KEY_PEPPER: "${HSO_API_KEY_PEPPER:-local-only-change-me-change-before-production}"
+      HSO_OIDC_ISSUER: "${HSO_OIDC_ISSUER:-}"
+      HSO_OIDC_AUDIENCE: "${HSO_OIDC_AUDIENCE:-}"
+      HSO_OIDC_JWKS_URL: "${HSO_OIDC_JWKS_URL:-}"
+    command: ["python", "-m", "hso_platform.worker", "--poll-interval", "2"]
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+
+volumes:
+  hso-postgres:
