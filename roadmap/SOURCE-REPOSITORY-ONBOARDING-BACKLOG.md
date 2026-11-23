@@ -90,6 +90,14 @@ The parent may register and pin a child source only after:
 - An upstream dataset used by a package is not automatically that package's canonical repository.
 
 
+## 7. Cross-plugin source-alignment tasks
+
+- SDO / Evaluator Team: make the Evaluator Team implementation helper handoff-only; SDO is the sole engineering write owner.
+- Photo Fixer / Master Photo Restoration: restrict Photo Fixer's internal restoration subskill to localized ordinary-photo cleanup; archival restoration routes to Master Photo Restoration.
+- PVEE / Video Explainer: PVEE owns health truth, communication governance, campaign decision and outcome evaluation; Video Explainer owns Promkes technical production compilation.
+- GODEX / Motion Graphic: maintain audio-source/timing ownership separately from visual-art/motion/timeline ownership.
+- Anatomi Prompt / AI Prompt Finder: keep prompt-structure work separate from content/reference-to-prompt reconstruction.
+
 ## 8. Redistribution-rights evidence refresh (2026-11-23)
 
 The machine-readable companion register is `catalog/source-rights-registry.json`; validate it with `python tools/validate_source_rights.py`.
@@ -107,11 +115,3 @@ The machine-readable companion register is `catalog/source-rights-registry.json`
 The remaining 14 NOT_IDENTIFIED Plugin Creator package identities have no accepted canonical Git source or independent redistribution licence in this baseline. Their USER/PRIVATE platform scope is evidence of access/discoverability, not permission to export or republish. Keep them snapshot-only and private-restricted until each owner approves a source repository, visibility, licence and distribution scope. The parent Apache-2.0 licence must not be used as a substitute for child-plugin permission.
 
 **Current verified baseline:** 22 identities; 5 pinned official sources; 14 source identities not identified; 2 incomplete candidates; 1 legacy redirect; 0 installable packages. Source pinning and licence evidence are separate gates.
-
-## 7. Cross-plugin source-alignment tasks
-
-- SDO / Evaluator Team: make the Evaluator Team implementation helper handoff-only; SDO is the sole engineering write owner.
-- Photo Fixer / Master Photo Restoration: restrict Photo Fixer's internal restoration subskill to localized ordinary-photo cleanup; archival restoration routes to Master Photo Restoration.
-- PVEE / Video Explainer: PVEE owns health truth, communication governance, campaign decision and outcome evaluation; Video Explainer owns Promkes technical production compilation.
-- GODEX / Motion Graphic: maintain audio-source/timing ownership separately from visual-art/motion/timeline ownership.
-- Anatomi Prompt / AI Prompt Finder: keep prompt-structure work separate from content/reference-to-prompt reconstruction.
