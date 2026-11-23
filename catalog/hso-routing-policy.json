@@ -1,38 +1,79 @@
 {
   "schema_version": "1.0.0",
-  "control_plane_components": ["HSO.CP-01","HSO.CP-02","HSO.CP-03","HSO.CP-04","HSO.CP-05","HSO.CP-06","HSO.CP-07","HSO.CP-08","HSO.CP-09"],
+  "control_plane_components": [
+    "HSO.CP-01",
+    "HSO.CP-02",
+    "HSO.CP-03",
+    "HSO.CP-04",
+    "HSO.CP-05",
+    "HSO.CP-06",
+    "HSO.CP-07",
+    "HSO.CP-08",
+    "HSO.CP-09"
+  ],
   "task_types": {
     "artifact.create": {
-      "rule_id":"ROUTE-ARTIFACT-CREATE-001",
-      "primary_owner":"HSO.CP-05",
-      "supporting_specialists":["HSO.CP-07"],
-      "action_id":"sandbox.write_text",
-      "required_capabilities":["sandbox.write_text","sandbox.verify_sha256"],
-      "decision_rationale":"CP-05 owns dependency-aware scheduling and dispatch; CP-07 is the required independent evidence reviewer."
+      "rule_id": "ROUTE-ARTIFACT-CREATE-001",
+      "primary_owner": "HSO.CP-05",
+      "supporting_specialists": [
+        "HSO.CP-07"
+      ],
+      "action_id": "sandbox.write_text",
+      "required_capabilities": [
+        "sandbox.write_text",
+        "sandbox.verify_sha256"
+      ],
+      "decision_rationale": "CP-05 owns dependency-aware scheduling and dispatch; CP-07 is the required independent evidence reviewer."
     },
     "artifact.verify": {
-      "rule_id":"ROUTE-ARTIFACT-VERIFY-001",
-      "primary_owner":"HSO.CP-07",
-      "supporting_specialists":["HSO.CP-05"],
-      "action_id":"sandbox.verify_sha256",
-      "required_capabilities":["sandbox.verify_sha256"],
-      "decision_rationale":"CP-07 owns independent target verification; CP-05 supplies execution ordering and trace context."
+      "rule_id": "ROUTE-ARTIFACT-VERIFY-001",
+      "primary_owner": "HSO.CP-07",
+      "supporting_specialists": [
+        "HSO.CP-05"
+      ],
+      "action_id": "sandbox.verify_sha256",
+      "required_capabilities": [
+        "sandbox.verify_sha256"
+      ],
+      "decision_rationale": "CP-07 owns independent target verification; CP-05 supplies execution ordering and trace context."
     },
     "test.recovery_path": {
-      "rule_id":"ROUTE-TEST-001",
-      "primary_owner":"HSO.CP-05",
-      "supporting_specialists":["HSO.CP-07"],
-      "action_id":"test.flaky_write_text",
-      "required_capabilities":["test.flaky_write_text","sandbox.verify_sha256"],
-      "decision_rationale":"CP-05 owns bounded retry/recovery; CP-07 independently verifies the eventual target."
+      "rule_id": "ROUTE-TEST-001",
+      "primary_owner": "HSO.CP-05",
+      "supporting_specialists": [
+        "HSO.CP-07"
+      ],
+      "action_id": "test.flaky_write_text",
+      "required_capabilities": [
+        "test.flaky_write_text",
+        "sandbox.verify_sha256"
+      ],
+      "decision_rationale": "CP-05 owns bounded retry/recovery; CP-07 independently verifies the eventual target."
     },
     "plugin.forensic_audit": {
-      "rule_id":"ROUTE-PLUGIN-001",
-      "primary_owner":"skill-analyzer",
-      "supporting_specialists":["asfree-canonical"],
-      "action_id":"plugin.skill.invoke",
-      "required_capabilities":["plugin.skill.invoke"],
-      "decision_rationale":"SKILL ANALYZER owns general analytical methods; A.S.F.R.E.E is the technical forensic specialist when source anatomy is required."
+      "rule_id": "ROUTE-PLUGIN-001",
+      "primary_owner": "skill-analyzer",
+      "supporting_specialists": [
+        "asfree-canonical"
+      ],
+      "action_id": "plugin.skill.invoke",
+      "required_capabilities": [
+        "plugin.skill.invoke"
+      ],
+      "decision_rationale": "SKILL ANALYZER owns general analytical methods; A.S.F.R.E.E is the technical forensic specialist when source anatomy is required."
+    },
+    "plugin.engineering_method": {
+      "rule_id": "ROUTE-PLUGIN-ENGINEERING-001",
+      "primary_owner": "ponytail-engineering-optimizer",
+      "supporting_specialists": [
+        "skill-developer-orchestrator",
+        "evaluator-team"
+      ],
+      "action_id": "plugin.skill.invoke",
+      "required_capabilities": [
+        "plugin.skill.invoke"
+      ],
+      "decision_rationale": "Ponytail owns minimal-complete software engineering method and its evidence dossier; SDO retains source-write lifecycle ownership and Evaluator Team supplies independent quality judgement. The route is selected declaratively, but dispatch remains blocked until a verified plugin-skill host adapter is configured."
     }
   }
 }
