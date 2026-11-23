@@ -72,7 +72,7 @@ The typed artifact is `contracts/ponytail-engineering-dossier.schema.json`. The 
 
 The dossier carries target repository/ref/commit, task mode, objective, scope/non-goals, baseline, chosen design and rejected alternatives, impact map, risks/mitigations, acceptance criteria, test plan, explicit authority boundaries and evidence/capability status.
 
-The general HSO handoff edge is `INT-PONYTAIL-SDO-001`. It is initially recorded as `INTERFACE_DEFINED_NOT_EXECUTED` with C2/C3 `NOT_RUN` until exact-branch CI validates both schema and mock-receiver behavior. Even after C2/C3 pass, C4 host activation and C5 runtime invocation remain separate.
+The general HSO handoff edge is `INT-PONYTAIL-SDO-001`. Its synthetic payload passed C2 JSON Schema validation and C3 mock-receiver behavior in CI run #45200131387; the matrix records `CONTRACT_TESTED`. That overall workflow still failed because a catalog regression test expected every edge to be contract-tested before the new edge state was promoted. The assertion and matrix state have now been brought into agreement for rerun. C4 host activation and C5 runtime invocation remain separate and NOT_RUN.
 
 ## 6. Safety and quality rules
 
@@ -93,7 +93,7 @@ The general HSO handoff edge is `INT-PONYTAIL-SDO-001`. It is initially recorded
 | Package creation | PASS | Private Plugin Creator release created and read-back inventory confirms nine skill files |
 | Parent catalog identity | PROPOSED_ON_PR_BRANCH | Catalog/metadata pointer only; not merged |
 | Typed Engineering Dossier | PROPOSED_ON_PR_BRANCH | Schema, synthetic example and schema tests added |
-| Handoff C2/C3 | NOT_RUN_PENDING_CI | Fixture and mock receiver contract declared; await exact-commit CI |
+| Handoff C2/C3 | PASS (synthetic) | Exact commit CI run #45200131387 passed all 15 fixture-schema and mock-receiver checks; overall CI still failed on a catalog status assertion, now corrected |
 | C4 host activation | NOT_RUN | No named host/version pilot |
 | C5 runtime execution | NOT_RUN | No operational plugin dispatcher |
 | Distribution eligibility | BLOCKED / SNAPSHOT_ONLY | USER/PRIVATE, no canonical Git source, package license clearance, public artifact or tested adapter |
