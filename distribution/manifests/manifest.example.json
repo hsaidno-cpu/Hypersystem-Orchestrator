@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "example-custom-selection-001",
+  "selection_mode": "multi",
+  "target_platform": "chatgpt",
+  "plugin_keys": [
+    "skill-analyzer",
+    "asfree-canonical"
+  ],
+  "dependency_policy": "explicit_only",
+  "version_policy": "pinned",
+  "private_source_access_granted": false,
+  "dry_run": true
+}

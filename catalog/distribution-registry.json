@@ -1,0 +1,406 @@
+{
+  "schema_version": "1.0.0",
+  "registry_revision": "2026-11-23",
+  "authority": "Hypersystem-Orchestrator parent registry",
+  "plugin_count": 20,
+  "installability_rule": "Eligible only when status is installable_public or installable_private, license_status is cleared, package_artifact exists, source_commit is pinned, and target adapter has host_tested or runtime_verified evidence.",
+  "selection_modes": {
+    "single": "Exactly one eligible plugin.",
+    "multi": "Two or more explicitly selected independent plugin modules.",
+    "full_suite": "Resolve all eligible packages at request time; never all catalog identities or instruction snapshots."
+  },
+  "runtime_state_separation": [
+    "installed",
+    "enabled",
+    "authorized",
+    "runtime_available"
+  ],
+  "plugins": [
+    {
+      "plugin_key": "video-explainer-promkes-v4-1-12",
+      "display_name": "Video Explainer Promkes V4.1.12",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "video-explainer-promkes",
+      "source_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
+      "source_version": "4.1.9",
+      "platform_package_version": "4.1.12",
+      "distribution_status": "blocked",
+      "license_status": "not_declared",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "SOURCE_VERSION_BEHIND_DEPLOYED_PACKAGE",
+        "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+      ],
+      "eligibility_note": "No distributable host package is released; clear all blockers before enabling installation."
+    },
+    {
+      "plugin_key": "skill-developer-orchestrator",
+      "display_name": "Skill Developer Orchestrator",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "skill-developer-orchestrator",
+      "source_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
+      "source_version": "0.1.0",
+      "platform_package_version": "0.1.0",
+      "distribution_status": "blocked",
+      "license_status": "cleared",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "SOURCE_INSTRUCTION_PARITY_DRIFT_DETECTED",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+      ],
+      "eligibility_note": "No distributable host package is released; clear all blockers before enabling installation."
+    },
+    {
+      "plugin_key": "evaluator-team",
+      "display_name": "Evaluator Team",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "1.0.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "master-photo-restoration",
+      "display_name": "Master Photo Restoration",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "1.0.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "anatomi-prompt-v3-octa-prompt",
+      "display_name": "Anatomi Prompt V3.0 — Octa-Prompt",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "anatomi-prompt-strategis",
+      "source_commit": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
+      "source_version": "3.0.0",
+      "platform_package_version": "3.0.0",
+      "distribution_status": "private_source_restricted",
+      "license_status": "private_not_cleared",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "PRIVATE_SOURCE_ACCESS_REQUIRED",
+        "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+      ],
+      "eligibility_note": "No distributable host package is released; clear all blockers before enabling installation."
+    },
+    {
+      "plugin_key": "skill-analyzer",
+      "display_name": "SKILL ANALYZER",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "skill-analyzer",
+      "source_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
+      "source_version": "1.3.0",
+      "platform_package_version": "1.0.0",
+      "distribution_status": "review_required",
+      "license_status": "not_declared",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+      ],
+      "eligibility_note": "No distributable host package is released; clear all blockers before enabling installation."
+    },
+    {
+      "plugin_key": "godex-motion-audio",
+      "display_name": "GODEX Motion Audio",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "2.0.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "ai-prompt-finder-creator",
+      "display_name": "AI Prompt Finder & Creator",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "1.0.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "agent-jailbreak-skill-ds",
+      "display_name": "Agent Jailbreak Skill DS",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.2.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "motion-graphic-arifanara-v-01",
+      "display_name": "Motion Graphic by arifanara V.01",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.2.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "plugin-agent-orchestrator",
+      "display_name": "Plugin Agent Orchestrator",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "2.0.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "photo-fixer",
+      "display_name": "Photo Fixer",
+      "source_state": "candidate_repository",
+      "source_repository_id": "photo-fixer-candidate",
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "1.0.0",
+      "distribution_status": "candidate_incomplete",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_PACKAGE_SOURCE_INCOMPLETE",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED"
+      ],
+      "eligibility_note": "Candidate source is incomplete and not canonical."
+    },
+    {
+      "plugin_key": "asfree-canonical",
+      "display_name": "A.S.F.R.E.E",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "asfree",
+      "source_commit": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
+      "source_version": "0.5.0-rc.1",
+      "platform_package_version": "0.3.2",
+      "distribution_status": "review_required",
+      "license_status": "review_required",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "POLYFORM_NONCOMMERCIAL_TERMS_REQUIRE_DISTRIBUTION_REVIEW",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+      ],
+      "eligibility_note": "No distributable host package is released; clear all blockers before enabling installation."
+    },
+    {
+      "plugin_key": "asfree-legacy",
+      "display_name": "A.S.F.R.E.E Legacy",
+      "source_state": "canonical_redirect",
+      "source_repository_id": "asfree",
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "1.0.4",
+      "distribution_status": "legacy_redirect",
+      "license_status": "inherited_from_canonical_source",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "LEGACY_ALIAS_IS_NOT_AN_INDEPENDENT_INSTALLABLE_PACKAGE"
+      ],
+      "eligibility_note": "Redirect to canonical product; never install as a second plugin."
+    },
+    {
+      "plugin_key": "cortex-workbench",
+      "display_name": "Cortex Workbench",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "1.0.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "commandcraft-56",
+      "display_name": "CommandCraft 56",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.1.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "agent-skills-atlas",
+      "display_name": "Agent Skills Atlas",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.3.1",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "workflow-systems-orchestrator",
+      "display_name": "AI Workflow Systems Orchestrator",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.2.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "growthforge-business-os",
+      "display_name": "GrowthForge Business OS",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "1.1.1",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+      ],
+      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "pvee-promkes-super-orchestrator",
+      "display_name": "PVEE Promkes Super Orchestrator",
+      "source_state": "candidate_repository",
+      "source_repository_id": "pvee-promkes-candidate",
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "2.0.2",
+      "distribution_status": "candidate_incomplete",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_PACKAGE_SOURCE_INCOMPLETE",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED"
+      ],
+      "eligibility_note": "Candidate source is incomplete and not canonical."
+    }
+  ]
+}

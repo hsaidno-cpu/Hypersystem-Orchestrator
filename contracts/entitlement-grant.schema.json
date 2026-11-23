@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hypersystem Entitlement Grant",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "grant_id",
+    "subject",
+    "audience",
+    "grants",
+    "issued_at",
+    "expires_at",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "grant_id": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "object",
+      "required": [
+        "subject_type",
+        "subject_id"
+      ],
+      "properties": {
+        "subject_type": {
+          "enum": [
+            "user",
+            "workspace",
+            "tenant",
+            "service_account"
+          ]
+        },
+        "subject_id": {
+          "type": "string"
+        }
+      }
+    },
+    "audience": {
+      "type": "string"
+    },
+    "grants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "plugin_key",
+          "scopes"
+        ],
+        "properties": {
+          "plugin_key": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "quota": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "requests_per_minute": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "requests_per_day": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "status": {
+      "enum": [
+        "active",
+        "suspended",
+        "revoked",
+        "expired"
+      ]
+    },
+    "policy_version": {
+      "type": "string"
+    }
+  }
+}
