@@ -186,6 +186,7 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 | Cortex Workbench | General knowledge-work command workbench | Business-specific OS or specialized command alias catalog |
 | CommandCraft 56 | 56 text command aliases and compact task profiles | Native slash-command UI or general case orchestration |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy and adoption maturity | Claiming every mapped skill is executable |
+| Ponytail Engineering System | Minimal-complete software change method, codebase mapping, repository audit, contextual change review, risk-based tests and evidence-led engineering debt | Repository write/release lifecycle (SDO), independent quality judgement (Evaluator Team), technical plugin forensics (A.S.F.R.E.E), reusable workflow architecture (WSO) or ecosystem control-plane routing (HSO) |
 | People & Business Competency Academy | Human competency diagnosis, learning pathways, deliberate practice, simulation, workplace transfer and evidence-led learner progress | AI capability inventory/adoption, commercial business decisions/deliverables, psychotherapy or claims of competence based only on reading/self-rating |
 | GrowthForge Business OS | Business strategy, commercial, marketing, finance and operating work | General non-business knowledge work or technical plugin engineering |
 | A.S.F.R.E.E Legacy | Redirect/migration identity only | Any new execution, analysis or engineering |
@@ -209,3 +210,11 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 - Independent evaluation is not performed by the same workstream that approves its own implementation.
 - Health-truth decisions remain with PVEE and qualified human authorities.
 - Visual production remains separate from audio truth and from health communication governance.
+
+## Ponytail Engineering System — method specialist, not a global orchestrator
+
+**Philosophy:** solve the confirmed software task with the smallest complete change that preserves correctness, security, reliability, accessibility and maintainability. “Smallest” is a complexity discipline, not code golf.
+
+It owns engineering-method intake, affected-code/context mapping, minimal-change option selection, read-only repository audit, contextual diff review, risk-based regression planning, security/reliability checks and evidence-based technical-debt/efficiency reporting.
+
+It does not own source writes, commits, pull requests, merges or releases. SDO owns the engineering lifecycle. It does not replace SKILL ANALYZER for general methodology, A.S.F.R.E.E for forensic plugin anatomy, Evaluator Team for independent judgement, AI Workflow Systems Orchestrator for reusable process architecture, or HSO for ecosystem-level arbitration. No dispatcher, installer, autonomous test runner or production runtime is included.
