@@ -349,3 +349,16 @@ CP-3 is blocked until CP-1 and the relevant CP-2 gates pass. CP-4 and CP-5 shoul
 5. Decide later whether a managed gateway/runtime has a real use case, operating owner, support model, cost envelope, security design, and rollback plan.
 
 **Acceptance rule:** the HSO control plane is operational only when real authorization, routing, dispatch, output collection, independent verification, durable state, and recovery have been demonstrated on an identified host and exact release. A complete document, a green static workflow, or a catalog entry alone does not satisfy that rule.
+
+## Specialist registration — Ponytail Engineering System
+
+The registered `ponytail-engineering-optimizer` is a bounded software-engineering method specialist, not an HSO control-plane owner.
+
+- **Use it for:** minimal-complete software change design, affected-code mapping, read-only repository audit, contextual diff review, risk-based test design, security/reliability review and evidence-based shortcut debt.
+- **Primary method output:** a versioned Engineering Change Dossier describing the objective, scope, baseline, chosen option, impact map, risk register, acceptance criteria, test plan and authority boundaries.
+- **Handoff:** Ponytail → SDO. SDO retains sole ownership of accepted source edits, repository writes, commits, pull requests and release preparation.
+- **Independent acceptance:** Evaluator Team. Ponytail does not self-certify its own output.
+- **Forensic escalation:** A.S.F.R.E.E only where the engineering target is the anatomy or reconstruction of an AI plugin, skill, agent or system.
+- **Routing boundary:** HSO selects this specialist when engineering-method work is the dominant work package. A catalog record and a mock contract do not prove that the private plugin is invokable by an HSO runtime.
+
+The private Plugin Creator package is USER/PRIVATE. The parent repository stores only catalog metadata and a pointer; no full private skill instructions are copied. The upstream `DietrichGebert/ponytail` repository is a methodology provenance reference, not the derivative package's canonical source. HSO can select the declarative route, but `plugin.skill.invoke` remains NOT_CONFIGURED, so the runtime blocks dispatch. C4/C5 remain `NOT_RUN`.
