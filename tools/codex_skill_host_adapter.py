@@ -166,27 +166,41 @@ def probe_codex_skill_host(workspace:Path,skill_source_path:str)->dict[str,Any]:
  except Exception as e:return {"status":"UNAVAILABLE","evidence":_clean(f"Codex CLI preflight failed: {type(e).__name__}: {e}")}
 
 def _register_skills(workspace:Path)->tuple[Path,list[Path],list[Path]]:
- agents=workspace/".agents";repo=agents/"skills";created=[];links=[]
+ agents=workspace/".agents";repo=agents/"skills";created=[];copied=[]
  if not agents.exists():agents.mkdir();created.append(agents)
+ if agents.is_symlink() or not agents.is_dir():raise RuntimeError(".agents is not a regular directory")
  if not repo.exists():repo.mkdir();created.append(repo)
  if repo.is_symlink() or not repo.is_dir():raise RuntimeError(".agents/skills is not a regular directory")
  src=workspace/SKILLS_SOURCE_ROOT
  if not src.is_dir() or src.is_symlink():raise RuntimeError("canonical plugin skills directory is unavailable")
  try:
   for d in sorted(src.iterdir()):
-   if not d.is_dir() or not (d/"SKILL.md").is_file():continue
+   if not d.is_dir() or (d/"SKILL.md").is_symlink() or not (d/"SKILL.md").is_file():continue
+   for child in d.rglob("*"):
+    if child.is_symlink():raise RuntimeError(f"canonical Agent Skill tree contains a symlink: {child.relative_to(workspace)}")
    target=repo/d.name
    if target.exists() or target.is_symlink():raise RuntimeError(f"Codex skill name collision: {d.name}")
-   target.symlink_to(d.resolve(),target_is_directory=True);links.append(target)
-  if not any(x.name==PLUGIN_KEY for x in links):raise RuntimeError("master skill not registered for Codex discovery")
-  return repo,links,created
+   shutil.copytree(d,target,symlinks=False)
+   copied.append(target)
+   source_skill=d/"SKILL.md";copied_skill=target/"SKILL.md"
+   if sha256_file(source_skill)!=sha256_file(copied_skill):
+    raise RuntimeError(f"copied SKILL.md hash mismatch: {d.name}")
+  master=repo/PLUGIN_KEY
+  if not master.is_dir() or not (master/"SKILL.md").is_file():
+   raise RuntimeError("master skill not registered for Codex discovery")
+  source_master=_resolve_skill(workspace,SKILL_RELATIVE_PATH.as_posix())
+  if sha256_file(source_master)!=sha256_file(master/"SKILL.md"):
+   raise RuntimeError("registered master skill differs from canonical pinned source")
+  return repo,copied,created
  except Exception:
-  _cleanup_links(links,created);raise
+  _cleanup_links(copied,created);raise
 
 def _cleanup_links(links:list[Path],created:list[Path])->None:
- for link in links:
+ for entry in reversed(links):
   try:
-   if link.is_symlink():link.unlink()
+   if entry.is_symlink():entry.unlink()
+   elif entry.is_dir():shutil.rmtree(entry)
+   elif entry.exists():entry.unlink()
   except OSError:pass
  for d in reversed(created):
   try:d.rmdir()

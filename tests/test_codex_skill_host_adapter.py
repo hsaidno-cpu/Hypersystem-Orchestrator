@@ -31,6 +31,8 @@ cfg=(pathlib.Path(os.environ["CODEX_HOME"])/"config.toml").read_text()
 for x in ('"*_KEY" = "exclude"','"*_TOKEN" = "exclude"','"*_SECRET" = "exclude"','"GITHUB_*" = "exclude"'):assert x in cfg
 skills=pathlib.Path.cwd()/".agents"/"skills"
 assert (skills/"skill-analyzer"/"SKILL.md").is_file() and (skills/"analyzer"/"SKILL.md").is_file()
+assert not (skills/"skill-analyzer").is_symlink()
+assert not (skills/"analyzer").is_symlink()
 pathlib.Path(val("--output-last-message")).write_text(json.dumps(OUTPUT),encoding="utf-8")
 print(json.dumps({"type":"thread.started","thread_id":"thr-test"}),flush=True)
 print(json.dumps({"type":"turn.started","turn_id":"turn-test"}),flush=True)
