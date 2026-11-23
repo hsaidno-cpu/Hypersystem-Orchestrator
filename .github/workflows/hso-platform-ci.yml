@@ -1,0 +1,69 @@
+name: HSO operational platform CI
+
+on:
+  push:
+    branches: [platform/e4-e5-operational-kernel-20261123]
+  pull_request:
+    branches: [architecture/control-plane-operating-contract-20261123]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  postgres-platform:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.7
+        env:
+          POSTGRES_DB: hso_test
+          POSTGRES_USER: hso
+          POSTGRES_PASSWORD: hso_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hso -d hso_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      HSO_ENV: test
+      HSO_AUTH_MODE: disabled
+      HSO_API_KEY_PEPPER: ci-test-only-pepper-not-a-production-secret
+      HSO_DATABASE_URL: postgresql+psycopg://hso:hso_test_password@localhost:5432/hso_test
+      HSO_MCP_ALLOWED_HOSTS: localhost:*,127.0.0.1:*,[::1]:*
+      HSO_MCP_ALLOWED_ORIGINS: http://localhost:*,http://127.0.0.1:*
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: services/hso-platform/pyproject.toml
+
+      - name: Install platform and test dependencies
+        run: python -m pip install -e "services/hso-platform[test]"
+
+      - name: Set catalog seed path
+        run: echo "HSO_CATALOG_DIR=$GITHUB_WORKSPACE/catalog" >> "$GITHUB_ENV"
+
+      - name: Compile Python sources
+        run: python -m compileall -q services/hso-platform/src services/hso-platform/tests
+
+      - name: Apply PostgreSQL migrations
+        working-directory: services/hso-platform
+        run: alembic upgrade head
+
+      - name: Seed persistent registry from parent catalog
+        working-directory: services/hso-platform
+        run: python -m hso_platform.seed_catalog
+
+      - name: Run operational kernel tests
+        working-directory: services/hso-platform
+        run: python -m pytest
