@@ -45,8 +45,8 @@ The parent catalog/positioning controls cross-plugin ownership and handoff expec
 
 ## 6. Current completeness declaration
 
-The index contains 238 skill records across 20 plugin identities. Five official plugin source repositories are pinned; the SDO runtime snapshot is now accompanied by a verified canonical source pointer:
-- Runtime instruction snapshots remain segregated for 12 NOT_IDENTIFIED packages and two CANDIDATE_INCOMPLETE packages. Video Explainer and SDO keep separate Plugin Creator snapshots with official Git submodules;
+The index contains 256 skill records across 22 plugin identities. Five official plugin source repositories are pinned; the SDO runtime snapshot is now accompanied by a verified canonical source pointer:
+- Runtime instruction snapshots remain segregated for 14 NOT_IDENTIFIED packages and two CANDIDATE_INCOMPLETE packages. Video Explainer and SDO keep separate Plugin Creator snapshots with official Git submodules;
 - Source-backed plugin packages are represented by their independent submodules/source pointers (SKILL ANALYZER, A.S.F.R.E.E, Anatomi Prompt, Video Explainer and SDO);
 - 1 skill document represents the A.S.F.R.E.E Legacy redirect.
 
@@ -62,7 +62,7 @@ The Video Explainer instruction bundle is captured from current Plugin Creator r
 
 - SDO source repository: promkespkmbinuang-coder/SPDO, commit 9d3c4bc09179ff857df4f3819be83e1847571add, source version 0.1.0, Apache-2.0, signature-verified. Its runtime snapshot remains for current Plugin Creator read-back; canonical source is the independent Git submodule. Compare content hashes before declaring exact instruction parity.
 - PVEE declared source pointer: promkespkmbinuang-coder/CL-VAEPPC, observed commit 1ab0c41081ccdbb91cc9dec0a2864acd0de00d54. It is registered as CANDIDATE_INCOMPLETE because the current tree does not contain a package manifest or skill source tree.
-- Counts: five official source submodules, two incomplete source candidates, twelve NOT_IDENTIFIED plugin sources, one legacy redirect and 238 skill records across 20 plugin identities.
+- Counts: five official source submodules, two incomplete source candidates, fourteen NOT_IDENTIFIED plugin sources, one legacy redirect and 238 skill records across 20 plugin identities.
 
 
 ## SDO source/snapshot drift (2026-11-22)
