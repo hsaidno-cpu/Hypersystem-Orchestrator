@@ -18,7 +18,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 ## What is included now
 
-The registry contains **21 plugin identities** supplied for this ecosystem.
+The registry contains **22 plugin identities** supplied for this ecosystem.
 
 Five verified official plugin source repositories are pinned as Git submodules:
 
@@ -32,7 +32,7 @@ Five verified official plugin source repositories are pinned as Git submodules:
 
 The other plugin identities remain recorded with explicit source states. Instruction snapshots and candidate repositories are not treated as canonical distributable source packages.
 
-## The 21 registered plugins
+## The 22 registered plugins
 
 1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
@@ -55,6 +55,7 @@ The other plugin identities remain recorded with explicit source states. Instruc
 19. AI Workflow Systems Orchestrator
 20. GrowthForge Business OS
 21. PVEE Promkes Super Orchestrator
+22. Progressive Roadmap Evaluator (PRE)
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
@@ -103,7 +104,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 
 ## Complete plugin instruction vault
 
-The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **247 skill definitions** across 21 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **256 skill definitions** across 21 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
