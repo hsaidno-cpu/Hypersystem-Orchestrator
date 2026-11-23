@@ -28,5 +28,7 @@ jobs:
         run: python tools/validate_catalog.py
       - name: Validate distribution eligibility and platform registry
         run: python tools/validate_distribution.py
+      - name: Validate canonical source and redistribution rights
+        run: python tools/validate_source_rights.py
       - name: Run unit and resolver tests
         run: python -m unittest discover -s tests -v
