@@ -18,7 +18,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 ## What is included now
 
-The registry contains **20 plugin identities** supplied for this ecosystem.
+The registry contains **21 plugin identities** supplied for this ecosystem.
 
 Five verified official plugin source repositories are pinned as Git submodules:
 
@@ -32,7 +32,7 @@ Five verified official plugin source repositories are pinned as Git submodules:
 
 The other plugin identities remain recorded with explicit source states. Instruction snapshots and candidate repositories are not treated as canonical distributable source packages.
 
-## The 20 registered plugins
+## The 21 registered plugins
 
 1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
@@ -51,9 +51,10 @@ The other plugin identities remain recorded with explicit source states. Instruc
 15. Cortex Workbench
 16. CommandCraft 56
 17. Agent Skills Atlas
-18. AI Workflow Systems Orchestrator
-19. GrowthForge Business OS
-20. PVEE Promkes Super Orchestrator
+18. People & Business Competency Academy
+19. AI Workflow Systems Orchestrator
+20. GrowthForge Business OS
+21. PVEE Promkes Super Orchestrator
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
@@ -102,13 +103,14 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 
 ## Complete plugin instruction vault
 
-The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **238 skill definitions** across 20 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **247 skill definitions** across 21 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
 The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architecture/PLUGIN-POSITIONING.md) and [ROUTING-AND-NON-DUPLICATION-OVERRIDES.md](architecture/ROUTING-AND-NON-DUPLICATION-OVERRIDES.md). Cross-plugin interfaces are tracked in [catalog/compatibility-matrix.json](catalog/compatibility-matrix.json), and progressive verification is in [COMPATIBILITY-AND-TEST-PLAN.md](docs/COMPATIBILITY-AND-TEST-PLAN.md).
 
 - SKILL ANALYZER owns general analytical methodology; A.S.F.R.E.E owns forensic anatomy of AI plugins and controlled reconstruction.
+- People & Business Competency Academy owns the development and evidence-based transfer of human People/Business Skills; Agent Skills Atlas owns AI capability inventory, while GrowthForge owns business-domain decisions and deliverables.
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
 - Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and turns it into a prompt.
 - Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
@@ -120,7 +122,7 @@ Plugin Creator package versions, canonical Git source versions and embedded skil
 
 ## Source inventory
 
-Five official source repositories are pinned, two candidate/incomplete sources are tracked, twelve plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
+Five official source repositories are pinned, two candidate/incomplete sources are tracked, thirteen plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
 
 ## Architecture principles
 

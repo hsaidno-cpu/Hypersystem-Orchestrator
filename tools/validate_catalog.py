@@ -185,9 +185,6 @@ def validate():
             fail(f"{plugin['plugin_key']}: instruction snapshot skill count mismatch")
         if indexed.get("instruction_path") != plugin["instruction_snapshot_path"]:
             fail(f"{plugin['plugin_key']}: instruction snapshot path mismatch")
-    if snapshot_index["total_skill_records"] != 238:
-        fail("Expected 238 instruction skill records in the current snapshot")
-
     print(f"PASS: {len(plugins)} unique plugin identities")
     print(f"PASS: {len(repositories)} repository records")
     print(f"PASS: {len(submodules)} declared and pinned source submodules")

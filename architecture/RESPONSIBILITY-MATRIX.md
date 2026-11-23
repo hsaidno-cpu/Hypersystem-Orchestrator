@@ -24,6 +24,7 @@ This matrix is normative for ecosystem-level routing. The detailed product philo
 | General learning, research, writing, thinking, productivity or coding | Cortex Workbench | SKILL ANALYZER, CommandCraft 56 | GrowthForge unless the main goal is business |
 | Use a compact named command mode from the 56-command catalog | CommandCraft 56 | Cortex or GrowthForge as domain support | Assuming text aliases create native UI commands or runtime tools |
 | Discover, inventory, map, classify or stage adoption of a skill/capability library | Agent Skills Atlas | SKILL ANALYZER, Workflow Systems | Treating a discovered/mapped skill as executable |
+| Develop or evaluate a person's/team's observable People Skills or Business Skills, including learning practice and transfer | People & Business Competency Academy | GrowthForge for a distinct business deliverable; Agent Skills Atlas only for an AI-capability inventory | Routing individual competency development to GrowthForge or treating reading completion as mastery |
 | Business model, market/customer, product, brand, finance, marketing, sales or operations | GrowthForge Business OS | Cortex, CommandCraft | General knowledge-work routing when business is dominant |
 | Access the retired A.S.F.R.E.E identity | A.S.F.R.E.E Canonical via Legacy redirect | None | Legacy execution or Legacy fallback |
 
@@ -49,6 +50,7 @@ This matrix is normative for ecosystem-level routing. The detailed product philo
 | Broad knowledge-work command routing | Cortex Workbench | Task contract and integrated knowledge-work deliverable |
 | 56 text command alias semantics | CommandCraft 56 | Command profile and resolution |
 | Capability inventory and adoption maturity | Agent Skills Atlas | Registry record, provenance and lifecycle state |
+| Human competency development and learning-to-work transfer | People & Business Competency Academy | Baseline, deliberate practice, simulation, workplace evidence and milestone assessment |
 | Business-domain decision/deliverable | GrowthForge Business OS | Business analysis, plan, model, experiment and operating deliverable |
 | Legacy A.S.F.R.E.E compatibility | A.S.F.R.E.E Legacy | Canonical migration pointer only |
 

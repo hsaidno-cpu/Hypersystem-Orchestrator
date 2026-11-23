@@ -1,10 +1,10 @@
 # Source Repository Classification and Reconciliation
 
-**Inventory date:** 2026-11-22  
-**Plugin identities:** 20  
+**Inventory date:** 2026-11-23  
+**Plugin identities:** 21  
 **Verified official plugin source repositories pinned:** 5  
 **Candidate/incomplete source repositories:** 2  
-**Plugin identities with no accepted GitHub source:** 12  
+**Plugin identities with no accepted GitHub source:** 13  
 **Legacy redirect identities:** 1 (A.S.F.R.E.E Legacy; not a second product)
 
 ## 1. Search scope and evidence
@@ -57,9 +57,11 @@ The SDO source contains plugin.json version 0.1.0, README, the master SKILL.md, 
 
 The CL2-VAEPPC repository is not accepted: only a placeholder README and LICENSE exist, without explicit plugin identity or a full source tree.
 
+People & Business Competency Academy has a verified private Plugin Creator package (0.1.0) and nine skill procedures, but no dedicated canonical GitHub source repository or separate source license decision has been established. The parent repository therefore records it as pending_repository / NOT_IDENTIFIED and stores only a clearly attributed instruction snapshot plus the user-supplied title-author reference catalog. This is not a canonical source integration and does not imply public installation or runtime readiness.
+
 Agent Skills Atlas separately references alirezarezvani/claude-skills as an upstream dataset at commit f8593c4941210a621a6629ce1da9e07897976d5f, package 2.14.14. That repository is upstream inventory data, not the canonical source repository for the Agent Skills Atlas plugin itself.
 
-## 5. Twelve plugin sources remain NOT_IDENTIFIED
+## 5. Thirteen plugin sources remain NOT_IDENTIFIED
 
 1. Evaluator Team
 2. Master Photo Restoration
@@ -73,17 +75,18 @@ Agent Skills Atlas separately references alirezarezvani/claude-skills as an upst
 10. Agent Skills Atlas
 11. AI Workflow Systems Orchestrator
 12. GrowthForge Business OS
+13. People & Business Competency Academy
 
-Together with the two incomplete candidates, there are **14 plugin source identities still not integrated**. The earlier backlog count was 15; SDO has now been identified and integrated as the fifth official source submodule.
+Together with the two incomplete candidates, there are **15 plugin source identities still not integrated** (13 NOT_IDENTIFIED plus 2 CANDIDATE_INCOMPLETE). The earlier backlog count was 15; SDO has now been identified and integrated as the fifth official source submodule.
 
 ## 6. Instruction snapshot inventory
 
-- 12 NOT_IDENTIFIED packages retain separate, read-only runtime instruction snapshots.
+- 13 NOT_IDENTIFIED packages retain separate, read-only runtime instruction snapshots, including People & Business Competency Academy.
 - Photo Fixer and PVEE retain separate candidate-source snapshots; neither candidate source is treated as canonical package source.
 - Video Explainer and SDO retain current Plugin Creator instruction snapshots while each has its own independently pinned source repository.
 - SKILL ANALYZER, A.S.F.R.E.E and Anatomi Prompt are represented by their own source submodules/source pointers.
 - A.S.F.R.E.E Legacy remains one redirect-only snapshot.
-- 238 skill records are indexed across 20 plugin identities.
+- 247 skill records are indexed across 21 plugin identities.
 - No snapshot merges two plugin packages or transfers implementation ownership to the parent repository.
 
 ## 7. Required proof before submodule integration
