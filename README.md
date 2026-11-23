@@ -98,8 +98,8 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 - architecture/ — system boundary, responsibility matrix, positioning, routing, integration topology and the ecosystem control-plane operating contract.
 - governance/ — contribution, authority, security, versioning, release and snapshot rules.
 - roadmap/ — progressive stages, source-repository onboarding backlog and evidence-based exit criteria.
-- tools/ — repository-local catalog/distribution validators, dry-run resolver and deterministic plan-only workflow planner.
-- tests/ — catalog/distribution/eligibility regressions, C2/C3 contract assurance and plan-only workflow-planner tests.
+- tools/ — repository-local validators, dry-run resolver, plan compiler and supervised sandbox runtime.
+- tests/ — catalog/distribution/eligibility regressions, C2/C3 contract assurance, planning and runtime recovery/security tests.
 - .github/workflows/ — automated static validation.
 
 ## Complete plugin instruction vault
@@ -129,7 +129,13 @@ Five official source repositories are pinned, two candidate/incomplete sources a
 
 The date-bound, evidence-backed migration baseline is documented in [SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md](docs/SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md). It separates catalog coverage, canonical source onboarding, source-content parity, compatibility testing and distribution readiness. An indexed instruction is not proof of canonical source synchronization.
 
-The ecosystem-level operating model, route arbitration, authority boundaries and execution gates are specified in [SUPER-ORCHESTRATOR-CONTROL-PLANE.md](architecture/SUPER-ORCHESTRATOR-CONTROL-PLANE.md). This is a design/control-plane contract, not a claim that a hosted runtime or automatic plugin dispatcher is deployed. The portable eight-pillar operating instruction is [HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md](prompts/HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md); it remains a draft until target-host testing and owner release.\n\nA bounded [plan-only workflow planner](docs/HSO-PLAN-ONLY-ORCHESTRATOR.md) now validates declared owners, capability states, authority, approvals and DAG dependencies. It returns an ordered plan and blockers; it does not invoke plugins or dispatch work.\n\n## Architecture principles
+The ecosystem-level operating model, route arbitration, authority boundaries and execution gates are specified in [SUPER-ORCHESTRATOR-CONTROL-PLANE.md](architecture/SUPER-ORCHESTRATOR-CONTROL-PLANE.md). This is a design/control-plane contract, not a claim that a hosted runtime or automatic plugin dispatcher is deployed. The portable eight-pillar operating instruction is [HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md](prompts/HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md); it remains a draft until target-host testing and owner release.
+
+A bounded [plan-only workflow planner](docs/HSO-PLAN-ONLY-ORCHESTRATOR.md) now validates declared owners, capability states, authority, approvals and DAG dependencies. It returns an ordered plan and blockers; it does not invoke plugins or dispatch work.
+
+A controlled [Super-Orchestrator runtime](docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md) probes registered sandbox capabilities, arbitrates one primary owner plus bounded specialists, enforces policy, executes a dependency DAG, retries idempotent actions, verifies the actual sandbox target and records a hash-chained audit. The GitHub Actions pilot does **not** invoke plugin skills or remote MCP: those adapters remain `NOT_CONFIGURED`, and staging/production are denied.
+
+## Architecture principles
 
 1. **Single source of truth:** plugin implementation stays in its own repository; the parent records exact source URL, branch, version and pinned commit.
 2. **One owner per concern:** each plugin retains a bounded responsibility; overlapping capabilities are resolved by explicit primary ownership and handoff contracts.
@@ -149,6 +155,9 @@ python -m pip install -r requirements-test.txt
 python tools/validate_catalog.py
 python tools/validate_distribution.py
 python tools/plan_hso_workflow.py examples/hso-workflow-plan.example.json
+python tools/hso_super_orchestrator.py discover --output /tmp/hso-capabilities.json
+python tools/hso_super_orchestrator.py run examples/hso-runtime-execution.example.json --workspace /tmp/hso-target --ledger /tmp/hso-ledger.sqlite --audit /tmp/hso-audit.jsonl --receipt /tmp/hso-receipt.json
+python tools/hso_super_orchestrator.py verify-audit /tmp/hso-audit.jsonl
 python -m unittest discover -s tests -v
 ~~~
 

@@ -1,0 +1,25 @@
+{
+  "schema_version":"1.0.0",
+  "default_decision":"DENY",
+  "authority_order":["S0","S1","S2","S3","S4","S5"],
+  "approval_contract":{
+    "type":"HMAC_SHA256_SCOPED_RECEIPT",
+    "secret_environment_variable":"HSO_APPROVAL_HMAC_KEY",
+    "requirements":["case_id","action_id","target_path","authority","approver","issued_at","expires_at","nonce","signature"],
+    "fail_closed":true
+  },
+  "actions":{
+    "sandbox.write_text":{"adapter_id":"builtin.python.sandbox","minimum_authority":"S3","allowed_environments":["SANDBOX"],"approval_required":false,"idempotent":true,"max_attempts":3,"test_only":false,"side_effect_class":"EPHEMERAL_SANDBOX_ONLY","overwrite":false},
+    "sandbox.verify_sha256":{"adapter_id":"builtin.python.verifier","minimum_authority":"S0","allowed_environments":["SANDBOX"],"approval_required":false,"idempotent":true,"max_attempts":1,"test_only":false,"side_effect_class":"READ_ONLY"},
+    "test.flaky_write_text":{"adapter_id":"builtin.python.test-fault-injector","minimum_authority":"S3","allowed_environments":["SANDBOX"],"approval_required":false,"idempotent":true,"max_attempts":3,"test_only":true,"side_effect_class":"TEST_FIXTURE_ONLY","overwrite":false}
+  },
+  "non_implemented_scopes":{
+    "CHILD_REPOSITORY_CHANGE":"NOT_REGISTERED",
+    "EXTERNAL_SIDE_EFFECT":"NOT_REGISTERED",
+    "STAGING_RELEASE":"NOT_REGISTERED",
+    "PRODUCTION_RELEASE":"NOT_REGISTERED",
+    "PLUGIN_SKILL_INVOCATION":"NO_VERIFIED_HOST_ADAPTER",
+    "REMOTE_MCP":"NO_ENDPOINT_OR_AUTH_ADAPTER",
+    "HTTP_API":"NO_ENDPOINT_OR_AUTH_ADAPTER"
+  }
+}

@@ -47,6 +47,19 @@ A bounded planner converts an explicitly declared work-package graph into a dete
 
 **Boundary:** no natural-language route inference, specialist invocation, capability probe, persistent queue/state, host adapter, runtime dispatch or side effect. The planner is a plan-validation tool, not an operational service. It remains in the open PR branch until reviewed and merged.
 
+
+### Controlled Super-Orchestrator runtime pilot — 23 November 2026
+
+**Status:** IMPLEMENTED_ON_PR_BRANCH / GITHUB_HOSTED_SANDBOX_PILOT / NOT_MERGED / NOT_PRODUCTION_READY
+
+A real, restricted runtime has been added beside the existing plan-only compiler. It performs live discovery of registered sandbox handlers, deterministic primary-owner/specialist routing, schema-validated DAG ordering, deny-by-default authority checks, trusted adapter dispatch, bounded idempotent retry, local SQLite run-state tracking, independent target-side SHA-256 verification, conditional compensation and hash-chained audit logging.
+
+**Acceptance evidence required from exact-head CI:** (1) create a real file in an isolated hosted-runner workspace; (2) execute its dependent verification package; (3) recover from one injected transient failure in a test-only adapter; (4) verify audit hash chains; (5) retain capability, run and target receipts as CI artifacts.
+
+**Hard boundary:** this does not activate plugin skills, remote MCP, arbitrary APIs, child repositories, staging or production. The real plugin host bridge and remote connector remain NOT_CONFIGURED. SQLite is not distributed state; the local hash chain is not an independently signed immutable audit log. C4/C5 for named plugin hosts remain NOT_RUN until an actual host adapter is installed and tested.
+
+**Artifacts:** `tools/hso_super_orchestrator.py`, `catalog/hso-runtime-capabilities.json`, `catalog/hso-routing-policy.json`, `governance/hso-execution-policy.json`, `contracts/hso-runtime-workflow.schema.json`, runtime examples, `docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md` and the runtime regression suite.
+
 ## Stage E3 — Compatibility and integration assurance
 
 **Objective:** Prove what can interoperate and where, without confusing static metadata with live capability.

@@ -99,13 +99,13 @@ The following are **logical responsibilities**, not separate deployed microservi
 |---|---|---|---|
 | CP-01 Intake & Scope Gate | Define requested outcome, target, scope, non-goals, constraints, and stop rules | Request/case brief | Partially represented in governance and handoff contracts |
 | CP-02 Catalog & Provenance Resolver | Resolve plugin identity, source state, version, commit, license and instruction provenance | Capability/source record | Catalog, repository registry and snapshots exist |
-| CP-03 Eligibility & Capability Gate | Check actual source, rights, artifact, dependency, host, permission and runtime availability | Eligibility/capability decision | Static distribution registry and dry-run resolver exist |
-| CP-04 Route Arbitration | Choose one primary plugin owner and narrowly scoped supporting owners | Route decision and ownership map | Responsibility matrix and routing overrides exist |
-| CP-05 Plan & Dependency Coordinator | Build and validate a directed acyclic work plan with declared owners, approvals, capabilities, dependencies and acceptance criteria | Deterministic plan-only DAG compiler | Implemented on PR branch via `tools/plan_hso_workflow.py`; no persistent scheduler, state store or dispatch |
-| CP-06 Handoff & State Manager | Validate payload contracts, capability status, epistemic status, and completion states | Versioned handoff receipt | JSON Schemas and fixtures exist; no shared service state store |
-| CP-07 Evidence & Quality Gate | Aggregate provenance, schema/behavior evidence, independent evaluation, and residual risk | Evidence dossier and gate result | C0–C3 evidence exists; C4/C5 remain open |
+| CP-03 Eligibility & Capability Gate | Check actual source, rights, artifact, dependency, host, permission and runtime availability | Eligibility/capability decision | Live probes for registered sandbox handlers; plugin/MCP remain NOT_CONFIGURED |
+| CP-04 Route Arbitration | Choose one primary owner and only the specialists needed for distinct outputs/controls | Route receipt | Explicit task-type route registry; unknown routes fail closed |
+| CP-05 Plan & Dependency Coordinator | Validate a DAG and execute authorized packages through registered adapters | Plan + execution receipt | Plan compiler plus serial sandbox DAG dispatcher on PR branch; no distributed scheduler/queue |
+| CP-06 Handoff & State Manager | Validate workflow envelope, dependency outcomes, idempotency and replay safety | Versioned run receipt + local idempotency ledger | Runtime schema + SQLite single-runner ledger; no distributed transactional state |
+| CP-07 Evidence & Quality Gate | Independently read back target state and judge acceptance evidence | Target verification receipt | Real sandbox SHA-256 read-back in CI; plugin-host C4/C5 remain NOT_RUN |
 | CP-08 Roadmap & Change Bridge | Hand longitudinal progress and adaptation decisions to PRE; hand source changes to SDO | Roadmap update / engineering change manifest | Procedural integration only; no cross-plugin event service |
-| CP-09 Governance & Observability | Record actor, authority, approvals, audit trail, failures, recovery and release state | Traceable execution record | Parent governance and CI exist; production observability is not deployed |
+| CP-09 Governance & Observability | Record route, policy, attempts, retry, result, verification, compensation and closure | Hash-chained run audit + receipt | JSONL hash chain and CI artifact; no external immutable/WORM audit service |
 
 Do not split these logical responsibilities into independent agents, services, or subskills until an observable bottleneck, repeated use case, clear interface, owner, and acceptance test justify the additional failure domains.
 
@@ -120,6 +120,21 @@ The parent now includes a deterministic plan-only workflow planner, its versione
 
 This closes the planning/compiler gap only. It does not select owners from free text, invoke specialist skills, probe host capability, persist run state, call a plugin, or perform dispatch. A `READY_FOR_REVIEW` result is a planning disposition, not an execution authorization or runtime proof. The implementation is on this PR branch and is not merged to `main`.
 
+
+### Controlled runtime implementation: sandbox execution pilot
+
+The plan-only compiler remains useful for validating declared plans without side effects. A separate supervised runtime now closes the execution loop for a deliberately restricted class of actions:
+
+- `catalog/hso-runtime-capabilities.json` registers trusted built-in adapters. The runtime probes handlers in a disposable directory and marks a capability `READY` only after a real action/read-back check.
+- `catalog/hso-routing-policy.json` resolves one primary owner and bounded specialists by task type. Artifact creation routes to CP-05 with CP-07 as evidence specialist; independent verification routes to CP-07 with CP-05 as scheduling support.
+- `contracts/hso-runtime-workflow.schema.json` defines the execution envelope; DAG cycles, duplicate IDs, unknown dependencies and repeated idempotency keys are rejected.
+- `governance/hso-execution-policy.json` is deny-by-default. Sandbox writes require S3. Staging, production, unregistered actions, and unconfigured plugin/MCP capabilities are rejected. Approval receipts for future approval-gated actions are HMAC-checked, time-bounded and scope-bound.
+- `tools/hso_super_orchestrator.py` dispatches only fixed, allow-listed Python handlers. It does not accept shell commands, arbitrary URLs, dynamic imports or user-selected callables.
+- SQLite stores local idempotency state. Retries are bounded and limited to idempotent actions. Outcome-unknown/manual-review records cannot be automatically replayed.
+- A dependent package independently reads the actual file target and verifies SHA-256. Conditional compensation removes only an artifact created by this run whose digest has not changed.
+- JSONL audit events are sequence- and hash-chained, secret-like fields are redacted, and CI uploads receipts/target evidence for bounded retention.
+
+The first CI pilot is actual GitHub-hosted sandbox execution, not a mock receiver. It proves only the built-in temporary-file adapter and isolated runner. The route for SKILL ANALYZER/A.S.F.R.E.E is defined but remains blocked because `plugin.skill.invoke` has no verified host bridge. Remote MCP and HTTP API dispatch are also `NOT_CONFIGURED`. The runtime is serial and single-runner; it is not a production service, distributed scheduler, or universal AI-host gateway. See `docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md`.
 
 ## 5. Canonical operating workflow
 

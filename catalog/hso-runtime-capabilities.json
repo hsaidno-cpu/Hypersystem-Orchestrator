@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "registry_status": "CONTROLLED_BUILTIN_ADAPTERS_ONLY",
+  "capabilities": [
+    {"capability_id":"sandbox.write_text","adapter_id":"builtin.python.sandbox","handler":"write_text","enabled":true,"test_only":false,"scope":"ephemeral_workspace_file","description":"Create a new UTF-8 file in an isolated workspace; never overwrite different content."},
+    {"capability_id":"sandbox.verify_sha256","adapter_id":"builtin.python.verifier","handler":"verify_sha256","enabled":true,"test_only":false,"scope":"ephemeral_workspace_read","description":"Read an actual sandbox target and verify its SHA-256 digest."},
+    {"capability_id":"test.flaky_write_text","adapter_id":"builtin.python.test-fault-injector","handler":"flaky_write_text","enabled":true,"test_only":true,"scope":"test_workspace_only","description":"CI-only fault injector that fails once before mutation, then delegates to the idempotent sandbox writer."}
+  ]
+}
