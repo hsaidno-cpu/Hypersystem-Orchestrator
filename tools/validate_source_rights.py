@@ -5,6 +5,8 @@ import json
 import sys
 from pathlib import Path
 
+from jsonschema import Draft202012Validator, FormatChecker
+
 ROOT = Path(__file__).resolve().parents[1]
 ELIGIBLE = {"installable_public", "installable_private"}
 ALLOWED_RIGHTS = {
@@ -26,6 +28,20 @@ def validate() -> None:
     catalog = load("catalog/plugins.json")
     dist = load("catalog/distribution-registry.json")
     rights = load("catalog/source-rights-registry.json")
+    schema = load("catalog/source-rights-registry.schema.json")
+    Draft202012Validator.check_schema(schema)
+    schema_validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    schema_errors = sorted(
+        schema_validator.iter_errors(rights),
+        key=lambda error: (list(map(str, error.absolute_path)), error.message),
+    )
+    if schema_errors:
+        details = []
+        for error in schema_errors[:10]:
+            location = ".".join(str(part) for part in error.absolute_path) or "<root>"
+            details.append(f"{location}: {error.message}")
+        suffix = f" (and {len(schema_errors) - 10} more)" if len(schema_errors) > 10 else ""
+        raise ValueError("Source/rights registry does not conform to its JSON Schema: " + "; ".join(details) + suffix)
     records = rights.get("records", [])
     catalog_by_key = {item["plugin_key"]: item for item in catalog["plugins"]}
     dist_by_key = {item["plugin_key"]: item for item in dist["plugins"]}
@@ -53,6 +69,10 @@ def validate() -> None:
         if item["distribution"].get("license_status") != d.get("license_status"):
             raise ValueError(f"{key}: distribution license_status drift")
         source = item.get("source", {})
+        if source.get("repository_id") != item.get("source_repository_id"):
+            raise ValueError(
+                f"{key}: nested source.repository_id does not match source_repository_id"
+            )
         if item["source_state"] == "integrated_submodule":
             if source.get("kind") != "canonical" or source.get("verification_state") != "SUBMODULE_PINNED":
                 raise ValueError(f"{key}: integrated source must be a pinned canonical repository")
