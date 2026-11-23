@@ -118,7 +118,7 @@ def require_scope(scope: str):
         if principal is None:
             factory = request.app.state.session_factory
             settings = request.app.state.settings
-            with factory() as session:
+            with factory() as session, session.begin():
                 principal = authenticate(request, session, settings)
         if scope not in principal.scopes:
             raise HTTPException(status_code=403, detail=f"Missing required scope: {scope}")

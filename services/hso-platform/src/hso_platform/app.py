@@ -168,7 +168,7 @@ def create_app(
 
         if request.url.path.startswith("/mcp"):
             try:
-                with session_factory() as session:
+                with session_factory() as session, session.begin():
                     authenticated = authenticate(request, session, settings)
                 if "mcp:invoke" not in authenticated.scopes:
                     return JSONResponse(
