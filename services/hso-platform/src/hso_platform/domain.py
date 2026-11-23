@@ -93,6 +93,7 @@ def emit_outbox(
         available_at=utcnow(),
     )
     session.add(event)
+    session.flush()
     return event
 
 
