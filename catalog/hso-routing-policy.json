@@ -74,6 +74,16 @@
         "plugin.skill.invoke"
       ],
       "decision_rationale": "Ponytail owns minimal-complete software engineering method and its evidence dossier; SDO retains source-write lifecycle ownership and Evaluator Team supplies independent quality judgement. The route is selected declaratively, but dispatch remains blocked until a verified plugin-skill host adapter is configured."
+    },
+    "plugin.skill_analyzer_p0_pilot": {
+      "rule_id": "ROUTE-PLUGIN-SKILL-ANALYZER-P0-001",
+      "primary_owner": "skill-analyzer",
+      "supporting_specialists": [],
+      "action_id": "plugin.skill.invoke.codex.skill-analyzer",
+      "required_capabilities": [
+        "plugin.skill.invoke.codex.skill-analyzer"
+      ],
+      "decision_rationale": "P0 is deliberately one canonical skill and one verified Codex CLI host adapter. SKILL ANALYZER owns its own analytical method; no additional specialist is added to this first vertical slice."
     }
   }
 }

@@ -140,6 +140,8 @@ A bounded [plan-only workflow planner](docs/HSO-PLAN-ONLY-ORCHESTRATOR.md) now v
 
 A controlled [Super-Orchestrator runtime](docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md) probes registered sandbox capabilities, arbitrates one primary owner plus bounded specialists, enforces policy, executes a dependency DAG, retries idempotent actions, verifies the actual sandbox target and records a hash-chained audit. The GitHub Actions pilot does **not** invoke plugin skills or remote MCP: those adapters remain `NOT_CONFIGURED`, and staging/production are denied.
 
+The next step is a deliberately narrow [P0 Codex CLI host invocation pilot](docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md): one pinned SKILL ANALYZER source, one Codex CLI host, one approval-gated synthetic task and one invocation receipt. Its live paid call is manual-only and remains NOT_RUN until the protected default-branch workflow is explicitly approved; it does not enable generic plugin dispatch.
+
 ## Architecture principles
 
 1. **Single source of truth:** plugin implementation stays in its own repository; the parent records exact source URL, branch, version and pinned commit.

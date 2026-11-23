@@ -74,6 +74,27 @@ A real, restricted runtime has been added beside the existing plan-only compiler
 
 **Artifacts:** `tools/hso_super_orchestrator.py`, `catalog/hso-runtime-capabilities.json`, `catalog/hso-routing-policy.json`, `governance/hso-execution-policy.json`, `contracts/hso-runtime-workflow.schema.json`, runtime examples, `docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md` and the runtime regression suite.
 
+## P0 — one-host / one-skill invocation pilot
+
+**Status:** IMPLEMENTED_ON_PR_BRANCH / MOCK_HOST_CONTRACT_TESTED / LIVE_PAID_INVOCATION_NOT_RUN
+
+- Host: Codex CLI 0.171.0 via codex exec, model gpt-6.2-sol.
+- Target: SKILL ANALYZER 1.3.0 canonical source at pinned SHA c469af7977c9bf6dcb3f5ab7b085a6de20d87004.
+- Route: one primary owner (skill-analyzer), no extra specialist for the first vertical slice.
+- Access: CODEX_API_KEY plus HSO_APPROVAL_HMAC_KEY in a protected GitHub environment; manual workflow dispatch; S4 scoped five-minute receipt; first-attempt-only; single execution attempt.
+- Guardrails: explicit $skill-analyzer reference, temporary .agents/skills registrations, immutable source/manifest/digest check, read-only sandbox, ephemeral session, disabled web search, minimal environment and secret filtering.
+- Output: strict JSON schema, invocation envelope, host receipt, thread/turn IDs, CLI/model/source versions, token usage, output hash and audit receipt.
+- Recovery: billable non-idempotent work; ambiguous post-dispatch failure becomes OUTCOME_UNKNOWN, not auto-replayed.
+
+**Acceptance status:** unit tests exercise a fake Codex CLI and verify the host protocol contract, source pin, secret filtering, schema, event receipt, HMAC approval and failure behaviour. They do not make a paid inference request. Live C4/C5 evidence remains NOT_RUN until the protected manual workflow is approved after the PR is accepted on main.
+
+**Attestation limit:** current Codex CLI JSONL provides thread/turn/item events but no dedicated skill-loaded attestation that this adapter can verify. Receipt records the exact skill reference and source hash but does not rely on a model-generated self-claim as proof.
+
+**Scope limit:** generic plugin invocation, other Agent Skills, other AI hosts, remote MCP, HTTP API, P1 gateway, P2 distributed runtime and P3–P5 controls remain separate and NOT_CONFIGURED/NOT_IMPLEMENTED.
+
+**Artifacts:** tools/codex_skill_host_adapter.py, approval/workflow preparation scripts, runtime capability/route/policy changes, P0 output schema, manual-only workflow, P0 docs and regression tests.
+
+
 ## Stage E3 — Compatibility and integration assurance
 
 **Objective:** Prove what can interoperate and where, without confusing static metadata with live capability.

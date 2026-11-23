@@ -6,6 +6,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 from jsonschema import Draft202012Validator
+try:
+    from tools import codex_skill_host_adapter
+except ImportError:
+    import codex_skill_host_adapter
 
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES_PATH = ROOT / "catalog" / "hso-runtime-capabilities.json"
@@ -115,11 +119,20 @@ def _flaky_write_text(workspace: Path, target_path: str, payload: dict[str, Any]
 HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
     "write_text": _write_text, "verify_sha256": _verify_sha256,
 }
+def _codex_skill_invoke(workspace: Path, target_path: str, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+    return codex_skill_host_adapter.invoke_codex_skill(workspace, target_path, payload, context)
+
+HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
+    "write_text": _write_text,
+    "verify_sha256": _verify_sha256,
+    "codex_skill_invoke": _codex_skill_invoke,
+}
 TEST_HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {"flaky_write_text": _flaky_write_text}
 TRUSTED_ADAPTERS = {
     "write_text": "builtin.python.sandbox",
     "verify_sha256": "builtin.python.verifier",
     "flaky_write_text": "builtin.python.test-fault-injector",
+    "codex_skill_invoke": "builtin.codex.cli-exec",
 }
 
 class AuditLog:
@@ -204,6 +217,19 @@ def discover_capabilities(include_test: bool = False) -> dict[str, Any]:
                 name not in registry or item.get("adapter_id") != TRUSTED_ADAPTERS.get(name)
             ):
                 status, evidence = "UNAVAILABLE", "capability registry handler/adapter does not match the runtime trusted allow-list"
+            elif item.get("enabled") and (not test_only or include_test) and name == "codex_skill_invoke":
+                probe = codex_skill_host_adapter.probe_codex_skill_host(
+                    ROOT, item.get("skill_source_path", "")
+                )
+                status, evidence = probe.get("status", "UNAVAILABLE"), probe.get("evidence", "Codex CLI preflight returned no evidence")
+                actions.append({
+                    "capability_id": cap_id, "adapter_id": item["adapter_id"], "status": status,
+                    "handler": name, "test_only": False, "evidence": evidence,
+                    "probe_details": probe, "probed_at": utc_now(),
+                    "host": probe.get("host", "codex-cli-exec"),
+                    "python": platform.python_version(), "scope": item.get("scope"),
+                })
+                continue
             elif item.get("enabled") and (not test_only or include_test) and name in registry:
                 try:
                     expected = (f"hso-probe:{cap_id}\n").encode("utf-8")
@@ -239,7 +265,7 @@ def discover_capabilities(include_test: bool = False) -> dict[str, Any]:
             })
     for cap_id, adapter, scope, evidence in [
         ("plugin.skill.invoke", "host-plugin-bridge", "host_plugin",
-         "no verified host plugin-dispatch adapter is installed in this repository runtime"),
+         "generic plugin host invocation is not configured; only the pinned SKILL ANALYZER Codex CLI pilot adapter is separately registered"),
         ("mcp.remote.invoke", "remote-mcp", "remote_mcp",
          "no endpoint, authentication provider, egress policy or remote MCP adapter is configured"),
     ]:
@@ -382,10 +408,13 @@ def _policy_check(action_id: str, authority: str, environment: str,
         raise PolicyDenied("test-only adapter is disabled")
     return item
 
-def _verify_target(workspace: Path, package: dict[str, Any]) -> dict[str, Any]:
+def _verify_target(workspace: Path, package: dict[str, Any], expected_sha256: str | None = None) -> dict[str, Any]:
     target = _safe_target(workspace, package["target_path"])
     if not target.is_file(): raise PermanentActionError("target read-back failed: file is missing")
-    actual, expected = sha256_bytes(target.read_bytes()), package["expected_sha256"].lower()
+    expected_value = expected_sha256 if expected_sha256 is not None else package["expected_sha256"]
+    if not isinstance(expected_value, str) or len(expected_value) != 64:
+        raise PermanentActionError("target verification requires a 64-character expected digest")
+    actual, expected = sha256_bytes(target.read_bytes()), expected_value.lower()
     if not hmac.compare_digest(actual, expected):
         raise PermanentActionError(f"target read-back digest mismatch: expected {expected}, observed {actual}")
     return {"verified": True, "target_path": package["target_path"], "sha256": actual,
@@ -440,7 +469,13 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
         if route["action_id"] != package["action_id"]:
             outcomes[package_id] = {"status": "REJECTED_ROUTE_ACTION_MISMATCH"}
             audit.emit("PACKAGE_REJECTED", package_id, reason="ROUTE_ACTION_MISMATCH"); continue
-        missing = sorted(cap for cap in set(route["required_capabilities"]) if cap_status.get(cap) != "READY")
+        configured_capabilities = {item["capability_id"]: item for item in capability_config["capabilities"]}
+        missing = []
+        for cap in sorted(set(route["required_capabilities"])):
+            registry_item = configured_capabilities.get(cap, {})
+            acceptable_states = set(registry_item.get("accepted_probe_statuses", ["READY"]))
+            if cap_status.get(cap) not in acceptable_states:
+                missing.append(cap)
         if missing:
             outcomes[package_id] = {"status": "BLOCKED_CAPABILITY", "missing_capabilities": missing}
             audit.emit("PACKAGE_BLOCKED", package_id, reason="CAPABILITY_NOT_READY", missing=missing); continue
@@ -466,13 +501,14 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
             audit.emit("PACKAGE_BLOCKED", package_id, reason="HANDLER_NOT_REGISTERED"); continue
         action_digest = digest_json({"action_id": package["action_id"], "target_path": package["target_path"],
                                      "input": package["input"], "expected_sha256": package["expected_sha256"]})
-        try: ledger_state, _ = ledger.begin(package["idempotency_key"], action_digest)
+        try: ledger_state, previous_receipt = ledger.begin(package["idempotency_key"], action_digest)
         except (PolicyDenied, IdempotencyConflict) as exc:
             outcomes[package_id] = {"status": "BLOCKED_IDEMPOTENCY", "reason": str(exc)}
             audit.emit("PACKAGE_BLOCKED", package_id, reason=str(exc)); continue
         if ledger_state == "EXISTING_SUCCESS":
             try:
-                verification = _verify_target(workspace, package)
+                replay_expected = previous_receipt.get("sha256") if action_policy.get("verify_digest_from_action_result") else None
+                verification = _verify_target(workspace, package, expected_sha256=replay_expected)
                 outcomes[package_id] = {"status": "SKIPPED_IDEMPOTENT", "verification": verification}
                 audit.emit("IDEMPOTENT_REPLAY", package_id, action_digest=action_digest,
                            verification=verification["verification_method"]); continue
@@ -508,7 +544,8 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
                            error=last_error); break
         if succeeded:
             try:
-                verification = _verify_target(workspace, package)
+                action_expected = action_result.get("sha256") if action_policy.get("verify_digest_from_action_result") else None
+                verification = _verify_target(workspace, package, expected_sha256=action_expected)
                 outcomes[package_id] = {"status": "SUCCEEDED", "attempts": attempts_used,
                     "action_result": action_result, "verification": verification, "route": route}
                 ledger.finish(package["idempotency_key"], "SUCCEEDED", {
@@ -531,7 +568,10 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
             if package["recovery"]["on_action_failure"] == "ROLLBACK_IF_CREATED" and action_result:
                 rollback = _rollback_if_created(workspace, package, action_result)
                 audit.emit("COMPENSATION_FINISHED", package_id, **rollback)
-            status = "FAILED" if rollback["status"] != "BLOCKED" else "PARTIAL_MANUAL_REVIEW"
+            if action_policy.get("outcome_unknown_on_failure"):
+                status = "OUTCOME_UNKNOWN"
+            else:
+                status = "FAILED" if rollback["status"] != "BLOCKED" else "PARTIAL_MANUAL_REVIEW"
             outcomes[package_id] = {"status": status, "attempts": attempts_used, "reason": last_error, "recovery": rollback}
             ledger.finish(package["idempotency_key"], status, {"reason": last_error, "recovery": rollback})
             audit.emit("PACKAGE_FAILED", package_id, attempts=attempts_used, reason=last_error)
@@ -546,9 +586,10 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
         "package_outcomes": outcomes,
         "audit": {"path": str(audit_path), "hash_chain_valid": valid, "event_count": audit.sequence,
                   "head_sha256": audit_head, "tamper_evidence": "HASH_CHAIN_ONLY_UNSIGNED"},
-        "runtime_boundary": {"actual_dispatch": "BUILTIN_PYTHON_SANDBOX_HANDLER",
-            "target_verification": "INDEPENDENT_FILESYSTEM_READBACK", "plugin_skill_invocation": "NOT_PERFORMED",
-            "remote_mcp_invocation": "NOT_CONFIGURED", "production_execution": "NOT_SUPPORTED"}}
+        "runtime_boundary": {"actual_dispatch": "MIXED_TRUSTED_BUILTIN_AND_CODEX_CLI_ADAPTERS",
+            "target_verification": "INDEPENDENT_FILESYSTEM_READBACK", "plugin_skill_invocation": "PINNED_CODEX_CLI_SKILL_ONLY",
+            "generic_plugin_host_invocation": "NOT_CONFIGURED", "remote_mcp_invocation": "NOT_CONFIGURED",
+            "production_execution": "NOT_SUPPORTED"}}
     audit.emit("RUN_FINISHED", status=overall, audit_chain_verified=valid,
                successful_packages=sum(s in {"SUCCEEDED", "SKIPPED_IDEMPOTENT"} for s in states),
                total_packages=len(states))

@@ -1,9 +1,50 @@
 {
   "schema_version": "1.0.0",
-  "registry_status": "CONTROLLED_BUILTIN_ADAPTERS_ONLY",
+  "registry_status": "CONTROLLED_BUILTIN_AND_SINGLE_HOST_SKILL_ADAPTERS",
   "capabilities": [
-    {"capability_id":"sandbox.write_text","adapter_id":"builtin.python.sandbox","handler":"write_text","enabled":true,"test_only":false,"scope":"ephemeral_workspace_file","description":"Create a new UTF-8 file in an isolated workspace; never overwrite different content."},
-    {"capability_id":"sandbox.verify_sha256","adapter_id":"builtin.python.verifier","handler":"verify_sha256","enabled":true,"test_only":false,"scope":"ephemeral_workspace_read","description":"Read an actual sandbox target and verify its SHA-256 digest."},
-    {"capability_id":"test.flaky_write_text","adapter_id":"builtin.python.test-fault-injector","handler":"flaky_write_text","enabled":true,"test_only":true,"scope":"test_workspace_only","description":"CI-only fault injector that fails once before mutation, then delegates to the idempotent sandbox writer."}
+    {
+      "capability_id": "sandbox.write_text",
+      "adapter_id": "builtin.python.sandbox",
+      "handler": "write_text",
+      "enabled": true,
+      "test_only": false,
+      "scope": "ephemeral_workspace_file",
+      "description": "Create a new UTF-8 file in an isolated workspace; never overwrite different content."
+    },
+    {
+      "capability_id": "sandbox.verify_sha256",
+      "adapter_id": "builtin.python.verifier",
+      "handler": "verify_sha256",
+      "enabled": true,
+      "test_only": false,
+      "scope": "ephemeral_workspace_read",
+      "description": "Read an actual sandbox target and verify its SHA-256 digest."
+    },
+    {
+      "capability_id": "test.flaky_write_text",
+      "adapter_id": "builtin.python.test-fault-injector",
+      "handler": "flaky_write_text",
+      "enabled": true,
+      "test_only": true,
+      "scope": "test_workspace_only",
+      "description": "CI-only fault injector that fails once before mutation, then delegates to the idempotent sandbox writer."
+    },
+    {
+      "capability_id": "plugin.skill.invoke.codex.skill-analyzer",
+      "adapter_id": "builtin.codex.cli-exec",
+      "handler": "codex_skill_invoke",
+      "enabled": true,
+      "test_only": false,
+      "scope": "codex_cli_ephemeral_read_only_skill_invocation",
+      "accepted_probe_statuses": [
+        "READY_WITH_LIMITATIONS"
+      ],
+      "plugin_id": "plugins_6ae2a122f5c881919193c9b0ba51961e",
+      "plugin_key": "skill-analyzer",
+      "source_repository": "hsaidno-cpu/skill-analyzer",
+      "source_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
+      "skill_source_path": "plugins/skill-analyzer/skills/skill-analyzer/SKILL.md",
+      "description": "One explicitly approved P0 invocation of the source-pinned SKILL ANALYZER master Agent Skill through Codex CLI codex exec. READY_WITH_LIMITATIONS means CLI/flags/source/API-key presence are checked; provider credentials and model entitlement are not tested until the billable run."
+    }
   ]
 }

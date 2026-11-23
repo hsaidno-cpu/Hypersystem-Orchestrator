@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/contracts/hso-p0-skill-analysis-output.schema.json",
+  "title": "HSO P0 SKILL ANALYZER Pilot Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id","skill_name","methods","observed_facts","inferences","unknowns","root_causes","risk_findings","mitigations","verification_tests","completion_status"],
+  "properties": {
+    "case_id": {"const":"HSO-P0-SKILL-ANALYZER-001"},
+    "skill_name": {"const":"skill-analyzer"},
+    "methods": {"type":"array","minItems":2,"maxItems":4,"items":{"type":"object","additionalProperties":false,"required":["method","purpose"],"properties":{"method":{"type":"string"},"purpose":{"type":"string"}}}},
+    "observed_facts": {"type":"array","minItems":2,"items":{"type":"string"}},
+    "inferences": {"type":"array","items":{"type":"string"}},
+    "unknowns": {"type":"array","minItems":1,"items":{"type":"string"}},
+    "root_causes": {"type":"array","minItems":1,"items":{"type":"string"}},
+    "risk_findings": {"type":"array","minItems":2,"items":{"type":"string"}},
+    "mitigations": {"type":"array","minItems":2,"items":{"type":"string"}},
+    "verification_tests": {"type":"array","minItems":2,"items":{"type":"string"}},
+    "completion_status": {"const":"completed"}
+  }
+}

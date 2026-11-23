@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "case_id": "HSO-P0-SKILL-ANALYZER-001",
+  "requested_by": "manual-github-workflow-dispatch",
+  "action_authority": "S4",
+  "environment": "SANDBOX",
+  "work_packages": [
+    {
+      "package_id": "WP-P0-SKILL-ANALYZER-INVOKE",
+      "task_type": "plugin.skill_analyzer_p0_pilot",
+      "action_id": "plugin.skill.invoke.codex.skill-analyzer",
+      "target_path": "artifacts/p0-skill-analyzer-invocation.json",
+      "input": {
+        "skill_name": "skill-analyzer",
+        "plugin_id": "plugins_6ae2a122f5c881919193c9b0ba51961e",
+        "skill_source_path": "plugins/skill-analyzer/skills/skill-analyzer/SKILL.md",
+        "request": "Analyze this synthetic scenario as a forensic risk case: a customer-support AI service stores conversation-response cache files on a multi-user workstation. The cache directory is writable by multiple local users, the files are not encrypted, retention is indefinite, and no documented access review exists. Use the SKILL ANALYZER method. Separate observed facts from inferences and unknowns. Identify root causes, attack paths, impact, risk severity rationale, preventive and detective mitigations, and concrete verification tests. Do not invent operating-system or deployment facts not provided. Return structured evidence suitable for independent review."
+      },
+      "depends_on": [],
+      "idempotency_key": "hso-p0-skill-analyzer-manual-run",
+      "expected_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "max_attempts": 1,
+      "recovery": {
+        "on_action_failure": "NONE",
+        "on_verification_failure": "NONE"
+      }
+    }
+  ]
+}

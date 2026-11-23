@@ -1,6 +1,6 @@
 # HSO Super-Orchestrator — Controlled Runtime v0.1
 
-**Status:** IMPLEMENTED_ON_PR_BRANCH / SANDBOX_RUNTIME_VERIFICATION_PENDING_CI / NOT_MERGED / NOT_PRODUCTION_READY  
+**Status:** SANDBOX_RUNTIME_CI_VERIFIED / P0_CODEX_SKILL_ADAPTER_IMPLEMENTED / LIVE_PAID_INVOCATION_NOT_RUN / NOT_MERGED / NOT_PRODUCTION_READY  
 **Scope:** capability discovery, route arbitration, policy enforcement, DAG execution, bounded retry, idempotency, target read-back, compensation and hash-chained audit.
 
 ## What is actually executable
@@ -69,6 +69,22 @@ A hash chain is tamper-evident, not independently authenticated: a privileged ac
 For the test-only retry demonstration:
 
     HSO_ENABLE_TEST_ADAPTERS=1 python tools/hso_super_orchestrator.py run examples/hso-runtime-recovery.example.json --workspace /tmp/hso-recovery-target --ledger /tmp/hso-recovery.sqlite --audit /tmp/hso-recovery-audit.jsonl --receipt /tmp/hso-recovery-receipt.json
+
+## P0 — one-host / one-skill invocation pilot
+
+A narrow Codex CLI adapter is registered for one exact target: SKILL ANALYZER 1.3.0 at immutable source commit c469af7977c9bf6dcb3f5ab7b085a6de20d87004. It is separate from the generic plugin.skill.invoke capability; other plugins and hosts remain NOT_CONFIGURED.
+
+- Host: pinned Codex CLI 0.171.0 through codex exec; model: gpt-6.2-sol.
+- Route: plugin.skill_analyzer_p0_pilot; one primary owner (skill-analyzer), no extra specialist in this first vertical slice.
+- Skill delivery: temporary repo-scoped .agents/skills registration plus explicit $skill-analyzer reference; source manifest, submodule SHA and skill digest are checked before invocation.
+- Runtime contract: READY_WITH_LIMITATIONS means preflight only. It does not mean API entitlement or a live model call has been tested.
+- Execution: manual-only GitHub Actions workflow, default-branch/owner/checkbox/first-attempt guards, protected codex-p0-live environment, five-minute HMAC approval, read-only sandbox, ephemeral thread, bounded JSON output and one attempt.
+- Recovery: paid inference is non-idempotent. Any ambiguous post-dispatch failure is OUTCOME_UNKNOWN, never an automatic retry.
+- Receipt: source commit, SKILL.md hash, CLI version, model, thread/turn IDs, event/item counts, token usage, request/output hashes, schema result and explicit attestation limitations.
+
+**Critical evidence boundary:** Codex CLI JSONL supplies thread/turn/item events but this adapter has no dedicated skill-loaded attestation to verify directly. HSO records the explicit skill reference, registered discovery path, canonical source SHA, instruction digest and completed turn, and labels direct skill-load attestation unavailable. Do not promote this to generic host activation evidence.
+
+The live paid invocation remains NOT_RUN until the protected manual workflow is approved and executed on the default branch. See docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md.
 
 ## Production blockers
 

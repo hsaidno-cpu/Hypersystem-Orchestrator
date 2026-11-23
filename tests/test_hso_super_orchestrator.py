@@ -262,6 +262,118 @@ class HsoRuntimeTests(unittest.TestCase):
         self.assertEqual(event["details"]["api_key"], "[REDACTED]")
         self.assertEqual(event["details"]["ordinary"], "kept")
 
+
+    def _p0_approval_receipt(self, secret="p0-test-approval-key-with-enough-entropy"):
+        import datetime, hashlib, hmac
+        now = datetime.datetime.now(datetime.timezone.utc)
+        unsigned = {
+            "case_id": "HSO-P0-SKILL-ANALYZER-001",
+            "action_id": "plugin.skill.invoke.codex.skill-analyzer",
+            "target_path": "artifacts/p0-skill-analyzer-invocation.json",
+            "authority": "S4",
+            "approver": "hsaidno-cpu",
+            "issued_at": now.isoformat(),
+            "expires_at": (now + datetime.timedelta(minutes=5)).isoformat(),
+            "nonce": "p0-test-nonce-unique",
+            "workflow_run_id": "test-run-001",
+            "workflow_run_attempt": "1"
+        }
+        signature = hmac.new(secret.encode(), hso.canonical_json(unsigned).encode(), hashlib.sha256).hexdigest()
+        return {**unsigned, "signature": signature}, secret
+
+    def _p0_workflow(self):
+        path = ROOT / "examples" / "hso-p0-skill-invocation-request.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        data["work_packages"][0]["approval_receipt"], _ = self._p0_approval_receipt()
+        return data
+
+    def test_p0_route_has_one_skill_owner_and_no_unnecessary_specialists(self):
+        _, routes, _, catalog = hso._load_registries()
+        route = hso.resolve_route("plugin.skill_analyzer_p0_pilot", routes, catalog)
+        self.assertEqual(route["primary_owner"], "skill-analyzer")
+        self.assertEqual(route["supporting_specialists"], [])
+        self.assertEqual(route["action_id"], "plugin.skill.invoke.codex.skill-analyzer")
+
+    def test_p0_host_probe_is_limited_to_pinned_skill_and_not_generic_plugin_dispatch(self):
+        with patch.dict(os.environ, {"CODEX_API_KEY": "test-only-not-a-real-key"}):
+            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
+                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"preflight only",
+                                            "source_commit":hso.codex_skill_host_adapter.SOURCE_PIN}):
+                result = hso.discover_capabilities()
+        states = {item["capability_id"]: item["status"] for item in result["capabilities"]}
+        self.assertEqual(states["plugin.skill.invoke.codex.skill-analyzer"], "READY_WITH_LIMITATIONS")
+        self.assertEqual(states["plugin.skill.invoke"], "NOT_CONFIGURED")
+        self.assertEqual(states["mcp.remote.invoke"], "NOT_CONFIGURED")
+
+    def test_p0_codex_invocation_receipt_and_dynamic_target_digest_are_verified(self):
+        data = self._p0_workflow()
+        secret = "p0-test-approval-key-with-enough-entropy"
+        calls = []
+        def fake_invoke(workspace, target_path, payload, context):
+            calls.append(payload["skill_name"])
+            artifact = {
+                "invocation_receipt": {
+                    "host":"openai-codex-cli-exec",
+                    "source_commit":hso.codex_skill_host_adapter.SOURCE_PIN,
+                    "skill_reference_supplied":"$skill-analyzer",
+                    "skill_load_attestation":"NO_DEDICATED_CLI_EVENT_EXPOSED"
+                },
+                "analysis_result":{"case_id":"HSO-P0-SKILL-ANALYZER-001","summary":"synthetic test"}
+            }
+            target = hso._safe_target(workspace, target_path)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            raw = (json.dumps(artifact, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+            with target.open("xb") as stream:
+                stream.write(raw)
+                stream.flush()
+                os.fsync(stream.fileno())
+            return {"target_path":target_path,"sha256":hso.sha256_bytes(raw),
+                    "created":True,"no_op":False,"thread_id":"thr-test","turn_id":"turn-test"}
+        with patch.dict(os.environ, {"CODEX_API_KEY":"fake-key","HSO_APPROVAL_HMAC_KEY":secret}):
+            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
+                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"fake host preflight"}):
+                with patch.object(hso.codex_skill_host_adapter, "invoke_codex_skill", side_effect=fake_invoke):
+                    first = self.run_workflow(data)
+                    second = self.run_workflow(data)
+        package = first["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]
+        replay = second["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]
+        self.assertEqual(first["status"], "SUCCEEDED")
+        self.assertEqual(package["status"], "SUCCEEDED")
+        self.assertEqual(package["route"]["primary_owner"], "skill-analyzer")
+        self.assertEqual(package["verification"]["sha256"], package["action_result"]["sha256"])
+        self.assertEqual(replay["status"], "SKIPPED_IDEMPOTENT")
+        self.assertEqual(len(calls), 1, "a successful paid invocation must not be called again on replay")
+        artifact_path = self.workspace / "artifacts" / "p0-skill-analyzer-invocation.json"
+        artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+        self.assertEqual(artifact["invocation_receipt"]["source_commit"], hso.codex_skill_host_adapter.SOURCE_PIN)
+        self.assertEqual(artifact["invocation_receipt"]["skill_load_attestation"], "NO_DEDICATED_CLI_EVENT_EXPOSED")
+
+    def test_p0_timeout_is_outcome_unknown_and_never_auto_replayed(self):
+        data = self._p0_workflow()
+        secret = "p0-test-approval-key-with-enough-entropy"
+        def uncertain(*args, **kwargs):
+            raise TimeoutError("Codex CLI timed out after dispatch started")
+        with patch.dict(os.environ, {"CODEX_API_KEY":"fake-key","HSO_APPROVAL_HMAC_KEY":secret}):
+            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
+                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"fake host preflight"}):
+                with patch.object(hso.codex_skill_host_adapter, "invoke_codex_skill", side_effect=uncertain) as invoke:
+                    first = self.run_workflow(data)
+                    second = self.run_workflow(data)
+        self.assertEqual(first["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]["status"], "OUTCOME_UNKNOWN")
+        self.assertEqual(second["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]["status"], "BLOCKED_IDEMPOTENCY")
+        self.assertEqual(invoke.call_count, 1)
+
+    def test_p0_invalid_approval_blocks_dispatch(self):
+        data = self._p0_workflow()
+        data["work_packages"][0]["approval_receipt"]["signature"] = "0" * 64
+        with patch.dict(os.environ, {"CODEX_API_KEY":"fake-key","HSO_APPROVAL_HMAC_KEY":"p0-test-approval-key-with-enough-entropy"}):
+            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
+                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"fake host preflight"}):
+                with patch.object(hso.codex_skill_host_adapter, "invoke_codex_skill") as invoke:
+                    result = self.run_workflow(data)
+        self.assertEqual(result["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]["status"], "REJECTED_POLICY")
+        invoke.assert_not_called()
+
     def test_plugin_route_is_blocked_at_capability_gate(self):
         data = self.workflow()
         item = data["work_packages"][0]

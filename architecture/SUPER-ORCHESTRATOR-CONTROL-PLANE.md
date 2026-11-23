@@ -136,6 +136,16 @@ The plan-only compiler remains useful for validating declared plans without side
 
 The first CI pilot is actual GitHub-hosted sandbox execution, not a mock receiver. It proves only the built-in temporary-file adapter and isolated runner. The route for SKILL ANALYZER/A.S.F.R.E.E is defined but remains blocked because `plugin.skill.invoke` has no verified host bridge. Remote MCP and HTTP API dispatch are also `NOT_CONFIGURED`. The runtime is serial and single-runner; it is not a production service, distributed scheduler, or universal AI-host gateway. See `docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md`.
 
+### P0 host invocation pilot — one canonical skill / one host
+
+The P0 pilot adds a specific capability plugin.skill.invoke.codex.skill-analyzer, implemented by the pinned Codex CLI adapter. It does not promote the generic plugin.skill.invoke capability. The route selects SKILL ANALYZER as its sole primary owner; no additional specialist is routed into the first invocation test.
+
+The pilot requires an explicit HMAC-signed S4 approval, a manual protected GitHub environment, a read-only/ephemeral Codex execution and one non-idempotent attempt. It writes an invocation envelope with a host-side receipt and a separately validated analysis result. A post-dispatch timeout is OUTCOME_UNKNOWN, never an automatic retry.
+
+Codex CLI's current JSONL receipt exposes thread/turn/item events but not a dedicated skill-loaded attestation. HSO records the explicit skill reference, registered discovery path, canonical source SHA, instruction digest and completed turn, and labels direct skill-load attestation unavailable. Do not promote this to generic host activation evidence.
+
+The live paid invocation remains NOT_RUN until the protected workflow is manually approved on the default branch. See docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md.
+
 ## 5. Canonical operating workflow
 
 The default workflow is **evidence-first, one-primary-owner, and human-governed**.
