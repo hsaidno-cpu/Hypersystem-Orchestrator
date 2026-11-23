@@ -76,13 +76,13 @@ A narrow Codex CLI adapter is registered for one exact target: SKILL ANALYZER 1.
 
 - Host: pinned Codex CLI 0.171.0 through codex exec; model: gpt-6.2-sol.
 - Route: plugin.skill_analyzer_p0_pilot; one primary owner (skill-analyzer), no extra specialist in this first vertical slice.
-- Skill delivery: temporary repo-scoped .agents/skills registration plus explicit $skill-analyzer reference; source manifest, submodule SHA and skill digest are checked before invocation.
+- Skill delivery: temporary copy of the plugin's Agent Skill directories into repo-scoped .agents/skills (no symlinks); every copied master SKILL.md is hash-checked; explicit $skill-analyzer reference; source manifest, submodule SHA and skill digest are checked before invocation.
 - Runtime contract: READY_WITH_LIMITATIONS means preflight only. It does not mean API entitlement or a live model call has been tested.
 - Execution: manual-only GitHub Actions workflow, default-branch/owner/checkbox/first-attempt guards, protected codex-p0-live environment, five-minute HMAC approval, read-only sandbox, ephemeral thread, bounded JSON output and one attempt.
 - Recovery: paid inference is non-idempotent. Any ambiguous post-dispatch failure is OUTCOME_UNKNOWN, never an automatic retry.
-- Receipt: source commit, SKILL.md hash, CLI version, model, thread/turn IDs, event/item counts, token usage, request/output hashes, schema result and explicit attestation limitations.
+- Receipt: source commit, SKILL.md hash, copied skill directories, HSO-verified approver/run/nonce-hash binding, CLI version, model, thread/turn IDs, event/item counts, token usage, request/output hashes, schema result and explicit attestation limitations.
 
-**Critical evidence boundary:** Codex CLI JSONL supplies thread/turn/item events but this adapter has no dedicated skill-loaded attestation to verify directly. HSO records the explicit skill reference, registered discovery path, canonical source SHA, instruction digest and completed turn, and labels direct skill-load attestation unavailable. Do not promote this to generic host activation evidence.
+**Current CI evidence:** exact head 0974efa58f0308ed87390546cadc28818bd928d2 passed [run #45209121971](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45209121971), with 120 tests and sandbox receipts uploaded.\n\n**Critical evidence boundary:** Codex CLI JSONL supplies thread/turn/item events but this adapter has no dedicated skill-loaded attestation to verify directly. HSO records the explicit skill reference, registered discovery path, canonical source SHA, instruction digest and completed turn, and labels direct skill-load attestation unavailable. Do not promote this to generic host activation evidence.
 
 The live paid invocation remains NOT_RUN until the protected manual workflow is approved and executed on the default branch. See docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md.
 

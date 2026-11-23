@@ -28,9 +28,9 @@ Codex App Server authentication is not the approved route for hosted commercial 
 
 ## Skill registration and evidence level
 
-The adapter registers the pinned plugin's skill folders under the repository-scoped .agents/skills directory using temporary symlinks, supplies the explicit $skill-analyzer marker, hashes the canonical SKILL.md, verifies the package manifest and submodule commit, then invokes Codex CLI.
+The adapter copies the pinned plugin's complete skill directories into a temporary repository-scoped .agents/skills directory (no symlinks), rejects symlinks inside the source tree, checks copied master SKILL.md SHA-256 against the canonical pinned file, supplies the explicit $skill-analyzer marker, verifies the package manifest and submodule commit, then invokes Codex CLI. The HSO approval receipt is verified before dispatch and its non-secret binding fields plus a nonce hash are included in the invocation receipt; the HMAC secret and raw nonce are not.
 
-**Attestation limitation:** the Codex CLI JSONL stream provides thread/turn/item events but the current adapter does not receive a dedicated, cryptographically verifiable “this exact skill was loaded” event. The receipt therefore records skill_reference_supplied, source pin, skill digest, registration path, thread/turn IDs, completed agent message, structured-output validation and token usage. It explicitly marks skill_load_attestation=NO_DEDICATED_CLI_EVENT_EXPOSED. It does not use a model-generated self-assertion such as activation_confirmed=true as proof.
+**Attestation limitation:** the Codex CLI JSONL stream provides thread/turn/item events but the current adapter does not receive a dedicated, cryptographically verifiable “this exact skill was loaded” event. The receipt therefore records skill_reference_supplied, source pin, skill digest, copied discovery directories, HSO-verified approval binding, thread/turn IDs, completed agent message, structured-output validation and token usage. It explicitly marks skill_load_attestation=NO_DEDICATED_CLI_EVENT_EXPOSED. It does not use a model-generated self-assertion such as activation_confirmed=true as proof.
 
 This is evidence of a host invocation with a pinned skill reference and a completed Codex turn, not an independent attestation from Codex internals that the skill text was applied without omission.
 
@@ -44,8 +44,8 @@ This is evidence of a host invocation with a pinned skill reference and a comple
   - HSO_APPROVAL_HMAC_KEY: random high-entropy HMAC key, at least 32 characters.
 - The approval script creates a case/action/target/authority/actor/run-bound five-minute HMAC receipt with a random nonce.
 - A workflow rerun is rejected. The Codex action is non-idempotent, has max_attempts=1, and a timeout after dispatch is marked OUTCOME_UNKNOWN; HSO will not automatically retry it.
-- The CLI receives a minimal environment. HSO_APPROVAL_HMAC_KEY, GitHub tokens and unrelated key/token/secret variables are not passed to model-generated child commands.
-- The run uses --ephemeral --sandbox read-only --ask-for-approval never, no user tools, no MCP servers and no web search.
+- The CLI receives a minimal environment. HSO_APPROVAL_HMAC_KEY and GitHub tokens are not passed to Codex; CODEX_API_KEY is supplied only to the Codex process and its key-like variable name is excluded from spawned child-command environments by Codex shell_environment_policy. This is a configurable reduction, not a hard secret vault boundary.
+- The run uses --ephemeral --sandbox read-only --ask-for-approval never, no user tools, no MCP servers and web_search=disabled. The Codex CLI itself must access the model endpoint; the read-only command sandbox remains network-off by default and no network-enabled override is configured.
 - The task is synthetic and must not contain personal, confidential or production data.
 
 The model gpt-6.2-sol is pinned for reproducibility, but an API project may not be entitled to that model. Preflight checks CLI version/flags and key presence only; it does not issue a paid request or prove model entitlement. The first approved live run is the acceptance test for API authentication, model availability and output generation.
@@ -87,4 +87,4 @@ A successful live acceptance does not enable other plugins, other Agent Skills, 
 
 ## Current evidence
 
-Adapter contract/security tests use a fake Codex binary. These tests prove invocation arguments, environment filtering, source pin enforcement, JSONL receipt parsing, schema validation, failure handling, non-overwrite and cleanup. They do not prove a real paid Codex API call. Until the protected manual workflow is run, live host invocation remains NOT_RUN.
+Exact-head CI evidence: commit 0974efa58f0308ed87390546cadc28818bd928d2; workflow run [#45209121971](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45209121971) completed SUCCESS with 120 tests passed and the sandbox execution artifact uploaded. Adapter contract/security tests use a fake Codex binary. They prove invocation arguments, environment filtering, source pin enforcement, copied skill registration, HSO approval binding, JSONL receipt parsing, schema validation, failure handling, non-overwrite and cleanup. They do not prove a real paid Codex API call. Until the protected manual workflow is run, live host invocation remains NOT_RUN.

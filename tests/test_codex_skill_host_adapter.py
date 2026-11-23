@@ -60,8 +60,12 @@ class CodexSkillHostAdapterTests(unittest.TestCase):
  def _payload(self):
   return {"skill_name":adapter.PLUGIN_KEY,"plugin_id":adapter.PLUGIN_ID,
    "skill_source_path":adapter.SKILL_RELATIVE_PATH.as_posix(),
-   "request":"Analyze this synthetic cache risk with evidence, methods, root causes, mitigations and verification tests.",
-   "approval_receipt":{"approver":"hsaidno-cpu","nonce":"test-nonce"}}
+   "request":"Analyze this synthetic cache risk with evidence, methods, root causes, mitigations and verification tests."}
+ def _context(self):
+  return {"approval_verified":True,"approval_receipt":{
+   "approver":"hsaidno-cpu","nonce":"test-nonce","workflow_run_id":"test-run-001",
+   "workflow_run_attempt":"1","issued_at":"2026-11-23T00:00:00Z",
+   "expires_at":"2026-11-23T00:05:00Z","authority":"S4"}}
  def test_preflight_ready_with_limitations_without_inference(self):
   with self._env(),patch.object(adapter,"_source_commit",return_value=adapter.SOURCE_PIN):
    x=adapter.probe_codex_skill_host(self.root,adapter.SKILL_RELATIVE_PATH.as_posix())
@@ -75,25 +79,35 @@ class CodexSkillHostAdapterTests(unittest.TestCase):
    self.assertEqual(adapter.probe_codex_skill_host(self.root,adapter.SKILL_RELATIVE_PATH.as_posix())["status"],"UNAVAILABLE")
  def test_invocation_returns_thread_turn_usage_and_digest_receipt(self):
   with self._env(),patch.object(adapter,"_source_commit",return_value=adapter.SOURCE_PIN):
-   result=adapter.invoke_codex_skill(self.root,"artifacts/result.json",self._payload(),{})
+   result=adapter.invoke_codex_skill(self.root,"artifacts/result.json",self._payload(),self._context())
   target=self.root/"artifacts"/"result.json";obj=json.loads(target.read_text());r=obj["invocation_receipt"]
   self.assertEqual(result["thread_id"],"thr-test");self.assertEqual(r["session"]["turn_id"],"turn-test")
   self.assertEqual(r["usage"]["input_tokens"],100);self.assertEqual(r["model"],"gpt-6.2-sol")
   self.assertEqual(r["plugin"]["source_commit"],adapter.SOURCE_PIN)
   self.assertEqual(r["dispatch"]["skill_load_attestation"],"NO_DEDICATED_CLI_EVENT_EXPOSED")
+  self.assertTrue(r["approval"]["verified_by_hso"])
+  self.assertEqual(r["approval"]["approver"],"hsaidno-cpu")
+  self.assertEqual(r["approval"]["workflow_run_id"],"test-run-001")
+  self.assertEqual(r["approval"]["nonce_sha256"],adapter.sha256_bytes(b"test-nonce"))
+  self.assertNotIn("test-nonce",json.dumps(r["approval"]))
   self.assertEqual(result["sha256"],adapter.sha256_file(target));self.assertFalse((self.root/".agents").exists())
   self.assertNotIn("unit-test-api-key",target.read_text())
  def test_failed_turn_has_no_invocation_artifact(self):
   self._fake(GOOD,True)
   with self._env(),patch.object(adapter,"_source_commit",return_value=adapter.SOURCE_PIN):
-   with self.assertRaisesRegex(RuntimeError,"status 1"):adapter.invoke_codex_skill(self.root,"artifacts/fail.json",self._payload(),{})
+   with self.assertRaisesRegex(RuntimeError,"status 1"):adapter.invoke_codex_skill(self.root,"artifacts/fail.json",self._payload(),self._context())
   self.assertFalse((self.root/"artifacts"/"fail.json").exists())
  def test_bad_json_shape_or_unapproved_identity_fails_closed(self):
   self._fake({"wrong":"shape"})
   with self._env(),patch.object(adapter,"_source_commit",return_value=adapter.SOURCE_PIN):
-   with self.assertRaises(Exception):adapter.invoke_codex_skill(self.root,"bad.json",self._payload(),{})
+   with self.assertRaises(Exception):adapter.invoke_codex_skill(self.root,"bad.json",self._payload(),self._context())
    p=self._payload();p["plugin_id"]="other"
-   with self.assertRaisesRegex(RuntimeError,"identity mismatch"):adapter.invoke_codex_skill(self.root,"bad2.json",p,{})
+   with self.assertRaisesRegex(RuntimeError,"identity mismatch"):adapter.invoke_codex_skill(self.root,"bad2.json",p,self._context())
+ def test_paid_invocation_refuses_missing_hso_verified_approval_context(self):
+  with self._env(),patch.object(adapter,"_source_commit",return_value=adapter.SOURCE_PIN):
+   with self.assertRaisesRegex(RuntimeError,"HSO-verified scoped approval"):
+    adapter.invoke_codex_skill(self.root,"artifacts/no-approval.json",self._payload(),{})
+  self.assertFalse((self.root/"artifacts"/"no-approval.json").exists())
  def test_canonical_schema_is_required_and_strict(self):
   self.assertEqual(adapter._load_schema(self.root),adapter.PILOT_OUTPUT_SCHEMA)
   (self.root/adapter.OUTPUT_SCHEMA_RELATIVE_PATH).unlink()

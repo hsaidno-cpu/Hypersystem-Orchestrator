@@ -140,11 +140,11 @@ The first CI pilot is actual GitHub-hosted sandbox execution, not a mock receive
 
 The P0 pilot adds a specific capability plugin.skill.invoke.codex.skill-analyzer, implemented by the pinned Codex CLI adapter. It does not promote the generic plugin.skill.invoke capability. The route selects SKILL ANALYZER as its sole primary owner; no additional specialist is routed into the first invocation test.
 
-The pilot requires an explicit HMAC-signed S4 approval, a manual protected GitHub environment, a read-only/ephemeral Codex execution and one non-idempotent attempt. It writes an invocation envelope with a host-side receipt and a separately validated analysis result. A post-dispatch timeout is OUTCOME_UNKNOWN, never an automatic retry.
+The pilot copies the canonical Agent Skill directories into .agents/skills and hash-verifies the master instruction, requires an explicit HMAC-signed S4 approval, a manual protected GitHub environment, a read-only/ephemeral Codex execution and one non-idempotent attempt. HSO passes the verified approval binding into the host adapter; the invocation receipt records the approver, workflow run and nonce hash without storing the raw nonce or HMAC secret. It writes an invocation envelope with a host-side receipt and a separately validated analysis result. A post-dispatch timeout is OUTCOME_UNKNOWN, never an automatic retry.
 
 Codex CLI's current JSONL receipt exposes thread/turn/item events but not a dedicated skill-loaded attestation. HSO records the explicit skill reference, registered discovery path, canonical source SHA, instruction digest and completed turn, and labels direct skill-load attestation unavailable. Do not promote this to generic host activation evidence.
 
-The live paid invocation remains NOT_RUN until the protected workflow is manually approved on the default branch. See docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md.
+The exact-head CI run #45209121971 passed 120 tests on commit 0974efa58f0308ed87390546cadc28818bd928d2; it uses a fake Codex binary for adapter contract tests and the existing sandbox runtime for live file effects. The live paid invocation remains NOT_RUN until the protected workflow is manually approved on the default branch. See docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md.
 
 ## 5. Canonical operating workflow
 

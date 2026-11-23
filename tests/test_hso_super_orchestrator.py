@@ -316,7 +316,12 @@ class HsoRuntimeTests(unittest.TestCase):
                     "host":"openai-codex-cli-exec",
                     "source_commit":hso.codex_skill_host_adapter.SOURCE_PIN,
                     "skill_reference_supplied":"$skill-analyzer",
-                    "skill_load_attestation":"NO_DEDICATED_CLI_EVENT_EXPOSED"
+                    "skill_load_attestation":"NO_DEDICATED_CLI_EVENT_EXPOSED",
+                    "approval":{
+                        "verified_by_hso":context.get("approval_verified"),
+                        "approver":context.get("approval_receipt",{}).get("approver"),
+                        "nonce_sha256":hso.sha256_bytes(context.get("approval_receipt",{}).get("nonce","").encode())
+                    }
                 },
                 "analysis_result":{"case_id":"HSO-P0-SKILL-ANALYZER-001","summary":"synthetic test"}
             }
@@ -347,6 +352,11 @@ class HsoRuntimeTests(unittest.TestCase):
         artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
         self.assertEqual(artifact["invocation_receipt"]["source_commit"], hso.codex_skill_host_adapter.SOURCE_PIN)
         self.assertEqual(artifact["invocation_receipt"]["skill_load_attestation"], "NO_DEDICATED_CLI_EVENT_EXPOSED")
+        self.assertTrue(artifact["invocation_receipt"]["approval"]["verified_by_hso"])
+        self.assertEqual(artifact["invocation_receipt"]["approval"]["approver"], "hsaidno-cpu")
+        self.assertEqual(artifact["invocation_receipt"]["approval"]["nonce_sha256"],
+                         hso.sha256_bytes(b"p0-test-nonce-unique"))
+        self.assertNotIn("p0-test-nonce-unique", json.dumps(artifact["invocation_receipt"]["approval"]))
 
     def test_p0_timeout_is_outcome_unknown_and_never_auto_replayed(self):
         data = self._p0_workflow()

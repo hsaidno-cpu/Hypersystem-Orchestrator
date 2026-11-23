@@ -292,7 +292,7 @@ def invoke_codex_skill(workspace:Path,target_path:str,payload:dict[str,Any],cont
    "skill_discovery_path":".agents/skills/skill-analyzer","skill_directory_registered":True,
    "skill_source_pin_verified":True,"skill_load_attestation":"NO_DEDICATED_CLI_EVENT_EXPOSED",
    "output_schema_sha256":schema_hash,"sandbox":"read-only","approval_policy":"never",
-   "sandbox_child_process_network":"disabled_by_codex_read_only_sandbox","thread_ephemeral":True,"jsonl_events":True},
+   "sandbox_child_process_network":"DEFAULT_OFF; no network-enabled sandbox override configured","thread_ephemeral":True,"jsonl_events":True},
   "session":event_receipt,"usage":event_receipt.get("usage",{}),
   "acceptance":{"output_schema_valid":True,"skill_source_pin_verified":True,"skill_directory_registered":True,
    "skill_reference_supplied":"$skill-analyzer","skill_load_attestation":"NO_DEDICATED_CLI_EVENT_EXPOSED",

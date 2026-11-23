@@ -523,8 +523,12 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
         for attempt in range(1, package["max_attempts"] + 1):
             attempts_used = attempt; audit.emit("ATTEMPT_STARTED", package_id, attempt=attempt)
             try:
-                action_result = handler(workspace, package["target_path"], package["input"],
-                    {"idempotency_key": package["idempotency_key"], "case_id": workflow["case_id"]})
+                action_result = handler(workspace, package["target_path"], package["input"], {
+                    "idempotency_key": package["idempotency_key"],
+                    "case_id": workflow["case_id"],
+                    "approval_receipt": package.get("approval_receipt"),
+                    "approval_verified": bool(action_policy.get("approval_required")),
+                })
                 audit.emit("ACTION_RETURNED", package_id, attempt=attempt,
                     target_path=action_result.get("target_path"), output_sha256=action_result.get("sha256"),
                     created=action_result.get("created"))

@@ -82,11 +82,11 @@ A real, restricted runtime has been added beside the existing plan-only compiler
 - Target: SKILL ANALYZER 1.3.0 canonical source at pinned SHA c469af7977c9bf6dcb3f5ab7b085a6de20d87004.
 - Route: one primary owner (skill-analyzer), no extra specialist for the first vertical slice.
 - Access: CODEX_API_KEY plus HSO_APPROVAL_HMAC_KEY in a protected GitHub environment; manual workflow dispatch; S4 scoped five-minute receipt; first-attempt-only; single execution attempt.
-- Guardrails: explicit $skill-analyzer reference, temporary .agents/skills registrations, immutable source/manifest/digest check, read-only sandbox, ephemeral session, disabled web search, minimal environment and secret filtering.
+- Guardrails: explicit $skill-analyzer reference, temporary copies into .agents/skills (symlink-free and hash-verified), immutable source/manifest check, read-only sandbox, ephemeral session, disabled web search, minimal environment and secret filtering; HSO-verified approver/run/nonce-hash binding included in the invocation receipt.
 - Output: strict JSON schema, invocation envelope, host receipt, thread/turn IDs, CLI/model/source versions, token usage, output hash and audit receipt.
 - Recovery: billable non-idempotent work; ambiguous post-dispatch failure becomes OUTCOME_UNKNOWN, not auto-replayed.
 
-**Acceptance status:** unit tests exercise a fake Codex CLI and verify the host protocol contract, source pin, secret filtering, schema, event receipt, HMAC approval and failure behaviour. They do not make a paid inference request. Live C4/C5 evidence remains NOT_RUN until the protected manual workflow is approved after the PR is accepted on main.
+**Acceptance status:** exact-head CI [run #45209121971](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45209121971) passed 120 tests on commit 0974efa58f0308ed87390546cadc28818bd928d2. Unit tests exercise a fake Codex CLI and verify the host protocol contract, source pin, secret filtering, schema, event receipt, HMAC approval binding and failure behaviour. They do not make a paid inference request. Live C4/C5 evidence remains NOT_RUN until the protected manual workflow is approved after the PR is accepted on main.
 
 **Attestation limit:** current Codex CLI JSONL provides thread/turn/item events but no dedicated skill-loaded attestation that this adapter can verify. Receipt records the exact skill reference and source hash but does not rely on a model-generated self-claim as proof.
 
