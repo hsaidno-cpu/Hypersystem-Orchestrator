@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "matrix_revision": "2026-11-23",
   "contract_schema": "contracts/plugin-handoff.schema.json",
-  "integration_count": 14,
+  "integration_count": 15,
   "status_semantics": {
     "INTERFACE_DEFINED_NOT_EXECUTED": "Handoff intent and ownership are documented, but no runtime dispatch has been observed.",
     "STATIC_ROUTING_TESTED": "Central registry, positive/negative route and ownership assertions passed in repository CI.",
@@ -417,6 +417,38 @@
         "The handoff preserves source/version/provenance and does not imply runtime execution."
       ],
       "contract_behavior_test": "PASS"
+    },
+    {
+      "integration_id": "INT-PONYTAIL-SDO-001",
+      "producer_plugin": "ponytail-engineering-optimizer",
+      "consumer_plugin": "skill-developer-orchestrator",
+      "handoff_type": "ENGINEERING_METHOD_HANDOFF",
+      "purpose": "Ponytail transfers a minimal-complete engineering dossier; SDO owns accepted source changes, regression execution, pull request and release preparation.",
+      "input_artifacts": [
+        "task_intent",
+        "repository_baseline",
+        "scope_and_change_impact",
+        "minimal_change_decision",
+        "risk_and_test_plan"
+      ],
+      "output_artifact": "engineering_change_dossier",
+      "producer_artifact_owner": "ponytail-engineering-optimizer",
+      "consumer_artifact_owner": "skill-developer-orchestrator",
+      "canonical_truth_owner": "skill-developer-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Ponytail produces a bounded engineering dossier; SDO is the only source-write lifecycle owner.",
+        "The handoff carries target identity, scope/non-goals, baseline status, design rationale, risks, acceptance criteria and test plan.",
+        "The handoff does not authorize repository writes, pull-request merge, release or production deployment.",
+        "Independent quality judgement remains with Evaluator Team; HSO controls ecosystem-level planning and routing."
+      ],
+      "contract_behavior_test": "NOT_RUN"
     }
   ]
 }
