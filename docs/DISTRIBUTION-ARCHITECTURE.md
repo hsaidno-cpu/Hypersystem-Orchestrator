@@ -77,14 +77,14 @@ No state implies another. Each requires its own source of truth and evidence.
 
 ## Initial eligibility baseline
 
-As of 23 November 2026 the 21 plugin identities map to these distribution states:
+As of 23 November 2026 the 22 plugin identities map to these distribution states:
 
 | State | Count |
 |---|---:|
 | review_required | 2 |
 | blocked | 2 |
 | private_source_restricted | 1 |
-| snapshot_only | 13 |
+| snapshot_only | 14 |
 | candidate_incomplete | 2 |
 | legacy_redirect | 1 |
 | **Installable** | **0** |
