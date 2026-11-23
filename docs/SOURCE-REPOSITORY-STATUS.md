@@ -2,10 +2,10 @@
 
 **Inventory date:** 2026-11-23
 **Platform package-source attestation:** 14/14 formerly NOT_IDENTIFIED Git sources have a verified current Plugin Creator USER/PRIVATE package manifest and full file inventory. Git child repository status remains NOT_IDENTIFIED until an immutable repository source is accepted.  
-**Plugin identities:** 21  
+**Plugin identities:** 22  
 **Verified official plugin source repositories pinned:** 5  
 **Candidate/incomplete source repositories:** 2  
-**Plugin identities with no accepted GitHub source:** 13  
+**Plugin identities with no accepted GitHub source:** 14  
 **Legacy redirect identities:** 1 (A.S.F.R.E.E Legacy; not a second product)
 
 ## 1. Search scope and evidence
@@ -118,7 +118,7 @@ Together with the two incomplete candidates, there are **16 plugin source identi
 - Video Explainer and SDO retain current Plugin Creator instruction snapshots while each has its own independently pinned source repository.
 - SKILL ANALYZER, A.S.F.R.E.E and Anatomi Prompt are represented by their own source submodules/source pointers.
 - A.S.F.R.E.E Legacy remains one redirect-only snapshot.
-- 247 skill records are indexed across 21 plugin identities.
+- 256 skill records are indexed across 22 plugin identities.
 - No snapshot merges two plugin packages or transfers implementation ownership to the parent repository.
 
 ## 7. Required proof before submodule integration
