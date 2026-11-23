@@ -2,6 +2,27 @@
 
 This matrix is normative for ecosystem-level routing. The detailed product philosophies, non-ownership boundaries and handoff rules are in [PLUGIN-POSITIONING.md](PLUGIN-POSITIONING.md).
 
+## 0. Ecosystem-level control-plane boundary (outside the plugin catalog)
+
+**Hypersystem Orchestrator (HSO) is the parent ecosystem control plane, not an additional plugin identity or a domain-specialist substitute.** It coordinates the use of the registered plugin portfolio; it does not duplicate their internal expertise or claim that a runtime dispatcher is deployed.
+
+HSO owns the cross-ecosystem control concerns:
+
+- request intake, scope and authority classification;
+- catalog/source/version/provenance lookup;
+- selection of exactly one primary plugin owner for each work package;
+- dependency ordering and construction of explicit handoff plans;
+- enforcement of shared contract, evidence, status and stop semantics;
+- aggregation of results, test evidence, unresolved risks and roadmap handoffs;
+- parent-repository governance, source pins, compatibility and distribution eligibility records.
+
+HSO does **not** own the specialist decisions below: general analytical method selection (SKILL ANALYZER), plugin technical forensics (A.S.F.R.E.E), independent quality judgement (Evaluator Team), skill/plugin source engineering (SDO), reusable workflow design (AI Workflow Systems Orchestrator), roadmap progression/adaptation (PRE), or agent runtime implementation/operation (Plugin Agent Orchestrator). It does not override domain truth owners such as PVEE.
+
+Routing invariant: HSO may coordinate several work packages, but every package has one primary decision owner. Supporting specialists are added only when they produce a distinct required artifact or control. A registry record, instruction snapshot, or declared handoff is not proof that a host can invoke the named plugin.
+
+For the intended operating sequence and maturity gates, see [SUPER-ORCHESTRATOR-CONTROL-PLANE.md](SUPER-ORCHESTRATOR-CONTROL-PLANE.md).
+
+
 ## 1. Primary route by dominant intent
 
 | Dominant user intent | Primary plugin | Supporting plugin when needed | Do not route to |
