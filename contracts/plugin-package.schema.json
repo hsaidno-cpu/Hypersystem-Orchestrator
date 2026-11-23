@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hypersystem Plugin Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plugin_key",
+    "package_version",
+    "source",
+    "license",
+    "artifacts",
+    "capabilities",
+    "release_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "plugin_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "package_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository_url",
+        "ref",
+        "commit_sha"
+      ],
+      "properties": {
+        "repository_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "source_manifest_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "distribution_cleared",
+        "evidence_url"
+      ],
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "distribution_cleared": {
+          "type": "boolean"
+        },
+        "evidence_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "uri",
+          "sha256"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "mcp-server",
+              "skill-package",
+              "agent-plugin",
+              "http-api",
+              "documentation"
+            ]
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "platform_targets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "hard_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "plugin_key",
+          "version_range"
+        ],
+        "properties": {
+          "plugin_key": {
+            "type": "string"
+          },
+          "version_range": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "release_status": {
+      "enum": [
+        "draft",
+        "candidate",
+        "released",
+        "deprecated",
+        "withdrawn"
+      ]
+    },
+    "compatibility": {
+      "type": "object",
+      "properties": {
+        "mcp_protocol_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

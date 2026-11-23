@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hypersystem Installation Request Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "selection_mode",
+    "target_platform",
+    "plugin_keys",
+    "dependency_policy",
+    "version_policy",
+    "dry_run"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "selection_mode": {
+      "enum": [
+        "single",
+        "multi",
+        "full_suite"
+      ]
+    },
+    "target_platform": {
+      "enum": [
+        "chatgpt",
+        "claude",
+        "gemini-cli",
+        "github-copilot-vscode",
+        "generic-mcp"
+      ]
+    },
+    "plugin_keys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "dependency_policy": {
+      "enum": [
+        "explicit_only",
+        "include_declared"
+      ]
+    },
+    "version_policy": {
+      "enum": [
+        "pinned",
+        "compatible_latest"
+      ]
+    },
+    "private_source_access_granted": {
+      "type": "boolean",
+      "default": false
+    },
+    "dry_run": {
+      "type": "boolean",
+      "const": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "selection_mode": {
+            "const": "single"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "plugin_keys": {
+            "minItems": 1,
+            "maxItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "selection_mode": {
+            "const": "multi"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "plugin_keys": {
+            "minItems": 2
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "selection_mode": {
+            "const": "full_suite"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "plugin_keys": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

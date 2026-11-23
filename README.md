@@ -12,7 +12,7 @@ Its operating rule is:
 
 > **One plugin, one independent source repository. One ecosystem, one central architecture and governance repository.**
 
-The parent repository owns the ecosystem catalog, architecture boundaries, cross-project contracts, dependency and compatibility policy, governance, integration evidence, and progressive roadmap. Each plugin's own repository remains the canonical source of its implementation, skills, manifests, references, tests and release history.
+The parent repository owns the ecosystem catalog, architecture boundaries, cross-project contracts, dependency and compatibility policy, governance, distribution eligibility, platform adapter contracts and progressive roadmap. Each plugin's own repository remains the canonical source of its implementation, skills, manifests, references, tests and release history.
 
 This is a hybrid multi-repository architecture. It is not a monorepo, does not silently absorb child source code, and does not make plugin capabilities executable merely by listing them.
 
@@ -20,7 +20,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 The registry contains **20 plugin identities** supplied for this ecosystem.
 
-Five verified official plugin source repositories are pinned as Git submodules (Video Explainer remains behind its current Plugin Creator deployment):
+Five verified official plugin source repositories are pinned as Git submodules:
 
 | Plugin / source | Repository | Visibility | Pinned source |
 |---|---|---|---|
@@ -30,9 +30,7 @@ Five verified official plugin source repositories are pinned as Git submodules (
 | Video Explainer Promkes | [VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR](https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR) | Public | plugins/video-explainer-promkes (source 4.1.9; deployment 4.1.12) |
 | Skill Developer Orchestrator | [SPDO](https://github.com/promkespkmbinuang-coder/SPDO) | Public | plugins/skill-developer-orchestrator (0.1.0) |
 
-The Anatomi Prompt submodule requires permission to the private source repository. Public readers can inspect this parent repository's registry and architecture but cannot clone the private submodule without access.
-
-Other plugin identities are recorded in catalog/plugins.json with explicit source states. They are not represented as migrated source code. The Photo-Fixer repository is currently only a candidate: its root contains a minimal README and a license, not a verified plugin source package.
+The other plugin identities remain recorded with explicit source states. Instruction snapshots and candidate repositories are not treated as canonical distributable source packages.
 
 ## The 20 registered plugins
 
@@ -59,35 +57,56 @@ Other plugin identities are recorded in catalog/plugins.json with explicit sourc
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
+## Distribution and cross-platform installation
+
+The ecosystem supports three selection modes at the contract level:
+
+- **Single:** select exactly one plugin.
+- **Multi:** select two or more explicit plugins.
+- **Full Suite:** dynamically resolve every package currently eligible for the selected platform, not every catalog identity.
+
+The distribution registry separates package readiness from source registration. It explicitly excludes snapshot-only packages, incomplete candidates, rights-uncleared packages and legacy redirects. A bundle is an installation envelope; it does not merge plugin source, ownership, permissions or versions.
+
+The current change adds:
+- [Distribution eligibility registry](catalog/distribution-registry.json)
+- [Platform adapter registry](catalog/platform-registry.json)
+- [Distribution architecture](docs/DISTRIBUTION-ARCHITECTURE.md)
+- [Installation and runtime hierarchy](docs/INSTALLATION-AND-RUNTIME-HIERARCHY.md)
+- [Cross-platform adapter matrix](docs/PLATFORM-ADAPTER-MATRIX.md)
+- [Package and installation contracts](contracts/)
+
+**Implementation status:** this is a versioned architecture, schema, static eligibility registry and dry-run resolver baseline. No production installer, remote MCP gateway or platform adapter is implemented by this change. At the initial baseline, zero plugin packages are marked installable. The resolver returns blockers rather than pretending that registered identities or instruction snapshots are ready for installation.
+
+Run:
+
+~~~bash
+python tools/validate_distribution.py
+python tools/resolve_distribution.py --manifest distribution/manifests/manifest.example.json
+~~~
+
+The resolver is plan-only. It does not download, install, enable, authorize or execute plugins. See [distribution/README.md](distribution/README.md) for the operational boundary.
+
 ## Repository map
 
-- catalog/ — plugin identity, source repository inventory and lifecycle state.
+- catalog/ — plugin identity, source inventory, compatibility, distribution eligibility and platform adapter registry.
 - plugins/ — pinned Git submodules; source code remains in each independent repository.
+- plugin-instructions/ — isolated instruction bundles or source pointers; snapshots do not become distributable source.
+- distribution/ — dry-run installation manifests and package selection examples.
+- contracts/ — registration, handoff, package, installation, entitlement and lock schemas.
 - architecture/ — system boundary, responsibility matrix, positioning, routing and integration topology.
-- contracts/ — registration schema and standard handoff expectations.
-- governance/ — contribution, authority, security, versioning and release rules.
+- governance/ — contribution, authority, security, versioning, release and snapshot rules.
 - roadmap/ — progressive stages, source-repository onboarding backlog and evidence-based exit criteria.
-- tools/ — repository-local validation scripts.
-- tests/ — standard-library checks for catalog integrity.
-- .github/workflows/ — automated static catalog checks.
-- plugin-instructions/ — one isolated instruction bundle or source pointer per plugin (20 plugin folders, 238 skill records indexed).
+- tools/ — repository-local catalog/distribution validators and dry-run resolver.
+- tests/ — standard-library checks for catalog, distribution and eligibility invariants.
+- .github/workflows/ — automated static validation.
 
 ## Complete plugin instruction vault
 
-The parent now includes an isolated instruction boundary for every registered plugin:
-
-- 14 isolated runtime instruction snapshots cover 12 NOT_IDENTIFIED packages plus the two CANDIDATE_INCOMPLETE packages (Photo Fixer and PVEE).
-- 2 Plugin Creator release snapshots (Video Explainer 4.1.12 and SDO 0.1.0) are retained alongside their independently pinned official Git submodules.
-- 3 source-pointer entries refer to the canonical submodules for SKILL ANALYZER, A.S.F.R.E.E and Anatomi Prompt.
-- 1 A.S.F.R.E.E Legacy redirect-only snapshot points to the canonical package.
-- Five official source repositories are pinned; Video Explainer is explicitly marked behind its 4.1.12 deployment.
-- The machine-readable index records **238 skill definitions** across the 20 plugin identities.
-
-Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect the [instruction snapshot index](catalog/instruction-snapshots.json). Each bundle is kept in its own plugin directory. These snapshots do not merge source ownership or replace the canonical plugin repository. See [snapshot synchronization governance](governance/SNAPSHOT-SYNCHRONIZATION.md).
+The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **238 skill definitions** across 20 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
-The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architecture/PLUGIN-POSITIONING.md) and [ROUTING-AND-NON-DUPLICATION-OVERRIDES.md](architecture/ROUTING-AND-NON-DUPLICATION-OVERRIDES.md). Cross-plugin interfaces are tracked in [catalog/compatibility-matrix.json](catalog/compatibility-matrix.json), and progressive verification is in [COMPATIBILITY-AND-TEST-PLAN.md](docs/COMPATIBILITY-AND-TEST-PLAN.md). Core separations:
+The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architecture/PLUGIN-POSITIONING.md) and [ROUTING-AND-NON-DUPLICATION-OVERRIDES.md](architecture/ROUTING-AND-NON-DUPLICATION-OVERRIDES.md). Cross-plugin interfaces are tracked in [catalog/compatibility-matrix.json](catalog/compatibility-matrix.json), and progressive verification is in [COMPATIBILITY-AND-TEST-PLAN.md](docs/COMPATIBILITY-AND-TEST-PLAN.md).
 
 - SKILL ANALYZER owns general analytical methodology; A.S.F.R.E.E owns forensic anatomy of AI plugins and controlled reconstruction.
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
@@ -95,74 +114,44 @@ The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architect
 - Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
 - GODEX owns audio/voice-over truth and post; Motion Graphic owns general visual-first animation; PVEE owns health communication truth/governance; Video Explainer owns the technical production engine after PVEE approval.
 
-The central catalog includes positive and negative routing triggers for all 20 plugins. Overlap is resolved by a single owner for each final decision and explicit handoffs.
-
 ## Version reconciliation
 
-The repository records Plugin Creator package versions separately from canonical Git source versions and embedded skill-header versions. Verified mismatches: Video Explainer deployment 4.1.12 vs Git source 4.1.9 (M00 internal header v4.0.9); SKILL ANALYZER Git source 1.3.0 vs Plugin Creator package 1.0.0; A.S.F.R.E.E Git source 0.5.0-rc.1 vs Plugin Creator package 0.3.2. Anatomi Prompt is aligned at 3.0.0. See [PACKAGE-VERSION-MATRIX.md](docs/PACKAGE-VERSION-MATRIX.md) and [VERSION-RECONCILIATION.md](docs/VERSION-RECONCILIATION.md).
+Plugin Creator package versions, canonical Git source versions and embedded skill-header versions remain distinct. Verified mismatches include Video Explainer deployment 4.1.12 versus source 4.1.9, SKILL ANALYZER source 1.3.0 versus package 1.0.0, and A.S.F.R.E.E source 0.5.0-rc.1 versus package 0.3.2. SDO's package version matches at 0.1.0 but instruction content drift remains unresolved. See [PACKAGE-VERSION-MATRIX.md](docs/PACKAGE-VERSION-MATRIX.md) and [VERSION-RECONCILIATION.md](docs/VERSION-RECONCILIATION.md).
 
 ## Source inventory
 
-The connected owner account exposes six repositories. Five official plugin source repositories are now pinned, including the externally owned SDO and Video Explainer sources. SDO package versions match at 0.1.0, but its Plugin Creator and Git master SKILL.md contents differ and remain under source-parity review. Twelve plugin identities remain NOT_IDENTIFIED and two repositories (Photo-Fixer and PVEE's CL-VAEPPC pointer) are CANDIDATE_INCOMPLETE. HSMART is a related platform. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md) and [SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md](roadmap/SOURCE-REPOSITORY-ONBOARDING-BACKLOG.md). An instruction snapshot is not a canonical source repository.
+Five official source repositories are pinned, two candidate/incomplete sources are tracked, twelve plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
 
 ## Architecture principles
 
-1. **Single source of truth:** plugin implementation stays in its own repository; the parent records identity, exact source URL, branch, version and pinned commit.
+1. **Single source of truth:** plugin implementation stays in its own repository; the parent records exact source URL, branch, version and pinned commit.
 2. **One owner per concern:** each plugin retains a bounded responsibility; overlapping capabilities are resolved by explicit primary ownership and handoff contracts.
-3. **No false execution claims:** discovery, inventory, mapping, submodule pinning, host activation, runtime invocation and production deployment are different lifecycle states.
+3. **No false execution claims:** discovery, inventory, mapping, submodule pinning, installation, host activation, runtime invocation and production deployment are different lifecycle states.
 4. **No dependency cycles:** integrations are directed, contract-based and reviewed before acceptance.
 5. **Least privilege:** source repository access, credentials, connector permission and consequential actions remain scoped and explicit.
-6. **Reproducibility:** source integrations are pinned to immutable commit SHAs; updating a submodule is a reviewed change.
+6. **Reproducibility:** source integrations are pinned to immutable commit SHAs; updates are reviewed changes.
 7. **Independent releases:** child plugin versions are independent from the parent ecosystem version.
-8. **Preserve provenance and license:** do not copy source files from a child repository into this parent without a specific need, license/provenance review and approved change.
+8. **Preserve provenance and license:** child licenses and terms continue to apply; the parent license does not relicense them.
 
-## Clone
-
-~~~bash
-git clone --recurse-submodules https://github.com/hsaidno-cpu/Hypersystem-Orchestrator.git
-cd Hypersystem-Orchestrator
-~~~
-
-If cloning without submodules:
-
-~~~bash
-git clone https://github.com/hsaidno-cpu/Hypersystem-Orchestrator.git
-cd Hypersystem-Orchestrator
-git submodule update --init --recursive
-~~~
-
-The private Anatomi Prompt submodule is available only to users who have access to its private repository. A public clone may therefore require initializing only accessible submodules.
-
-## Validate the ecosystem catalog
+## Validate
 
 Requires Python 3.10+ and no third-party packages.
 
 ~~~bash
 python tools/validate_catalog.py
+python tools/validate_distribution.py
 python -m unittest discover -s tests -v
 ~~~
 
-The workflow validates JSON syntax, unique identities, repository references, source-state consistency, alias targets and submodule declarations. These are static repository checks; they do not test whether ChatGPT discovers a plugin, whether an AI host routes correctly, or whether a runtime integration executes.
+Static CI checks do not prove that ChatGPT, Claude, Gemini or Copilot can install or run a plugin. Host activation and real runtime invocation require separate evidence for each target.
 
 ## Notion project documentation
 
-Read the [Notion project documentation](docs/NOTION-DOCUMENTATION.md) for the detailed ecosystem architecture, plugin inventory, source-state register, responsibility matrix, decisions, roadmap and operational procedures. The detailed Notion knowledge page is a private draft in the connected workspace. GitHub remains authoritative for versioned engineering artifacts; Notion is the project knowledge and navigation layer.
-
-## Status language
-
-- REGISTERED — plugin identity exists in the central catalog.
-- SOURCE_REPO_IDENTIFIED — a possible or confirmed source repository has been identified.
-- SUBMODULE_PINNED — an exact source commit is linked from this parent.
-- SOURCE_VERIFIED — relevant source artifacts were inspected.
-- HOST_TESTED — actual activation/routing was tested on a named host and version.
-- RUNTIME_VERIFIED — an actual integration/execution was observed and evidenced.
-- RELEASED — a specific source release was published.
-
-A repository entry or submodule pin does not imply host testing, runtime verification or release readiness.
+Read [docs/NOTION-DOCUMENTATION.md](docs/NOTION-DOCUMENTATION.md) for the Notion knowledge hub. GitHub remains authoritative for versioned engineering artifacts, schemas, tests, governance files and release history; Notion explains the architecture, decisions and operating procedures.
 
 ## Related but separate platform
 
-[HSMART](https://github.com/hsaidno-cpu/HSMART) is tracked as a related platform repository, not merged into this plugin portfolio. Its platform-level charter, logical planes and KM roadmap remain under its own source of truth. Any future integration must be specified through an explicit interface contract and an approved architecture decision record.
+[HSMART](https://github.com/hsaidno-cpu/HSMART) is tracked as a related platform repository, not merged into this plugin portfolio. Any future integration requires an explicit interface contract and approved architecture decision record.
 
 ## License and source rights
 

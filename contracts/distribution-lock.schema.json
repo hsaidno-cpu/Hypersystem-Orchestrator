@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hypersystem Distribution Resolution Lock",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "request_id",
+    "target_platform",
+    "selection_mode",
+    "resolution_status",
+    "action",
+    "resolved_plugins",
+    "excluded_plugins",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "target_platform": {
+      "type": "string"
+    },
+    "selection_mode": {
+      "enum": [
+        "single",
+        "multi",
+        "full_suite"
+      ]
+    },
+    "resolution_status": {
+      "enum": [
+        "READY_FOR_INSTALLER",
+        "BLOCKED"
+      ]
+    },
+    "action": {
+      "const": "PLAN_ONLY_NOT_INSTALLED"
+    },
+    "resolved_plugins": {
+      "type": "array"
+    },
+    "excluded_plugins": {
+      "type": "array"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

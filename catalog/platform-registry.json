@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "registry_revision": "2026-11-23",
+  "note": "Adapter targets only. Registration does not prove host support, plan entitlement, host activation or runtime execution.",
+  "adapters": [
+    {
+      "target_id": "chatgpt",
+      "display_name": "ChatGPT",
+      "adapter_status": "planned",
+      "integration_modes": [
+        "remote_mcp"
+      ],
+      "authentication_models": [
+        "oauth"
+      ],
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "constraints": [
+        "Availability depends on plan, workspace policy and app configuration.",
+        "A repository clone or endpoint does not install an app into an account."
+      ]
+    },
+    {
+      "target_id": "claude",
+      "display_name": "Claude",
+      "adapter_status": "planned",
+      "integration_modes": [
+        "remote_mcp",
+        "local_mcp"
+      ],
+      "authentication_models": [
+        "oauth",
+        "host_managed_credentials"
+      ],
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "constraints": [
+        "Validate exact product/client version, transport and feature support."
+      ]
+    },
+    {
+      "target_id": "gemini-cli",
+      "display_name": "Gemini CLI",
+      "adapter_status": "planned",
+      "integration_modes": [
+        "mcp_server_config"
+      ],
+      "authentication_models": [
+        "host_managed_credentials",
+        "oauth"
+      ],
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "constraints": [
+        "Validate exact CLI version, configuration, allowlists and exclusions."
+      ]
+    },
+    {
+      "target_id": "github-copilot-vscode",
+      "display_name": "VS Code / GitHub Copilot",
+      "adapter_status": "planned",
+      "integration_modes": [
+        "agent_plugin_bundle",
+        "mcp_server_config",
+        "skill_package"
+      ],
+      "authentication_models": [
+        "oauth",
+        "host_managed_credentials"
+      ],
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "constraints": [
+        "Host plugin bundles are not universal import formats; validate exact VS Code/Copilot version."
+      ]
+    },
+    {
+      "target_id": "generic-mcp",
+      "display_name": "Generic MCP-compatible host",
+      "adapter_status": "planned",
+      "integration_modes": [
+        "remote_mcp",
+        "local_mcp"
+      ],
+      "authentication_models": [
+        "oauth",
+        "host_managed_credentials"
+      ],
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "constraints": [
+        "MCP compatibility does not imply identical host UI, discovery, authorization or user experience."
+      ]
+    }
+  ]
+}
