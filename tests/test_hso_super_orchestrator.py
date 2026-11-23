@@ -72,6 +72,21 @@ class HsoRuntimeTests(unittest.TestCase):
         self.assertEqual(route["primary_owner"], "HSO.CP-05")
         self.assertEqual(route["supporting_specialists"], ["HSO.CP-07"])
 
+    def test_ponytail_engineering_route_has_single_owner_and_bounded_support(self):
+        _, routes, _, catalog = hso._load_registries()
+        route = hso.resolve_route("plugin.engineering_method", routes, catalog)
+        self.assertEqual(route["primary_owner"], "ponytail-engineering-optimizer")
+        self.assertEqual(route["supporting_specialists"], ["skill-developer-orchestrator", "evaluator-team"])
+
+    def test_ponytail_route_is_blocked_until_plugin_host_adapter_exists(self):
+        data = self.workflow()
+        item = data["work_packages"][0]
+        item["task_type"] = "plugin.engineering_method"
+        item["action_id"] = "plugin.skill.invoke"
+        result = self.run_workflow(data)
+        self.assertEqual(result["package_outcomes"][item["package_id"]]["status"], "BLOCKED_CAPABILITY")
+        self.assertNotEqual(result["status"], "SUCCEEDED")
+
     def test_plugin_route_is_selected_but_not_dispatchable_without_host_adapter(self):
         _, routes, catalog_policy, catalog = hso._load_registries()
         route = hso.resolve_route("plugin.forensic_audit", routes, catalog)
