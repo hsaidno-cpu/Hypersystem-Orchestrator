@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+import base64
+import hashlib
 import unittest
+from datetime import timedelta
 
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
@@ -9,10 +14,12 @@ from sqlalchemy.pool import StaticPool
 
 from hso_platform.app import create_app
 from hso_platform.domain import (
-    DomainError, append_audit, claim_next_package, complete_package,
-    create_workflow, register_plugin, verify_audit_chain, verify_package,
+    DomainError, ack_outbox, add_entitlement, append_audit, claim_next_package,
+    claim_outbox, complete_package, create_installation, create_release,
+    create_workflow, emit_outbox, fail_outbox, publish_release, register_plugin,
+    verify_audit_chain, verify_package, verify_release,
 )
-from hso_platform.models import AuditEvent, AuditHead, Base, Capability, WorkPackage
+from hso_platform.models import AuditEvent, AuditHead, Base, Capability, OutboxEvent, PackageRelease, WorkPackage
 from hso_platform.settings import Settings
 
 
@@ -286,6 +293,183 @@ class OperationalKernelTests(unittest.TestCase):
             self.assertEqual(client.get("/health/ready").status_code, 200)
             response = client.get("/api/v1/registry/plugins")
             self.assertEqual(response.status_code, 200)
+
+    def test_host_verification_is_required_before_capability_enablement(self):
+        settings = Settings(environment="test", database_url="sqlite+pysqlite://", auth_mode="disabled")
+        app = create_app(settings, engine=self.engine, session_factory=self.factory)
+        with self.factory() as session, session.begin():
+            register_plugin(session, plugin_data(), "test")
+        with TestClient(app) as client:
+            created = client.post(
+                "/api/v1/registry/plugins/skill-analyzer/capabilities",
+                json={
+                    "capability_key": "skill-analyzer.invoke",
+                    "version": "1.0.0",
+                    "contract_version": "1.0.0",
+                    "protocol": "MCP",
+                    "endpoint": "https://mcp.example.test",
+                    "permission_scopes": ["capability:invoke"],
+                    "evidence_reference": "inventory://capability",
+                    "metadata_json": {},
+                },
+            )
+            self.assertEqual(created.status_code, 201)
+            capability_id = created.json()["capability_id"]
+            denied = client.post(f"/api/v1/registry/capabilities/{capability_id}/enable")
+            self.assertEqual(denied.status_code, 409)
+
+            verified = client.post(
+                f"/api/v1/registry/capabilities/{capability_id}/host-verification",
+                json={
+                    "host": "test-host",
+                    "host_version": "2026.11",
+                    "adapter_version": "0.1.0",
+                    "disposition": "PASS",
+                    "evidence_reference": "evidence://named-host-c4-run",
+                },
+            )
+            self.assertEqual(verified.status_code, 200)
+            self.assertEqual(verified.json()["last_health_status"], "C4_PASS")
+
+            enabled = client.post(f"/api/v1/registry/capabilities/{capability_id}/enable")
+            self.assertEqual(enabled.status_code, 200)
+            self.assertTrue(enabled.json()["enabled"])
+
+    def test_api_key_can_be_issued_rotated_and_revoked(self):
+        settings = Settings(
+            environment="test",
+            database_url="sqlite+pysqlite://",
+            auth_mode="disabled",
+            api_key_pepper="unit-test-only-pepper-with-sufficient-length",
+        )
+        app = create_app(settings, engine=self.engine, session_factory=self.factory)
+        with TestClient(app) as client:
+            issued = client.post(
+                "/api/v1/api-keys",
+                json={"subject": "integration-test", "scopes": ["registry:read"]},
+            )
+            self.assertEqual(issued.status_code, 201)
+            old_key = issued.json()["api_key"]
+            key_id = issued.json()["key_id"]
+
+            self.assertEqual(
+                client.get("/api/v1/registry/plugins", headers={"X-API-Key": old_key}).status_code,
+                200,
+            )
+            rotated = client.post(f"/api/v1/api-keys/{key_id}/rotate")
+            self.assertEqual(rotated.status_code, 200)
+            new_key = rotated.json()["api_key"]
+            self.assertEqual(
+                client.get("/api/v1/registry/plugins", headers={"X-API-Key": old_key}).status_code,
+                401,
+            )
+            self.assertEqual(
+                client.get("/api/v1/registry/plugins", headers={"X-API-Key": new_key}).status_code,
+                200,
+            )
+            revoke = client.post(f"/api/v1/api-keys/{rotated.json()['key_id']}/revoke")
+            self.assertEqual(revoke.status_code, 200)
+            self.assertEqual(
+                client.get("/api/v1/registry/plugins", headers={"X-API-Key": new_key}).status_code,
+                401,
+            )
+
+    def test_signed_release_and_entitlement_do_not_bypass_missing_installer(self):
+        private_key = Ed25519PrivateKey.generate()
+        public_key = private_key.public_key().public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+        ).decode("utf-8")
+        settings = Settings(
+            environment="test",
+            release_public_key_pem=public_key,
+            release_public_key_id="test-signing-key",
+            max_artifact_bytes=1024 * 1024,
+        )
+        artifact = b"immutable-test-package"
+        digest = hashlib.sha256(artifact).hexdigest()
+        source_commit = "a" * 40
+        signed = f"skill-analyzer:1.0.0:{source_commit}:{digest}".encode("utf-8")
+        signature = base64.b64encode(private_key.sign(signed)).decode("ascii")
+
+        with self.factory() as session, session.begin():
+            register_plugin(session, plugin_data(), "test")
+            release = create_release(
+                session,
+                {
+                    "plugin_key": "skill-analyzer",
+                    "version": "1.0.0",
+                    "source_commit": source_commit,
+                    "artifact_url": "https://artifacts.example.test/skill-analyzer-1.0.0.tar",
+                    "artifact_sha256": digest,
+                    "signature_b64": signature,
+                    "signing_key_id": "test-signing-key",
+                },
+                "publisher",
+            )
+            self.assertEqual(release.state, "DRAFT")
+            verified = verify_release(session, release.release_id, artifact, settings, "reviewer")
+            self.assertEqual(verified.state, "VERIFIED")
+            published = publish_release(session, release.release_id, "publisher")
+            self.assertEqual(published.state, "PUBLISHED")
+            add_entitlement(
+                session,
+                {
+                    "subject": "customer-1",
+                    "product_key": "skill-analyzer",
+                    "scopes": ["package:install"],
+                    "source_reference": "contract://entitlement",
+                },
+                "entitlement-admin",
+            )
+            installation = create_installation(
+                session,
+                {"release_id": release.release_id, "target": "named-host"},
+                "customer-1",
+                "install-idempotency-1",
+            )
+            self.assertEqual(installation.state, "BLOCKED_ADAPTER_UNAVAILABLE")
+            self.assertEqual(
+                installation.blocker,
+                "TARGET_PLATFORM_ADAPTER_NOT_PROVISIONED",
+            )
+
+    def test_outbox_acknowledgement_and_dead_letter(self):
+        with self.factory() as session, session.begin():
+            event = emit_outbox(session, "test.event", "aggregate-1", {"v": 1})
+            event_id = event.event_id
+            claimed = claim_outbox(session, "sync-worker", lease_seconds=30)
+            self.assertEqual(claimed.event_id, event_id)
+            delivered = ack_outbox(session, event_id, "sync-worker")
+            self.assertEqual(delivered.state, "DELIVERED")
+
+            dead = emit_outbox(session, "test.dead", "aggregate-2", {"v": 2})
+            dead.max_attempts = 1
+            dead_id = dead.event_id
+            claimed_dead = claim_outbox(session, "sync-worker", lease_seconds=30)
+            self.assertEqual(claimed_dead.event_id, dead_id)
+            failed = fail_outbox(session, dead_id, "sync-worker", "sink unavailable")
+            self.assertEqual(failed.state, "DEAD")
+
+    def test_worker_fails_closed_when_no_trusted_runtime_adapter_is_registered(self):
+        from hso_platform.worker import RuntimeBroker, run_once
+        with self.factory() as session, session.begin():
+            register_plugin(session, plugin_data(), "test")
+            add_c4_capability(session, "skill-analyzer")
+            workflow = create_workflow(session, workflow_data(package_data()), "test")
+        worked = run_once(
+            self.factory,
+            Settings(environment="test"),
+            "worker-no-adapter",
+            RuntimeBroker(adapters={}),
+        )
+        self.assertTrue(worked)
+        with self.factory() as session:
+            package = session.scalar(
+                select(WorkPackage).where(WorkPackage.workflow_id == workflow.workflow_id)
+            )
+            self.assertEqual(package.state, "BLOCKED")
+            self.assertIn("RUNTIME_ADAPTER_NOT_REGISTERED", package.blockers[0])
 
     def test_production_settings_reject_disabled_authentication(self):
         settings = Settings(environment="production", auth_mode="disabled")
