@@ -29,7 +29,7 @@ class DistributionValidationTests(unittest.TestCase):
         catalog=self.load(ROOT/"catalog"/"plugins.json")
         registry=self.load(REGISTRY)
         self.assertEqual({p["plugin_key"] for p in catalog["plugins"]},{p["plugin_key"] for p in registry["plugins"]})
-        self.assertEqual(registry["plugin_count"],21)
+        self.assertEqual(registry["plugin_count"],22)
 
     def test_people_business_competency_academy_remains_snapshot_only(self):
         registry = self.load(REGISTRY)
@@ -67,7 +67,7 @@ class DistributionValidationTests(unittest.TestCase):
         plan=json.loads(result.stdout)
         self.assertEqual(plan["requested_plugin_keys"],[])
         self.assertIn("NO_INSTALLABLE_PLUGIN_PACKAGES_AVAILABLE",plan["blockers"])
-        self.assertEqual(len(plan["excluded_plugins"]),21)
+        self.assertEqual(len(plan["excluded_plugins"]),22)
 
     def test_legacy_is_redirect_only(self):
         registry=self.load(REGISTRY)

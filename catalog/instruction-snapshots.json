@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "capture_date": "2026-11-23",
-  "total_skill_records": 247,
+  "total_skill_records": 256,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1429,6 +1429,62 @@
         "classification": "CANDIDATE_INCOMPLETE",
         "reason": "Manifest pointer verified; complete package source absent from observed repository tree."
       }
+    },
+    {
+      "plugin_key": "progressive-roadmap-evaluator",
+      "instruction_path": "plugin-instructions/progressive-roadmap-evaluator/INSTRUCTIONS-BUNDLE.md",
+      "origin": "official_plugin_creator_release_snapshot",
+      "skill_count": 9,
+      "skills": [
+        {
+          "skill_name": "progressive-roadmap-evaluator",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/progressive-roadmap-evaluator",
+          "description": "Use when a project, product, AI system, capability, program or portfolio needs a phased roadmap, milestone structure, evidence-based progress evaluation, gate decisions, adaptive replanning or closure across multiple iterations."
+        },
+        {
+          "skill_name": "roadmap-intake-baseline",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/roadmap-intake-baseline",
+          "description": "Use when a roadmap needs a governed intake, decision owner, scope, objectives, constraints, baseline, provenance or a clear statement of the current state."
+        },
+        {
+          "skill_name": "roadmap-architecture-planner",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/roadmap-architecture-planner",
+          "description": "Use when translating an approved objective and baseline into phases, milestones, work items, dependencies, entry/exit criteria, and an executable roadmap structure."
+        },
+        {
+          "skill_name": "progressive-development-manager",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/progressive-development-manager",
+          "description": "Use when an approved roadmap must be delivered through bounded iterations, committed work, scope control, status updates, and milestone preparation."
+        },
+        {
+          "skill_name": "continuous-evaluation-engine",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/continuous-evaluation-engine",
+          "description": "Use when defining or coordinating roadmap progress indicators, formative checkpoints, milestone evaluation, outcomes, impact, evaluation evidence and gate handoffs."
+        },
+        {
+          "skill_name": "adaptive-roadmap-optimizer",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/adaptive-roadmap-optimizer",
+          "description": "Use when evidence shows that a roadmap may need resequencing, rebaselining, splitting, merging, deferral, piloting, rollback, stopping or closure."
+        },
+        {
+          "skill_name": "risk-dependency-governor",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/risk-dependency-governor",
+          "description": "Use when a roadmap contains material risks, cross-team or external dependencies, bottlenecks, resource constraints, critical-path uncertainty or cascading failure potential."
+        },
+        {
+          "skill_name": "capability-learning-federator",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/capability-learning-federator",
+          "description": "Use when PRE Standalone or a host-integrated PRE learns a potentially reusable roadmap capability and it should be classified, validated, versioned, shared or quarantined across compatible PRE hosts."
+        },
+        {
+          "skill_name": "roadmap-assurance-closure",
+          "source_uri": "skills://plugins/progressive-roadmap-evaluator/roadmap-assurance-closure",
+          "description": "Use when a roadmap milestone or initiative requires gate aggregation, acceptance assurance, closure, outcome handoff, residual risk disposition or a post-implementation learning review."
+        }
+      ],
+      "plugin_creator_release_id": "pluginrel_6b0385d7a4488191a681997c0d9ae531",
+      "package_version": "0.1.1",
+      "git_source_version": null
     }
   ]
 }
