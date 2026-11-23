@@ -153,6 +153,7 @@ def probe_codex_skill_host(workspace:Path,skill_source_path:str)->dict[str,Any]:
  if not binary:return {"status":"NOT_CONFIGURED","evidence":"Codex CLI binary is not installed"}
  try:
   skill=_resolve_skill(workspace,skill_source_path);manifest=_manifest(workspace);schema=_load_schema(workspace);commit=_source_commit(workspace)
+  if commit != SOURCE_PIN: raise RuntimeError("SKILL ANALYZER source pin mismatch at preflight call-site")
   with tempfile.TemporaryDirectory(prefix="hso-codex-probe-") as t:
    root=Path(t);home=root/"home";tmp=root/"tmp";home.mkdir(mode=0o700);tmp.mkdir(mode=0o700)
    codex_home=root/"codex-home";_write_config(codex_home)
@@ -241,6 +242,7 @@ def invoke_codex_skill(workspace:Path,target_path:str,payload:dict[str,Any],cont
  request=payload.get("request")
  if not isinstance(request,str) or len(request)<40 or len(request)>6000:raise RuntimeError("P0 request must be bounded")
  skill=_resolve_skill(workspace,payload["skill_source_path"]);schema=_load_schema(workspace);manifest=_manifest(workspace);commit=_source_commit(workspace)
+ if commit != SOURCE_PIN: raise RuntimeError("SKILL ANALYZER source pin mismatch at invocation call-site")
  skill_hash=sha256_file(skill);schema_hash=sha256_bytes(canonical_json(schema).encode());request_hash=sha256_bytes(request.encode())
  prompt=f"$skill-analyzer\n\n{request}\n\nReturn only the JSON object required by the supplied output schema."
  with tempfile.TemporaryDirectory(prefix="hso-codex-run-") as t:
