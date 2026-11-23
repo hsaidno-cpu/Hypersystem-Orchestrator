@@ -725,30 +725,18 @@
         "canonical_plugin_key": "asfree-canonical"
       },
       "rights": {
-        "url": "https://github.com/hsaidno-cpu/A.S.F.R.E.E",
-        "repo_id": "asfree",
-        "visibility": "PUBLIC",
-        "head": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
-        "pinned": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
-        "license": "PolyForm-Noncommercial-1.0.0",
+        "license_id": "PolyForm-Noncommercial-1.0.0",
         "license_status": "INHERITED_CANONICAL_RESTRICTED",
-        "license_path": "LICENSE",
-        "license_url": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/blob/a5eb55db0f6c2c6126a7fbcba645caf44c660c93/LICENSE",
-        "notice_path": "NOTICE",
-        "notice_url": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/blob/a5eb55db0f6c2c6126a7fbcba645caf44c660c93/NOTICE",
-        "strategy_url": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/blob/a5eb55db0f6c2c6126a7fbcba645caf44c660c93/LICENSE-STRATEGY.md",
-        "rights_state": "NONCOMMERCIAL_ONLY_COMMERCIAL_RIGHTS_REQUIRE_SEPARATE_WRITTEN_PERMISSION",
-        "classification": "OFFICIAL_PUBLIC_SOURCE",
-        "next": "Retain LICENSE and NOTICE; assess actual commercial purpose; obtain separate written commercial permission for commercial hosting/enterprise use; preserve the historical Apache-2.0 licence/grant history and trademark restrictions; legal review remains open.",
         "license_file_path": "LICENSE",
         "license_evidence_url": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/blob/a5eb55db0f6c2c6126a7fbcba645caf44c660c93/LICENSE",
         "required_notice_path": "NOTICE",
         "required_notice_url": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/blob/a5eb55db0f6c2c6126a7fbcba645caf44c660c93/NOTICE",
+        "rights_state": "NONCOMMERCIAL_ONLY_COMMERCIAL_RIGHTS_REQUIRE_SEPARATE_WRITTEN_PERMISSION",
+        "commercial_use": "Same Noncommercial-only restriction as A.S.F.R.E.E Canonical; separate written commercial permission and brand rights remain required.",
         "redistribution_rule": "Inherited from A.S.F.R.E.E Canonical only; this legacy alias is not an independent package and may not be installed separately.",
-        "commercial_use": "Same Noncommercial-only restriction; separate written commercial permission and brand rights remain required.",
         "rights_evidence": [
-          "Canonical source LICENSE and NOTICE at the pinned A.S.F.R.E.E commit",
-          "A.S.F.R.E.E LICENSE-STRATEGY.md documents separate commercial permission and trademark boundary"
+          "Canonical source LICENSE and NOTICE at the pinned A.S.F.R.E.E commit.",
+          "A.S.F.R.E.E LICENSE-STRATEGY.md documents separate commercial permission and trademark boundaries: https://github.com/hsaidno-cpu/A.S.F.R.E.E/blob/a5eb55db0f6c2c6126a7fbcba645caf44c660c93/LICENSE-STRATEGY.md"
         ]
       },
       "distribution": {
@@ -1105,7 +1093,7 @@
       "source": {
         "kind": "candidate",
         "repository_url": "https://github.com/promkespkmbinuang-coder/CL-VAEPPC",
-        "repository_id": "pvee-candidate",
+        "repository_id": "pvee-promkes-candidate",
         "visibility": "PUBLIC",
         "default_branch": "main",
         "observed_head_sha": "1ab0c41081ccdbb91cc9dec0a2864acd0de00d54",
