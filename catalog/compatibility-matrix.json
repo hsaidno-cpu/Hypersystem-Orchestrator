@@ -437,9 +437,9 @@
       "canonical_truth_owner": "skill-developer-orchestrator",
       "contract_version": "1.0.0",
       "dependency": "OPTIONAL",
-      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "status": "CONTRACT_TESTED",
       "static_routing_test": "DEFINED",
-      "schema_contract_test": "NOT_RUN",
+      "schema_contract_test": "PASS",
       "host_activation_test": "NOT_RUN",
       "runtime_execution_test": "NOT_RUN",
       "acceptance_criteria": [
@@ -448,7 +448,7 @@
         "The handoff does not authorize repository writes, pull-request merge, release or production deployment.",
         "Independent quality judgement remains with Evaluator Team; HSO controls ecosystem-level planning and routing."
       ],
-      "contract_behavior_test": "NOT_RUN"
+      "contract_behavior_test": "PASS"
     }
   ]
 }
