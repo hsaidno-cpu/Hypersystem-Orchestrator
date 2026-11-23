@@ -67,25 +67,65 @@ A bounded planner converts an explicitly declared work-package graph into a dete
 
 ## Stage E4 — Governed ecosystem operations
 
-**Objective:** Establish the minimum operational controls justified by real usage.
+**Status:** IMPLEMENTATION_BASELINE_ON_FEATURE_BRANCH / PRE_PRODUCTION / RUNTIME_ADAPTERS_NOT_PROVISIONED
 
-**Candidate capabilities:**
-- registry update automation;
-- dependency drift detection;
-- scheduled submodule freshness checks;
-- release notes aggregation;
-- compatibility and security issue routing;
-- integration dashboards.
+**Objective:** Establish a durable operational kernel without splitting into premature microservices.
 
-**Gate:** implement only when there is a real runtime/service and an identified operator. GitHub catalog documentation alone does not require microservices, Kubernetes or a separate orchestration backend.
+**Implemented on the E4/E5 feature branch:**
+- FastAPI REST control plane and Streamable HTTP MCP read interface.
+- PostgreSQL registry, capability, workflow, work-package, specialist assignment, API key, entitlement, release, installation, outbox, usage and audit tables.
+- Alembic bootstrap migration and PostgreSQL 18.7 CI service.
+- Polling worker with row leases, SKIP LOCKED claims, bounded retries, expired-lease recovery and idempotency-key propagation.
+- Runtime broker interface with an explicit adapter allowlist; the registry is empty by default and fails closed.
+- OIDC JWT validation, HMAC-SHA256 API key storage, one-time key display, rotation/revocation, delegated-scope restriction and production configuration gates.
+- C4 host-verification attestation, capability enablement gate and mandatory C5 output/trace/host/adapter evidence.
+- Transactional outbox with lease, acknowledge, failure, retry and dead-letter state.
+- Source/right-gated release staging, SHA-256 verification, Ed25519 signature validation, entitlement checks and blocked installation lifecycle.
+- Hash-chained audit ledger, request ID logging, Prometheus counters, liveness/readiness endpoints and backup/restore scripts.
 
-## Stage E5 — Scale and productization
+**Not operationally complete:**
+- No named-host runtime adapter is installed or C4/C5 pilot passed.
+- The outbox has claim/ack/fail contracts but no approved downstream sink adapter.
+- Installer requests remain BLOCKED_ADAPTER_UNAVAILABLE.
+- No public cloud deployment, production domain/TLS, OIDC provider registration, secret manager, WORM audit, alert routing or tested disaster recovery has been provisioned.
+- The feature branch has not been merged.
 
-**Objective:** Decide whether the ecosystem becomes a distributable platform, not merely a source portfolio.
+**Exit criteria:**
+1. PostgreSQL migrations, seed, workflow persistence, worker leases, retries, audit verification and independent review tests pass on exact commit.
+2. A named host, host version and adapter version pass C4 and a controlled C5 invocation with trace and artifact read-back.
+3. Runtime and sync adapters are reviewed, scoped, idempotent, observable and recoverable.
+4. Production configuration, secrets, TLS, network allowlists, rate limits, redaction, retention, external audit and recovery controls are accepted by their owners.
+5. The operator/security/incident-response roles and escalation procedures are assigned.
+6. A production-readiness review accepts the exact release and deployment environment.
 
-**Prerequisites:** actual demand/use cases, ownership and licensing, access control, costs, support, privacy/security model, runtime design and independent production verification.
+## Stage E5 — Productization and governed distribution
 
-**Exit criteria:** explicit business/product approval and tested operating model. Marketplace, billing, multi-tenancy and universal gateway features remain out of scope until justified and implemented.
+**Status:** PRODUCTIZATION_FOUNDATION_ON_FEATURE_BRANCH / NOT_RELEASE_READY
+
+**Objective:** Turn the source portfolio into a legally distributable, versioned and supportable capability service, without treating registration as entitlement or installability.
+
+**Implemented foundation:**
+- Package release records tied to canonical source commit and artifact digest.
+- SHA-256 artifact verification plus Ed25519 signature verification against a configured trusted public key ID.
+- Separate distribution-rights, execution-rights, package verification, publish, entitlement and installation-request states.
+- Subject/product/scope/expiry entitlement records and basic usage records.
+- Idempotent installation request records. Requests remain blocked if the target platform adapter has not been provisioned.
+- Single/Multi/Full-Suite policy remains controlled by the parent eligibility registry; no automatic Full-Suite publication is introduced.
+
+**Not included / not approved:**
+- No payment processor, subscription billing, marketplace listing, seller onboarding, public multi-tenancy, customer support SLA or commercial launch.
+- No private plugin source export, license grant or rights transfer is implied.
+- No package is automatically made installable by building this service.
+- No production installer or plugin-host adapter has passed C4/C5.
+
+**Exit criteria:**
+1. A package has canonical source, rights-holder approval, manifest, dependency lock, immutable artifact and trusted signature.
+2. Independent compatibility/security assurance passes for the target platform/host.
+3. Entitlement, authorization, quotas, metering, privacy, terms, support and incident processes have named owners and tests.
+4. Installer lifecycle including install/enable/authorize/update/disable/uninstall/rollback is tested for a named adapter.
+5. Business/legal and operational owners approve the product scope and production release.
+
+Marketplace, billing, public multi-tenancy and a universal public gateway remain deferred until demand, rights, cost, support and production controls justify them.
 
 ## Initial priority backlog
 

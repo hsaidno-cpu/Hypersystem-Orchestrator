@@ -438,6 +438,8 @@ def create_app(
         payload: APIKeyCreate,
         actor: Principal = Depends(require_scope("keys:manage")),
     ):
+        if not settings.api_key_pepper:
+            raise HTTPException(status_code=503, detail="API-key issuance is not configured")
         if not set(payload.scopes).issubset(actor.scopes):
             raise HTTPException(status_code=403, detail="Cannot delegate scopes the caller does not possess")
         with session_factory() as session, session.begin():

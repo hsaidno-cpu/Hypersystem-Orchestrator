@@ -140,6 +140,12 @@ The ecosystem-level operating model, route arbitration, authority boundaries and
 7. **Independent releases:** child plugin versions are independent from the parent ecosystem version.
 8. **Preserve provenance and license:** child licenses and terms continue to apply; the parent license does not relicense them.
 
+## Operational platform
+
+A modular-monolith E4/E5 platform kernel is under implementation at [services/hso-platform](services/hso-platform/README.md). It includes PostgreSQL-backed registry/workflow state, a lease-based worker, REST and read-only MCP transport, scoped access, entitlements, signed release verification, installation requests, transactional outbox, audit hash-chain and Prometheus/health endpoints.
+
+**Status boundary:** the service is on the stacked feature branch and is not merged or deployed. The runtime adapter registry is empty; installer and downstream synchronization sink adapters are not provisioned; C4/C5 host/runtime pilot evidence is still required. See [E4/E5 Operational Platform](docs/E4-E5-OPERATIONAL-PLATFORM.md) for the delivery map and remaining production gates.
+
 ## Validate
 
 Requires Python 3.10+. Catalog and distribution validation and the plan-only planner use the Python standard library. Contract/regression tests also use the pinned test dependencies in `requirements-test.txt`.

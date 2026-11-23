@@ -20,6 +20,7 @@ services:
       dockerfile: services/hso-platform/Dockerfile
     environment:
       HSO_ENV: "${HSO_ENV:-development}"
+      HSO_CATALOG_DIR: /app/catalog
       HSO_DATABASE_URL: "postgresql+psycopg://hso:${HSO_DB_PASSWORD:-hso-local-only-change-me}@database:5432/hso"
       HSO_AUTH_MODE: "${HSO_AUTH_MODE:-disabled}"
       HSO_API_KEY_PEPPER: "${HSO_API_KEY_PEPPER:-local-only-change-me-change-before-production}"

@@ -102,10 +102,10 @@ The following are **logical responsibilities**, not separate deployed microservi
 | CP-03 Eligibility & Capability Gate | Check actual source, rights, artifact, dependency, host, permission and runtime availability | Eligibility/capability decision | Static distribution registry and dry-run resolver exist |
 | CP-04 Route Arbitration | Choose one primary plugin owner and narrowly scoped supporting owners | Route decision and ownership map | Responsibility matrix and routing overrides exist |
 | CP-05 Plan & Dependency Coordinator | Build and validate a directed acyclic work plan with declared owners, approvals, capabilities, dependencies and acceptance criteria | Deterministic plan-only DAG compiler | Implemented on PR branch via `tools/plan_hso_workflow.py`; no persistent scheduler, state store or dispatch |
-| CP-06 Handoff & State Manager | Validate payload contracts, capability status, epistemic status, and completion states | Versioned handoff receipt | JSON Schemas and fixtures exist; no shared service state store |
-| CP-07 Evidence & Quality Gate | Aggregate provenance, schema/behavior evidence, independent evaluation, and residual risk | Evidence dossier and gate result | C0–C3 evidence exists; C4/C5 remain open |
-| CP-08 Roadmap & Change Bridge | Hand longitudinal progress and adaptation decisions to PRE; hand source changes to SDO | Roadmap update / engineering change manifest | Procedural integration only; no cross-plugin event service |
-| CP-09 Governance & Observability | Record actor, authority, approvals, audit trail, failures, recovery and release state | Traceable execution record | Parent governance and CI exist; production observability is not deployed |
+| CP-06 Handoff & State Manager | Persist workflow, work-package and specialist-contribution state; enforce lease, retry, idempotency and independent verification | Durable work-package ledger and verification receipt | PostgreSQL state, DAG validation, leases and outbox implemented on feature branch; not merged or deployed |
+| CP-07 Evidence & Quality Gate | Require canonical source/rights, C4 host attestation and C5 trace/output evidence before execution acceptance | Evidence dossier and independent verification disposition | C0–C3 evidence exists; C4/C5 gates are implemented but no named-host pilot has passed |
+| CP-08 Roadmap & Change Bridge | Emit transactional state-change events for governed synchronization and expose claim/ack/fail contracts | Outbox event and delivery receipt | Transactional outbox API implemented on feature branch; downstream sink adapters not provisioned |
+| CP-09 Governance & Observability | Persist actor/authority evidence, chained audit hashes, structured request logs, metrics, health state and recovery events | Audit chain, metrics and operational health record | Hash-chain ledger, JSON logs, Prometheus counters and health endpoints implemented on feature branch; no WORM, SIEM, alerting or production DR proof |
 
 Do not split these logical responsibilities into independent agents, services, or subskills until an observable bottleneck, repeated use case, clear interface, owner, and acceptance test justify the additional failure domains.
 
@@ -295,6 +295,14 @@ A future operational trace should record, at minimum:
 | State transitions, timestamps, failure and rollback references | Explain what happened and how it recovered |
 
 A future runtime must add least-privilege access control, redaction, retention limits, tenant isolation where applicable, tamper-evident audit storage, and explicit secret handling before processing sensitive production data.
+
+## 11. E4/E5 operational implementation baseline
+
+A modular-monolith operational kernel is being implemented under `services/hso-platform/` with PostgreSQL, FastAPI, a lease-based worker, REST/MCP transport, OIDC/API-key access, release/entitlement/installation records, transactional outbox, audit chain and health/metrics endpoints.
+
+The implementation remains pre-production and lives on a stacked feature branch. It does not declare host dispatch operational: the runtime adapter registry is empty; installation requests remain blocked until a target installer adapter exists; outbox delivery requires a trusted sink adapter; and C4/C5 evidence still requires a named host pilot and actual runtime read-back.
+
+See [E4/E5 Operational Platform](../docs/E4-E5-OPERATIONAL-PLATFORM.md) and the service runbook at `services/hso-platform/README.md`.
 
 ## 10. Progress measurement without misleading percentages
 
