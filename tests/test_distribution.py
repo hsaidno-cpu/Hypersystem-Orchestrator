@@ -82,5 +82,16 @@ class DistributionValidationTests(unittest.TestCase):
             self.assertEqual(adapter["runtime_execution_test"],"NOT_RUN")
 
 
+    def test_pre_remains_snapshot_only_until_source_and_rights_are_cleared(self):
+        registry = self.load(REGISTRY)
+        item = next(p for p in registry["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
+        self.assertEqual(item["distribution_status"], "snapshot_only")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertEqual(item["license_status"], "not_assessed")
+        self.assertIsNone(item["source_commit"])
+        self.assertIsNone(item["package_artifact"])
+        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
+        self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
+
 if __name__=="__main__":
     unittest.main()
