@@ -95,7 +95,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 - plugin-instructions/ — isolated instruction bundles or source pointers; snapshots do not become distributable source.
 - distribution/ — dry-run installation manifests and package selection examples.
 - contracts/ — registration, handoff, package, installation, entitlement and lock schemas.
-- architecture/ — system boundary, responsibility matrix, positioning, routing and integration topology.
+- architecture/ — system boundary, responsibility matrix, positioning, routing, integration topology and the ecosystem control-plane operating contract.
 - governance/ — contribution, authority, security, versioning, release and snapshot rules.
 - roadmap/ — progressive stages, source-repository onboarding backlog and evidence-based exit criteria.
 - tools/ — repository-local catalog/distribution validators and dry-run resolver.
@@ -123,13 +123,13 @@ Plugin Creator package versions, canonical Git source versions and embedded skil
 
 ## Source inventory
 
-Five official source repositories are pinned, two candidate/incomplete sources are tracked, thirteen plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
+Five official source repositories are pinned, two candidate/incomplete sources are tracked, fourteen plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
 
 ## Skill migration audit
 
 The date-bound, evidence-backed migration baseline is documented in [SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md](docs/SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md). It separates catalog coverage, canonical source onboarding, source-content parity, compatibility testing and distribution readiness. An indexed instruction is not proof of canonical source synchronization.
 
-## Architecture principles
+The ecosystem-level operating model, route arbitration, authority boundaries and execution gates are specified in [SUPER-ORCHESTRATOR-CONTROL-PLANE.md](architecture/SUPER-ORCHESTRATOR-CONTROL-PLANE.md). This is a design/control-plane contract, not a claim that a hosted runtime or automatic plugin dispatcher is deployed.\n\n## Architecture principles
 
 1. **Single source of truth:** plugin implementation stays in its own repository; the parent records exact source URL, branch, version and pinned commit.
 2. **One owner per concern:** each plugin retains a bounded responsibility; overlapping capabilities are resolved by explicit primary ownership and handoff contracts.
