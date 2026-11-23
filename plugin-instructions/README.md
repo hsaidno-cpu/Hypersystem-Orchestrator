@@ -51,3 +51,7 @@ The parent owns only the catalog, routing matrix, contracts, governance, integra
 ## Video Explainer version exception
 
 Video Explainer's current Plugin Creator release is 4.1.12; the public GitHub source submodule is pinned at 4.1.9 and marked as lagging. A 16-skill instruction-only snapshot from the exact current Plugin Creator release is stored in its dedicated plugin folder. This is not a complete package mirror.
+
+## Private package pointer policy
+
+For USER/PRIVATE Plugin Creator packages without a canonical Git source, the public parent may store a source pointer and concise skill metadata only. Keep full private instructions in the private package. Do not publish private instruction files, assets or support files to this repository without a separate publication decision and rights review.
