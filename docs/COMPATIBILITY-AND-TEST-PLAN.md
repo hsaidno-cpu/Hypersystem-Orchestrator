@@ -1,6 +1,6 @@
 # Plugin Compatibility and Progressive Test Plan
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Matrix:** catalog/compatibility-matrix.json  
 **Handoff schema:** contracts/plugin-handoff.schema.json  
 **Matrix schema:** contracts/plugin-compatibility.schema.json
@@ -44,12 +44,22 @@ These are interface definitions and routing constraints. They are not hard runti
 |---|---|---|---|
 | C0 — Identity | Producer/consumer exist, source/version identity is known | Plugin catalog and source registry | STATIC_VALIDATED by parent CI |
 | C1 — Routing | Positive/negative trigger and primary owner are correct | Routing contract and regression assertions | STATIC_VALIDATED by parent CI |
-| C2 — Schema | Real payload validates against the handoff JSON Schema | Valid/invalid fixture results | NOT_RUN |
-| C3 — Contract behavior | Producer artifact can be accepted or rejected by consumer using mock/fixture data | Test report, exact contract version and fixture | NOT_RUN |
+| C2 — Schema | Real payload validates against the handoff JSON Schema | 14 synthetic valid fixtures + negative schema cases; CI run #45149817422 | PASS — 14/14 |
+| C3 — Contract behavior | Producer artifact can be accepted or rejected by consumer using mock/fixture data | 14 mock receiver acceptances + negative producer/recipient/version/output cases; CI run #45149817422 | PASS — 14/14 (mock) |
 | C4 — Host activation | Named host, model/provider and release select the expected plugin route | Host/version test evidence | NOT_RUN |
 | C5 — Runtime | Actual end-to-end handoff/execution and artifact read-back | Trace, output artifact, timestamps and failure evidence | NOT_RUN |
 
 A static PASS must never be copied into C2–C5. NOT_RUN is a valid status.
+
+
+### Executed C2/C3 evidence — 23 November 2026
+
+- PR: [#8 — C2/C3 handoff assurance fixtures](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/8)
+- Tested commit: `3bd10b5f550a3ac6994a4c4fa792e62f7513fd25`
+- CI: [run #45149817422](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45149817422) — `completed/success`
+- Test suite: `Ran 33 tests — OK`; includes 14/14 schema-valid synthetic payloads, 14/14 mock receiver acceptances, and expected rejection tests for invalid/mismatched payloads.
+- Matrix disposition: `CONTRACT_TESTED`; `schema_contract_test=PASS`; `contract_behavior_test=PASS` for all 14 edges.
+- Boundary: this evidence is limited to JSON Schema and deterministic mock receiver behavior. No real producer/consumer plugin was invoked. C4 host activation and C5 runtime execution remain `NOT_RUN`.
 
 ## 4. Required test cases per edge
 
@@ -86,6 +96,6 @@ For every handoff:
 
 ## 6. Current compatibility status
 
-The parent CI validates the existence of each plugin identity, unique integration IDs, allowed producer/consumer relationships, owner fields and explicit test states. The current integration matrix marks schema-contract, host-activation and runtime-execution tests as NOT_RUN.
+The parent CI validates the existence of each plugin identity, unique integration IDs, allowed producer/consumer relationships, owner fields and explicit test states. C2 schema fixtures and C3 mock receiver behavior passed for all 14 edges on the exact PR #8 head. Host activation and runtime execution remain NOT_RUN.
 
 The next test implementation step is to add representative valid/invalid handoff fixtures for the highest-risk edges, beginning with PVEE→Video Explainer and Evaluator Team→SDO. Host testing follows only when a host supports distinct plugin dispatch and read-back evidence is available.

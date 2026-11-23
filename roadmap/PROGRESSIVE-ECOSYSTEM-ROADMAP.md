@@ -41,6 +41,10 @@ This roadmap is staged by evidence and dependencies, not by arbitrary calendar p
 
 **Objective:** Prove what can interoperate and where, without confusing static metadata with live capability.
 
+
+**Evidence checkpoint — 23 November 2026:** C2 schema validation and C3 mock receiver contract behavior have passed for all 14 declared edges in [PR #8](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/8), commit `3bd10b5f550a3ac6994a4c4fa792e62f7513fd25`, CI [run #45149817422](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45149817422). The matrix now records `CONTRACT_TESTED`. These are synthetic fixtures and mock receiver tests only. C4 named-host activation and C5 real runtime invocation remain `NOT_RUN`; E3 is therefore PARTIAL, not complete.
+
+
 **Work:**
 - static validation of manifests and package structure;
 - contract tests using fixtures and mocks;

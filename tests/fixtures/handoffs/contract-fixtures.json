@@ -1,0 +1,792 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Deterministic synthetic fixtures for C2 JSON Schema validation and C3 mocked receiver-contract behavior. These do not assert host activation or runtime execution.",
+  "matrix_revision": "2026-11-22",
+  "count": 14,
+  "fixtures": [
+    {
+      "fixture_id": "INT-ANALYZER-ASFREE-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-ANALYZER-ASFREE-001/v1",
+        "case_id": "case/INT-ANALYZER-ASFREE-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "skill-analyzer",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "asfree-canonical",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Method blueprint supports technical plugin anatomy; A.S.F.R.E.E retains technical case authority.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-ANALYZER-ASFREE-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "method_blueprint",
+        "acceptance_criteria": [
+          "Method blueprint supports technical plugin anatomy; A.S.F.R.E.E retains technical case authority.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-ASFREE-EVALUATOR-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-ASFREE-EVALUATOR-001/v1",
+        "case_id": "case/INT-ASFREE-EVALUATOR-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "asfree-canonical",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "evaluator-team",
+          "contract_version": "1.0.0"
+        },
+        "intent": "A.S.F.R.E.E transfers a traceable technical anatomy dossier; Evaluator Team owns independent quality judgement.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-ASFREE-EVALUATOR-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "independent_evaluation_dossier",
+        "acceptance_criteria": [
+          "A.S.F.R.E.E transfers a traceable technical anatomy dossier; Evaluator Team owns independent quality judgement.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-EVALUATOR-SDO-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-EVALUATOR-SDO-001/v1",
+        "case_id": "case/INT-EVALUATOR-SDO-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "evaluator-team",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "skill-developer-orchestrator",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Evaluator Team transfers accepted findings and acceptance criteria; SDO is the sole repository write owner.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-EVALUATOR-SDO-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "approved_change_package",
+        "acceptance_criteria": [
+          "Evaluator Team transfers accepted findings and acceptance criteria; SDO is the sole repository write owner.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-SDO-EVALUATOR-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-SDO-EVALUATOR-001/v1",
+        "case_id": "case/INT-SDO-EVALUATOR-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "skill-developer-orchestrator",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "evaluator-team",
+          "contract_version": "1.0.0"
+        },
+        "intent": "SDO returns implementation/regression evidence; Evaluator Team independently retests and may reject.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-SDO-EVALUATOR-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "independent_retest_disposition",
+        "acceptance_criteria": [
+          "SDO returns implementation/regression evidence; Evaluator Team independently retests and may reject.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-FINDER-ANATOMI-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-FINDER-ANATOMI-001/v1",
+        "case_id": "case/INT-FINDER-ANATOMI-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "ai-prompt-finder-creator",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "anatomi-prompt-v3-octa-prompt",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Finder reconstructs a prompt from content; Anatomi owns optional eight-pillar structural hardening.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-FINDER-ANATOMI-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "eight_pillar_prompt_specification",
+        "acceptance_criteria": [
+          "Finder reconstructs a prompt from content; Anatomi owns optional eight-pillar structural hardening.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-ANATOMI-SDO-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-ANATOMI-SDO-001/v1",
+        "case_id": "case/INT-ANATOMI-SDO-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "anatomi-prompt-v3-octa-prompt",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "skill-developer-orchestrator",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Anatomi owns prompt architecture; SDO owns package/source implementation and release lifecycle.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-ANATOMI-SDO-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "skill_instruction_change_package",
+        "acceptance_criteria": [
+          "Anatomi owns prompt architecture; SDO owns package/source implementation and release lifecycle.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-PHOTO-RESTORE-ROUTE-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-PHOTO-RESTORE-ROUTE-001/v1",
+        "case_id": "case/INT-PHOTO-RESTORE-ROUTE-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "photo-fixer",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "master-photo-restoration",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Old, aged, damaged or archival restoration routes directly to Master Photo Restoration; routine editing stays with Photo Fixer.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-PHOTO-RESTORE-ROUTE-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "restoration_case_intake",
+        "acceptance_criteria": [
+          "Old, aged, damaged or archival restoration routes directly to Master Photo Restoration; routine editing stays with Photo Fixer.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-GODEX-MOTION-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-GODEX-MOTION-001/v1",
+        "case_id": "case/INT-GODEX-MOTION-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "godex-motion-audio",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "motion-graphic-arifanara-v-01",
+          "contract_version": "1.0.0"
+        },
+        "intent": "GODEX owns audio source/timing truth; Motion Graphic owns visual beats, storyboard and choreography.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-GODEX-MOTION-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "visual_audio_sync_contract",
+        "acceptance_criteria": [
+          "GODEX owns audio source/timing truth; Motion Graphic owns visual beats, storyboard and choreography.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-GODEX-VIDEO-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-GODEX-VIDEO-001/v1",
+        "case_id": "case/INT-GODEX-VIDEO-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "godex-motion-audio",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "video-explainer-promkes-v4-1-12",
+          "contract_version": "1.0.0"
+        },
+        "intent": "GODEX supplies verified audio/VO/timing assets; Video Explainer integrates them into Promkes production.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-GODEX-VIDEO-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "promkes_audio_production_package",
+        "acceptance_criteria": [
+          "GODEX supplies verified audio/VO/timing assets; Video Explainer integrates them into Promkes production.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-PVEE-VIDEO-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-PVEE-VIDEO-001/v1",
+        "case_id": "case/INT-PVEE-VIDEO-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "pvee-promkes-super-orchestrator",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "video-explainer-promkes-v4-1-12",
+          "contract_version": "1.0.0"
+        },
+        "intent": "PVEE owns health truth, Fact Lock and approved campaign brief; Video Explainer owns technical scene/renderer production.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-PVEE-VIDEO-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "fact_locked_promkes_production_brief",
+        "acceptance_criteria": [
+          "PVEE owns health truth, Fact Lock and approved campaign brief; Video Explainer owns technical scene/renderer production.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-MOTION-VIDEO-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-MOTION-VIDEO-001/v1",
+        "case_id": "case/INT-MOTION-VIDEO-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "motion-graphic-arifanara-v-01",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "video-explainer-promkes-v4-1-12",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Motion Graphic supplies distinct visual-art-direction support; Video Explainer integrates it under PVEE health constraints.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-MOTION-VIDEO-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "promkes_visual_support_package",
+        "acceptance_criteria": [
+          "Motion Graphic supplies distinct visual-art-direction support; Video Explainer integrates it under PVEE health constraints.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-VIDEO-PVEE-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-VIDEO-PVEE-001/v1",
+        "case_id": "case/INT-VIDEO-PVEE-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "video-explainer-promkes-v4-1-12",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "pvee-promkes-super-orchestrator",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Video Explainer owns technical production QA; PVEE owns health communication safety and outcome interpretation.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-VIDEO-PVEE-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "promkes_production_assurance_packet",
+        "acceptance_criteria": [
+          "Video Explainer owns technical production QA; PVEE owns health communication safety and outcome interpretation.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-JAILBREAK-AGENT-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-JAILBREAK-AGENT-001/v1",
+        "case_id": "case/INT-JAILBREAK-AGENT-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "agent-jailbreak-skill-ds",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "plugin-agent-orchestrator",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Defensive security review transfers requirements into the agent lifecycle; security judgement remains independent.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-JAILBREAK-AGENT-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "agent_security_requirements",
+        "acceptance_criteria": [
+          "Defensive security review transfers requirements into the agent lifecycle; security judgement remains independent.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    },
+    {
+      "fixture_id": "INT-WORKFLOW-AGENT-001",
+      "contract_version": "1.0.0",
+      "payload": {
+        "handoff_id": "fixture/INT-WORKFLOW-AGENT-001/v1",
+        "case_id": "case/INT-WORKFLOW-AGENT-001/synthetic",
+        "source_plugin": {
+          "plugin_key": "workflow-systems-orchestrator",
+          "version_or_commit": "fixture-source@0.1.0"
+        },
+        "recipient_plugin": {
+          "plugin_key": "plugin-agent-orchestrator",
+          "contract_version": "1.0.0"
+        },
+        "intent": "Workflow Systems owns reusable workflow design; Plugin Agent Orchestrator owns agent runtime/product lifecycle.",
+        "scope": [
+          "Synthetic C2/C3 contract assurance only"
+        ],
+        "non_goals": [
+          "No real plugin invocation",
+          "No host activation or runtime proof"
+        ],
+        "inputs": [
+          {
+            "locator": "fixture://INT-WORKFLOW-AGENT-001",
+            "provenance": "tests/fixtures/handoffs/contract-fixtures.json",
+            "sensitivity": "synthetic"
+          }
+        ],
+        "findings": [
+          {
+            "id": "SYNTH-001",
+            "status": "OBSERVED",
+            "summary": "Synthetic fixture generated from the compatibility matrix."
+          }
+        ],
+        "epistemic_status": [
+          "OBSERVED"
+        ],
+        "capability_status": "READY_WITH_LIMITATIONS",
+        "authority": {
+          "level": "TEST_FIXTURE_ONLY"
+        },
+        "dependencies": [],
+        "expected_output": "agent_workflow_architecture_package",
+        "acceptance_criteria": [
+          "Workflow Systems owns reusable workflow design; Plugin Agent Orchestrator owns agent runtime/product lifecycle.",
+          "No plugin receives authority outside its declared responsibility.",
+          "The handoff preserves source/version/provenance and does not imply runtime execution."
+        ],
+        "risk_and_unknowns": [
+          "Fixture validation does not prove producer/consumer runtime behavior."
+        ],
+        "completion_status": "READY_FOR_HANDOFF"
+      }
+    }
+  ]
+}
