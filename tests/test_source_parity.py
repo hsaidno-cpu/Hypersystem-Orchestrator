@@ -49,5 +49,13 @@ class SourceParityAuditTests(unittest.TestCase):
         self.assertEqual(item["platform_package_version"], "4.1.12")
         self.assertIn("no SKILL.md", item["source_instruction_parity_note"])
 
+    def test_pre_has_no_git_source_or_instruction_parity_baseline(self):
+        item = self.plugins["progressive-roadmap-evaluator"]
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertIsNone(item["source_repository_id"])
+        self.assertEqual(item["source_instruction_parity_status"], "NOT_COMPARED")
+        self.assertEqual(item["platform_package_version"], "0.1.1")
+        self.assertIn("no canonical Git source", item["version_evidence"].lower())
+
 if __name__ == "__main__":
     unittest.main()
