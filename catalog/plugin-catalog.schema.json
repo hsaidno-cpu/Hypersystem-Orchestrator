@@ -47,7 +47,20 @@
           "instruction_snapshot_path",
           "instruction_skill_count",
           "instruction_capture_date",
-          "instruction_source_authority"
+          "instruction_source_authority",
+          "platform_package_version",
+          "platform_current_release_id",
+          "platform_scope",
+          "platform_discoverability",
+          "platform_source_authority",
+          "version_alignment_state",
+          "repository_version",
+          "version_alignment_note",
+          "version_authority",
+          "version_reconciliation_status",
+          "source_sync_status",
+          "source_instruction_parity_status",
+          "source_instruction_parity_note"
         ],
         "properties": {
           "plugin_key": {
@@ -178,7 +191,8 @@
               "SOURCE_VERIFIED_IN_SYNC",
               "NO_CONFLICT",
               "NOT_VERIFIED",
-              "DEPLOYED_RELEASE_VERIFIED_SOURCE_BEHIND"
+              "DEPLOYED_RELEASE_VERIFIED_SOURCE_BEHIND",
+              "SOURCE_VERIFIED_PLATFORM_BEHIND"
             ]
           },
           "source_repository_version": {
@@ -197,6 +211,59 @@
             "type": "string"
           },
           "source_sync_status": {
+            "type": "string"
+          },
+          "platform_package_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform_current_release_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "platform_scope": {
+            "type": "string"
+          },
+          "platform_discoverability": {
+            "type": "string"
+          },
+          "platform_source_authority": {
+            "type": "string"
+          },
+          "version_alignment_state": {
+            "enum": [
+              "SOURCE_AND_PLATFORM_MATCH",
+              "SOURCE_AHEAD_OF_PLATFORM",
+              "DEPLOYMENT_AHEAD_OF_SOURCE",
+              "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
+              "CANDIDATE_SOURCE_INCOMPLETE",
+              "LEGACY_REDIRECT_VERSION"
+            ]
+          },
+          "repository_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version_alignment_note": {
+            "type": "string"
+          },
+          "version_authority": {
+            "enum": [
+              "SOURCE_MANIFEST_AND_PLUGIN_CREATOR_RELEASE_COMPARISON",
+              "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY"
+            ]
+          },
+          "source_instruction_parity_status": {
+            "enum": [
+              "MATCH",
+              "DRIFT_DETECTED",
+              "NOT_COMPARED",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "source_instruction_parity_note": {
             "type": "string"
           }
         }

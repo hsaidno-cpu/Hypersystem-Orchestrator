@@ -10,7 +10,8 @@ Each plugin has its own directory under plugin-instructions. The bundle contains
 
 - Source-backed official plugins: point to their independent Git submodule/source repository.
 - Not-identified plugins: store a complete installed-skill instruction snapshot, with source URI for each skill.
-- Photo Fixer: snapshot available, but its GitHub repository remains an incomplete candidate.
+- Photo Fixer and PVEE: separate snapshots available, but their explicitly referenced GitHub repositories remain CANDIDATE_INCOMPLETE until complete manifests, skill trees and tests are restored.
+- SDO: official public source is pinned at promkespkmbinuang-coder/SPDO commit 9d3c4bc09179ff857df4f3819be83e1847571add; the parent also retains the Plugin Creator instruction snapshot, which must be compared for drift.
 - A.S.F.R.E.E Legacy: redirect-only snapshot linked to A.S.F.R.E.E Canonical.
 
 ## 3. Synchronization contract
@@ -44,9 +45,9 @@ The parent catalog/positioning controls cross-plugin ownership and handoff expec
 
 ## 6. Current completeness declaration
 
-The index contains 238 skill records across 20 plugin identities:
-- 203 skill documents are stored as segregated runtime instruction bundles for the 16 packages without verified official source submodules;
-- 34 skill records refer to the three source-backed plugin packages whose canonical sources are in submodules;
+The index contains 238 skill records across 20 plugin identities. Five official plugin source repositories are pinned; the SDO runtime snapshot is now accompanied by a verified canonical source pointer:
+- Runtime instruction snapshots remain segregated for 12 NOT_IDENTIFIED packages and two CANDIDATE_INCOMPLETE packages. Video Explainer and SDO keep separate Plugin Creator snapshots with official Git submodules;
+- Source-backed plugin packages are represented by their independent submodules/source pointers (SKILL ANALYZER, A.S.F.R.E.E, Anatomi Prompt, Video Explainer and SDO);
 - 1 skill document represents the A.S.F.R.E.E Legacy redirect.
 
 This is a complete snapshot of the skill definitions visible to the current connected registry at capture time, not proof that hidden, inaccessible, unpublished or future package files are included.
@@ -55,3 +56,20 @@ This is a complete snapshot of the skill definitions visible to the current conn
 ## Video Explainer current release exception
 
 The Video Explainer instruction bundle is captured from current Plugin Creator release 4.1.12 (release ID pluginrel_6b02a0f630208191b71ad994703aed68). Scope USER and discoverability PRIVATE. At the owner's explicit request, the parent contains only 16 SKILL.md instruction files, not binary assets or unrelated package files. The public GitHub source is pinned at 4.1.9; source/deployment parity is not claimed.
+
+
+## Additional source reconciliation
+
+- SDO source repository: promkespkmbinuang-coder/SPDO, commit 9d3c4bc09179ff857df4f3819be83e1847571add, source version 0.1.0, Apache-2.0, signature-verified. Its runtime snapshot remains for current Plugin Creator read-back; canonical source is the independent Git submodule. Compare content hashes before declaring exact instruction parity.
+- PVEE declared source pointer: promkespkmbinuang-coder/CL-VAEPPC, observed commit 1ab0c41081ccdbb91cc9dec0a2864acd0de00d54. It is registered as CANDIDATE_INCOMPLETE because the current tree does not contain a package manifest or skill source tree.
+- Counts: five official source submodules, two incomplete source candidates, twelve NOT_IDENTIFIED plugin sources, one legacy redirect and 238 skill records across 20 plugin identities.
+
+
+## SDO source/snapshot drift (2026-11-22)
+
+SDO is an official source submodule, but the canonical Git master SKILL.md and the current Plugin Creator master SKILL.md differ in content and length (10,573 vs 23,651 characters). Package manifests both report 0.1.0. This is version metadata match with instruction-content drift, not full source parity.
+
+- Keep the Plugin Creator snapshot and Git source submodule as separate evidence.
+- Do not overwrite either file automatically.
+- Have the SDO source owner review the semantic diff, decide the canonical body, update changelog/package version if required, and verify read-back before changing source_instruction_parity_status to MATCH.
+- Until then, source_sync_status remains SOURCE_INSTRUCTION_DRIFT_DETECTED.

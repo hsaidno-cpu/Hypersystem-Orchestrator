@@ -1,0 +1,407 @@
+{
+  "schema_version": "1.0.0",
+  "matrix_revision": "2026-11-22",
+  "contract_schema": "contracts/plugin-handoff.schema.json",
+  "integration_count": 14,
+  "status_semantics": {
+    "INTERFACE_DEFINED_NOT_EXECUTED": "Handoff intent and ownership are documented, but no runtime dispatch has been observed.",
+    "STATIC_ROUTING_TESTED": "Central registry, positive/negative route and ownership assertions passed in repository CI.",
+    "SCHEMA_CONTRACT_TESTED": "A concrete payload fixture was validated against the versioned handoff JSON Schema.",
+    "HOST_ACTIVATION_TESTED": "Routing was tested on a named host and version.",
+    "RUNTIME_VERIFIED": "A real end-to-end invocation and returned artifact were observed and evidenced."
+  },
+  "integrations": [
+    {
+      "integration_id": "INT-ANALYZER-ASFREE-001",
+      "producer_plugin": "skill-analyzer",
+      "consumer_plugin": "asfree-canonical",
+      "handoff_type": "SOFT_HANDOFF",
+      "purpose": "Method blueprint supports technical plugin anatomy; A.S.F.R.E.E retains technical case authority.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "method_blueprint",
+      "producer_artifact_owner": "skill-analyzer",
+      "consumer_artifact_owner": "asfree-canonical",
+      "canonical_truth_owner": "asfree-canonical",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Method blueprint supports technical plugin anatomy; A.S.F.R.E.E retains technical case authority.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-ASFREE-EVALUATOR-001",
+      "producer_plugin": "asfree-canonical",
+      "consumer_plugin": "evaluator-team",
+      "handoff_type": "SOFT_HANDOFF",
+      "purpose": "A.S.F.R.E.E transfers a traceable technical anatomy dossier; Evaluator Team owns independent quality judgement.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "independent_evaluation_dossier",
+      "producer_artifact_owner": "asfree-canonical",
+      "consumer_artifact_owner": "evaluator-team",
+      "canonical_truth_owner": "evaluator-team",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "A.S.F.R.E.E transfers a traceable technical anatomy dossier; Evaluator Team owns independent quality judgement.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-EVALUATOR-SDO-001",
+      "producer_plugin": "evaluator-team",
+      "consumer_plugin": "skill-developer-orchestrator",
+      "handoff_type": "CONTROLLED_IMPLEMENTATION_HANDOFF",
+      "purpose": "Evaluator Team transfers accepted findings and acceptance criteria; SDO is the sole repository write owner.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "approved_change_package",
+      "producer_artifact_owner": "evaluator-team",
+      "consumer_artifact_owner": "skill-developer-orchestrator",
+      "canonical_truth_owner": "skill-developer-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Evaluator Team transfers accepted findings and acceptance criteria; SDO is the sole repository write owner.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-SDO-EVALUATOR-001",
+      "producer_plugin": "skill-developer-orchestrator",
+      "consumer_plugin": "evaluator-team",
+      "handoff_type": "INDEPENDENT_RETEST_HANDOFF",
+      "purpose": "SDO returns implementation/regression evidence; Evaluator Team independently retests and may reject.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "independent_retest_disposition",
+      "producer_artifact_owner": "skill-developer-orchestrator",
+      "consumer_artifact_owner": "evaluator-team",
+      "canonical_truth_owner": "evaluator-team",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "SDO returns implementation/regression evidence; Evaluator Team independently retests and may reject.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-FINDER-ANATOMI-001",
+      "producer_plugin": "ai-prompt-finder-creator",
+      "consumer_plugin": "anatomi-prompt-v3-octa-prompt",
+      "handoff_type": "SOFT_HANDOFF",
+      "purpose": "Finder reconstructs a prompt from content; Anatomi owns optional eight-pillar structural hardening.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "eight_pillar_prompt_specification",
+      "producer_artifact_owner": "ai-prompt-finder-creator",
+      "consumer_artifact_owner": "anatomi-prompt-v3-octa-prompt",
+      "canonical_truth_owner": "anatomi-prompt-v3-octa-prompt",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Finder reconstructs a prompt from content; Anatomi owns optional eight-pillar structural hardening.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-ANATOMI-SDO-001",
+      "producer_plugin": "anatomi-prompt-v3-octa-prompt",
+      "consumer_plugin": "skill-developer-orchestrator",
+      "handoff_type": "CONTROLLED_IMPLEMENTATION_HANDOFF",
+      "purpose": "Anatomi owns prompt architecture; SDO owns package/source implementation and release lifecycle.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "skill_instruction_change_package",
+      "producer_artifact_owner": "anatomi-prompt-v3-octa-prompt",
+      "consumer_artifact_owner": "skill-developer-orchestrator",
+      "canonical_truth_owner": "skill-developer-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Anatomi owns prompt architecture; SDO owns package/source implementation and release lifecycle.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-PHOTO-RESTORE-ROUTE-001",
+      "producer_plugin": "photo-fixer",
+      "consumer_plugin": "master-photo-restoration",
+      "handoff_type": "ROUTING_OVERRIDE",
+      "purpose": "Old, aged, damaged or archival restoration routes directly to Master Photo Restoration; routine editing stays with Photo Fixer.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "restoration_case_intake",
+      "producer_artifact_owner": "photo-fixer",
+      "consumer_artifact_owner": "master-photo-restoration",
+      "canonical_truth_owner": "master-photo-restoration",
+      "contract_version": "1.0.0",
+      "dependency": "ROUTING_ONLY",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Old, aged, damaged or archival restoration routes directly to Master Photo Restoration; routine editing stays with Photo Fixer.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-GODEX-MOTION-001",
+      "producer_plugin": "godex-motion-audio",
+      "consumer_plugin": "motion-graphic-arifanara-v-01",
+      "handoff_type": "SOFT_HANDOFF",
+      "purpose": "GODEX owns audio source/timing truth; Motion Graphic owns visual beats, storyboard and choreography.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "visual_audio_sync_contract",
+      "producer_artifact_owner": "godex-motion-audio",
+      "consumer_artifact_owner": "motion-graphic-arifanara-v-01",
+      "canonical_truth_owner": "godex-motion-audio",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "GODEX owns audio source/timing truth; Motion Graphic owns visual beats, storyboard and choreography.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-GODEX-VIDEO-001",
+      "producer_plugin": "godex-motion-audio",
+      "consumer_plugin": "video-explainer-promkes-v4-1-12",
+      "handoff_type": "SOFT_HANDOFF",
+      "purpose": "GODEX supplies verified audio/VO/timing assets; Video Explainer integrates them into Promkes production.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "promkes_audio_production_package",
+      "producer_artifact_owner": "godex-motion-audio",
+      "consumer_artifact_owner": "video-explainer-promkes-v4-1-12",
+      "canonical_truth_owner": "godex-motion-audio",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "GODEX supplies verified audio/VO/timing assets; Video Explainer integrates them into Promkes production.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-PVEE-VIDEO-001",
+      "producer_plugin": "pvee-promkes-super-orchestrator",
+      "consumer_plugin": "video-explainer-promkes-v4-1-12",
+      "handoff_type": "DOMAIN_TO_PRODUCTION_HANDOFF",
+      "purpose": "PVEE owns health truth, Fact Lock and approved campaign brief; Video Explainer owns technical scene/renderer production.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "fact_locked_promkes_production_brief",
+      "producer_artifact_owner": "pvee-promkes-super-orchestrator",
+      "consumer_artifact_owner": "video-explainer-promkes-v4-1-12",
+      "canonical_truth_owner": "pvee-promkes-super-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "DOMAIN_GATE",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "PVEE owns health truth, Fact Lock and approved campaign brief; Video Explainer owns technical scene/renderer production.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-MOTION-VIDEO-001",
+      "producer_plugin": "motion-graphic-arifanara-v-01",
+      "consumer_plugin": "video-explainer-promkes-v4-1-12",
+      "handoff_type": "OPTIONAL_VISUAL_HANDOFF",
+      "purpose": "Motion Graphic supplies distinct visual-art-direction support; Video Explainer integrates it under PVEE health constraints.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "promkes_visual_support_package",
+      "producer_artifact_owner": "motion-graphic-arifanara-v-01",
+      "consumer_artifact_owner": "video-explainer-promkes-v4-1-12",
+      "canonical_truth_owner": "pvee-promkes-super-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Motion Graphic supplies distinct visual-art-direction support; Video Explainer integrates it under PVEE health constraints.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-VIDEO-PVEE-001",
+      "producer_plugin": "video-explainer-promkes-v4-1-12",
+      "consumer_plugin": "pvee-promkes-super-orchestrator",
+      "handoff_type": "ASSURANCE_AND_LEARNING_HANDOFF",
+      "purpose": "Video Explainer owns technical production QA; PVEE owns health communication safety and outcome interpretation.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "promkes_production_assurance_packet",
+      "producer_artifact_owner": "video-explainer-promkes-v4-1-12",
+      "consumer_artifact_owner": "pvee-promkes-super-orchestrator",
+      "canonical_truth_owner": "pvee-promkes-super-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Video Explainer owns technical production QA; PVEE owns health communication safety and outcome interpretation.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-JAILBREAK-AGENT-001",
+      "producer_plugin": "agent-jailbreak-skill-ds",
+      "consumer_plugin": "plugin-agent-orchestrator",
+      "handoff_type": "SECURITY_CONTROL_HANDOFF",
+      "purpose": "Defensive security review transfers requirements into the agent lifecycle; security judgement remains independent.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "agent_security_requirements",
+      "producer_artifact_owner": "agent-jailbreak-skill-ds",
+      "consumer_artifact_owner": "plugin-agent-orchestrator",
+      "canonical_truth_owner": "agent-jailbreak-skill-ds",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Defensive security review transfers requirements into the agent lifecycle; security judgement remains independent.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    },
+    {
+      "integration_id": "INT-WORKFLOW-AGENT-001",
+      "producer_plugin": "workflow-systems-orchestrator",
+      "consumer_plugin": "plugin-agent-orchestrator",
+      "handoff_type": "ARCHITECTURE_HANDOFF",
+      "purpose": "Workflow Systems owns reusable workflow design; Plugin Agent Orchestrator owns agent runtime/product lifecycle.",
+      "input_artifacts": [
+        "source_artifact_provenance",
+        "scope_and_constraints",
+        "version_and_evidence_context"
+      ],
+      "output_artifact": "agent_workflow_architecture_package",
+      "producer_artifact_owner": "workflow-systems-orchestrator",
+      "consumer_artifact_owner": "plugin-agent-orchestrator",
+      "canonical_truth_owner": "plugin-agent-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Workflow Systems owns reusable workflow design; Plugin Agent Orchestrator owns agent runtime/product lifecycle.",
+        "No plugin receives authority outside its declared responsibility.",
+        "The handoff preserves source/version/provenance and does not imply runtime execution."
+      ]
+    }
+  ]
+}

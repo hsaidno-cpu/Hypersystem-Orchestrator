@@ -64,3 +64,12 @@ The parent contains the 16 current SKILL.md instruction files from Plugin Creato
 - A.S.F.R.E.E Legacy 1.0.4 belongs to the redirect shell only.
 - Master Photo Restoration preset v3.0 is a preset label, not proof of package version 3.0.0.
 - Other package release versions remain unknown until authoritative evidence is available.
+
+
+## Additional source-vs-deployment reconciliation (2026-11-22)
+
+The version matrix also records two source-ahead cases:
+- SKILL ANALYZER: canonical Git source 1.3.0 vs Plugin Creator package metadata 1.0.0. Parent source baseline is 1.3.0; platform republishing remains separate.
+- A.S.F.R.E.E Canonical: Git source 0.5.0-rc.1 vs Plugin Creator package 0.3.2. The higher source is a release candidate, not a stable release.
+
+The source/deployment gap is not resolved by changing version strings. Package files, tests, license, manifest and Plugin Creator read-back must match before declaring deployment synchronization complete. See [PACKAGE-VERSION-MATRIX.md](PACKAGE-VERSION-MATRIX.md).

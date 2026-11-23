@@ -118,6 +118,45 @@
       "plugin_creator_visibility": "PRIVATE",
       "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
       "notes": "Current Plugin Creator deployment is 4.1.12 while public GitHub source is 4.1.9. Pinned as official source but explicitly marked behind. Parent contains only the 16 current SKILL.md instructions at owner's request; binaries and unrelated assets are excluded."
+    },
+    {
+      "repository_id": "skill-developer-orchestrator",
+      "full_name": "promkespkmbinuang-coder/SPDO",
+      "url": "https://github.com/promkespkmbinuang-coder/SPDO",
+      "visibility": "public",
+      "default_branch": "main",
+      "role": "plugin_source",
+      "status": "integrated_submodule",
+      "pinned_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
+      "submodule_path": "plugins/skill-developer-orchestrator",
+      "commit_signature_verified": true,
+      "commit_tree_sha": "9783998995a2b868575b0938372da24833ccd9df",
+      "verified_artifact": "README.md, plugin.json, skills/skill-developer-orchestrator/SKILL.md, three reference files and tests/acceptance-cases.json inspected. README/package identity and version match current Plugin Creator SDO 0.1.0. Commit signature verified.",
+      "source_classification": "OFFICIAL_PUBLIC_SOURCE",
+      "license_status": "APACHE-2.0",
+      "package_version": "0.1.0",
+      "package_version_evidence": [
+        "plugin.json",
+        "README.md"
+      ],
+      "plugin_creator_id": "Plugin_a5294996e38c8191b8e20b2d9f61447a",
+      "plugin_creator_current_release_id": "pluginrel_6afdee10a5688191ad8fc37a9d0d827b",
+      "source_version_status": "MATCHES_PLUGIN_CREATOR_PACKAGE"
+    },
+    {
+      "repository_id": "pvee-promkes-candidate",
+      "full_name": "promkespkmbinuang-coder/CL-VAEPPC",
+      "url": "https://github.com/promkespkmbinuang-coder/CL-VAEPPC",
+      "visibility": "public",
+      "default_branch": "main",
+      "role": "candidate_plugin_source",
+      "status": "candidate_not_integrated",
+      "last_observed_commit": "1ab0c41081ccdbb91cc9dec0a2864acd0de00d54",
+      "last_commit_signature_verified": true,
+      "verified_artifact": "Current Plugin Creator manifest explicitly points to this repository. Repository README describes a legacy Promkes Video Explainer Engine V3.0 line; LICENSE is Apache-2.0. At inspected main commit recursive tree has only README.md, LICENSE and a one-byte empty .claude-plugin marker; no manifest, skills, references, scripts or tests.",
+      "source_classification": "CANDIDATE_INCOMPLETE",
+      "license_status": "APACHE-2.0",
+      "candidate_reason": "Source provenance pointer exists, but repository content is incomplete and does not contain the current PVEE 2.0.2 package. No Git source version can be asserted and no submodule is created."
     }
   ],
   "search_scope": {
@@ -132,7 +171,7 @@
       "Photo-Fixer",
       "anatomi-prompt-strategis"
     ],
-    "result": "No additional official source repository was verified for the 15 plugins listed as NOT_IDENTIFIED.",
+    "result": "Five official plugin source repositories are now verified and pinned. Twelve plugin identities remain NOT_IDENTIFIED at GitHub-source level. Two explicitly referenced repositories remain CANDIDATE_INCOMPLETE: Photo-Fixer (minimal README/LICENSE only) and PVEE's CL-VAEPPC pointer (legacy README/LICENSE/empty marker only). A.S.F.R.E.E Legacy is redirect-only. Similar-name repositories and upstream datasets are not promoted to canonical source without matching provenance and a complete source tree.",
     "classification_rule": "A name-similar repository, search result owned by another account, prototype or mirror is not accepted as canonical without identity, provenance, manifest, license and source-history evidence.",
     "external_official_source_repositories": [
       {
@@ -142,6 +181,50 @@
         "source_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
         "source_version": "4.1.9",
         "deployed_plugin_creator_version": "4.1.12"
+      },
+      {
+        "repository_id": "skill-developer-orchestrator",
+        "full_name": "promkespkmbinuang-coder/SPDO",
+        "identity_evidence": "The source README identifies SKILL DEVELOPER ORCHESTRATOR; plugin.json name/version/description match the current Plugin Creator package and version 0.1.0; source tree contains master SKILL.md, references, acceptance cases and Apache-2.0 LICENSE.",
+        "source_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
+        "source_version": "0.1.0",
+        "deployed_plugin_creator_version": "0.1.0",
+        "license": "Apache-2.0",
+        "commit_signature_verified": true
+      }
+    ],
+    "verified_plugin_source_repositories": 5,
+    "not_identified_plugin_sources": 12,
+    "candidate_incomplete_plugin_sources": 2,
+    "external_source_candidates": [
+      {
+        "repository_id": "pvee-promkes-candidate",
+        "full_name": "promkespkmbinuang-coder/CL-VAEPPC",
+        "identity_evidence": "Explicit repository/homepage pointer in current PVEE Plugin Creator manifest.",
+        "observed_commit": "1ab0c41081ccdbb91cc9dec0a2864acd0de00d54",
+        "classification": "CANDIDATE_INCOMPLETE",
+        "reason": "Root tree has README.md, Apache-2.0 LICENSE and empty .claude-plugin marker only. No plugin manifest or skill source tree."
+      },
+      {
+        "repository_id": "photo-fixer-candidate",
+        "full_name": "hsaidno-cpu/Photo-Fixer",
+        "classification": "CANDIDATE_INCOMPLETE",
+        "reason": "Plugin Creator manifest points to repository, but root only has README.md and Apache-2.0 LICENSE; no source tree, manifest or tests."
+      }
+    ],
+    "related_upstream_sources": [
+      {
+        "source": "alirezarezvani/claude-skills",
+        "related_plugin": "agent-skills-atlas",
+        "relationship": "RELATED_UPSTREAM_DATASET",
+        "evidence": "Agent Skills Atlas 0.3.1 README/plugin manifest pins this repository as upstream skill inventory data at commit f8593c4941210a621a6629ce1da9e07897976d5f (package v2.14.14). It is not the canonical source repository for the Agent Skills Atlas plugin itself."
+      }
+    ],
+    "unaccepted_name_matches": [
+      {
+        "full_name": "promkespkmbinuang-coder/CL2-VAEPPC",
+        "classification": "UNVERIFIED_PLACEHOLDER",
+        "evidence": "Repository tree contains only README.md with title CL2-VAEPPC and LICENSE; no plugin identity, manifest, skill source or explicit current-package provenance. Not accepted as canonical or prototype."
       }
     ]
   }

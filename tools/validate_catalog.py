@@ -126,6 +126,31 @@ def validate():
             fail(f"{key}: canonical redirect must use LEGACY_REDIRECT classification")
         if state == "integrated_submodule" and not plugin.get("source_classification", "").startswith("OFFICIAL_"):
             fail(f"{key}: integrated submodule must use an OFFICIAL source classification")
+        for platform_field in ["platform_package_version", "platform_current_release_id", "platform_scope", "platform_discoverability", "platform_source_authority", "version_alignment_state", "repository_version", "version_alignment_note", "version_authority", "version_reconciliation_status", "source_sync_status"]:
+            if platform_field not in plugin:
+                fail(f"{key}: missing version-plane field '{platform_field}'")
+        if not re.fullmatch(r"pluginrel_[A-Za-z0-9]+", plugin["platform_current_release_id"]):
+            fail(f"{key}: invalid Plugin Creator release ID")
+        if plugin["platform_scope"] != "USER" or plugin["platform_discoverability"] != "PRIVATE":
+            fail(f"{key}: Plugin Creator scope/discoverability metadata drift")
+        alignment = plugin["version_alignment_state"]
+        if alignment in {"SOURCE_AHEAD_OF_PLATFORM", "SOURCE_AND_PLATFORM_MATCH", "DEPLOYMENT_AHEAD_OF_SOURCE"} and not plugin.get("repository_version"):
+            fail(f"{key}: source-backed version alignment requires repository_version")
+        if alignment == "SOURCE_AND_PLATFORM_MATCH" and plugin["repository_version"] != plugin["platform_package_version"]:
+            fail(f"{key}: SOURCE_AND_PLATFORM_MATCH versions do not match")
+        if alignment == "SOURCE_AHEAD_OF_PLATFORM" and plugin["repository_version"] == plugin["platform_package_version"]:
+            fail(f"{key}: SOURCE_AHEAD_OF_PLATFORM must contain differing versions")
+        if alignment == "DEPLOYMENT_AHEAD_OF_SOURCE" and plugin["repository_version"] == plugin["platform_package_version"]:
+            fail(f"{key}: DEPLOYMENT_AHEAD_OF_SOURCE must contain differing versions")
+        parity = plugin.get("source_instruction_parity_status")
+        if parity not in {"MATCH", "DRIFT_DETECTED", "NOT_COMPARED", "NOT_APPLICABLE"}:
+            fail(f"{key}: invalid source_instruction_parity_status")
+        if not plugin.get("source_instruction_parity_note"):
+            fail(f"{key}: source_instruction_parity_note is required")
+        if parity == "DRIFT_DETECTED" and plugin.get("source_sync_status") != "SOURCE_INSTRUCTION_DRIFT_DETECTED":
+            fail(f"{key}: instruction drift must remain explicitly open")
+        if parity == "MATCH" and plugin.get("source_sync_status") == "SOURCE_INSTRUCTION_DRIFT_DETECTED":
+            fail(f"{key}: matching instruction state conflicts with drift status")
         for related in plugin.get("related_plugins", []):
             if related not in plugin_key_set:
                 fail(f"{key}: unknown related plugin '{related}'")
@@ -143,8 +168,8 @@ def validate():
                 fail(f"{repo['repository_id']}: .gitmodules URL does not match catalog URL")
             if not re.fullmatch(r"[0-9a-f]{40}", repo.get("pinned_commit", "")):
                 fail(f"{repo['repository_id']}: pinned_commit must be a 40-character SHA")
-    if len(submodules) != 4:
-        fail(f"Expected 4 verified source submodules at this stage, found {len(submodules)}")
+    if len(submodules) != 5:
+        fail(f"Expected 5 verified source submodules at this stage, found {len(submodules)}")
 
     snapshot_index = load_json(ROOT / "catalog" / "instruction-snapshots.json")
     if len(snapshot_index.get("plugins", [])) != len(plugins):
@@ -169,6 +194,26 @@ def validate():
     print("PASS: source-state, alias, relationship and repository URL consistency")
     print("PASS: every plugin has a segregated instruction snapshot/pointer and explicit routing boundaries")
     print(f"PASS: {snapshot_index['total_skill_records']} indexed skill instruction records across {len(plugins)} plugins")
+
+    compatibility = load_json(ROOT / "catalog" / "compatibility-matrix.json")
+    integration_edges = compatibility.get("integrations")
+    if not isinstance(integration_edges, list) or len(integration_edges) != compatibility.get("integration_count"):
+        fail("Compatibility matrix integration_count does not match entries")
+    integration_ids = [edge.get("integration_id") for edge in integration_edges]
+    if len(integration_ids) != len(set(integration_ids)):
+        fail("Duplicate compatibility integration_id detected")
+    for edge in integration_edges:
+        for field in ["producer_plugin","consumer_plugin","canonical_truth_owner","purpose","input_artifacts","output_artifact","contract_version","handoff_type","runtime_execution_test","host_activation_test"]:
+            if not edge.get(field):
+                fail(f"Compatibility edge {edge.get('integration_id')}: missing {field}")
+        for owner_field in ["producer_plugin","consumer_plugin","canonical_truth_owner"]:
+            if edge[owner_field] not in plugin_key_set:
+                fail(f"Compatibility edge {edge['integration_id']}: unknown {owner_field}")
+        if edge["runtime_execution_test"] not in {"NOT_RUN","PASS","FAIL"} or edge["host_activation_test"] not in {"NOT_RUN","PASS","FAIL"}:
+            fail(f"Compatibility edge {edge['integration_id']}: invalid test state")
+    if len(integration_edges) != 14:
+        fail("Expected 14 defined compatibility edges for the current matrix")
+    print(f"PASS: {len(integration_edges)} cross-plugin compatibility edges with explicit ownership and test states")
     print("NOTE: static checks do not prove host activation or runtime execution")
 
 

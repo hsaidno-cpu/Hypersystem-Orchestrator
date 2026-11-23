@@ -10,3 +10,7 @@
 [submodule "plugins/video-explainer-promkes"]
 	path = plugins/video-explainer-promkes
 	url = https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR.git
+[submodule "plugins/skill-developer-orchestrator"]
+	path = plugins/skill-developer-orchestrator
+	url = https://github.com/promkespkmbinuang-coder/SPDO.git
+
