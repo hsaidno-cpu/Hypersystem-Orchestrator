@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "registry_status": "CONTROLLED_BUILTIN_AND_SINGLE_HOST_SKILL_ADAPTERS",
+  "registry_status": "CONTROLLED_BUILTIN_AND_ONE_REMOTE_MCP_HOST_SKILL_CAPABILITY",
   "capabilities": [
     {
       "capability_id": "sandbox.write_text",
@@ -30,21 +30,28 @@
       "description": "CI-only fault injector that fails once before mutation, then delegates to the idempotent sandbox writer."
     },
     {
-      "capability_id": "plugin.skill.invoke.codex.skill-analyzer",
-      "adapter_id": "builtin.codex.cli-exec",
-      "handler": "codex_skill_invoke",
+      "capability_id": "plugin.skill.invoke.remote-mcp.skill-analyzer",
+      "adapter_id": "builtin.openai.responses-remote-mcp",
+      "handler": "remote_mcp_skill_invoke",
       "enabled": true,
       "test_only": false,
-      "scope": "codex_cli_ephemeral_read_only_skill_invocation",
+      "scope": "single_tool_read_only_analysis_over_remote_mcp_streamable_http",
       "accepted_probe_statuses": [
         "READY_WITH_LIMITATIONS"
       ],
       "plugin_id": "plugins_6ae2a122f5c881919193c9b0ba51961e",
       "plugin_key": "skill-analyzer",
       "source_repository": "hsaidno-cpu/skill-analyzer",
+      "source_version": "1.3.0",
       "source_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
-      "skill_source_path": "plugins/skill-analyzer/skills/skill-analyzer/SKILL.md",
-      "description": "One explicitly approved P0 invocation of the source-pinned SKILL ANALYZER master Agent Skill through Codex CLI codex exec. READY_WITH_LIMITATIONS means CLI/flags/source/API-key presence are checked; provider credentials and model entitlement are not tested until the billable run."
+      "remote_mcp_server_label": "skill_analyzer_internal",
+      "remote_mcp_tool_name": "invoke_skill_analyzer",
+      "allowed_tools": [
+        "invoke_skill_analyzer"
+      ],
+      "transport": "STREAMABLE_HTTP",
+      "approval_policy": "ALWAYS",
+      "description": "Exactly one scoped SKILL ANALYZER invocation through OpenAI Responses API and its canonical Remote MCP gateway. Probe validates HTTPS, OIDC client-credentials token, Streamable HTTP handshake and tool discovery without inference; model/API entitlement is tested only on the explicitly approved live invocation."
     }
   ]
 }

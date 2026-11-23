@@ -79,11 +79,11 @@
       "rule_id": "ROUTE-PLUGIN-SKILL-ANALYZER-P0-001",
       "primary_owner": "skill-analyzer",
       "supporting_specialists": [],
-      "action_id": "plugin.skill.invoke.codex.skill-analyzer",
+      "action_id": "plugin.skill.invoke.remote-mcp.skill-analyzer",
       "required_capabilities": [
-        "plugin.skill.invoke.codex.skill-analyzer"
+        "plugin.skill.invoke.remote-mcp.skill-analyzer"
       ],
-      "decision_rationale": "P0 is deliberately one canonical skill and one verified Codex CLI host adapter. SKILL ANALYZER owns its own analytical method; no additional specialist is added to this first vertical slice."
+      "decision_rationale": "SKILL ANALYZER is the sole primary owner. The one P0 executor is OpenAI Responses API using one authenticated Streamable HTTP Remote MCP tool; no other skill, MCP tool or downstream capability is included."
     }
   }
 }

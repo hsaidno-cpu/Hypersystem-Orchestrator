@@ -1,13 +1,13 @@
 # HSO Super-Orchestrator — Controlled Runtime v0.1
 
-**Status:** SANDBOX_RUNTIME_CI_VERIFIED / P0_CODEX_SKILL_ADAPTER_IMPLEMENTED / LIVE_PAID_INVOCATION_NOT_RUN / NOT_MERGED / NOT_PRODUCTION_READY  
+**Status:** SANDBOX_RUNTIME_CI_VERIFIED / P0_REMOTE_MCP_HOST_ADAPTER_IMPLEMENTED / LIVE_ENDPOINT_NOT_CONFIGURED / NO_LIVE_INVOCATION_RECEIPT / NOT_MERGED / NOT_PRODUCTION_READY  
 **Scope:** capability discovery, route arbitration, policy enforcement, DAG execution, bounded retry, idempotency, target read-back, compensation and hash-chained audit.
 
 ## What is actually executable
 
 The file tools/hso_super_orchestrator.py is a real Python execution engine. GitHub Actions runs it on an isolated hosted runner. The registered built-in adapter creates a new file inside a dedicated temporary workspace; the independent verifier reopens that file and checks its SHA-256 digest. A test-only adapter injects one transient fault so CI can observe retry and recovery.
 
-This is real runtime execution against a real sandbox target. It is **not** proof of calling a ChatGPT plugin, remote MCP server, external API, child repository, staging or production. The runtime reports plugin and MCP dispatch as NOT_CONFIGURED.
+This is real runtime execution against a real sandbox target. The default continuous-integration workflow still proves only the sandbox path. A separate, narrowly allow-listed SKILL ANALYZER Remote MCP adapter is registered on the PR branch, but its public endpoint/OIDC configuration is not yet verified; no live plugin invocation is claimed. Generic plugin dispatch and generic multi-server MCP remain NOT_CONFIGURED.
 
 ## The eight requirements mapped to implementation
 
@@ -70,21 +70,24 @@ For the test-only retry demonstration:
 
     HSO_ENABLE_TEST_ADAPTERS=1 python tools/hso_super_orchestrator.py run examples/hso-runtime-recovery.example.json --workspace /tmp/hso-recovery-target --ledger /tmp/hso-recovery.sqlite --audit /tmp/hso-recovery-audit.jsonl --receipt /tmp/hso-recovery-receipt.json
 
-## P0 — one-host / one-skill invocation pilot
+## P0 — one-host / one-skill Remote MCP invocation pilot
 
-A narrow Codex CLI adapter is registered for one exact target: SKILL ANALYZER 1.3.0 at immutable source commit c469af7977c9bf6dcb3f5ab7b085a6de20d87004. It is separate from the generic plugin.skill.invoke capability; other plugins and hosts remain NOT_CONFIGURED.
+The selected host is OpenAI Responses API and the selected transport is Remote MCP over Streamable HTTP. The sole plugin owner is SKILL ANALYZER; the sole model-visible tool is `invoke_skill_analyzer`. The generic `plugin.skill.invoke` and generic multi-server `mcp.remote.invoke` capabilities remain NOT_CONFIGURED.
 
-- Host: pinned Codex CLI 0.171.0 through codex exec; model: gpt-6.2-sol.
-- Route: plugin.skill_analyzer_p0_pilot; one primary owner (skill-analyzer), no extra specialist in this first vertical slice.
-- Skill delivery: temporary copy of the plugin's Agent Skill directories into repo-scoped .agents/skills (no symlinks); every copied master SKILL.md is hash-checked; explicit $skill-analyzer reference; source manifest, submodule SHA and skill digest are checked before invocation.
-- Runtime contract: READY_WITH_LIMITATIONS means preflight only. It does not mean API entitlement or a live model call has been tested.
-- Execution: manual-only GitHub Actions workflow, default-branch/owner/checkbox/first-attempt guards, protected codex-p0-live environment, five-minute HMAC approval, read-only sandbox, ephemeral thread, bounded JSON output and one attempt.
-- Recovery: paid inference is non-idempotent. Any ambiguous post-dispatch failure is OUTCOME_UNKNOWN, never an automatic retry.
-- Receipt: source commit, SKILL.md hash, copied skill directories, HSO-verified approver/run/nonce-hash binding, CLI version, model, thread/turn IDs, event/item counts, token usage, request/output hashes, schema result and explicit attestation limitations.
+- Host: OpenAI Responses API; model: `gpt-6.2-astra`.
+- Plugin source: `hsaidno-cpu/skill-analyzer`, version 1.3.0, immutable local source pin `c469af7977c9bf6dcb3f5ab7b085a6de20d87004`.
+- Remote protocol: Streamable HTTP; one protected `/mcp` endpoint; Auth0-compatible client credentials with exact resource audience and only `analyzer:invoke`.
+- Tool allowlist: exactly `invoke_skill_analyzer`; `list_skill_analyzer_commands` is not exposed to the model.
+- Approval: scoped five-minute HMAC receipt plus Responses API `require_approval: "always"`; HSO checks exact server, tool, arguments, target and source digest before sending `mcp_approval_response`.
+- Execution: one synthetic analysis case, S4, SANDBOX, manual workflow dispatch, repository owner guard, explicit checkbox, protected GitHub environment and one attempt only.
+- Recovery: inference is non-idempotent. Any ambiguous post-dispatch failure is OUTCOME_UNKNOWN; no automatic retry.
+- Receipt: host response IDs, approval request ID, MCP call ID, server/tool identity, argument digest, source pin, skill digest, Gateway route/load fields, result digest, token usage, HSO audit and independent artifact SHA-256 read-back.
 
-**Current CI evidence:** exact head 0974efa58f0308ed87390546cadc28818bd928d2 passed [run #45209121971](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45209121971), with 120 tests and sandbox receipts uploaded.\n\n**Critical evidence boundary:** Codex CLI JSONL supplies thread/turn/item events but this adapter has no dedicated skill-loaded attestation to verify directly. HSO records the explicit skill reference, registered discovery path, canonical source SHA, instruction digest and completed turn, and labels direct skill-load attestation unavailable. Do not promote this to generic host activation evidence.
+**Zero-inference preflight:** validates public HTTPS/DNS endpoints, the Auth0-compatible token exchange, MCP Streamable HTTP initialize and the exact tool list. It does not call OpenAI Responses API or test model entitlement. The live approved invocation is still required to verify the OpenAI API key/model and generate a real MCP call receipt.
 
-The live paid invocation remains NOT_RUN until the protected manual workflow is approved and executed on the default branch. See docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md.
+**Current status:** the adapter and governance are being prepared on PR #13. The SKILL ANALYZER source contains a deployable Gateway, but its own deployment guide says a Git commit does not provision a public endpoint, OAuth client, provider key or Redis service. No live endpoint or invocation receipt has been verified here. See `docs/HSO-P0-REMOTE-MCP-SKILL-INVOCATION-PILOT.md`.
+
+**Remote attestation limitation:** HSO verifies the local canonical submodule SHA and master SKILL.md digest, but the currently inspected Gateway response does not expose a cryptographically verifiable deployed commit/runtime skill digest. The receipt records `remote_source_attestation=NOT_EXPOSED_BY_CURRENT_GATEWAY`; it must not be promoted to a source deployment attestation.
 
 ## Production blockers
 

@@ -58,13 +58,15 @@ class HsoRuntimeTests(unittest.TestCase):
                 hso.verify_approval(receipt, "CASE-VALID", "approved.action", "other/target.txt", "S4")
 
     def test_live_capability_discovery_only_marks_probed_adapters_ready(self):
-        result = hso.discover_capabilities()
+        with patch.dict(os.environ, {}, clear=True):
+            result = hso.discover_capabilities()
         states = {item["capability_id"]: item["status"] for item in result["capabilities"]}
         self.assertEqual(states["sandbox.write_text"], "READY")
         self.assertEqual(states["sandbox.verify_sha256"], "READY")
         self.assertEqual(states["test.flaky_write_text"], "DISABLED_TEST_ONLY")
         self.assertEqual(states["plugin.skill.invoke"], "NOT_CONFIGURED")
         self.assertEqual(states["mcp.remote.invoke"], "NOT_CONFIGURED")
+        self.assertEqual(states["plugin.skill.invoke.remote-mcp.skill-analyzer"], "NOT_CONFIGURED")
 
     def test_route_has_exactly_one_primary_owner_and_minimal_specialist(self):
         _, routes, _, catalog = hso._load_registries()
@@ -265,18 +267,31 @@ class HsoRuntimeTests(unittest.TestCase):
 
     def _p0_approval_receipt(self, secret="p0-test-approval-key-with-enough-entropy"):
         import datetime, hashlib, hmac
+        from tools import remote_mcp_responses_adapter as adapter
         now = datetime.datetime.now(datetime.timezone.utc)
+        data = json.loads((ROOT / "examples" / "hso-p0-skill-invocation-request.json").read_text(encoding="utf-8"))
+        package = data["work_packages"][0]
+        payload = dict(package["input"])
+        payload["skill_sha256"] = "a" * 64
+        arguments = adapter._expected_arguments(payload)
         unsigned = {
-            "case_id": "HSO-P0-SKILL-ANALYZER-001",
-            "action_id": "plugin.skill.invoke.codex.skill-analyzer",
-            "target_path": "artifacts/p0-skill-analyzer-invocation.json",
-            "authority": "S4",
+            "case_id": data["case_id"],
+            "action_id": package["action_id"],
+            "target_path": package["target_path"],
+            "authority": data["action_authority"],
             "approver": "hsaidno-cpu",
             "issued_at": now.isoformat(),
             "expires_at": (now + datetime.timedelta(minutes=5)).isoformat(),
-            "nonce": "p0-test-nonce-unique",
+            "nonce": "p0-remote-mcp-test-nonce",
             "workflow_run_id": "test-run-001",
-            "workflow_run_attempt": "1"
+            "workflow_run_attempt": "1",
+            "host": adapter.HOST_ID,
+            "mcp_server_label": adapter.SERVER_LABEL,
+            "mcp_tool_name": adapter.TOOL_NAME,
+            "mcp_server_url_sha256": hashlib.sha256(b"https://gateway.example.com/mcp").hexdigest(),
+            "tool_arguments_sha256": adapter.sha256_json(arguments),
+            "plugin_source_commit": adapter.SOURCE_PIN,
+            "skill_sha256": "a" * 64,
         }
         signature = hmac.new(secret.encode(), hso.canonical_json(unsigned).encode(), hashlib.sha256).hexdigest()
         return {**unsigned, "signature": signature}, secret
@@ -284,46 +299,93 @@ class HsoRuntimeTests(unittest.TestCase):
     def _p0_workflow(self):
         path = ROOT / "examples" / "hso-p0-skill-invocation-request.json"
         data = json.loads(path.read_text(encoding="utf-8"))
-        data["work_packages"][0]["approval_receipt"], _ = self._p0_approval_receipt()
+        approval, _ = self._p0_approval_receipt()
+        package = data["work_packages"][0]
+        package["input"]["skill_sha256"] = approval["skill_sha256"]
+        package["approval_receipt"] = approval
         return data
 
-    def test_p0_route_has_one_skill_owner_and_no_unnecessary_specialists(self):
+    def _p0_preflight(self):
+        return {
+            "status": "READY_WITH_LIMITATIONS",
+            "host": "openai-responses-api",
+            "evidence": "fake zero-inference fixture",
+            "server_label": "skill_analyzer_internal",
+            "tool_name": "invoke_skill_analyzer",
+            "allowed_tools": ["invoke_skill_analyzer"],
+            "billable_inference_performed": False,
+        }
+
+    def test_p0_route_has_one_owner_and_one_remote_mcp_capability(self):
         _, routes, _, catalog = hso._load_registries()
         route = hso.resolve_route("plugin.skill_analyzer_p0_pilot", routes, catalog)
         self.assertEqual(route["primary_owner"], "skill-analyzer")
         self.assertEqual(route["supporting_specialists"], [])
-        self.assertEqual(route["action_id"], "plugin.skill.invoke.codex.skill-analyzer")
+        self.assertEqual(route["action_id"], "plugin.skill.invoke.remote-mcp.skill-analyzer")
+        self.assertEqual(route["required_capabilities"], ["plugin.skill.invoke.remote-mcp.skill-analyzer"])
 
-    def test_p0_host_probe_is_limited_to_pinned_skill_and_not_generic_plugin_dispatch(self):
-        with patch.dict(os.environ, {"CODEX_API_KEY": "test-only-not-a-real-key"}):
-            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
-                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"preflight only",
-                                            "source_commit":hso.codex_skill_host_adapter.SOURCE_PIN}):
-                result = hso.discover_capabilities()
-        states = {item["capability_id"]: item["status"] for item in result["capabilities"]}
-        self.assertEqual(states["plugin.skill.invoke.codex.skill-analyzer"], "READY_WITH_LIMITATIONS")
-        self.assertEqual(states["plugin.skill.invoke"], "NOT_CONFIGURED")
-        self.assertEqual(states["mcp.remote.invoke"], "NOT_CONFIGURED")
+    def test_p0_zero_inference_preflight_remains_distinct_from_live_invocation(self):
+        with patch.dict(os.environ, {}, clear=True):
+            result = hso.discover_capabilities()
+        capability = next(item for item in result["capabilities"]
+                          if item["capability_id"] == "plugin.skill.invoke.remote-mcp.skill-analyzer")
+        self.assertEqual(capability["status"], "NOT_CONFIGURED")
+        self.assertEqual(capability["handler"], "remote_mcp_skill_invoke")
+        self.assertEqual(capability["adapter_id"], "builtin.openai.responses-remote-mcp")
+        self.assertNotEqual(capability["status"], "READY")
 
-    def test_p0_codex_invocation_receipt_and_dynamic_target_digest_are_verified(self):
+    def test_p0_approval_receipt_cannot_be_replayed_in_a_different_workflow_run(self):
+        receipt, secret = self._p0_approval_receipt()
+        with patch.dict(os.environ, {
+            "HSO_APPROVAL_HMAC_KEY": secret,
+            "GITHUB_RUN_ID": "different-run",
+            "GITHUB_RUN_ATTEMPT": "1",
+        }, clear=True):
+            with self.assertRaisesRegex(hso.PolicyDenied, "exact workflow run"):
+                hso.verify_approval(
+                    receipt,
+                    "HSO-P0-SKILL-ANALYZER-001",
+                    "plugin.skill.invoke.remote-mcp.skill-analyzer",
+                    "artifacts/p0-skill-analyzer-invocation.json",
+                    "S4",
+                )
+
+    def test_p0_runtime_dispatch_receipt_and_independent_target_readback(self):
         data = self._p0_workflow()
         secret = "p0-test-approval-key-with-enough-entropy"
-        calls = []
+        invocations = []
         def fake_invoke(workspace, target_path, payload, context):
-            calls.append(payload["skill_name"])
+            from tools import remote_mcp_responses_adapter as adapter
+            self.assertTrue(context["approval_verified"])
+            self.assertEqual(context["approval_receipt"]["tool_arguments_sha256"], adapter.sha256_json(adapter._expected_arguments(payload)))
+            self.assertEqual(context["approval_receipt"]["mcp_tool_name"], "invoke_skill_analyzer")
+            invocations.append(context["case_id"])
             artifact = {
                 "invocation_receipt": {
-                    "host":"openai-codex-cli-exec",
-                    "source_commit":hso.codex_skill_host_adapter.SOURCE_PIN,
-                    "skill_reference_supplied":"$skill-analyzer",
-                    "skill_load_attestation":"NO_DEDICATED_CLI_EVENT_EXPOSED",
-                    "approval":{
-                        "verified_by_hso":context.get("approval_verified"),
-                        "approver":context.get("approval_receipt",{}).get("approver"),
-                        "nonce_sha256":hso.sha256_bytes(context.get("approval_receipt",{}).get("nonce","").encode())
-                    }
+                    "host": "openai-responses-api",
+                    "plugin": {
+                        "source_commit": adapter.SOURCE_PIN,
+                        "skill_sha256": payload["skill_sha256"],
+                        "remote_source_attestation": "NOT_EXPOSED_BY_CURRENT_GATEWAY",
+                    },
+                    "remote_mcp": {
+                        "server_label": "skill_analyzer_internal",
+                        "tool_name": "invoke_skill_analyzer",
+                        "allowed_tools": ["invoke_skill_analyzer"],
+                    },
+                    "host_session": {
+                        "initial_response_id": "resp-initial-test",
+                        "final_response_id": "resp-final-test",
+                        "approval_request_id": "mcpr-approval-test",
+                        "mcp_call_id": "mcp-call-test",
+                    },
+                    "verification": {
+                        "mcp_call_completed": True,
+                        "gateway_result_contract_valid": True,
+                        "remote_source_attestation": "NOT_EXPOSED_BY_CURRENT_GATEWAY",
+                    },
                 },
-                "analysis_result":{"case_id":"HSO-P0-SKILL-ANALYZER-001","summary":"synthetic test"}
+                "analysis_result": {"result": "synthetic test result"},
             }
             target = hso._safe_target(workspace, target_path)
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -332,54 +394,76 @@ class HsoRuntimeTests(unittest.TestCase):
                 stream.write(raw)
                 stream.flush()
                 os.fsync(stream.fileno())
-            return {"target_path":target_path,"sha256":hso.sha256_bytes(raw),
-                    "created":True,"no_op":False,"thread_id":"thr-test","turn_id":"turn-test"}
-        with patch.dict(os.environ, {"CODEX_API_KEY":"fake-key","HSO_APPROVAL_HMAC_KEY":secret}):
-            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
-                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"fake host preflight"}):
-                with patch.object(hso.codex_skill_host_adapter, "invoke_codex_skill", side_effect=fake_invoke):
-                    first = self.run_workflow(data)
-                    second = self.run_workflow(data)
-        package = first["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]
-        replay = second["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]
-        self.assertEqual(first["status"], "SUCCEEDED")
+            return {
+                "target_path": target_path,
+                "sha256": hso.sha256_bytes(raw),
+                "created": True,
+                "no_op": False,
+                "host_response_id": "resp-final-test",
+                "mcp_call_id": "mcp-call-test",
+                "approval_request_id": "mcpr-approval-test",
+            }
+
+        with patch.dict(os.environ, {
+            "HSO_APPROVAL_HMAC_KEY": secret,
+            "GITHUB_RUN_ID": "test-run-001",
+            "GITHUB_RUN_ATTEMPT": "1",
+        }, clear=True):
+            with patch.object(hso.remote_mcp_responses_adapter, "probe_remote_mcp_host",
+                              return_value=self._p0_preflight()):
+                with patch.object(hso.remote_mcp_responses_adapter, "invoke_remote_mcp_skill",
+                                  side_effect=fake_invoke):
+                    result = self.run_workflow(data)
+
+        package = result["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]
+        self.assertEqual(result["status"], "SUCCEEDED", result["package_outcomes"])
         self.assertEqual(package["status"], "SUCCEEDED")
         self.assertEqual(package["route"]["primary_owner"], "skill-analyzer")
+        self.assertEqual(package["route"]["supporting_specialists"], [])
+        self.assertEqual(package["verification"]["verification_method"], "independent_filesystem_readback_sha256")
         self.assertEqual(package["verification"]["sha256"], package["action_result"]["sha256"])
-        self.assertEqual(replay["status"], "SKIPPED_IDEMPOTENT")
-        self.assertEqual(len(calls), 1, "a successful paid invocation must not be called again on replay")
+        self.assertEqual(invocations, ["HSO-P0-SKILL-ANALYZER-001"])
         artifact_path = self.workspace / "artifacts" / "p0-skill-analyzer-invocation.json"
         artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
-        self.assertEqual(artifact["invocation_receipt"]["source_commit"], hso.codex_skill_host_adapter.SOURCE_PIN)
-        self.assertEqual(artifact["invocation_receipt"]["skill_load_attestation"], "NO_DEDICATED_CLI_EVENT_EXPOSED")
-        self.assertTrue(artifact["invocation_receipt"]["approval"]["verified_by_hso"])
-        self.assertEqual(artifact["invocation_receipt"]["approval"]["approver"], "hsaidno-cpu")
-        self.assertEqual(artifact["invocation_receipt"]["approval"]["nonce_sha256"],
-                         hso.sha256_bytes(b"p0-test-nonce-unique"))
-        self.assertNotIn("p0-test-nonce-unique", json.dumps(artifact["invocation_receipt"]["approval"]))
+        receipt = artifact["invocation_receipt"]
+        self.assertEqual(receipt["host"], "openai-responses-api")
+        self.assertEqual(receipt["host_session"]["mcp_call_id"], "mcp-call-test")
+        self.assertEqual(receipt["verification"]["remote_source_attestation"], "NOT_EXPOSED_BY_CURRENT_GATEWAY")
+        self.assertTrue(result["audit"]["hash_chain_valid"])
 
-    def test_p0_timeout_is_outcome_unknown_and_never_auto_replayed(self):
+    def test_p0_ambiguous_post_dispatch_failure_is_outcome_unknown_and_never_replayed(self):
         data = self._p0_workflow()
         secret = "p0-test-approval-key-with-enough-entropy"
+        invocation_count = []
         def uncertain(*args, **kwargs):
-            raise TimeoutError("Codex CLI timed out after dispatch started")
-        with patch.dict(os.environ, {"CODEX_API_KEY":"fake-key","HSO_APPROVAL_HMAC_KEY":secret}):
-            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
-                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"fake host preflight"}):
-                with patch.object(hso.codex_skill_host_adapter, "invoke_codex_skill", side_effect=uncertain) as invoke:
+            invocation_count.append("attempt")
+            raise TimeoutError("ambiguous post-dispatch response timeout")
+        with patch.dict(os.environ, {
+            "HSO_APPROVAL_HMAC_KEY": secret,
+            "GITHUB_RUN_ID": "test-run-001",
+            "GITHUB_RUN_ATTEMPT": "1",
+        }, clear=True):
+            with patch.object(hso.remote_mcp_responses_adapter, "probe_remote_mcp_host",
+                              return_value=self._p0_preflight()):
+                with patch.object(hso.remote_mcp_responses_adapter, "invoke_remote_mcp_skill", side_effect=uncertain):
                     first = self.run_workflow(data)
                     second = self.run_workflow(data)
         self.assertEqual(first["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]["status"], "OUTCOME_UNKNOWN")
         self.assertEqual(second["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]["status"], "BLOCKED_IDEMPOTENCY")
-        self.assertEqual(invoke.call_count, 1)
+        self.assertEqual(len(invocation_count), 1)
 
-    def test_p0_invalid_approval_blocks_dispatch(self):
+    def test_p0_invalid_scope_bound_approval_blocks_before_dispatch(self):
         data = self._p0_workflow()
         data["work_packages"][0]["approval_receipt"]["signature"] = "0" * 64
-        with patch.dict(os.environ, {"CODEX_API_KEY":"fake-key","HSO_APPROVAL_HMAC_KEY":"p0-test-approval-key-with-enough-entropy"}):
-            with patch.object(hso.codex_skill_host_adapter, "probe_codex_skill_host",
-                              return_value={"status":"READY_WITH_LIMITATIONS","evidence":"fake host preflight"}):
-                with patch.object(hso.codex_skill_host_adapter, "invoke_codex_skill") as invoke:
+        secret = "p0-test-approval-key-with-enough-entropy"
+        with patch.dict(os.environ, {
+            "HSO_APPROVAL_HMAC_KEY": secret,
+            "GITHUB_RUN_ID": "test-run-001",
+            "GITHUB_RUN_ATTEMPT": "1",
+        }, clear=True):
+            with patch.object(hso.remote_mcp_responses_adapter, "probe_remote_mcp_host",
+                              return_value=self._p0_preflight()):
+                with patch.object(hso.remote_mcp_responses_adapter, "invoke_remote_mcp_skill") as invoke:
                     result = self.run_workflow(data)
         self.assertEqual(result["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]["status"], "REJECTED_POLICY")
         invoke.assert_not_called()

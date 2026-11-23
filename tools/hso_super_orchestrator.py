@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import Any, Callable
 from jsonschema import Draft202012Validator
 try:
-    from tools import codex_skill_host_adapter
+    from tools import remote_mcp_responses_adapter
 except ImportError:
-    import codex_skill_host_adapter
+    import remote_mcp_responses_adapter
 
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES_PATH = ROOT / "catalog" / "hso-runtime-capabilities.json"
@@ -119,20 +119,20 @@ def _flaky_write_text(workspace: Path, target_path: str, payload: dict[str, Any]
 HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
     "write_text": _write_text, "verify_sha256": _verify_sha256,
 }
-def _codex_skill_invoke(workspace: Path, target_path: str, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
-    return codex_skill_host_adapter.invoke_codex_skill(workspace, target_path, payload, context)
+def _remote_mcp_skill_invoke(workspace: Path, target_path: str, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+    return remote_mcp_responses_adapter.invoke_remote_mcp_skill(workspace, target_path, payload, context)
 
 HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
     "write_text": _write_text,
     "verify_sha256": _verify_sha256,
-    "codex_skill_invoke": _codex_skill_invoke,
+    "remote_mcp_skill_invoke": _remote_mcp_skill_invoke,
 }
 TEST_HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {"flaky_write_text": _flaky_write_text}
 TRUSTED_ADAPTERS = {
     "write_text": "builtin.python.sandbox",
     "verify_sha256": "builtin.python.verifier",
     "flaky_write_text": "builtin.python.test-fault-injector",
-    "codex_skill_invoke": "builtin.codex.cli-exec",
+    "remote_mcp_skill_invoke": "builtin.openai.responses-remote-mcp",
 }
 
 class AuditLog:
@@ -217,16 +217,14 @@ def discover_capabilities(include_test: bool = False) -> dict[str, Any]:
                 name not in registry or item.get("adapter_id") != TRUSTED_ADAPTERS.get(name)
             ):
                 status, evidence = "UNAVAILABLE", "capability registry handler/adapter does not match the runtime trusted allow-list"
-            elif item.get("enabled") and (not test_only or include_test) and name == "codex_skill_invoke":
-                probe = codex_skill_host_adapter.probe_codex_skill_host(
-                    ROOT, item.get("skill_source_path", "")
-                )
-                status, evidence = probe.get("status", "UNAVAILABLE"), probe.get("evidence", "Codex CLI preflight returned no evidence")
+            elif item.get("enabled") and (not test_only or include_test) and name == "remote_mcp_skill_invoke":
+                probe = remote_mcp_responses_adapter.probe_remote_mcp_host(ROOT)
+                status, evidence = probe.get("status", "UNAVAILABLE"), probe.get("evidence", "Remote MCP preflight returned no evidence")
                 actions.append({
                     "capability_id": cap_id, "adapter_id": item["adapter_id"], "status": status,
                     "handler": name, "test_only": False, "evidence": evidence,
                     "probe_details": probe, "probed_at": utc_now(),
-                    "host": probe.get("host", "codex-cli-exec"),
+                    "host": probe.get("host", "openai-responses-api"),
                     "python": platform.python_version(), "scope": item.get("scope"),
                 })
                 continue
@@ -265,9 +263,9 @@ def discover_capabilities(include_test: bool = False) -> dict[str, Any]:
             })
     for cap_id, adapter, scope, evidence in [
         ("plugin.skill.invoke", "host-plugin-bridge", "host_plugin",
-         "generic plugin host invocation is not configured; only the pinned SKILL ANALYZER Codex CLI pilot adapter is separately registered"),
+         "generic plugin host invocation is not configured; the SKILL ANALYZER P0 route is a separate exact Remote MCP capability"),
         ("mcp.remote.invoke", "remote-mcp", "remote_mcp",
-         "no endpoint, authentication provider, egress policy or remote MCP adapter is configured"),
+         "generic multi-server MCP invocation is not configured; only the one pinned SKILL ANALYZER Remote MCP tool is registered"),
     ]:
         actions.append({"capability_id": cap_id, "adapter_id": adapter, "status": "NOT_CONFIGURED",
             "handler": None, "test_only": False, "evidence": evidence, "probed_at": utc_now(),
@@ -355,6 +353,15 @@ def verify_approval(receipt: dict[str, Any] | None, case_id: str, action_id: str
         raise PolicyDenied("approval receipt validity window exceeds the 15-minute policy limit")
     if not unsigned.get("approver") or not unsigned.get("nonce"):
         raise PolicyDenied("approval receipt requires approver identity and nonce")
+    if "workflow_run_id" in unsigned or "workflow_run_attempt" in unsigned:
+        expected_run_id = os.environ.get("GITHUB_RUN_ID", "")
+        expected_attempt = os.environ.get("GITHUB_RUN_ATTEMPT", "1")
+        if (
+            not expected_run_id
+            or unsigned.get("workflow_run_id") != expected_run_id
+            or unsigned.get("workflow_run_attempt") != expected_attempt
+        ):
+            raise PolicyDenied("approval receipt is not bound to this exact workflow run and attempt")
 
 class IdempotencyLedger:
     def __init__(self, path: Path):
@@ -590,9 +597,9 @@ def execute_workflow(workflow: dict[str, Any], workspace: Path, ledger_path: Pat
         "package_outcomes": outcomes,
         "audit": {"path": str(audit_path), "hash_chain_valid": valid, "event_count": audit.sequence,
                   "head_sha256": audit_head, "tamper_evidence": "HASH_CHAIN_ONLY_UNSIGNED"},
-        "runtime_boundary": {"actual_dispatch": "MIXED_TRUSTED_BUILTIN_AND_CODEX_CLI_ADAPTERS",
-            "target_verification": "INDEPENDENT_FILESYSTEM_READBACK", "plugin_skill_invocation": "PINNED_CODEX_CLI_SKILL_ONLY",
-            "generic_plugin_host_invocation": "NOT_CONFIGURED", "remote_mcp_invocation": "NOT_CONFIGURED",
+        "runtime_boundary": {"actual_dispatch": "BUILTIN_SANDBOX_AND_ONE_OPENAI_RESPONSES_REMOTE_MCP_ADAPTER",
+            "target_verification": "INDEPENDENT_FILESYSTEM_READBACK", "plugin_skill_invocation": "ONE_PINNED_SKILL_ANALYZER_REMOTE_MCP_TOOL_ONLY",
+            "generic_plugin_host_invocation": "NOT_CONFIGURED", "generic_remote_mcp_invocation": "NOT_CONFIGURED",
             "production_execution": "NOT_SUPPORTED"}}
     audit.emit("RUN_FINISHED", status=overall, audit_chain_verified=valid,
                successful_packages=sum(s in {"SUCCEEDED", "SKIPPED_IDEMPOTENT"} for s in states),

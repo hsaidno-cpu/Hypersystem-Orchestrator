@@ -70,7 +70,7 @@ A real, restricted runtime has been added beside the existing plan-only compiler
 
 **Acceptance evidence required from exact-head CI:** (1) create a real file in an isolated hosted-runner workspace; (2) execute its dependent verification package; (3) recover from one injected transient failure in a test-only adapter; (4) verify audit hash chains; (5) retain capability, run and target receipts as CI artifacts.
 
-**Hard boundary:** this does not activate plugin skills, remote MCP, arbitrary APIs, child repositories, staging or production. The real plugin host bridge and remote connector remain NOT_CONFIGURED. SQLite is not distributed state; the local hash chain is not an independently signed immutable audit log. C4/C5 for named plugin hosts remain NOT_RUN until an actual host adapter is installed and tested.
+**Hard boundary:** the always-on CI workflow proves only sandbox dispatch. A distinct P0 SKILL ANALYZER Remote MCP adapter is registered but remains blocked until public endpoint/OIDC preflight and a live host invocation pass. Generic plugin dispatch, generic multi-server MCP, arbitrary APIs, child repositories, staging and production remain unavailable. SQLite is not distributed state; the local hash chain is not an independently signed immutable audit log. C4/C5 for named plugin hosts remain NOT_RUN until a live receipt is independently verified.
 
 **Artifacts:** `tools/hso_super_orchestrator.py`, `catalog/hso-runtime-capabilities.json`, `catalog/hso-routing-policy.json`, `governance/hso-execution-policy.json`, `contracts/hso-runtime-workflow.schema.json`, runtime examples, `docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md` and the runtime regression suite.
 

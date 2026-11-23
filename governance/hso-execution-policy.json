@@ -21,7 +21,16 @@
       "issued_at",
       "expires_at",
       "nonce",
-      "signature"
+      "host",
+      "mcp_server_label",
+      "mcp_tool_name",
+      "mcp_server_url_sha256",
+      "tool_arguments_sha256",
+      "plugin_source_commit",
+      "skill_sha256",
+      "signature",
+      "workflow_run_id",
+      "workflow_run_attempt"
     ],
     "fail_closed": true
   },
@@ -64,8 +73,8 @@
       "side_effect_class": "TEST_FIXTURE_ONLY",
       "overwrite": false
     },
-    "plugin.skill.invoke.codex.skill-analyzer": {
-      "adapter_id": "builtin.codex.cli-exec",
+    "plugin.skill.invoke.remote-mcp.skill-analyzer": {
+      "adapter_id": "builtin.openai.responses-remote-mcp",
       "minimum_authority": "S4",
       "allowed_environments": [
         "SANDBOX"
@@ -74,7 +83,7 @@
       "idempotent": false,
       "max_attempts": 1,
       "test_only": false,
-      "side_effect_class": "BILLABLE_MODEL_INFERENCE",
+      "side_effect_class": "BILLABLE_MODEL_INFERENCE_READ_ONLY_DATA_SCOPE",
       "outcome_unknown_on_failure": true,
       "verify_digest_from_action_result": true,
       "overwrite": false
@@ -85,8 +94,8 @@
     "EXTERNAL_SIDE_EFFECT": "NOT_REGISTERED",
     "STAGING_RELEASE": "NOT_REGISTERED",
     "PRODUCTION_RELEASE": "NOT_REGISTERED",
-    "PLUGIN_SKILL_INVOCATION": "ONLY_ONE_PINNED_SKILL_AND_CODEX_CLI_ADAPTER_ENABLED; GENERIC_HOST_BRIDGE_NOT_CONFIGURED",
-    "REMOTE_MCP": "NO_ENDPOINT_OR_AUTH_ADAPTER",
-    "HTTP_API": "NO_ENDPOINT_OR_AUTH_ADAPTER"
+    "PLUGIN_SKILL_INVOCATION": "ONLY_ONE_PINNED_SKILL_ANALYZER_REMOTE_MCP_TOOL_REGISTERED; GENERIC_PLUGIN_HOST_BRIDGE_NOT_CONFIGURED",
+    "REMOTE_MCP": "ONLY_ONE_SKILL_ANALYZER_MCP_TOOL_ISOLATED_BY_EXACT_ALLOWLIST; PUBLIC_ENDPOINT_AND_CREDENTIALS_MUST_BE_PROVISIONED_AND_VERIFIED",
+    "HTTP_API": "NO_HSO_HTTP_API_ADAPTER_REGISTERED"
   }
 }

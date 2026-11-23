@@ -134,7 +134,7 @@ The plan-only compiler remains useful for validating declared plans without side
 - A dependent package independently reads the actual file target and verifies SHA-256. Conditional compensation removes only an artifact created by this run whose digest has not changed.
 - JSONL audit events are sequence- and hash-chained, secret-like fields are redacted, and CI uploads receipts/target evidence for bounded retention.
 
-The first CI pilot is actual GitHub-hosted sandbox execution, not a mock receiver. It proves only the built-in temporary-file adapter and isolated runner. The route for SKILL ANALYZER/A.S.F.R.E.E is defined but remains blocked because `plugin.skill.invoke` has no verified host bridge. Remote MCP and HTTP API dispatch are also `NOT_CONFIGURED`. The runtime is serial and single-runner; it is not a production service, distributed scheduler, or universal AI-host gateway. See `docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md`.
+The always-on CI pilot is actual GitHub-hosted sandbox execution, not a mock receiver. It proves only the built-in temporary-file adapter and isolated runner. A separate, exact SKILL ANALYZER Remote MCP capability is registered for P0; it remains blocked until endpoint/OIDC preflight is verified and a live receipt is produced. The generic `plugin.skill.invoke` bridge, generic multi-server `mcp.remote.invoke`, arbitrary HTTP, distributed scheduling, staging and production remain unavailable. The runtime is serial and single-runner; it is not a production service or universal AI-host gateway. See `docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md`.
 
 ### P0 host invocation pilot — one canonical skill / one host
 
