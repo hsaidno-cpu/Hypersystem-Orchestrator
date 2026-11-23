@@ -18,9 +18,9 @@ class CatalogValidationTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
-        self.assertIn("PASS: 21 unique plugin identities", result.stdout)
+        self.assertIn("PASS: 22 unique plugin identities", result.stdout)
         self.assertIn("PASS: 5 declared and pinned source submodules", result.stdout)
-        self.assertIn("PASS: 247 indexed skill instruction records", result.stdout)
+        self.assertIn("PASS: 256 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):
         gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
@@ -189,6 +189,22 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(book_catalog["totals"]["book_references"], 100)
         self.assertEqual(sum(len(d["books"]) for d in book_catalog["domains"]), 100)
         self.assertTrue(all(b["bibliographic_verification"] == "NOT_INDEPENDENTLY_VERIFIED" for d in book_catalog["domains"] for b in d["books"]))
+
+    def test_pre_registration_is_additive_and_snapshot_only(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        snapshots = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        pre = next(p for p in catalog["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
+        indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
+        self.assertEqual(catalog["expected_plugin_count"], 22)
+        self.assertEqual(len(catalog["plugins"]), 22)
+        self.assertEqual(pre["plugin_creator_id"], "plugins_6b038580bc488191ac56d9e586071bfc")
+        self.assertEqual(pre["platform_package_version"], "0.1.1")
+        self.assertEqual(pre["platform_current_release_id"], "pluginrel_6b0385d7a4488191a681997c0d9ae531")
+        self.assertEqual(pre["source_state"], "pending_repository")
+        self.assertIsNone(pre["source_repository_id"])
+        self.assertEqual(pre["instruction_skill_count"], 9)
+        self.assertEqual(indexed["skill_count"], 9)
+        self.assertEqual(snapshots["total_skill_records"], 256)
 
 if __name__ == "__main__":
     unittest.main()

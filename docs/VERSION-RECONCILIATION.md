@@ -73,3 +73,30 @@ The version matrix also records two source-ahead cases:
 - A.S.F.R.E.E Canonical: Git source 0.5.0-rc.1 vs Plugin Creator package 0.3.2. The higher source is a release candidate, not a stable release.
 
 The source/deployment gap is not resolved by changing version strings. Package files, tests, license, manifest and Plugin Creator read-back must match before declaring deployment synchronization complete. See [PACKAGE-VERSION-MATRIX.md](PACKAGE-VERSION-MATRIX.md).
+
+
+## 5. Full skill-file parity results — 23 November 2026
+
+See [PARITY-RECONCILIATION-2026-11-23.md](PARITY-RECONCILIATION-2026-11-23.md) for the exact file-by-file comparison and evidence boundary.
+
+| Plugin | Platform release | Git source | Exact SKILL.md files | Current decision |
+|---|---:|---:|---:|---|
+| Anatomi Prompt V3 | 3.0.0 | 3.0.0 | 9/9 | Instruction MATCH |
+| SKILL ANALYZER | 1.0.0 | 1.3.0 | 11/12 | One platform-compatibility drift; source ahead |
+| A.S.F.R.E.E | 0.3.2 | 0.5.0-rc.1 | 5/13 | Eight files differ; RC source ahead |
+| SDO | 0.1.0 | 0.1.0 | 0/4 | Same version label, all four contents differ |
+| Video Explainer | 4.1.12 | 4.1.9 | Not comparable | Plugin Creator archive has no directly corresponding SKILL.md entries; keep NOT_COMPARED |
+
+These are file-level comparisons of the current platform package and exact pinned Git source. Exact skill-file parity does not clear license or distribution rights. For Video Explainer, the platform package's README header (V4.1.11) also differs from its manifest (4.1.12), and complete file mapping remains unresolved.
+
+
+## 6. Progressive Roadmap Evaluator (PRE)
+
+- Plugin Creator USER/PRIVATE package version: 0.1.1.
+- Current release: `pluginrel_6b0385d7a4488191a681997c0d9ae531`.
+- Package file inventory: 23 files, including nine skill procedures.
+- Canonical Git source: NOT_IDENTIFIED.
+- Source version and file parity: NOT_COMPARED.
+- Distribution: snapshot_only; no independent license declaration, canonical Git commit or public artifact.
+
+Do not infer a Git source release from the private package manifest. The parent registration remains non-installable until source identity and rights are resolved.

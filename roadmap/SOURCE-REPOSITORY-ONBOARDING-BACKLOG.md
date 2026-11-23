@@ -1,9 +1,10 @@
 # Canonical Plugin Repository Onboarding Backlog
 
-**As-of:** 2026-11-22  
+**As-of:** 2026-11-23  
 **Parent:** Hypersystem Orchestrator  
 **Verified official plugin source repositories:** 5  
-**Remaining source identities not integrated:** 14 (12 NOT_IDENTIFIED + 2 CANDIDATE_INCOMPLETE)
+**Remaining Git source identities not integrated:** 16 (14 NOT_IDENTIFIED + 2 CANDIDATE_INCOMPLETE)
+**Platform package-source provenance:** 14/14 NOT_IDENTIFIED packages have a verified USER/PRIVATE Plugin Creator manifest and file inventory; canonical Git source migration remains pending.
 
 ## 1. Source classifications
 
@@ -38,7 +39,7 @@
 | Agent Skills Atlas upstream dataset | alirezarezvani/claude-skills | RELATED_UPSTREAM_DATASET | Preserve pinned dataset provenance; do not register as Agent Skills Atlas plugin source |
 | CL2-VAEPPC | promkespkmbinuang-coder/CL2-VAEPPC | UNVERIFIED_PLACEHOLDER | Not accepted; only README/LICENSE and no package identity or source tree |
 
-## 4. Twelve NOT_IDENTIFIED plugin repositories
+## 4. Fourteen NOT_IDENTIFIED plugin repositories
 
 1. Evaluator Team — Plugin Creator package 1.0.0
 2. Master Photo Restoration — 1.0.0
@@ -52,8 +53,10 @@
 10. Agent Skills Atlas — 0.3.1
 11. AI Workflow Systems Orchestrator — 0.2.0
 12. GrowthForge Business OS — 1.1.1
+13. People & Business Competency Academy — 0.1.0
+14. Progressive Roadmap Evaluator (PRE) — 0.1.1
 
-Plugin Creator version metadata is not a Git source release. Do not invent repository URLs from plugin slugs or treat a source dataset as the wrapper plugin's canonical source.
+Plugin Creator version metadata and a complete USER/PRIVATE package file inventory verify a platform package source, not a canonical Git source release. Do not invent repository URLs from plugin slugs or treat a source dataset as the wrapper plugin's canonical source. For these 14 plugins, Git source migration remains pending and no redistribution license is declared in the current package manifest.
 
 ## 5. Repository creation and onboarding acceptance
 
