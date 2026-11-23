@@ -29,7 +29,18 @@ class DistributionValidationTests(unittest.TestCase):
         catalog=self.load(ROOT/"catalog"/"plugins.json")
         registry=self.load(REGISTRY)
         self.assertEqual({p["plugin_key"] for p in catalog["plugins"]},{p["plugin_key"] for p in registry["plugins"]})
-        self.assertEqual(registry["plugin_count"],20)
+        self.assertEqual(registry["plugin_count"],21)
+
+    def test_people_business_competency_academy_remains_snapshot_only(self):
+        registry = self.load(REGISTRY)
+        item = next(p for p in registry["plugins"] if p["plugin_key"] == "people-business-competency-academy")
+        self.assertEqual(item["distribution_status"], "snapshot_only")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertEqual(item["license_status"], "not_assessed")
+        self.assertIsNone(item["source_commit"])
+        self.assertIsNone(item["package_artifact"])
+        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
+        self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
 
     def test_no_package_is_falsely_marked_installable(self):
         registry=self.load(REGISTRY)
@@ -56,7 +67,7 @@ class DistributionValidationTests(unittest.TestCase):
         plan=json.loads(result.stdout)
         self.assertEqual(plan["requested_plugin_keys"],[])
         self.assertIn("NO_INSTALLABLE_PLUGIN_PACKAGES_AVAILABLE",plan["blockers"])
-        self.assertEqual(len(plan["excluded_plugins"]),20)
+        self.assertEqual(len(plan["excluded_plugins"]),21)
 
     def test_legacy_is_redirect_only(self):
         registry=self.load(REGISTRY)

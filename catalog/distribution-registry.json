@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "registry_revision": "2026-11-23",
   "authority": "Hypersystem-Orchestrator parent registry",
-  "plugin_count": 20,
+  "plugin_count": 21,
   "installability_rule": "Eligible only when status is installable_public or installable_private, license_status is cleared, package_artifact exists, source_commit is pinned, and target adapter has host_tested or runtime_verified evidence.",
   "selection_modes": {
     "single": "Exactly one eligible plugin.",
@@ -344,6 +344,26 @@
         "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
       ],
       "eligibility_note": "Instruction snapshot only; not a distributable source package."
+    },
+    {
+      "plugin_key": "people-business-competency-academy",
+      "display_name": "People & Business Competency Academy",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.1.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
+        "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE"
+      ],
+      "eligibility_note": "Private Plugin Creator package snapshot only. No canonical source repository, independently cleared license or public distribution artifact. Do not mark installable."
     },
     {
       "plugin_key": "workflow-systems-orchestrator",
