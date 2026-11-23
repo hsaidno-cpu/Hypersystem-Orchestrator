@@ -83,3 +83,14 @@ Before calling this a universal super-orchestrator, the following must be delive
 7. Security, load, chaos, compatibility, cost and operational-runbook evidence.
 
 Do not unlock a higher environment merely because the local sandbox passes. Advance one adapter and one target at a time.
+
+## Ponytail engineering-method route — declared, not dispatchable
+
+The runtime routing policy declares `plugin.engineering_method` with:
+- primary owner: `ponytail-engineering-optimizer`;
+- supporting specialists: `skill-developer-orchestrator` and `evaluator-team`;
+- required capability: `plugin.skill.invoke`.
+
+This separates **route selection** from **capability availability**. The HSO route resolver can identify the correct specialist and ownership boundaries, but `plugin.skill.invoke` remains `NOT_CONFIGURED` in the runtime capability registry. The runtime therefore returns a capability blocker and does not pretend to invoke Ponytail. SDO remains the source-write owner; Evaluator Team remains the independent acceptance specialist.
+
+The private Plugin Creator release is not a runtime adapter. Before dispatch can be enabled, a named host adapter must be implemented, authenticated, authorized, probed, tested against the exact package version and independently read back. Until then, C2/C3 can provide synthetic/mock contract evidence only; C4 host activation and C5 actual plugin runtime invocation remain `NOT_RUN`.
