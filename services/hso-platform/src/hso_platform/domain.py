@@ -628,6 +628,9 @@ def verify_package(
     else:
         package.state = "SUCCEEDED"
 
+    # autoflush is disabled for explicit transaction control; flush the terminal
+    # transition before calculating aggregate workflow state.
+    session.flush()
     remaining = session.scalars(
         select(WorkPackage).where(
             WorkPackage.workflow_id == workflow_id,
