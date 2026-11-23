@@ -101,7 +101,8 @@ def authenticate(request: Request, session: Session, settings: Settings) -> Prin
             subject="local-development",
             scopes=frozenset({
                 "registry:read", "registry:write", "workflow:read", "workflow:write",
-                "workflow:execute", "workers:manage", "keys:manage", "entitlements:manage",
+                "workflow:execute", "workflow:verify", "capabilities:verify",
+                "workers:manage", "keys:manage", "entitlements:manage",
                 "package:publish", "package:install", "audit:read", "mcp:invoke",
                 "metrics:read", "outbox:manage",
             }),
