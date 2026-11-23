@@ -5,6 +5,8 @@ import sys
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator, FormatChecker
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "catalog" / "source-rights-registry.json"
 VALIDATOR = ROOT / "tools" / "validate_source_rights.py"
@@ -26,6 +28,21 @@ class SourceRightsRegistryTests(unittest.TestCase):
         self.assertEqual(self.registry["counts"]["not_identified_git_source_count"], 14)
         self.assertEqual(self.registry["counts"]["candidate_incomplete_count"], 2)
         self.assertEqual(self.registry["counts"]["legacy_redirect_count"], 1)
+
+    def test_registry_conforms_to_published_json_schema(self):
+        schema = json.loads(
+            (ROOT / "catalog" / "source-rights-registry.schema.json").read_text(encoding="utf-8")
+        )
+        Draft202012Validator.check_schema(schema)
+        Draft202012Validator(schema, format_checker=FormatChecker()).validate(self.registry)
+
+    def test_nested_source_repository_ids_match_registry_identity(self):
+        for item in self.registry["records"]:
+            self.assertEqual(
+                item["source"].get("repository_id"),
+                item.get("source_repository_id"),
+                msg=item["plugin_key"],
+            )
 
     def test_only_sdo_has_apache_rights_cleared_for_its_source(self):
         cleared = [
