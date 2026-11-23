@@ -18,7 +18,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 ## What is included now
 
-The registry contains **22 plugin identities** supplied for this ecosystem.
+The registry contains **23 plugin identities** supplied for this ecosystem.
 
 Five verified official plugin source repositories are pinned as Git submodules:
 
@@ -32,7 +32,7 @@ Five verified official plugin source repositories are pinned as Git submodules:
 
 The other plugin identities remain recorded with explicit source states. Instruction snapshots and candidate repositories are not treated as canonical distributable source packages.
 
-## The 22 registered plugins
+## The 23 registered plugins
 
 1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
@@ -56,6 +56,7 @@ The other plugin identities remain recorded with explicit source states. Instruc
 20. GrowthForge Business OS
 21. PVEE Promkes Super Orchestrator
 22. Progressive Roadmap Evaluator (PRE)
+23. Ponytail Engineering System
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
@@ -88,6 +89,10 @@ python tools/resolve_distribution.py --manifest distribution/manifests/manifest.
 
 The resolver is plan-only. It does not download, install, enable, authorize or execute plugins. See [distribution/README.md](distribution/README.md) for the operational boundary.
 
+## Ponytail Engineering System
+
+[Ponytail integration and ownership contract](docs/PONYTAIL-ENGINEERING-INTEGRATION.md). The package is USER/PRIVATE; only its metadata pointer is kept here. The upstream Ponytail repository is cited as methodology provenance, not as the derivative package's canonical source.
+
 ## Repository map
 
 - catalog/ — plugin identity, source inventory, compatibility, distribution eligibility and platform adapter registry.
@@ -104,7 +109,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 
 ## Complete plugin instruction vault
 
-The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **256 skill definitions** across 22 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **265 skill definitions** across 23 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
