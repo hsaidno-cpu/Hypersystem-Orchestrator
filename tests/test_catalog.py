@@ -194,7 +194,7 @@ class CatalogValidationTests(unittest.TestCase):
         indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
         self.assertEqual(catalog["expected_plugin_count"], 22)
         self.assertEqual(len(catalog["plugins"]), 22)
-        self.assertEqual(pre["plugin_creator_id"], "plugins_6b038580bc4881911bbaa159e5ecf2a22")
+        self.assertEqual(pre["plugin_creator_id"], "plugins_6b038580bc488191ac56d9e586071bfc")
         self.assertEqual(pre["platform_package_version"], "0.1.1")
         self.assertEqual(pre["platform_current_release_id"], "pluginrel_6b0385d7a4488191a681997c0d9ae531")
         self.assertEqual(pre["source_state"], "pending_repository")
