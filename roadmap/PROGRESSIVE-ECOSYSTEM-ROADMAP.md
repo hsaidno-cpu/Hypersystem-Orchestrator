@@ -1,12 +1,26 @@
 # Progressive Ecosystem Roadmap
 
+## Latest addendum — Ponytail Engineering System, 23 November 2026
+
+**Status:** PACKAGE_CREATED / PRIVATE / REGISTERED_ON_PR_BRANCH / HSO_ROUTE_DECLARED / PLUGIN_DISPATCH_BLOCKED
+
+- Parent inventory on the integration branch: 23 plugin identities and 265 indexed skill records. The main branch remains unchanged until PR review and merge.
+- New private package: `ponytail-engineering-optimizer`, Plugin Creator v0.1.0, release `pluginrel_6b044f37640081918df7f449298d72cf`, nine subskills.
+- Canonical Git source: NOT_IDENTIFIED. Upstream Ponytail is provenance only; it is not added as a child source submodule for this derivative.
+- Distribution: `snapshot_only`; package-level license clearance, public artifact and tested host adapter are not established.
+- HSO route: `plugin.engineering_method` selects Ponytail as primary, SDO and Evaluator Team as bounded supporting owners; `plugin.skill.invoke` is still NOT_CONFIGURED, so dispatch is blocked.
+- New Ponytail → SDO Engineering Dossier interface and C2/C3 fixture are added. The integration matrix remains unverified until the exact PR commit CI passes. C4/C5 remain NOT_RUN.
+
+Historical checkpoints below are retained as records of the earlier 22-plugin baseline.
+
+
 This roadmap is staged by evidence and dependencies, not by arbitrary calendar promises.
 
 ## Stage E0 — Central foundation
 
 **Objective:** Establish the central repository, identity catalog, source provenance, responsibility matrix, governance and roadmap.
 
-**Deliverables:** 22 plugin records; 256 indexed skill records; source/rights registry (PR #12 pending merge); five immutable source pins; architecture and responsibility boundaries; versioned handoff contracts; local validators; CI catalog gate; Notion documentation.
+**Deliverables:** 23 plugin records; 265 indexed skill records; source/rights registry (PR #12 pending merge); five immutable source pins; architecture and responsibility boundaries; versioned handoff contracts; local validators; CI catalog gate; Notion documentation.
 
 **Exit criteria:** unique plugin IDs and keys; every source reference has a real URL and status; all current submodule SHAs are immutable; private repository access is clearly documented; static checks pass.
 
@@ -106,7 +120,7 @@ A real, restricted runtime has been added beside the existing plan-only compiler
 |---|---|---|---|
 | P0 | Validate central catalog and submodule pins | E0 source data | Validator and read-back |
 | P0 | Reconcile Video Explainer V4.1.12 vs observed master skill header v4.0.9 | Source package discovery | Authoritative manifest and commit |
-| P0 | Resolve the 14 NOT_IDENTIFIED sources and two incomplete candidates; SDO is already pinned as an official source | Source inventory and owner decision | Accepted canonical source or explicit pending/deprecated disposition, complete manifest/tree and rights evidence |
+| P0 | Resolve the 15 NOT_IDENTIFIED sources and two incomplete candidates; SDO is already pinned as an official source | Source inventory and owner decision | Accepted canonical source or explicit pending/deprecated disposition, complete manifest/tree and rights evidence |
 | P1 | Verify Photo-Fixer candidate repository content | Source inspection | Correct source tree and ownership |
 | P1 | Identify repository sources for remaining plugins | Source inventory | Approved source URL and provenance |
 | P1 | Decide if PVEE and Video Explainer are distinct products or release generations | Source comparison | Comparative dossier and decision record |
