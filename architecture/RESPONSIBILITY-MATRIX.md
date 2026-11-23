@@ -10,6 +10,7 @@ This matrix is normative for ecosystem-level routing. The detailed product philo
 | Forensic anatomy and reconstruction of an AI plugin/skill/agent | A.S.F.R.E.E Canonical | SKILL ANALYZER for methods; Agent Jailbreak DS for security; SDO for engineering lifecycle | A.S.F.R.E.E Legacy |
 | Independent skill/plugin evaluation, scoring, ranking or redesign | Evaluator Team | SKILL ANALYZER for analytical methods; Anatomi Prompt for eight-pillar structure | SDO as independent judge of its own implementation |
 | Build, modify, reconstruct, test or release an AI skill/plugin | Skill Developer Orchestrator | A.S.F.R.E.E, Evaluator Team, Anatomi Prompt | Multiple simultaneous write owners |
+| Create/govern a multi-phase roadmap, milestones, iterations, evidence-based progress and adaptive replanning | Progressive Roadmap Evaluator (PRE) | SKILL ANALYZER for method choice; Evaluator Team for independent judgement; A.S.F.R.E.E for technical anatomy; SDO for plugin-source engineering | Routing PRE to a general method engine, plugin forensic engine or source engineering lifecycle as the sole roadmap owner |
 | Audit or construct a prompt using eight Octa-Prompt pillars | Anatomi Prompt V3 — Octa-Prompt | AI Prompt Finder before it when a prompt must first be reconstructed from content | Prompt Finder as a substitute for eight-pillar structural audit |
 | Analyze image/video/document/design/content and turn it into a prompt | AI Prompt Finder & Creator | Anatomi Prompt for optional eight-pillar hardening | Anatomi Prompt alone when the source content itself must be analyzed |
 | General photo edit, retouch, object/background, product photo or visual enhancement | Photo Fixer | Master Photo Restoration only when restoration is the actual task | Master Photo Restoration for ordinary editing |
@@ -35,6 +36,7 @@ This matrix is normative for ecosystem-level routing. The detailed product philo
 | Plugin/package anatomy and forensic reconstruction case | A.S.F.R.E.E | Evidence dossier, component map, dependency/permission map and change assurance |
 | Independent evaluation score and acceptance recommendation | Evaluator Team | Scoring rubric, findings, evidence, severity, recommendation and acceptance criteria |
 | Integrated skill/plugin engineering lifecycle | SDO | Requirement trace, change manifest, tests, read-back, PR and release evidence |
+| Progressive roadmap lifecycle state (R0–R9), phase/milestone/iteration structure and roadmap adaptation decisions | PRE | Roadmap records, evidence handoff, gate and adaptation rationale |
 | Eight-pillar prompt architecture | Anatomi Prompt | Octa-Prompt master prompt and structural validation |
 | Source-content analysis and reconstructed prompt | AI Prompt Finder & Creator | Observation/inference/unknown map and target-generator prompt package |
 | General photo-edit operation | Photo Fixer | Scoped edit plan and QA result |
@@ -71,6 +73,15 @@ This matrix is normative for ecosystem-level routing. The detailed product philo
 - Anatomi inspects the prompt as an instruction object and enforces eight pillars.
 - Finder inspects source content/reference and turns it into a reconstructed/new prompt.
 - Finder → Anatomi is a valid sequence when both content reconstruction and structural hardening are required.
+
+### PRE vs SKILL ANALYZER, A.S.F.R.E.E, Evaluator Team, Workflow Systems and SDO
+
+- PRE owns roadmap-specific lifecycle progression, milestones, iteration state, evidence-based progress measures, adaptation and closure.
+- SKILL ANALYZER supplies general methods; PRE does not absorb general analytical methodology.
+- A.S.F.R.E.E owns technical anatomy and supervised engineering of AI/software systems; in A.S.F.R.E.E, PRE is subordinate to M00 and does not become O13.
+- Evaluator Team independently judges system quality; PRE coordinates roadmap evaluation handoffs but cannot declare itself independently accepted.
+- Workflow Systems owns reusable workflows, SOPs and automation architecture; PRE owns the roadmap's lifecycle state and decision graph.
+- SDO owns implementation/release lifecycle for skill/plugin source changes; PRE may track that work as roadmap work but cannot replace SDO's engineering authority.
 
 ### Photo Fixer vs Master Photo Restoration
 

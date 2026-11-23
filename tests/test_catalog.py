@@ -18,9 +18,9 @@ class CatalogValidationTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
-        self.assertIn("PASS: 20 unique plugin identities", result.stdout)
+        self.assertIn("PASS: 21 unique plugin identities", result.stdout)
         self.assertIn("PASS: 5 declared and pinned source submodules", result.stdout)
-        self.assertIn("PASS: 238 indexed skill instruction records", result.stdout)
+        self.assertIn("PASS: 247 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):
         gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
@@ -163,5 +163,36 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(sdo["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
         self.assertIn("23,651", sdo["source_instruction_parity_note"])
         self.assertIn("10,573", sdo["source_instruction_parity_note"])
+
+    def test_pre_is_independent_private_plugin_with_pending_source_repository(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        pre = next(p for p in catalog["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
+        self.assertEqual(pre["platform_package_version"], "0.1.1")
+        self.assertEqual(pre["platform_scope"], "USER")
+        self.assertEqual(pre["platform_discoverability"], "PRIVATE")
+        self.assertEqual(pre["source_state"], "pending_repository")
+        self.assertIsNone(pre["source_repository_id"])
+        self.assertEqual(pre["source_classification"], "NOT_IDENTIFIED")
+        self.assertEqual(pre["instruction_skill_count"], 9)
+        self.assertEqual(pre["version_alignment_state"], "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED")
+        self.assertEqual(pre["source_instruction_parity_status"], "NOT_COMPARED")
+        self.assertIn("asfree-canonical", pre["related_plugins"])
+        self.assertIn("skill-analyzer", pre["related_plugins"])
+
+    def test_pre_snapshot_release_and_skill_count_match_catalog(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        snapshot = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        pre = next(p for p in catalog["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
+        indexed = next(p for p in snapshot["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
+        self.assertEqual(indexed["skill_count"], pre["instruction_skill_count"])
+        self.assertEqual(indexed["plugin_creator_release_id"], "pluginrel_6b0385d7a4488191a681997c0d9ae531")
+        self.assertEqual(indexed["package_version"], "0.1.1")
+        self.assertTrue((ROOT / pre["instruction_snapshot_path"]).is_file())
+
+    def test_pre_positioning_preserves_neighboring_plugin_boundaries(self):
+        matrix = (ROOT / "architecture" / "RESPONSIBILITY-MATRIX.md").read_text(encoding="utf-8")
+        self.assertIn("Progressive Roadmap Evaluator (PRE)", matrix)
+        self.assertIn("M00", matrix)
+
 if __name__ == "__main__":
     unittest.main()

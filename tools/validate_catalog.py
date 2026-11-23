@@ -173,7 +173,7 @@ def validate():
 
     snapshot_index = load_json(ROOT / "catalog" / "instruction-snapshots.json")
     if len(snapshot_index.get("plugins", [])) != len(plugins):
-        fail("Instruction snapshot index must contain all 20 plugin identities")
+        fail("Instruction snapshot index must contain all registered plugin identities")
     if snapshot_index.get("total_skill_records") != sum(p["instruction_skill_count"] for p in plugins):
         fail("Instruction snapshot skill total does not match the plugin catalog")
     index_by_key = {p["plugin_key"]: p for p in snapshot_index["plugins"]}
@@ -185,8 +185,6 @@ def validate():
             fail(f"{plugin['plugin_key']}: instruction snapshot skill count mismatch")
         if indexed.get("instruction_path") != plugin["instruction_snapshot_path"]:
             fail(f"{plugin['plugin_key']}: instruction snapshot path mismatch")
-    if snapshot_index["total_skill_records"] != 238:
-        fail("Expected 238 instruction skill records in the current snapshot")
 
     print(f"PASS: {len(plugins)} unique plugin identities")
     print(f"PASS: {len(repositories)} repository records")

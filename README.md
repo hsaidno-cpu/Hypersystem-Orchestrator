@@ -18,7 +18,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 ## What is included now
 
-The registry contains **20 plugin identities** supplied for this ecosystem.
+The registry contains **21 plugin identities** supplied for this ecosystem.
 
 Five verified official plugin source repositories are pinned as Git submodules (Video Explainer remains behind its current Plugin Creator deployment):
 
@@ -34,7 +34,7 @@ The Anatomi Prompt submodule requires permission to the private source repositor
 
 Other plugin identities are recorded in catalog/plugins.json with explicit source states. They are not represented as migrated source code. The Photo-Fixer repository is currently only a candidate: its root contains a minimal README and a license, not a verified plugin source package.
 
-## The 20 registered plugins
+## The 21 registered plugins
 
 1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
@@ -56,6 +56,7 @@ Other plugin identities are recorded in catalog/plugins.json with explicit sourc
 18. AI Workflow Systems Orchestrator
 19. GrowthForge Business OS
 20. PVEE Promkes Super Orchestrator
+21. Progressive Roadmap Evaluator (PRE)
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
@@ -70,18 +71,18 @@ The machine-readable identities and statuses are in [catalog/plugins.json](catal
 - tools/ — repository-local validation scripts.
 - tests/ — standard-library checks for catalog integrity.
 - .github/workflows/ — automated static catalog checks.
-- plugin-instructions/ — one isolated instruction bundle or source pointer per plugin (20 plugin folders, 238 skill records indexed).
+- plugin-instructions/ — one isolated instruction bundle or source pointer per plugin (21 plugin folders, 247 skill records indexed).
 
 ## Complete plugin instruction vault
 
 The parent now includes an isolated instruction boundary for every registered plugin:
 
-- 14 isolated runtime instruction snapshots cover 12 NOT_IDENTIFIED packages plus the two CANDIDATE_INCOMPLETE packages (Photo Fixer and PVEE).
-- 2 Plugin Creator release snapshots (Video Explainer 4.1.12 and SDO 0.1.0) are retained alongside their independently pinned official Git submodules.
+- 14 isolated runtime instruction snapshots cover 13 NOT_IDENTIFIED packages plus the two CANDIDATE_INCOMPLETE packages (Photo Fixer and PVEE).
+- 3 Plugin Creator release snapshots (Video Explainer 4.1.12, SDO 0.1.0 and PRE 0.1.1) are retained with their respective provenance; PRE has no canonical Git source repository yet.
 - 3 source-pointer entries refer to the canonical submodules for SKILL ANALYZER, A.S.F.R.E.E and Anatomi Prompt.
 - 1 A.S.F.R.E.E Legacy redirect-only snapshot points to the canonical package.
 - Five official source repositories are pinned; Video Explainer is explicitly marked behind its 4.1.12 deployment.
-- The machine-readable index records **238 skill definitions** across the 20 plugin identities.
+- The machine-readable index records **247 skill definitions** across the 21 plugin identities.
 
 Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect the [instruction snapshot index](catalog/instruction-snapshots.json). Each bundle is kept in its own plugin directory. These snapshots do not merge source ownership or replace the canonical plugin repository. See [snapshot synchronization governance](governance/SNAPSHOT-SYNCHRONIZATION.md).
 
@@ -93,9 +94,10 @@ The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architect
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
 - Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and turns it into a prompt.
 - Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
+- PRE owns the R0–R9 progressive roadmap lifecycle and evidence-based adaptation; it complements rather than replaces SKILL ANALYZER, A.S.F.R.E.E, Evaluator Team, SDO or Workflow Systems. See the [PRE host-integration architecture](architecture/PRE-POSITIONING-AND-HOST-INTEGRATION.md) and [Notion documentation](https://app.notion.com/p/42199868397f8148b25ff0992174cf3f).
 - GODEX owns audio/voice-over truth and post; Motion Graphic owns general visual-first animation; PVEE owns health communication truth/governance; Video Explainer owns the technical production engine after PVEE approval.
 
-The central catalog includes positive and negative routing triggers for all 20 plugins. Overlap is resolved by a single owner for each final decision and explicit handoffs.
+The central catalog includes positive and negative routing triggers for all 21 plugins. Overlap is resolved by a single owner for each final decision and explicit handoffs.
 
 ## Version reconciliation
 

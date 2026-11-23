@@ -45,8 +45,8 @@ The parent catalog/positioning controls cross-plugin ownership and handoff expec
 
 ## 6. Current completeness declaration
 
-The index contains 238 skill records across 20 plugin identities. Five official plugin source repositories are pinned; the SDO runtime snapshot is now accompanied by a verified canonical source pointer:
-- Runtime instruction snapshots remain segregated for 12 NOT_IDENTIFIED packages and two CANDIDATE_INCOMPLETE packages. Video Explainer and SDO keep separate Plugin Creator snapshots with official Git submodules;
+The index contains 247 skill records across 21 plugin identities. Five official plugin source repositories are pinned; the SDO runtime snapshot is now accompanied by a verified canonical source pointer:
+- Runtime instruction snapshots remain segregated for 13 NOT_IDENTIFIED packages (including PRE, whose snapshot is a Plugin Creator current-release read-back) and two CANDIDATE_INCOMPLETE packages. Video Explainer and SDO keep separate Plugin Creator snapshots with official Git submodules; PRE has no canonical source repository;
 - Source-backed plugin packages are represented by their independent submodules/source pointers (SKILL ANALYZER, A.S.F.R.E.E, Anatomi Prompt, Video Explainer and SDO);
 - 1 skill document represents the A.S.F.R.E.E Legacy redirect.
 
@@ -62,7 +62,7 @@ The Video Explainer instruction bundle is captured from current Plugin Creator r
 
 - SDO source repository: promkespkmbinuang-coder/SPDO, commit 9d3c4bc09179ff857df4f3819be83e1847571add, source version 0.1.0, Apache-2.0, signature-verified. Its runtime snapshot remains for current Plugin Creator read-back; canonical source is the independent Git submodule. Compare content hashes before declaring exact instruction parity.
 - PVEE declared source pointer: promkespkmbinuang-coder/CL-VAEPPC, observed commit 1ab0c41081ccdbb91cc9dec0a2864acd0de00d54. It is registered as CANDIDATE_INCOMPLETE because the current tree does not contain a package manifest or skill source tree.
-- Counts: five official source submodules, two incomplete source candidates, twelve NOT_IDENTIFIED plugin sources, one legacy redirect and 238 skill records across 20 plugin identities.
+- Counts: five official source submodules, two incomplete source candidates, thirteen NOT_IDENTIFIED plugin sources, one legacy redirect and 247 skill records across 21 plugin identities. PRE contributes the third Plugin Creator release snapshot but is not a source submodule.
 
 
 ## SDO source/snapshot drift (2026-11-22)
@@ -73,3 +73,8 @@ SDO is an official source submodule, but the canonical Git master SKILL.md and t
 - Do not overwrite either file automatically.
 - Have the SDO source owner review the semantic diff, decide the canonical body, update changelog/package version if required, and verify read-back before changing source_instruction_parity_status to MATCH.
 - Until then, source_sync_status remains SOURCE_INSTRUCTION_DRIFT_DETECTED.
+
+
+## PRE private-plugin/public-snapshot distinction
+
+PRE is a USER-scope PRIVATE Plugin Creator plugin at version 0.1.1 (release pluginrel_6b0385d7a4488191a681997c0d9ae531). At the owner's explicit request, its nine skill documents are mirrored in this public parent repository. The snapshot is evidence of the exact Plugin Creator release read-back, not a canonical source repository or executable hosted runtime. The plugin manifest does not declare a license; the parent's license does not extend to PRE. PRE therefore remains pending_repository / NOT_IDENTIFIED until an independent canonical source repository and its licensing are established.
