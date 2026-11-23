@@ -1,4 +1,4 @@
-"""C2/C3 assurance for the 14 declared cross-plugin handoff contracts.
+"""C2/C3 assurance for the 15 declared cross-plugin handoff contracts.
 
 C2 validates deterministic synthetic payloads against the published JSON Schema.
 C3 exercises a strict mock receiver; no plugin, host or runtime is invoked.
@@ -70,9 +70,9 @@ class HandoffContractAssuranceTests(unittest.TestCase):
             for fixture in cls.fixture_doc["fixtures"]
         }
 
-    def test_fixture_inventory_covers_all_14_matrix_edges(self):
-        self.assertEqual(self.matrix["integration_count"], 14)
-        self.assertEqual(self.fixture_doc["count"], 14)
+    def test_fixture_inventory_covers_all_15_matrix_edges(self):
+        self.assertEqual(self.matrix["integration_count"], 15)
+        self.assertEqual(self.fixture_doc["count"], 15)
         self.assertEqual(set(self.fixtures), set(self.edges))
 
     def test_c2_all_synthetic_payloads_validate_against_schema(self):
@@ -107,7 +107,7 @@ class HandoffContractAssuranceTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             self.validator.validate(payload)
 
-    def test_c3_mock_receiver_accepts_all_14_matching_contracts(self):
+    def test_c3_mock_receiver_accepts_all_15_matching_contracts(self):
         accepted = []
         for integration_id, payload in self.fixtures.items():
             receipt = mock_receiver_accept(
@@ -157,9 +157,14 @@ class HandoffContractAssuranceTests(unittest.TestCase):
 
     def test_matrix_records_c2_c3_pass_without_claiming_c4_c5(self):
         for edge in self.matrix["integrations"]:
-            self.assertEqual(edge["status"], "CONTRACT_TESTED")
-            self.assertEqual(edge["schema_contract_test"], "PASS")
-            self.assertEqual(edge["contract_behavior_test"], "PASS")
+            if edge["integration_id"] == "INT-PONYTAIL-SDO-001":
+                self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
+                self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
+                self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
+            else:
+                self.assertEqual(edge["status"], "CONTRACT_TESTED")
+                self.assertEqual(edge["schema_contract_test"], "PASS")
+                self.assertEqual(edge["contract_behavior_test"], "PASS")
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
 
