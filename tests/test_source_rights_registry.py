@@ -29,8 +29,8 @@ class SourceRightsRegistryTests(unittest.TestCase):
 
     def test_only_sdo_has_apache_rights_cleared_for_its_source(self):
         cleared = [
-            x["plugin_key"] for x in self.registry["records"]
-            if x["rights"]["license_status"] == "CLEARED_APACHE_2_0_CONDITIONAL"
+            item["plugin_key"] for item in self.registry["records"]
+            if item["rights"]["license_status"] == "CLEARED_APACHE_2_0_CONDITIONAL"
         ]
         self.assertEqual(cleared, ["skill-developer-orchestrator"])
 
@@ -44,14 +44,21 @@ class SourceRightsRegistryTests(unittest.TestCase):
     def test_public_repo_without_license_is_not_assumed_redistributable(self):
         for key in ("video-explainer-promkes-v4-1-12", "skill-analyzer"):
             item = self.records[key]
-            self.assertEqual(item["rights"]["license_status"], "PRIVATE_NO_LICENSE")
-        self.assertEqual(item["plugin_creator_discoverability"], "PRIVATE")
+            self.assertEqual(item["source"]["visibility"], "PUBLIC")
+            self.assertEqual(item["rights"]["license_status"], "NOT_DECLARED")
             self.assertFalse(item["distribution"]["eligible_for_redistribution"])
 
     def test_private_anatomi_source_remains_private_and_unlicensed(self):
         item = self.records["anatomi-prompt-v3-octa-prompt"]
         self.assertEqual(item["source"]["visibility"], "PRIVATE")
-        self.assertEqual(item["rights"]["license_status"], "NOT_DECLARED")
+        self.assertEqual(item["plugin_creator_discoverability"], "PRIVATE")
+        self.assertEqual(item["rights"]["license_status"], "PRIVATE_NO_LICENSE")
+        self.assertFalse(item["distribution"]["eligible_for_redistribution"])
+
+    def test_legacy_alias_inherits_canonical_rights_and_is_not_installable(self):
+        item = self.records["asfree-legacy"]
+        self.assertEqual(item["rights"]["license_status"], "INHERITED_CANONICAL_RESTRICTED")
+        self.assertEqual(item["source"]["canonical_plugin_key"], "asfree-canonical")
         self.assertFalse(item["distribution"]["eligible_for_redistribution"])
 
     def test_candidates_with_apache_license_are_still_incomplete(self):
@@ -62,7 +69,7 @@ class SourceRightsRegistryTests(unittest.TestCase):
             self.assertFalse(item["distribution"]["eligible_for_redistribution"])
 
     def test_pending_plugin_creator_snapshots_are_not_release_packages(self):
-        pending = [x for x in self.registry["records"] if x["source_state"] == "pending_repository"]
+        pending = [item for item in self.registry["records"] if item["source_state"] == "pending_repository"]
         self.assertEqual(len(pending), 14)
         for item in pending:
             self.assertIsNone(item["source"]["repository_url"])
@@ -70,7 +77,13 @@ class SourceRightsRegistryTests(unittest.TestCase):
             self.assertFalse(item["distribution"]["eligible_for_redistribution"])
 
     def test_validator_passes_and_installable_count_remains_zero(self):
-        result = subprocess.run([sys.executable, str(VALIDATOR)], cwd=ROOT, text=True, capture_output=True, check=False)
+        result = subprocess.run(
+            [sys.executable, str(VALIDATOR)],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
         self.assertIn("0 plugin packages are currently cleared", result.stdout)
 
