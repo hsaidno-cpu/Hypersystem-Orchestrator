@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import hmac
 import http.client
 import ipaddress
 import json
@@ -505,6 +506,14 @@ def _validate_approval_binding(
             raise RemoteMCPError(f"P0 approval receipt is not bound to the expected {key}")
     if not approval.get("nonce") or not approval.get("approver"):
         raise RemoteMCPError("P0 approval receipt is missing an approver or nonce")
+    if (
+        approval.get("environment") != "hso-p0-remote-mcp-live"
+        or approval.get("approval_source") != "github_actions_workflow_run_approvals_api"
+        or not isinstance(approval.get("environment_reviewer_id"), int)
+        or not approval.get("workflow_actor")
+        or str(approval.get("approver", "")).lower() == str(approval.get("workflow_actor", "")).lower()
+    ):
+        raise RemoteMCPError("P0 approval receipt is not bound to an independent authenticated Environment reviewer")
 
 
 def probe_remote_mcp_host(_workspace: Path | None = None, _skill_source_path: str | None = None) -> dict[str, Any]:
