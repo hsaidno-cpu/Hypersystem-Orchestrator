@@ -66,7 +66,7 @@ def validate_policy(schema: dict[str, Any], policy: dict[str, Any]) -> None:
         raise ContractError("ECIG Notion writes must remain allowlisted")
     never_automatic = set(policy.get("never_automatic") or [])
     forbidden = {
-        "infer_human_approval_from_ci",
+        "infer_human_approval_from_ci_success",
         "delete_evidence_to_clear_drift",
         "widen_credentials_after_authorization_failure",
     }
