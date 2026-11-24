@@ -79,7 +79,7 @@ def main() -> int:
     }
     if not configured_users or any(not isinstance(value, int) for value in configured_users.values()):
         raise SystemExit("P0 Environment must configure an individually identifiable User reviewer")
-    if not configured_users.issubset(allowed_logins):
+    if not set(configured_users).issubset(allowed_logins):
         raise SystemExit("Configured Environment reviewers must all be in HSO_P0_ALLOWED_REVIEWER_LOGINS")
 
     history = api_get(run_approvals_url, token)
