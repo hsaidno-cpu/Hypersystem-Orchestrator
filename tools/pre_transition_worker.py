@@ -270,14 +270,26 @@ def result_properties(result: dict[str, Any], correlation_id: str) -> dict[str, 
     }
 
 
-def read_back_matches(page: dict[str, Any], result: dict[str, Any]) -> bool:
+def read_back_matches(
+    page: dict[str, Any], result: dict[str, Any], correlation_id: str,
+) -> bool:
+    """Verify the complete persisted decision, not just its summary fields."""
     props = page.get("properties") or {}
+    expected_state = {
+        "ALLOW": "POLICY_PASSED", "HOLD": "HOLD", "DENY": "REJECTED"
+    }[result["decision"]]
+    expected_details = canonical_json({
+        "blockers": result.get("blockers", []),
+        "reasons": result.get("reasons", []),
+        "next_action": result.get("next_action"),
+    })
     return (
         select_value(props.get("Gate Decision")) == result["decision"]
         and rich_text_value(props.get("Evaluation Digest")) == result["evaluation_digest"]
-        and select_value(props.get("Request State")) == {
-            "ALLOW": "POLICY_PASSED", "HOLD": "HOLD", "DENY": "REJECTED"
-        }[result["decision"]]
+        and select_value(props.get("Request State")) == expected_state
+        and rich_text_value(props.get("Evaluation Receipt JSON")) == canonical_json(result)
+        and rich_text_value(props.get("Block Reasons")) == expected_details
+        and rich_text_value(props.get("Correlation ID")) == correlation_id
     )
 
 
@@ -314,7 +326,7 @@ def process_page(
 
     client.update_page(page_id, result_properties(result, correlation_id))
     verified_page = client.get_page(page_id)
-    if not read_back_matches(verified_page, result):
+    if not read_back_matches(verified_page, result, correlation_id):
         raise NotionWorkerError(
             f"READ_BACK_MISMATCH:{page_id}:{result['evaluation_digest']}"
         )
