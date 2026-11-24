@@ -1,6 +1,6 @@
 # PRE R0-R9 Policy & State Transition Enforcement v1.0
 
-**Implementation status:** policy engine implemented on a PR branch; CI validation required; live Notion enforcement is not activated.  
+**Implementation status:** deterministic policy engine, Notion queue worker and scheduled self-hosted workflow are implemented on PR #17; exact-head CI and live activation remain gated. No persistent PRE worker is currently deployed.  
 **Authority:** PRE evaluates the transition. It does not replace the accountable human decision owner or approve its own implementation.
 
 ## Purpose
@@ -37,9 +37,11 @@ The key is supplied only as `HSO_PRE_APPROVAL_HMAC_KEY`; it must never be commit
 2. A transition request is created in the Notion PRE Transition Queue with project/scope, from/to stages, evidence envelope and approval receipt references.
 3. The service loads the canonical PRE policy, resolves the exact work item revision and fetches source evidence.
 4. The policy engine evaluates evidence and authority; missing/invalid conditions return HOLD or DENY.
-5. The host adapter persists the evaluation receipt in the queue. It may apply stage transition only for ALLOW and only with revision compare-and-swap.
-6. Notion receives the applied stage, evaluation digest, source commit, correlation ID, audit receipt and timestamp.
-7. PRE schedules the next lifecycle evaluation. It never runs or approves the underlying engineering tests.
+5. The queue worker first claims a PENDING request as EVALUATING, then evaluates policy, persists a decision receipt and reads the row back by page ID, decision, state and digest.
+6. The worker sets the queue row to POLICY_PASSED, HOLD or REJECTED only after the evaluation data has been read back. EVALUATING rows are polled again, so a crash after a claim can be resumed. Approval nonce consumption is idempotent only for the exact same logical request and receipt.
+7. The worker never updates the canonical Work Item PRE Stage. POLICY_PASSED means the transition contract passed, not that a human accepted a milestone or that the stage has been applied.
+8. A separate stage-application service must be designed with identity-bound authorization, source-revision compare-and-swap, signed application receipt and stronger permission isolation before automatic roadmap stage writes are permitted.
+9. PRE schedules the next lifecycle evaluation. It never runs or approves the underlying engineering tests.
 
 ## Notion queue
 
@@ -47,16 +49,19 @@ The companion database is **PRE Transition Queue — Policy Evaluations**. It st
 
 ## Current limitations and activation gates
 
-- This PR implements the deterministic policy evaluator, schema policy, CLI, unit tests, and CI validation workflow.
-- The connected Notion API token is not provisioned as a GitHub Actions secret, and the Notion integration has not been shared with the new queue or the existing Work Item/Evidence data sources.
-- There is not yet a deployed persistent PRE worker, webhook subscription, or shared durable nonce store.
-- The current GitHub connector cannot configure repository secrets, variables, environments, or Notion integration sharing.
-- Therefore this branch is **not** a claim that live Notion stage changes are automatically enforced yet. Production activation requires the queue integration, least-privilege credential provisioning, a durable shared nonce store, service deployment, and live create/evaluate/hold/allow/apply/read-back tests.
+- This PR implements the deterministic policy evaluator, queue worker, queue schema contract, unit tests, CI validation workflow, and a scheduled polling workflow.
+- The polling workflow is gated by repository variable `HSO_PRE_ENFORCEMENT_ENABLED=true` and requires a persistent self-hosted runner labelled `hso-pre-enforcement`; it must use a persistent nonce-store path.
+- The GitHub Actions environment `hso-pre-runtime` must be created and provisioned with `HSO_PRE_NOTION_API_KEY` and `HSO_PRE_APPROVAL_HMAC_KEY`; repository variables `HSO_PRE_NOTION_DATA_SOURCE_ID` and `HSO_PRE_NONCE_STORE_PATH` must also be configured.
+- The Notion integration must be shared with the PRE Transition Queue and have only the permissions required to read/update that queue. It must not have unrestricted permission to update canonical Work Item stage fields.
+- The HMAC key validates receipts from a trusted approval issuer; it must not be used as an ad-hoc key to mint human approvals. A production identity issuer must authenticate the approver and bind its immutable subject, role, scope, transition, expiry and nonce into the signed receipt.
+- SQLite nonce storage is appropriate only for one persistent worker. Multi-worker production requires a shared transactional nonce store.
+- The current GitHub connector cannot configure repository secrets, variables, environments, self-hosted runners, or Notion integration sharing.
+- Therefore this branch is **not** a claim that live Notion enforcement is activated. It is a tested worker and scheduled-service implementation awaiting environment provisioning, runner registration, integration sharing, and live controlled acceptance. It evaluates gates and writes decision receipts; it does not automatically apply PRE Stage transitions.
 
 ## Commands
 
 ```bash
-python tools/pre_policy_engine.py evaluate \
+python -m tools.pre_policy_engine evaluate \
   --request-file examples/pre-transition-r0-r1.example.json \
   --output /tmp/pre-evaluation.json
 ```
