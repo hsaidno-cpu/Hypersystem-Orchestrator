@@ -99,7 +99,7 @@
         },
         "commit_sha": {
           "type": "string",
-          "pattern": "^[a-f0-9]{40,64}$"
+          "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
         },
         "manifest_path": {
           "type": "string"
@@ -467,7 +467,8 @@
             "pattern": "^[a-f0-9]{64}$"
           }
         }
-      }
+      },
+      "minItems": 1
     },
     "approvals": {
       "type": "array",
@@ -504,7 +505,32 @@
               "null"
             ]
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "decision": {
+                  "const": "APPROVED"
+                }
+              },
+              "required": [
+                "decision"
+              ]
+            },
+            "then": {
+              "required": [
+                "approver"
+              ],
+              "properties": {
+                "approver": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "conflicts": {
@@ -538,15 +564,151 @@
       ],
       "properties": {
         "algorithm": {
-          "type": "string"
+          "enum": [
+            "Ed25519"
+          ]
         },
         "key_id": {
           "type": "string"
         },
         "value": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{86}==$"
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "overall_state": {
+            "const": "SYNCED"
+          }
+        },
+        "required": [
+          "overall_state"
+        ]
+      },
+      "then": {
+        "required": [
+          "signature"
+        ],
+        "properties": {
+          "source": {
+            "properties": {
+              "state": {
+                "const": "MATCH"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "package": {
+            "properties": {
+              "state": {
+                "const": "MATCH"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "installation": {
+            "properties": {
+              "state": {
+                "const": "MATCH"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "instructions": {
+            "properties": {
+              "state": {
+                "const": "MATCH"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "documentation": {
+            "properties": {
+              "state": {
+                "const": "MATCH"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "rights": {
+            "properties": {
+              "state": {
+                "const": "CLEARED"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "signature": {
+            "type": "object",
+            "required": [
+              "algorithm",
+              "key_id",
+              "value"
+            ],
+            "properties": {
+              "algorithm": {
+                "const": "Ed25519"
+              }
+            }
+          },
+          "conflicts": {
+            "maxItems": 0
+          },
+          "limitations": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "instructions": {
+            "properties": {
+              "file_count": {
+                "minimum": 1
+              }
+            },
+            "required": [
+              "file_count"
+            ]
+          }
+        },
+        "required": [
+          "instructions"
+        ]
+      },
+      "then": {
+        "properties": {
+          "instructions": {
+            "required": [
+              "per_file_digests"
+            ],
+            "properties": {
+              "per_file_digests": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }
