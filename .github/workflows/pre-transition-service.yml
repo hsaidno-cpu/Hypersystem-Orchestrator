@@ -43,7 +43,7 @@ jobs:
           test -n "${HSO_PRE_NOTION_DATA_SOURCE_ID}"
           test -n "${HSO_PRE_NONCE_STORE_PATH}"
           mkdir -p "$(dirname "${HSO_PRE_NONCE_STORE_PATH}")"
-          python tools/pre_transition_worker.py \
+          python -m tools.pre_transition_worker \
             --nonce-store "${HSO_PRE_NONCE_STORE_PATH}" \
             | tee /tmp/pre-transition-worker-receipt.json
 
