@@ -4,7 +4,7 @@ on:
   push:
     branches: [feat/github-notion-evidence-sync-20261124]
   pull_request:
-    branches: [fix/ponytail-c2-c3-test-contract-20261124]
+    branches: [fix/ponytail-c2-c3-test-contract-20261124, main]
 
 permissions:
   contents: read
