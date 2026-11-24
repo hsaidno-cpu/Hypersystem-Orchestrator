@@ -100,7 +100,7 @@ class PRETransitionWorkerTests(unittest.TestCase):
                 NonceStore(Path(folder) / "nonces.sqlite"),
             )
         self.assertEqual(result["decision"], "DENY")
-        self.assertIn("EVIDENCE_ENVELOPE_JSON_INVALID", result["request_id"] if False else rich_text_value(page["properties"]["Block Reasons"]))
+        self.assertIn("EVIDENCE_ENVELOPE_JSON_INVALID", rich_text_value(page["properties"]["Block Reasons"]))
         self.assertEqual(select_value(page["properties"]["Request State"]), "REJECTED")
         self.assertTrue(result["read_back_verified"])
 
