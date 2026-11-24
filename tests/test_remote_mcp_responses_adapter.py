@@ -64,6 +64,7 @@ class RemoteMCPAdapterTests(unittest.TestCase):
             "approver": "independent-security-reviewer",
             "environment_reviewer_id": 424242,
             "workflow_actor": "hsaidno-cpu",
+            "workflow_actor_id": 100,
             "environment": "hso-p0-remote-mcp-live",
             "approval_source": "github_actions_workflow_run_approvals_api",
             "nonce": "single-use-test-nonce",
