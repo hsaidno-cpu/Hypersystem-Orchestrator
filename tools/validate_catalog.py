@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 import re
 import sys
+import subprocess
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,6 +46,28 @@ def parse_submodules(path: Path):
     return result
 
 
+def read_gitlink_sha(path: str) -> str:
+    """Read the exact gitlink SHA from HEAD without initializing submodules."""
+    try:
+        completed = subprocess.run(
+            ["git", "ls-tree", "HEAD", "--", path],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        fail(f"Cannot inspect gitlink for {path}: {exc}")
+    lines = [line for line in completed.stdout.splitlines() if line.endswith("\\t" + path)]
+    if len(lines) != 1:
+        fail(f"Expected exactly one git tree entry for submodule {path}; found {len(lines)}")
+    metadata, _entry_path = lines[0].split("\\t", 1)
+    parts = metadata.split()
+    if len(parts) != 3 or parts[0] != "160000" or parts[1] != "commit":
+        fail(f"{path}: expected a gitlink (mode 160000, type commit), got {metadata}")
+    return parts[2]
+
+
 def validate():
     catalog = load_json(CATALOG_PATH)
     repo_doc = load_json(REPOSITORIES_PATH)
@@ -52,6 +76,13 @@ def validate():
 
     if not isinstance(plugins, list) or not isinstance(repositories, list):
         fail("Catalog plugins and repositories must both be arrays")
+    try:
+        catalog_revision = date.fromisoformat(catalog.get("catalog_revision", ""))
+    except (TypeError, ValueError):
+        fail("catalog_revision must be an ISO-8601 calendar date")
+    if catalog_revision > date.today():
+        fail("catalog_revision must not be in the future")
+
     if len(plugins) != catalog.get("expected_plugin_count"):
         fail(f"Expected {catalog.get('expected_plugin_count')} plugin records, found {len(plugins)}")
 
@@ -111,6 +142,20 @@ def validate():
                 fail(f"{key}: canonical redirect must point to a registered alias_of target")
             if alias == key:
                 fail(f"{key}: alias cannot point to itself")
+        observed_metadata = plugin.get("platform_metadata_observed_at")
+        try:
+            observed_date = date.fromisoformat(observed_metadata or "")
+        except (TypeError, ValueError):
+            fail(f"{key}: platform_metadata_observed_at must be an ISO-8601 date")
+        if observed_date > date.today():
+            fail(f"{key}: Plugin Creator metadata observation date is in the future")
+        metadata_age_days = (date.today() - observed_date).days
+        if metadata_age_days > 30:
+            fail(
+                f"{key}: Plugin Creator metadata is stale ({metadata_age_days} days); "
+                "re-read current metadata and release ID before updating the registry"
+            )
+
         if not plugin.get("primary_triggers") or not plugin.get("negative_triggers"):
             fail(f"{key}: positive and negative routing triggers are required")
         if not isinstance(plugin.get("instruction_skill_count"), int) or plugin["instruction_skill_count"] < 1:
@@ -168,6 +213,32 @@ def validate():
                 fail(f"{repo['repository_id']}: .gitmodules URL does not match catalog URL")
             if not re.fullmatch(r"[0-9a-f]{40}", repo.get("pinned_commit", "")):
                 fail(f"{repo['repository_id']}: pinned_commit must be a 40-character SHA")
+            actual_gitlink_sha = read_gitlink_sha(path)
+            if actual_gitlink_sha != repo["pinned_commit"]:
+                fail(
+                    f"{repo['repository_id']}: parent gitlink SHA {actual_gitlink_sha} "
+                    f"does not match repositories.json pinned_commit {repo['pinned_commit']}"
+                )
+            manifest_fields = [
+                "source_manifest_path",
+                "source_manifest_blob_sha",
+                "source_manifest_version",
+                "source_manifest_commit",
+                "source_manifest_verified_at",
+            ]
+            for field in manifest_fields:
+                if not repo.get(field):
+                    fail(f"{repo['repository_id']}: missing {field} for the pinned source manifest")
+            if repo["source_manifest_commit"] != repo["pinned_commit"]:
+                fail(f"{repo['repository_id']}: source manifest was not verified at its pinned commit")
+            if not re.fullmatch(r"[0-9a-f]{40}", repo["source_manifest_blob_sha"]):
+                fail(f"{repo['repository_id']}: source_manifest_blob_sha must be a 40-character SHA")
+            if repo.get("package_version") != repo["source_manifest_version"]:
+                fail(f"{repo['repository_id']}: package_version conflicts with source manifest version")
+            try:
+                date.fromisoformat(repo["source_manifest_verified_at"])
+            except ValueError:
+                fail(f"{repo['repository_id']}: source_manifest_verified_at must be an ISO-8601 date")
     if len(submodules) != 5:
         fail(f"Expected 5 verified source submodules at this stage, found {len(submodules)}")
 
@@ -187,7 +258,10 @@ def validate():
             fail(f"{plugin['plugin_key']}: instruction snapshot path mismatch")
     print(f"PASS: {len(plugins)} unique plugin identities")
     print(f"PASS: {len(repositories)} repository records")
-    print(f"PASS: {len(submodules)} declared and pinned source submodules")
+    print(f"PASS: {len(submodules)} declared source submodules")
+    print("PASS: parent gitlink SHAs equal registered source pins")
+    print("PASS: integrated source manifest provenance is recorded and internally consistent")
+    print("PASS: Plugin Creator metadata observations are no older than 30 days")
     print("PASS: source-state, alias, relationship and repository URL consistency")
     print("PASS: every plugin has a segregated instruction snapshot/pointer and explicit routing boundaries")
     print(f"PASS: {snapshot_index['total_skill_records']} indexed skill instruction records across {len(plugins)} plugins")
