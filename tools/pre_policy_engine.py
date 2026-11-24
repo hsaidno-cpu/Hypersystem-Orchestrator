@@ -67,7 +67,10 @@ def verify_ed25519_signature(
     public_key_b64: str | None, payload: str, signature_b64: str | None,
 ) -> bool:
     """Verify an Ed25519 signature using a public key; verifier cannot mint receipts."""
-    if not public_key_b64 or not signature_b64:
+    if (
+        not isinstance(public_key_b64, str) or not public_key_b64.strip()
+        or not isinstance(signature_b64, str) or not signature_b64.strip()
+    ):
         return False
     try:
         public_key = Ed25519PublicKey.from_public_bytes(
