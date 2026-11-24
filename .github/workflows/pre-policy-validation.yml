@@ -1,0 +1,63 @@
+name: PRE R0-R9 policy enforcement validation
+
+on:
+  push:
+    branches: [feat/pre-policy-enforcement-v1-20261124]
+  pull_request:
+    branches: [fix/ponytail-c2-c3-test-contract-20261124]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pre-policy-validation-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  pre-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out proposed PRE policy
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run PRE transition policy tests
+        run: python -m unittest discover -s tests -p 'test_pre_policy_engine.py' -v
+
+      - name: Evaluate the canonical R0 to R1 fixture
+        run: |
+          python tools/pre_policy_engine.py evaluate \
+            --request-file examples/pre-transition-r0-r1.example.json \
+            --output /tmp/pre-evaluation.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          result = json.loads(Path("/tmp/pre-evaluation.json").read_text(encoding="utf-8"))
+          assert result["decision"] == "ALLOW", result
+          assert result["gate_state"] == "PASS", result
+          assert result["stage_mutation_performed"] is False
+          assert result["evaluation_digest"]
+          print(json.dumps({
+              "decision": result["decision"],
+              "gate_state": result["gate_state"],
+              "evaluation_digest": result["evaluation_digest"],
+              "stage_mutation_performed": result["stage_mutation_performed"],
+          }, indent=2))
+          PY
+
+      - name: Preserve policy evaluation receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pre-policy-evaluation-${{ github.sha }}
+          path: /tmp/pre-evaluation.json
+          if-no-files-found: warn
+          retention-days: 30
