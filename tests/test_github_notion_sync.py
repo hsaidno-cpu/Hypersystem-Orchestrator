@@ -182,7 +182,7 @@ class GitHubNotionSyncTests(unittest.TestCase):
         record = build_event_record("pull_request", sample_pr(), CONFIG, today=date(2026, 11, 24))
         first = upsert_record(client, record, apply=True)
         second = upsert_record(client, record, apply=True)
-        self.assertEqual(first["operation"], "CREATED")
+        self.assertEqual(first["operation"], "CREATED_AND_VERIFIED")
         self.assertEqual(second["operation"], "NO_OP")
         self.assertEqual(client.created, 1)
         self.assertEqual(client.updated, 0)
@@ -194,7 +194,7 @@ class GitHubNotionSyncTests(unittest.TestCase):
         changed = dict(record)
         changed["claim"] = changed["claim"] + " changed"
         result = upsert_record(client, changed, apply=True)
-        self.assertEqual(result["operation"], "UPDATED")
+        self.assertEqual(result["operation"], "UPDATED_AND_VERIFIED")
         self.assertEqual(client.created, 1)
         self.assertEqual(client.updated, 1)
 
