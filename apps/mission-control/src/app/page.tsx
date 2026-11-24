@@ -105,6 +105,8 @@ export default async function Home() {
   const connected=sources.filter(x=>x.status==="connected").length;
   const latest=decision;
   const primary=latest?.primary_action as Row|null;
+  const blockedActionRows=(latest?.blocked_actions??[]) as Row[];
+  const pendingDecisionRows=(latest?.pending_decisions??[]) as Row[];
   const promptQ=latest?.id
     ? await supabase.from("hso_prompt_artifacts").select("id,prompt_text,prompt_state,task_key,context_hash,created_at").eq("created_from_decision_run",latest.id).order("created_at",{ascending:false}).limit(1).maybeSingle()
     : {data:null,error:null};
@@ -149,15 +151,15 @@ export default async function Home() {
       {latestPrompt?.prompt_text?<PromptPanel text={latestPrompt.prompt_text} taskId={String(latestPrompt.task_key??primary.task_id)}/>:<div className="empty">Prompt belum dibuat untuk decision run ini. Jalankan REFRESH & RECOMPUTE setelah integrasi dan hard gates tersedia.</div>}
       <div className="two-col followup-actions">
         <div><h4>Supporting actions</h4>{(latest?.supporting_actions??[]).length?<ul>{latest.supporting_actions.map((x:Row,i:number)=><li key={i}><strong>{x.task_id}</strong> · {x.title} <span className="muted">score {Number(x.score).toFixed(1)}</span></li>)}</ul>:<div className="empty">Tidak ada supporting action yang lolos gate.</div>}</div>
-        <div><h4>Blocked actions & dependency gaps</h4>{(latest?.blocked_actions??[]).length?<ul>{latest.blocked_actions.slice(0,8).map((x:Row,i:number)=><li key={i}><strong>{x.task_id}</strong> · {x.reasons.join(", ")}</li>)}</ul>:<div className="empty">Tidak ada blocked action yang tercatat.</div>}</div>
+        <div><h4>Blocked actions & dependency gaps</h4>{blockedActionRows.length?<ul>{blockedActionRows.slice(0,8).map((x:Row,i:number)=><li key={i}><strong>{x.task_id}</strong> · {x.reasons.join(", ")}</li>)}</ul>:<div className="empty">Tidak ada blocked action yang tercatat.</div>}</div>
       </div>
     </section>:<section className="panel no-action">
       <div className="action-kicker">NO ELIGIBLE ACTION</div>
       <h2>Belum ada pekerjaan yang aman direkomendasikan.</h2>
       <p>Engine tidak akan memilih pekerjaan hanya karena terlihat mendesak. Periksa sumber kedaluwarsa, bukti, dependency ID, commit, CI, approval, dan input bobot prioritas yang belum lengkap.</p>
       <div className="source-alerts">{sourceMissing.slice(0,5).map(([key,value])=><div key={key}><strong>{key}</strong><Pill value={(value as Row)?.status}/><span>{(value as Row)?.last_error??"Freshness SLA tidak terpenuhi."}</span></div>)}</div>
-      <div className="blocked-summary"><strong>{(latest?.blocked_actions??[]).length} pekerjaan terblokir oleh hard gate</strong><strong>{(latest?.pending_decisions??[]).length} keputusan menunggu manusia</strong></div>
-      {(latest?.blocked_actions??[]).length?<ul className="compact-list">{latest.blocked_actions.slice(0,12).map((x:Row,i:number)=><li key={i}><strong>{x.task_id} · {x.title}</strong><div className="microcopy">{x.reasons.join(" · ")}</div></li>)}</ul>:null}
+      <div className="blocked-summary"><strong>{blockedActionRows.length} pekerjaan terblokir oleh hard gate</strong><strong>{pendingDecisionRows.length} keputusan menunggu manusia</strong></div>
+      {blockedActionRows.length?<ul className="compact-list">{blockedActionRows.slice(0,12).map((x:Row,i:number)=><li key={i}><strong>{x.task_id} · {x.title}</strong><div className="microcopy">{x.reasons.join(" · ")}</div></li>)}</ul>:null}
       <p className="muted">Decision state: {latest?.decision_state??"BELUM DIHITUNG"} · {dateLabel(latest?.computed_at)}</p>
     </section>}
 
@@ -195,7 +197,7 @@ export default async function Home() {
 
     <div className="section-title"><h2>Pending decisions & completion gap</h2><span>Project Completion Intelligence</span></div>
     <div className="two-col">
-      <section className="panel"><h3>Pending approvals</h3>{(latest?.pending_decisions??[]).length?<ul className="compact-list">{latest.pending_decisions.map((x:Row,i:number)=><li key={i}><strong>{x.task_id} · {x.title}</strong><Pill value={x.approval_state}/><div className="microcopy">{x.source_url}</div></li>)}</ul>:<div className="empty">Tidak ada pending approval pada decision run terakhir.</div>}</section>
+      <section className="panel"><h3>Pending approvals</h3>{pendingDecisionRows.length?<ul className="compact-list">{pendingDecisionRows.map((x:Row,i:number)=><li key={i}><strong>{x.task_id} · {x.title}</strong><Pill value={x.approval_state}/><div className="microcopy">{x.source_url}</div></li>)}</ul>:<div className="empty">Tidak ada pending approval pada decision run terakhir.</div>}</section>
       <section className="panel"><h3>Required deliverables</h3><div className="completion-summary">{completion?.verified_criteria_count??0} / {completion?.required_criteria_count??0} verified</div>{incompleteCriteria.length?<ul className="compact-list">{incompleteCriteria.slice(0,10).map((x:Row,i:number)=><li key={i}><strong>{x.criterion_key} · {x.title}</strong><Pill value={x.state}/></li>)}</ul>:<div className="empty">Kriteria akhir belum dikonfigurasi, atau seluruh kriteria wajib telah diterima.</div>}</section>
     </div>
 
