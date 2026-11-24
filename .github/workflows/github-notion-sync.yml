@@ -1,7 +1,8 @@
 name: GitHub-to-Notion evidence synchronization
 
 on:
-  pull_request:
+  pull_request_target:
+    branches: [main]
     types: [opened, synchronize, reopened, closed, ready_for_review]
   push:
     branches: [main]
@@ -32,7 +33,7 @@ jobs:
     if: >-
       github.repository == 'hsaidno-cpu/Hypersystem-Orchestrator' &&
       vars.HSO_NOTION_SYNC_ENABLED == 'true' &&
-      ((github.event_name != 'pull_request') ||
+      ((github.event_name != 'pull_request_target') ||
        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 5
