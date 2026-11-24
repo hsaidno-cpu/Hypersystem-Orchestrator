@@ -8,8 +8,7 @@
     "schema_version",
     "catalog_revision",
     "expected_plugin_count",
-    "plugins",
-    "platform_metadata_observed_at"
+    "plugins"
   ],
   "properties": {
     "schema_version": {
@@ -61,7 +60,8 @@
           "version_reconciliation_status",
           "source_sync_status",
           "source_instruction_parity_status",
-          "source_instruction_parity_note"
+          "source_instruction_parity_note",
+          "platform_metadata_observed_at"
         ],
         "properties": {
           "plugin_key": {
@@ -266,14 +266,14 @@
           },
           "source_instruction_parity_note": {
             "type": "string"
+          },
+          "platform_metadata_observed_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Date on which the current Plugin Creator release metadata was read back by the authorized connector. This does not certify package-file parity."
           }
         }
       }
-    },
-    "platform_metadata_observed_at": {
-      "type": "string",
-      "format": "date",
-      "description": "Date on which the current Plugin Creator release metadata was read back by the authorized connector. This does not certify package-file parity."
     }
   }
 }
