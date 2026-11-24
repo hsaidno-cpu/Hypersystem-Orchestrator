@@ -150,8 +150,16 @@ class NotionAPI:
             body: dict[str, Any] = {
                 "page_size": 100,
                 "filter": {
-                    "property": "Request State",
-                    "select": {"equals": "PENDING"},
+                    "or": [
+                        {
+                            "property": "Request State",
+                            "select": {"equals": "PENDING"},
+                        },
+                        {
+                            "property": "Request State",
+                            "select": {"equals": "EVALUATING"},
+                        },
+                    ]
                 },
             }
             if cursor:
@@ -284,14 +292,24 @@ def process_page(
         rich_text_value((page.get("properties") or {}).get("Correlation ID"))
         or f"pre:{page_id}"
     )
+    # Claim the queue item before consuming any single-use approval nonce.
+    # A crash leaves EVALUATING, which the next poll can safely resume.
+    client.update_page(page_id, {
+        "Request State": {"select": {"name": "EVALUATING"}},
+        "Correlation ID": {"rich_text": rich_text_chunks(correlation_id)},
+    })
+    claimed_page = client.get_page(page_id)
+    if select_value((claimed_page.get("properties") or {}).get("Request State")) != "EVALUATING":
+        raise NotionWorkerError(f"CLAIM_READ_BACK_MISMATCH:{page_id}")
+
     try:
-        request = request_from_page(page)
+        request = request_from_page(claimed_page)
         result = evaluate_transition(
             request, policy, approval_secret=approval_secret,
             nonce_store=nonce_store,
         )
     except NotionWorkerError as exc:
-        result = malformed_result(page, str(exc), policy)
+        result = malformed_result(claimed_page, str(exc), policy)
 
     client.update_page(page_id, result_properties(result, correlation_id))
     verified_page = client.get_page(page_id)
