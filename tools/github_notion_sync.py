@@ -85,14 +85,14 @@ def build_event_record(
     repo_url = f"https://github.com/{repo}"
     observed = (today or datetime.now(timezone.utc).date()).isoformat()
 
-    if event_name == "pull_request":
+    if event_name in {"pull_request", "pull_request_target"}:
         pr = payload.get("pull_request") or {}
         head_repo = (pr.get("head") or {}).get("repo") or {}
         if head_repo.get("full_name") != repo:
             return None
         number = payload.get("number") or pr.get("number")
         if not number or not pr.get("html_url"):
-            raise SyncError("pull_request event lacks its number or canonical URL")
+            raise SyncError("pull request event lacks its number or canonical URL")
         branch = (pr.get("head") or {}).get("ref") or ""
         sha = (pr.get("head") or {}).get("sha") or ""
         claim = (
@@ -218,7 +218,7 @@ class NotionClient:
         self.opener = opener or urllib.request.urlopen
         self.sleeper = sleeper
 
-    def request(self, method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
+    def request(self, method: str, path: str, body: dict[str, Any] | None = None, *, retry_transient: bool = True) -> dict[str, Any]:
         data = None if body is None else json.dumps(body).encode("utf-8")
         headers = {
             "Authorization": f"Bearer {self.token}",
@@ -234,7 +234,7 @@ class NotionClient:
                     raw = response.read().decode("utf-8")
                     return json.loads(raw) if raw else {}
             except urllib.error.HTTPError as exc:
-                if exc.code not in RETRYABLE or attempt == 4:
+                if not retry_transient or exc.code not in RETRYABLE or attempt == 4:
                     raise SyncError(f"Notion API request failed with HTTP {exc.code}") from None
                 retry_after = exc.headers.get("Retry-After")
                 try:
@@ -243,8 +243,8 @@ class NotionClient:
                     delay = min(2 ** attempt, 16)
                 self.sleeper(delay)
             except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
-                if attempt == 4:
-                    raise SyncError("Notion API transport failed after 4 attempts") from None
+                if not retry_transient or attempt == 4:
+                    raise SyncError("Notion API transport failed; create outcome may require locator reconciliation") from None
                 self.sleeper(min(2 ** attempt, 16))
         raise SyncError("Notion API retry loop exhausted")
 
@@ -271,10 +271,27 @@ class NotionClient:
                 return results
             body["start_cursor"] = page["next_cursor"]
 
-    def create_page(self, properties: dict[str, Any]) -> dict[str, Any]:
-        return self.request("POST", "pages", {
-            "parent": {"data_source_id": self.data_source_id}, "properties": properties
-        })
+    def create_page(self, properties: dict[str, Any], source_locator: str) -> dict[str, Any]:
+        body = {
+            "parent": {"data_source_id": self.data_source_id},
+            "properties": properties,
+        }
+        try:
+            # Page creation is non-idempotent. Never blindly retry a POST /pages
+            # after an ambiguous timeout/5xx; first reconcile by canonical locator.
+            return self.request("POST", "pages", body, retry_transient=False)
+        except SyncError:
+            matches = self.query_by_locator(source_locator)
+            if len(matches) == 1:
+                return matches[0]
+            if len(matches) > 1:
+                raise SyncError(
+                    f"Duplicate Source Locator after ambiguous create ({len(matches)} rows); manual reconciliation required"
+                ) from None
+            raise SyncError(
+                "Page create outcome is ambiguous and no matching Source Locator exists; "
+                "retry only after a fresh source-locator preflight"
+            ) from None
 
     def update_page(self, page_id: str, properties: dict[str, Any]) -> dict[str, Any]:
         return self.request("PATCH", f"pages/{page_id}", {"properties": properties})
@@ -288,7 +305,7 @@ def upsert_record(client: Any, record: dict[str, Any], *, apply: bool) -> dict[s
     if not matches:
         if not apply:
             return {"operation": "CREATE", "source_locator": record["source_locator"]}
-        page = client.create_page(props)
+        page = client.create_page(props, record["source_locator"])
         return {"operation": "CREATED", "page_id": page.get("id")}
     existing = matches[0]
     if page_digest(existing) == digest_record(record):
