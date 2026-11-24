@@ -124,11 +124,16 @@ The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architect
 
 ## Version reconciliation
 
-Plugin Creator package versions, canonical Git source versions and embedded skill-header versions remain distinct. Verified mismatches include Video Explainer deployment 4.1.12 versus source 4.1.9, SKILL ANALYZER source 1.3.0 versus package 1.0.0, and A.S.F.R.E.E source 0.5.0-rc.1 versus package 0.3.2. SDO's package version matches at 0.1.0 but instruction content drift remains unresolved. See [PACKAGE-VERSION-MATRIX.md](docs/PACKAGE-VERSION-MATRIX.md) and [VERSION-RECONCILIATION.md](docs/VERSION-RECONCILIATION.md).
+The current machine-generated package/source registry is [CURRENT-VERSION-REGISTRY.md](docs/CURRENT-VERSION-REGISTRY.md). It separates Plugin Creator package versions and release IDs, canonical Git manifest versions and pins, instruction-content parity, internal skill headers and snapshot dates.
+
+The dated [PACKAGE-VERSION-MATRIX.md](docs/PACKAGE-VERSION-MATRIX.md) and [VERSION-RECONCILIATION.md](docs/VERSION-RECONCILIATION.md) remain historical audit records. Do not treat either as the live source for current versions. CI checks the generated registry, verifies every parent gitlink against the source pin registry, and rejects Plugin Creator metadata observations older than 30 days.
+
+A metadata observation is not a package-content parity test. Source/package reconciliation and any USER/PRIVATE Plugin Creator release update still require exact file read-back, regression, authorization and an explicit release decision.
+
 
 ## Source inventory
 
-Five official source repositories are pinned, two candidate/incomplete sources are tracked, fourteen plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
+Five official source repositories are pinned, two candidate/incomplete sources are tracked, fifteen plugin identities have no accepted Git source and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
 
 ## Skill migration audit
 
