@@ -416,6 +416,7 @@ class HsoRuntimeTests(unittest.TestCase):
             "GITHUB_RUN_ID": "test-run-001",
             "GITHUB_RUN_ATTEMPT": "1",
             "GITHUB_ACTOR": "hsaidno-cpu",
+            "GITHUB_ACTOR_ID": "100",
         }, clear=True):
             with patch.object(hso.remote_mcp_responses_adapter, "probe_remote_mcp_host",
                               return_value=self._p0_preflight()):
