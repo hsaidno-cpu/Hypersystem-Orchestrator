@@ -36,7 +36,7 @@ def request(from_stage="R0", to_stage="R1", types=None):
         "from_stage": from_stage,
         "to_stage": to_stage,
         "requested_by_actor_id": "agent:hso",
-        "evidence": [evidence(item) for item in (types or ["INTAKE_BRIEF"])],
+        "evidence": [evidence(item) for item in (["INTAKE_BRIEF"] if types is None else types)],
         "approvals": [],
     }
 
