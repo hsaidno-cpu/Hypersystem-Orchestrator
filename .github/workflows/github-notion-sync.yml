@@ -1,0 +1,62 @@
+name: GitHub-to-Notion evidence synchronization
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed, ready_for_review]
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["Catalog and distribution validation"]
+    types: [completed]
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      run_stale_sweep:
+        description: "Mark old FRESH evidence as STALE"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: hso-github-notion-evidence-sync
+  cancel-in-progress: false
+
+jobs:
+  sync-evidence:
+    if: >-
+      github.repository == 'hsaidno-cpu/Hypersystem-Orchestrator' &&
+      vars.HSO_NOTION_SYNC_ENABLED == 'true' &&
+      ((github.event_name != 'pull_request') ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NOTION_API_KEY: ${{ secrets.HSO_NOTION_API_KEY }}
+      NOTION_DATA_SOURCE_ID: "42299868-397f-817c-bb25-000b49b243fa"
+      NOTION_API_VERSION: "2025-09-03"
+    steps:
+      - name: Check out trusted default branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Synchronize one normalized GitHub evidence event
+        if: github.event_name != 'schedule' && !(github.event_name == 'workflow_dispatch' && inputs.run_stale_sweep == true)
+        run: python tools/github_notion_sync.py --event-file "$GITHUB_EVENT_PATH" --event-name "$GITHUB_EVENT_NAME" --apply
+
+      - name: Mark stale evidence only (never delete)
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.run_stale_sweep == true)
+        run: python tools/github_notion_sync.py --stale-sweep --apply
