@@ -282,6 +282,7 @@ class HsoRuntimeTests(unittest.TestCase):
             "approver": "independent-security-reviewer",
             "environment_reviewer_id": 424242,
             "workflow_actor": "hsaidno-cpu",
+            "workflow_actor_id": 100,
             "environment": "hso-p0-remote-mcp-live",
             "approval_source": "github_actions_workflow_run_approvals_api",
             "issued_at": now.isoformat(),
@@ -345,6 +346,7 @@ class HsoRuntimeTests(unittest.TestCase):
             "GITHUB_RUN_ID": "different-run",
             "GITHUB_RUN_ATTEMPT": "1",
             "GITHUB_ACTOR": "hsaidno-cpu",
+            "GITHUB_ACTOR_ID": "100",
         }, clear=True):
             with self.assertRaisesRegex(hso.PolicyDenied, "exact workflow run"):
                 hso.verify_approval(
