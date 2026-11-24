@@ -65,6 +65,16 @@ def rich_text_chunks(value: str, limit: int = 1800) -> list[dict[str, Any]]:
     ]
 
 
+def stage_id(value: str) -> str:
+    """Convert a Notion display label such as 'R0 Intake' to canonical 'R0'."""
+    if not isinstance(value, str):
+        return ""
+    candidate = value.strip().split(maxsplit=1)[0] if value.strip() else ""
+    if len(candidate) == 2 and candidate[0] == "R" and candidate[1].isdigit():
+        return candidate
+    return value.strip()
+
+
 def parse_json_list(raw: str, label: str) -> list[dict[str, Any]]:
     if not raw.strip():
         return []
@@ -188,8 +198,8 @@ def request_from_page(page: dict[str, Any]) -> dict[str, Any]:
         "request_id": request_id,
         "project_id": rich_text_value(props.get("Project ID")),
         "scope_id": rich_text_value(props.get("Scope ID")),
-        "from_stage": select_value(props.get("From Stage")),
-        "to_stage": select_value(props.get("Requested Stage")),
+        "from_stage": stage_id(select_value(props.get("From Stage"))),
+        "to_stage": stage_id(select_value(props.get("Requested Stage")),
         "requested_by_actor_id": rich_text_value(props.get("Requested By Actor ID")),
         "evidence": evidence,
         "approvals": approvals,
