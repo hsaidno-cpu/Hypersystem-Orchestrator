@@ -75,20 +75,53 @@ class NonceStore:
                     nonce TEXT PRIMARY KEY,
                     scope_id TEXT NOT NULL,
                     approval_id TEXT NOT NULL,
+                    request_id TEXT NOT NULL,
+                    receipt_digest TEXT NOT NULL,
                     consumed_at TEXT NOT NULL
                 )"""
             )
+            # Upgrade the initial v1.0 table without discarding any existing
+            # nonce records. Old rows remain non-replayable because the empty
+            # request/digest values can never match a fresh signed receipt.
+            columns = {row[1] for row in db.execute("PRAGMA table_info(consumed_approval_nonces)")}
+            if "request_id" not in columns:
+                db.execute("ALTER TABLE consumed_approval_nonces ADD COLUMN request_id TEXT NOT NULL DEFAULT ''")
+            if "receipt_digest" not in columns:
+                db.execute("ALTER TABLE consumed_approval_nonces ADD COLUMN receipt_digest TEXT NOT NULL DEFAULT ''")
 
-    def consume_many(self, scope_id: str, approvals: list[dict[str, Any]], now: str) -> None:
+    def consume_many(
+        self, scope_id: str, request_id: str,
+        approvals: list[dict[str, Any]], now: str,
+    ) -> None:
         nonces = [item["nonce"] for item in approvals]
         if len(nonces) != len(set(nonces)):
             raise PREPolicyError("Approval nonce is duplicated inside this transition request")
         try:
             with sqlite3.connect(self.path, timeout=10, isolation_level="IMMEDIATE") as db:
                 for item in approvals:
+                    receipt_digest = digest_json(item)
+                    existing = db.execute(
+                        "SELECT scope_id, approval_id, request_id, receipt_digest "
+                        "FROM consumed_approval_nonces WHERE nonce = ?",
+                        (item["nonce"],),
+                    ).fetchone()
+                    expected = (scope_id, item["approval_id"], request_id, receipt_digest)
+                    if existing is not None:
+                        if tuple(existing) == expected:
+                            # Exact same signed receipt replayed for the same
+                            # logical request: safe retry, do not consume twice.
+                            continue
+                        raise PREPolicyError(
+                            "Approval nonce replay detected across a different request or receipt"
+                        )
                     db.execute(
-                        "INSERT INTO consumed_approval_nonces(nonce, scope_id, approval_id, consumed_at) VALUES (?, ?, ?, ?)",
-                        (item["nonce"], scope_id, item["approval_id"], now),
+                        "INSERT INTO consumed_approval_nonces"
+                        "(nonce, scope_id, approval_id, request_id, receipt_digest, consumed_at) "
+                        "VALUES (?, ?, ?, ?, ?, ?)",
+                        (
+                            item["nonce"], scope_id, item["approval_id"],
+                            request_id, receipt_digest, now,
+                        ),
                     )
         except sqlite3.IntegrityError:
             raise PREPolicyError("Approval nonce replay detected; refusing transition") from None
@@ -258,17 +291,20 @@ def evaluate_transition(
         supplied = []
     for role in required_roles:
         matched = False
-        for receipt in supplied:
-            ok, reason = _verify_approval(
-                receipt, request, role, policy, approval_secret or "",
-                evaluated_at,
-            ) if approval_secret else (False, "APPROVAL_SIGNING_KEY_NOT_CONFIGURED")
-            if ok:
-                valid_approvals.append(receipt)
-                matched = True
-                break
-            if reason not in {"APPROVAL_RECEIPT_INCOMPLETE", "APPROVAL_NOT_GRANTED"}:
-                denials.append(reason)
+        if not approval_secret:
+            reasons.append("APPROVAL_SIGNING_KEY_NOT_CONFIGURED")
+        else:
+            for receipt in supplied:
+                ok, reason = _verify_approval(
+                    receipt, request, role, policy, approval_secret,
+                    evaluated_at,
+                )
+                if ok:
+                    valid_approvals.append(receipt)
+                    matched = True
+                    break
+                if reason not in {"APPROVAL_RECEIPT_INCOMPLETE", "APPROVAL_NOT_GRANTED"}:
+                    denials.append(reason)
         if not matched and not any(item in denials for item in {
             "APPROVAL_SIGNATURE_INVALID", "SELF_APPROVAL_PROHIBITED",
             "APPROVAL_SCOPE_MISMATCH", "APPROVAL_TRANSITION_MISMATCH",
@@ -283,7 +319,7 @@ def evaluate_transition(
             reasons.append("APPROVAL_NONCE_STORE_NOT_CONFIGURED")
         else:
             try:
-                nonce_store.consume_many(request["scope_id"], valid_approvals, utc_now())
+                nonce_store.consume_many(request["scope_id"], request["request_id"], valid_approvals, utc_now())
             except PREPolicyError as exc:
                 denials.append(str(exc))
 
