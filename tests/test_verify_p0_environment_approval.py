@@ -77,8 +77,18 @@ class VerifyEnvironmentApprovalTests(unittest.TestCase):
             "user": {"login": ACTOR, "id": 100},
             "environments": [{"name": verifier.ENVIRONMENT}],
         }]
+        environment = {
+            "protection_rules": [{
+                "type": "required_reviewers",
+                "prevent_self_review": True,
+                "reviewers": [
+                    {"type": "User", "reviewer": {"login": REVIEWER, "id": REVIEWER_ID}},
+                    {"type": "User", "reviewer": {"login": ACTOR, "id": 100}},
+                ],
+            }],
+        }
         with self.assertRaisesRegex(SystemExit, "cannot approve their own"):
-            self.run_main(history=history)
+            self.run_main(environment=environment, history=history, allowlist=REVIEWER + "," + ACTOR)
 
     def test_rejects_unconfigured_or_unallowlisted_reviewer(self):
         with self.assertRaisesRegex(SystemExit, "must all be in"):
