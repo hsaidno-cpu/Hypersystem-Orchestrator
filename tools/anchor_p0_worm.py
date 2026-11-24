@@ -148,10 +148,19 @@ def main() -> int:
             "bucket_state": bucket_state,
             "preflight_marker": anchored,
         }
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        if args.output.exists() or args.output.is_symlink():
+            raise SystemExit("P0 WORM preflight report already exists; refusing overwrite")
+        fd = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            stream.write(json.dumps(report, indent=2) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
     else:
         evidence_paths = [
             args.verification, args.artifact, args.runtime_receipt,
             args.audit, args.approval, args.environment_approval,
+            Path("/tmp/hso-p0-worm-preflight.json"),
         ]
         missing = [str(p) for p in evidence_paths if not p.is_file() or p.is_symlink()]
         if missing:
