@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 import json
 import urllib.error
-from tools.github_notion_sync import SyncError, build_event_record, digest_record, upsert_record, stale_sweep
+from tools.github_notion_sync import SyncError, build_event_record, build_event_records, digest_record, upsert_record, stale_sweep
 
 CONFIG = {
     "repository": "hsaidno-cpu/Hypersystem-Orchestrator",
@@ -115,6 +115,60 @@ class GitHubNotionSyncTests(unittest.TestCase):
         self.assertEqual(record["evidence_type"], "Commit")
         self.assertEqual(record["evidence_state"], "UNKNOWN")
         self.assertIn("not a successful test", record["limitation"])
+
+    def test_main_push_records_every_commit_in_the_payload(self):
+        event = {
+            "ref": "refs/heads/main",
+            "repository": {"full_name": CONFIG["repository"]},
+            "size": 2,
+            "distinct_size": 2,
+            "commits": [
+                {"id": "a" * 40, "message": "first"},
+                {"id": "b" * 40, "message": "second"},
+            ],
+            "head_commit": {"id": "b" * 40, "message": "second"},
+        }
+        records = build_event_records("push", event, CONFIG)
+        self.assertEqual(len(records), 2)
+        self.assertEqual(
+            [record["source_locator"] for record in records],
+            [
+                "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/commit/" + "a" * 40,
+                "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/commit/" + "b" * 40,
+            ],
+        )
+        self.assertEqual(records[0]["related_work_item_ids"], ["42299868-397f-81fe-8349-c8e97800573a"])
+
+    def test_main_push_fails_closed_if_webhook_payload_omits_commits(self):
+        event = {
+            "ref": "refs/heads/main",
+            "size": 3,
+            "distinct_size": 3,
+            "commits": [{"id": "a" * 40, "message": "only supplied commit"}],
+        }
+        with self.assertRaisesRegex(SyncError, "payload is incomplete"):
+            build_event_records("push", event, CONFIG)
+
+    def test_upsert_readback_verifies_create_and_update(self):
+        client = FakeNotion()
+        record = build_event_record("pull_request", sample_pr(), CONFIG)
+        created = upsert_record(client, record, apply=True)
+        self.assertEqual(created["operation"], "CREATED_AND_VERIFIED")
+        changed = dict(record)
+        changed["claim"] += " updated"
+        updated = upsert_record(client, changed, apply=True)
+        self.assertEqual(updated["operation"], "UPDATED_AND_VERIFIED")
+
+    def test_upsert_fails_closed_when_readback_digest_differs(self):
+        class CorruptingNotion(FakeNotion):
+            def create_page(self, properties, source_locator):
+                page = super().create_page(properties, source_locator)
+                self.rows[-1]["properties"]["Content Digest"]["rich_text"][0]["text"]["content"] = "0" * 64
+                return page
+        client = CorruptingNotion()
+        record = build_event_record("pull_request", sample_pr(), CONFIG)
+        with self.assertRaisesRegex(SyncError, "Read-back Content Digest"):
+            upsert_record(client, record, apply=True)
 
     def test_source_digest_ignores_observation_timestamps_on_replay(self):
         first = build_event_record("pull_request", sample_pr(), CONFIG, today=date(2026, 11, 24))
