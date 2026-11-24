@@ -8,8 +8,8 @@ with compare-and-swap against the canonical source and preserve the receipt.
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
-import hmac
 import json
 import os
 import re
@@ -18,6 +18,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_POLICY = ROOT / "governance" / "pre-r0-r9-policy.json"
@@ -60,16 +63,31 @@ def evidence_attestation_payload(item: dict[str, Any]) -> dict[str, Any]:
     return {key: item.get(key) for key in EVIDENCE_ATTESTED_FIELDS}
 
 
-def sign_evidence_envelope(item: dict[str, Any], secret: str) -> str:
-    """Issuer-side helper; call only after authenticating verifier identity and source."""
-    if not secret:
-        raise PREPolicyError("Evidence signing key is not configured")
-    payload = evidence_attestation_payload(item)
-    return hmac.new(
-        secret.encode("utf-8"),
-        canonical_json(payload).encode("utf-8"),
-        hashlib.sha256,
-    ).hexdigest()
+def verify_ed25519_signature(
+    public_key_b64: str | None, payload: str, signature_b64: str | None,
+) -> bool:
+    """Verify an Ed25519 signature using a public key; verifier cannot mint receipts."""
+    if not public_key_b64 or not signature_b64:
+        return False
+    try:
+        public_key = Ed25519PublicKey.from_public_bytes(
+            base64.b64decode(public_key_b64.strip(), validate=True)
+        )
+        signature = base64.b64decode(signature_b64.strip(), validate=True)
+        public_key.verify(signature, payload.encode("utf-8"))
+        return True
+    except (ValueError, InvalidSignature):
+        return False
+
+
+def verify_evidence_envelope_signature(
+    item: dict[str, Any], public_key_b64: str | None,
+) -> bool:
+    return verify_ed25519_signature(
+        public_key_b64,
+        canonical_json(evidence_attestation_payload(item)),
+        item.get("signature"),
+    )
 
 
 def load_policy(path: Path = DEFAULT_POLICY) -> dict[str, Any]:
@@ -154,7 +172,7 @@ class NonceStore:
 def _verify_evidence(
     evidence: list[dict[str, Any]], required_types: list[str],
     request: dict[str, Any], policy: dict[str, Any],
-    *, evidence_secret: str | None, now: datetime,
+    *, evidence_public_key: str | None, now: datetime,
 ) -> tuple[list[str], list[str]]:
     blockers: list[str] = []
     denials: list[str] = []
@@ -228,12 +246,10 @@ def _verify_evidence(
             if age_seconds > int(attestation.get("max_age_seconds", 7776000)):
                 blockers.append(f"EVIDENCE_ATTESTATION_EXPIRED:{kind}")
                 continue
-            if not evidence_secret:
-                blockers.append(f"EVIDENCE_SIGNING_KEY_NOT_CONFIGURED:{kind}")
+            if not evidence_public_key:
+                blockers.append(f"EVIDENCE_VERIFYING_KEY_NOT_CONFIGURED:{kind}")
                 continue
-            signature = item.get("signature")
-            expected_signature = sign_evidence_envelope(item, evidence_secret)
-            if not isinstance(signature, str) or not hmac.compare_digest(signature, expected_signature):
+            if not verify_evidence_envelope_signature(item, evidence_public_key):
                 denials.append(f"EVIDENCE_SIGNATURE_INVALID:{kind}")
                 continue
             accepted = True
@@ -245,7 +261,7 @@ def _verify_evidence(
 
 def _verify_approval(
     receipt: dict[str, Any], request: dict[str, Any], required_role: str,
-    policy: dict[str, Any], secret: str, now: datetime,
+    policy: dict[str, Any], public_key_b64: str, now: datetime,
 ) -> tuple[bool, str]:
     required = {
         "approval_id", "decision", "scope_id", "from_stage", "to_stage",
@@ -282,8 +298,9 @@ def _verify_approval(
     if validity <= 0 or validity > int(policy["approval"]["max_validity_seconds"]):
         return False, "APPROVAL_VALIDITY_WINDOW_INVALID"
     unsigned = {key: value for key, value in receipt.items() if key != "signature"}
-    expected = hmac.new(secret.encode("utf-8"), canonical_json(unsigned).encode("utf-8"), hashlib.sha256).hexdigest()
-    if not hmac.compare_digest(str(receipt["signature"]), expected):
+    if not verify_ed25519_signature(
+        public_key_b64, canonical_json(unsigned), receipt.get("signature")
+    ):
         return False, "APPROVAL_SIGNATURE_INVALID"
     if not receipt["nonce"]:
         return False, "APPROVAL_NONCE_MISSING"
@@ -294,9 +311,9 @@ def evaluate_transition(
     request: dict[str, Any],
     policy: dict[str, Any],
     *,
-    approval_secret: str | None = None,
+    approval_public_key: str | None = None,
     nonce_store: NonceStore | None = None,
-    evidence_secret: str | None = None,
+    evidence_public_key: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Return ALLOW, HOLD, or DENY for one adjacent PRE stage transition."""
@@ -350,7 +367,7 @@ def evaluate_transition(
 
     blockers, evidence_denials = _verify_evidence(
         request.get("evidence", []), rule["required_evidence_types"], request, policy,
-        evidence_secret=evidence_secret, now=evaluated_at,
+        evidence_public_key=evidence_public_key, now=evaluated_at,
     )
     reasons.extend(blockers)
     denials.extend(evidence_denials)
@@ -363,12 +380,12 @@ def evaluate_transition(
         supplied = []
     for role in required_roles:
         matched = False
-        if not approval_secret:
-            reasons.append("APPROVAL_SIGNING_KEY_NOT_CONFIGURED")
+        if not approval_public_key:
+            reasons.append("APPROVAL_VERIFYING_KEY_NOT_CONFIGURED")
         else:
             for receipt in supplied:
                 ok, reason = _verify_approval(
-                    receipt, request, role, policy, approval_secret,
+                    receipt, request, role, policy, approval_public_key,
                     evaluated_at,
                 )
                 if ok:
@@ -437,12 +454,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         request = json.loads(args.request_file.read_text(encoding="utf-8"))
         policy = load_policy(args.policy)
-        secret = os.environ.get(policy["approval"]["key_environment_variable"])
-        evidence_secret = os.environ.get(policy["evidence"]["attestation"]["key_environment_variable"])
+        approval_public_key = os.environ.get(policy["approval"]["public_key_environment_variable"])
+        evidence_public_key = os.environ.get(policy["evidence"]["attestation"]["public_key_environment_variable"])
         nonce_store = NonceStore(args.nonce_store) if args.nonce_store else None
         result = evaluate_transition(
-            request, policy, approval_secret=secret,
-            evidence_secret=evidence_secret, nonce_store=nonce_store,
+            request, policy, approval_public_key=approval_public_key,
+            evidence_public_key=evidence_public_key, nonce_store=nonce_store,
         )
         rendered = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
         if args.output:
