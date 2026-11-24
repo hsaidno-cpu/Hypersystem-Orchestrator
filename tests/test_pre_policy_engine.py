@@ -1,19 +1,37 @@
+import base64
 import hashlib
-import hmac
 import json
 import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+
 from tools.pre_policy_engine import (
     NonceStore, canonical_json, evaluate_transition, load_policy,
-    sign_evidence_envelope,
+    evidence_attestation_payload,
 )
 
 POLICY = load_policy()
 NOW = datetime(2026, 11, 24, 3, 0, tzinfo=timezone.utc)
-SECRET = "test-pre-approval-key-32-bytes-minimum"
+EVIDENCE_PRIVATE = Ed25519PrivateKey.from_private_bytes(bytes.fromhex("11" * 32))
+APPROVAL_PRIVATE = Ed25519PrivateKey.from_private_bytes(bytes.fromhex("22" * 32))
+
+
+def public_key_b64(private_key):
+    raw = private_key.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+    return base64.b64encode(raw).decode("ascii")
+
+
+EVIDENCE_PUBLIC = public_key_b64(EVIDENCE_PRIVATE)
+APPROVAL_PUBLIC = public_key_b64(APPROVAL_PRIVATE)
+
+
+def sign(private_key, payload):
+    signature = private_key.sign(canonical_json(payload).encode("utf-8"))
+    return base64.b64encode(signature).decode("ascii")
 
 
 def evidence(
@@ -37,7 +55,7 @@ def evidence(
         "source_locator": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/commit/" + "a" * 40,
         "sha256": "a" * 64,
     }
-    item["signature"] = sign_evidence_envelope(item, SECRET)
+    item["signature"] = sign(EVIDENCE_PRIVATE, evidence_attestation_payload(item))
     return item
 
 
@@ -76,15 +94,15 @@ def signed_approval(req, role="HUMAN_DECISION_OWNER", *, now=NOW, subject="user:
         "expires_at": (issued + timedelta(minutes=5)).isoformat().replace("+00:00", "Z"),
         "nonce": "nonce-" + role,
     }
-    unsigned["signature"] = hmac.new(
-        SECRET.encode(), canonical_json(unsigned).encode(), hashlib.sha256
-    ).hexdigest()
+    unsigned["signature"] = sign(APPROVAL_PRIVATE, {k: v for k, v in unsigned.items() if k != "signature"})
     return unsigned
 
 
 class PREPolicyEngineTests(unittest.TestCase):
     def test_valid_r0_to_r1_transition_is_allowed_only_with_signed_scoped_evidence(self):
-        result = evaluate_transition(request(), POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(
+            request(), POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW
+        )
         self.assertEqual(result["decision"], "ALLOW")
         self.assertEqual(result["gate_state"], "PASS")
         self.assertFalse(result["stage_mutation_performed"])
@@ -93,70 +111,75 @@ class PREPolicyEngineTests(unittest.TestCase):
 
     def test_skipping_a_stage_is_denied(self):
         result = evaluate_transition(
-            request("R0", "R2"), POLICY, evidence_secret=SECRET, now=NOW
+            request("R0", "R2"), POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW
         )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("NON_ADJACENT_STAGE_TRANSITION", result["reasons"])
 
     def test_missing_evidence_holds_transition(self):
-        req = request(types=[])
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(
+            request(types=[]), POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW
+        )
         self.assertEqual(result["decision"], "HOLD")
         self.assertIn("MISSING_EVIDENCE:INTAKE_BRIEF", result["blockers"])
 
     def test_stale_evidence_cannot_pass(self):
         req = request()
         req["evidence"][0]["freshness"] = "STALE"
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW)
         self.assertEqual(result["decision"], "HOLD")
 
     def test_invalid_content_digest_is_denied(self):
         req = request()
         req["evidence"][0]["sha256"] = "not-a-digest"
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW)
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("INVALID_EVIDENCE_DIGEST:INTAKE_BRIEF", result["reasons"])
 
     def test_same_actor_cannot_verify_own_evidence(self):
         req = request()
         req["evidence"][0]["verified_by"] = req["requested_by_actor_id"]
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW)
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("NON_INDEPENDENT_VERIFIER:INTAKE_BRIEF", result["reasons"])
 
     def test_invalid_evidence_signature_is_denied(self):
         req = request()
-        req["evidence"][0]["signature"] = "0" * 64
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        req["evidence"][0]["signature"] = base64.b64encode(b"x" * 64).decode("ascii")
+        result = evaluate_transition(req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW)
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("EVIDENCE_SIGNATURE_INVALID:INTAKE_BRIEF", result["reasons"])
 
     def test_evidence_cannot_be_replayed_across_project_or_scope(self):
         req = request()
         req["scope_id"] = "HSO:WI-OTHER:baseline-v1"
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW)
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("EVIDENCE_SCOPE_MISMATCH:INTAKE_BRIEF", result["reasons"])
 
-    def test_missing_evidence_issuer_key_holds(self):
+    def test_missing_evidence_public_key_holds(self):
         result = evaluate_transition(request(), POLICY, now=NOW)
         self.assertEqual(result["decision"], "HOLD")
-        self.assertIn("EVIDENCE_SIGNING_KEY_NOT_CONFIGURED:INTAKE_BRIEF", result["blockers"])
+        self.assertIn("EVIDENCE_VERIFYING_KEY_NOT_CONFIGURED:INTAKE_BRIEF", result["blockers"])
 
     def test_expired_evidence_attestation_holds(self):
         req = request()
         req["evidence"][0]["verified_at"] = (
             NOW - timedelta(days=100)
         ).isoformat().replace("+00:00", "Z")
-        req["evidence"][0]["signature"] = sign_evidence_envelope(req["evidence"][0], SECRET)
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        req["evidence"][0]["signature"] = sign(
+            EVIDENCE_PRIVATE,
+            evidence_attestation_payload(req["evidence"][0]),
+        )
+        result = evaluate_transition(req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW)
         self.assertEqual(result["decision"], "HOLD")
         self.assertIn("EVIDENCE_ATTESTATION_EXPIRED:INTAKE_BRIEF", result["blockers"])
 
     def test_r2_to_r3_requires_signed_independent_human_approval(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         result = evaluate_transition(
-            req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, now=NOW
+            req, POLICY, approval_public_key=APPROVAL_PUBLIC,
+            evidence_public_key=EVIDENCE_PUBLIC, now=NOW,
         )
         self.assertEqual(result["decision"], "HOLD")
         self.assertIn("MISSING_APPROVAL:HUMAN_DECISION_OWNER", result["blockers"])
@@ -166,7 +189,8 @@ class PREPolicyEngineTests(unittest.TestCase):
         req["approvals"] = [signed_approval(req, subject=req["requested_by_actor_id"])]
         with tempfile.TemporaryDirectory() as folder:
             result = evaluate_transition(
-                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
+                req, POLICY, approval_public_key=APPROVAL_PUBLIC,
+                evidence_public_key=EVIDENCE_PUBLIC,
                 nonce_store=NonceStore(Path(folder) / "nonces.sqlite"), now=NOW,
             )
         self.assertEqual(result["decision"], "DENY")
@@ -175,10 +199,11 @@ class PREPolicyEngineTests(unittest.TestCase):
     def test_approval_signature_is_verified(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
-        req["approvals"][0]["signature"] = "0" * 64
+        req["approvals"][0]["signature"] = base64.b64encode(b"x" * 64).decode("ascii")
         with tempfile.TemporaryDirectory() as folder:
             result = evaluate_transition(
-                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
+                req, POLICY, approval_public_key=APPROVAL_PUBLIC,
+                evidence_public_key=EVIDENCE_PUBLIC,
                 nonce_store=NonceStore(Path(folder) / "nonces.sqlite"), now=NOW,
             )
         self.assertEqual(result["decision"], "DENY")
@@ -190,18 +215,18 @@ class PREPolicyEngineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             store = NonceStore(Path(folder) / "nonces.sqlite")
             first = evaluate_transition(
-                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
-                nonce_store=store, now=NOW,
+                req, POLICY, approval_public_key=APPROVAL_PUBLIC,
+                evidence_public_key=EVIDENCE_PUBLIC, nonce_store=store, now=NOW,
             )
             retry = evaluate_transition(
-                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
-                nonce_store=store, now=NOW,
+                req, POLICY, approval_public_key=APPROVAL_PUBLIC,
+                evidence_public_key=EVIDENCE_PUBLIC, nonce_store=store, now=NOW,
             )
             replay = dict(req)
             replay["request_id"] = "PRE-REQ-DIFFERENT"
             replayed = evaluate_transition(
-                replay, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
-                nonce_store=store, now=NOW,
+                replay, POLICY, approval_public_key=APPROVAL_PUBLIC,
+                evidence_public_key=EVIDENCE_PUBLIC, nonce_store=store, now=NOW,
             )
         self.assertEqual(first["decision"], "ALLOW")
         self.assertEqual(retry["decision"], "ALLOW")
@@ -209,18 +234,21 @@ class PREPolicyEngineTests(unittest.TestCase):
         self.assertEqual(replayed["decision"], "DENY")
         self.assertTrue(any("nonce replay" in reason.lower() for reason in replayed["reasons"]))
 
-    def test_missing_approval_signing_key_holds(self):
+    def test_missing_approval_public_key_holds(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(
+            req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW
+        )
         self.assertEqual(result["decision"], "HOLD")
-        self.assertIn("APPROVAL_SIGNING_KEY_NOT_CONFIGURED", result["blockers"])
+        self.assertIn("APPROVAL_VERIFYING_KEY_NOT_CONFIGURED", result["blockers"])
 
     def test_required_approval_without_nonce_store_holds(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
         result = evaluate_transition(
-            req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, now=NOW
+            req, POLICY, approval_public_key=APPROVAL_PUBLIC,
+            evidence_public_key=EVIDENCE_PUBLIC, now=NOW,
         )
         self.assertEqual(result["decision"], "HOLD")
         self.assertIn("APPROVAL_NONCE_STORE_NOT_CONFIGURED", result["blockers"])
@@ -228,13 +256,13 @@ class PREPolicyEngineTests(unittest.TestCase):
     def test_empty_actor_identity_is_denied(self):
         req = request()
         req["requested_by_actor_id"] = ""
-        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(req, POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW)
         self.assertEqual(result["decision"], "DENY")
         self.assertTrue(any(reason.startswith("REQUEST_FIELDS_EMPTY") for reason in result["reasons"]))
 
     def test_terminal_r9_cannot_advance(self):
         result = evaluate_transition(
-            request("R9", "R9"), POLICY, evidence_secret=SECRET, now=NOW
+            request("R9", "R9"), POLICY, evidence_public_key=EVIDENCE_PUBLIC, now=NOW
         )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("TERMINAL_STAGE_CANNOT_ADVANCE", result["reasons"])
