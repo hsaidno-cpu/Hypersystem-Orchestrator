@@ -1,18 +1,25 @@
+import base64
 import json
 import unittest
-from unittest.mock import patch
+from pathlib import Path
+import tempfile
 
-from tools.pre_policy_engine import NonceStore, load_policy, sign_evidence_envelope
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+
+from tools.pre_policy_engine import (
+    NonceStore, canonical_json, evidence_attestation_payload, load_policy,
+)
 from tools.pre_transition_worker import (
     NotionAPI, NotionWorkerError, process_page, rich_text_chunks, rich_text_value,
     select_value,
 )
-from pathlib import Path
-import tempfile
-
 
 POLICY = load_policy()
-EVIDENCE_SECRET = "test-pre-approval-key-32-bytes-minimum"
+EVIDENCE_PRIVATE = Ed25519PrivateKey.from_private_bytes(bytes.fromhex("11" * 32))
+EVIDENCE_PUBLIC = base64.b64encode(
+    EVIDENCE_PRIVATE.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+).decode("ascii")
 
 
 def text_prop(value):
@@ -21,6 +28,12 @@ def text_prop(value):
 
 def select_prop(value):
     return {"select": {"name": value}}
+
+
+def sign(payload):
+    return base64.b64encode(
+        EVIDENCE_PRIVATE.sign(canonical_json(payload).encode("utf-8"))
+    ).decode("ascii")
 
 
 def evidence():
@@ -41,7 +54,7 @@ def evidence():
         "source_locator": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/README.md",
         "sha256": "a" * 64,
     }
-    item["signature"] = sign_evidence_envelope(item, EVIDENCE_SECRET)
+    item["signature"] = sign(evidence_attestation_payload(item))
     return [item]
 
 
@@ -88,7 +101,7 @@ class PRETransitionWorkerTests(unittest.TestCase):
             result = process_page(
                 page, client, POLICY, None,
                 NonceStore(Path(folder) / "nonces.sqlite"),
-                evidence_secret=EVIDENCE_SECRET,
+                evidence_public_key=EVIDENCE_PUBLIC,
             )
         self.assertEqual(result["decision"], "ALLOW")
         self.assertEqual(result["gate_state"], "PASS")
@@ -99,18 +112,17 @@ class PRETransitionWorkerTests(unittest.TestCase):
         self.assertEqual(select_value(page["properties"]["Request State"]), "POLICY_PASSED")
         self.assertEqual(select_value(page["properties"]["Gate Decision"]), "ALLOW")
         self.assertEqual(rich_text_value(page["properties"]["Evaluation Digest"]), result["evaluation_digest"])
-        # The queue worker only updates its queue row. The linked Work Item relation
-        # is left untouched and no PRE Stage field is written.
         self.assertEqual(page["properties"]["Work Item"]["relation"][0]["id"], "work-item-001")
         self.assertNotIn("PRE Stage", client.updated[0][1])
 
-    def test_malformed_evidence_json_is_recorded_as_deny_and_read_back(self):
+    def test_unsigned_or_malformed_evidence_json_is_recorded_as_deny_and_read_back(self):
         page = queue_page(evidence_raw="{not-json")
         client = MemoryNotion(page)
         with tempfile.TemporaryDirectory() as folder:
             result = process_page(
                 page, client, POLICY, None,
                 NonceStore(Path(folder) / "nonces.sqlite"),
+                evidence_public_key=EVIDENCE_PUBLIC,
             )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("EVIDENCE_ENVELOPE_JSON_INVALID", rich_text_value(page["properties"]["Block Reasons"]))
@@ -125,9 +137,21 @@ class PRETransitionWorkerTests(unittest.TestCase):
             result = process_page(
                 page, client, POLICY, None,
                 NonceStore(Path(folder) / "nonces.sqlite"),
+                evidence_public_key=EVIDENCE_PUBLIC,
             )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("REQUEST_FIELDS_EMPTY", rich_text_value(page["properties"]["Block Reasons"]))
+
+    def test_missing_evidence_public_key_holds_request(self):
+        page = queue_page()
+        client = MemoryNotion(page)
+        with tempfile.TemporaryDirectory() as folder:
+            result = process_page(
+                page, client, POLICY, None,
+                NonceStore(Path(folder) / "nonces.sqlite"),
+            )
+        self.assertEqual(result["decision"], "HOLD")
+        self.assertIn("EVIDENCE_VERIFYING_KEY_NOT_CONFIGURED", rich_text_value(page["properties"]["Block Reasons"]))
 
     def test_read_back_mismatch_fails_closed(self):
         page = queue_page()
@@ -142,7 +166,7 @@ class PRETransitionWorkerTests(unittest.TestCase):
                 process_page(
                     page, client, POLICY, None,
                     NonceStore(Path(folder) / "nonces.sqlite"),
-                    evidence_secret=EVIDENCE_SECRET,
+                    evidence_public_key=EVIDENCE_PUBLIC,
                 )
 
     def test_pending_query_follows_notion_cursor(self):
@@ -181,6 +205,7 @@ class PRETransitionWorkerTests(unittest.TestCase):
                 process_page(
                     page, client, POLICY, None,
                     NonceStore(Path(folder) / "nonces.sqlite"),
+                    evidence_public_key=EVIDENCE_PUBLIC,
                 )
         self.assertEqual(client.updated, [])
 
