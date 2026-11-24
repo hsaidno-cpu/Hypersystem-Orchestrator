@@ -13,7 +13,7 @@ Stable upsert keys:
 - CI: canonical workflow-run URL (one record per run).
 - Main commit: canonical commit URL (one record per commit).
 
-A SHA-256 digest detects unchanged events. More than one matching source locator fails closed. Notion 429/5xx and transport errors receive bounded retries for read/query and idempotent update calls; non-idempotent page creation is attempted once and reconciled by Source Locator before any later retry. Pagination is followed. A weekly sweep only changes old `FRESH` records to `STALE`; it never deletes records or alters evidence outcome.
+A SHA-256 digest over normalized source content detects unchanged events; observation/verification timestamps are excluded so replaying the same event on a later day remains a true no-op. More than one matching source locator fails closed. Notion 429/5xx and transport errors receive bounded retries for read/query and idempotent update calls; non-idempotent page creation is attempted once and reconciled by Source Locator before any later retry. Pagination is followed. A weekly sweep only changes old `FRESH` records to `STALE`; it never deletes records or alters evidence outcome.
 
 ## Event security boundary
 
