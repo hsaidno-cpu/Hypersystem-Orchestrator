@@ -2,7 +2,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-from tools.pre_policy_engine import NonceStore, load_policy
+from tools.pre_policy_engine import NonceStore, load_policy, sign_evidence_envelope
 from tools.pre_transition_worker import (
     NotionAPI, NotionWorkerError, process_page, rich_text_chunks, rich_text_value,
     select_value,
@@ -12,6 +12,7 @@ import tempfile
 
 
 POLICY = load_policy()
+EVIDENCE_SECRET = "test-pre-approval-key-32-bytes-minimum"
 
 
 def text_prop(value):
@@ -23,16 +24,25 @@ def select_prop(value):
 
 
 def evidence():
-    return [{
+    item = {
+        "schema_version": "1.0.0",
         "evidence_id": "EV-INTAKE-001",
         "evidence_type": "INTAKE_BRIEF",
+        "project_id": "HSO",
+        "scope_id": "HSO:WI-001:baseline-v1",
         "state": "PASS",
         "freshness": "FRESH",
         "verified": True,
+        "identity_verified": True,
         "verified_by": "evaluator:independent",
+        "verifier_role": "Evaluator Team",
+        "verified_at": "2026-11-24T03:00:00Z",
+        "issuer": "hso-evidence-issuer",
         "source_locator": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/README.md",
         "sha256": "a" * 64,
-    }]
+    }
+    item["signature"] = sign_evidence_envelope(item, EVIDENCE_SECRET)
+    return [item]
 
 
 def queue_page(*, evidence_raw=None, page_id="page-001"):
@@ -78,6 +88,7 @@ class PRETransitionWorkerTests(unittest.TestCase):
             result = process_page(
                 page, client, POLICY, None,
                 NonceStore(Path(folder) / "nonces.sqlite"),
+                evidence_secret=EVIDENCE_SECRET,
             )
         self.assertEqual(result["decision"], "ALLOW")
         self.assertEqual(result["gate_state"], "PASS")
@@ -131,6 +142,7 @@ class PRETransitionWorkerTests(unittest.TestCase):
                 process_page(
                     page, client, POLICY, None,
                     NonceStore(Path(folder) / "nonces.sqlite"),
+                    evidence_secret=EVIDENCE_SECRET,
                 )
 
     def test_pending_query_follows_notion_cursor(self):
