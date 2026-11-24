@@ -1,0 +1,53 @@
+name: HSO Mission Control synchronization
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  workflow_run:
+    workflows: ["Catalog and distribution validation"]
+    types: [completed]
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: hso-mission-control-sync-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  event-ingestion:
+    if: ${{ github.event_name != 'schedule' && github.event_name != 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out HSO
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Emit signed event to HSO
+        env:
+          HSO_SYNC_URL: ${{ vars.HSO_GITHUB_WEBHOOK_URL }}
+          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: python tools/emit_hso_sync_event.py --mode event
+
+  scheduled-reconciliation:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out HSO
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Reconcile authoritative sources
+        env:
+          HSO_SYNC_URL: ${{ vars.HSO_GITHUB_WEBHOOK_URL }}
+          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: python tools/emit_hso_sync_event.py --mode reconcile
