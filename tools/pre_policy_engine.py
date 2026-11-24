@@ -48,6 +48,30 @@ def digest_json(value: Any) -> str:
     return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
+EVIDENCE_ATTESTED_FIELDS = (
+    "schema_version", "evidence_id", "evidence_type", "project_id", "scope_id",
+    "state", "freshness", "verified", "verified_by", "verifier_role",
+    "verified_at", "issuer", "source_locator", "sha256",
+)
+
+
+def evidence_attestation_payload(item: dict[str, Any]) -> dict[str, Any]:
+    """Return the only fields covered by the evidence issuer signature."""
+    return {key: item.get(key) for key in EVIDENCE_ATTESTED_FIELDS}
+
+
+def sign_evidence_envelope(item: dict[str, Any], secret: str) -> str:
+    """Issuer-side helper; call only after authenticating verifier identity and source."""
+    if not secret:
+        raise PREPolicyError("Evidence signing key is not configured")
+    payload = evidence_attestation_payload(item)
+    return hmac.new(
+        secret.encode("utf-8"),
+        canonical_json(payload).encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+
+
 def load_policy(path: Path = DEFAULT_POLICY) -> dict[str, Any]:
     try:
         policy = json.loads(path.read_text(encoding="utf-8"))
@@ -130,10 +154,12 @@ class NonceStore:
 def _verify_evidence(
     evidence: list[dict[str, Any]], required_types: list[str],
     request: dict[str, Any], policy: dict[str, Any],
+    *, evidence_secret: str | None, now: datetime,
 ) -> tuple[list[str], list[str]]:
     blockers: list[str] = []
     denials: list[str] = []
     rules = policy["evidence"]
+    attestation = rules.get("attestation", {})
     by_type: dict[str, list[dict[str, Any]]] = {}
     for item in evidence:
         if not isinstance(item, dict):
@@ -157,6 +183,7 @@ def _verify_evidence(
             if item.get("freshness") not in rules["accepted_freshness"]:
                 continue
             if item.get("verified") is not True:
+                denials.append(f"EVIDENCE_NOT_VERIFIED:{kind}")
                 continue
             locator = item.get("source_locator")
             if rules.get("require_https_source_locator") and (
@@ -174,6 +201,40 @@ def _verify_evidence(
                 verifier == request.get("requested_by_actor_id")
             ):
                 denials.append(f"NON_INDEPENDENT_VERIFIER:{kind}")
+                continue
+            verifier_role = item.get("verifier_role")
+            if verifier_role not in attestation.get("allowed_verifier_roles", []):
+                denials.append(f"UNTRUSTED_VERIFIER_ROLE:{kind}")
+                continue
+            if item.get("project_id") != request.get("project_id") or item.get("scope_id") != request.get("scope_id"):
+                denials.append(f"EVIDENCE_SCOPE_MISMATCH:{kind}")
+                continue
+            issuer = item.get("issuer")
+            if issuer not in attestation.get("allowed_issuers", []):
+                denials.append(f"UNTRUSTED_EVIDENCE_ISSUER:{kind}")
+                continue
+            if attestation.get("require_identity_verified") and item.get("identity_verified") is not True:
+                denials.append(f"EVIDENCE_VERIFIER_IDENTITY_UNVERIFIED:{kind}")
+                continue
+            try:
+                verified_at = parse_time(item.get("verified_at"))
+            except (TypeError, ValueError):
+                denials.append(f"EVIDENCE_VERIFICATION_TIME_INVALID:{kind}")
+                continue
+            if verified_at > now:
+                denials.append(f"EVIDENCE_VERIFICATION_TIME_IN_FUTURE:{kind}")
+                continue
+            age_seconds = (now - verified_at).total_seconds()
+            if age_seconds > int(attestation.get("max_age_seconds", 7776000)):
+                blockers.append(f"EVIDENCE_ATTESTATION_EXPIRED:{kind}")
+                continue
+            if not evidence_secret:
+                blockers.append(f"EVIDENCE_SIGNING_KEY_NOT_CONFIGURED:{kind}")
+                continue
+            signature = item.get("signature")
+            expected_signature = sign_evidence_envelope(item, evidence_secret)
+            if not isinstance(signature, str) or not hmac.compare_digest(signature, expected_signature):
+                denials.append(f"EVIDENCE_SIGNATURE_INVALID:{kind}")
                 continue
             accepted = True
             break
@@ -235,6 +296,7 @@ def evaluate_transition(
     *,
     approval_secret: str | None = None,
     nonce_store: NonceStore | None = None,
+    evidence_secret: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Return ALLOW, HOLD, or DENY for one adjacent PRE stage transition."""
@@ -287,7 +349,8 @@ def evaluate_transition(
         rule = {"required_evidence_types": [], "required_approval_roles": []}
 
     blockers, evidence_denials = _verify_evidence(
-        request.get("evidence", []), rule["required_evidence_types"], request, policy
+        request.get("evidence", []), rule["required_evidence_types"], request, policy,
+        evidence_secret=evidence_secret, now=evaluated_at,
     )
     reasons.extend(blockers)
     denials.extend(evidence_denials)
@@ -375,10 +438,11 @@ def main(argv: list[str] | None = None) -> int:
         request = json.loads(args.request_file.read_text(encoding="utf-8"))
         policy = load_policy(args.policy)
         secret = os.environ.get(policy["approval"]["key_environment_variable"])
+        evidence_secret = os.environ.get(policy["evidence"]["attestation"]["key_environment_variable"])
         nonce_store = NonceStore(args.nonce_store) if args.nonce_store else None
         result = evaluate_transition(
             request, policy, approval_secret=secret,
-            nonce_store=nonce_store,
+            evidence_secret=evidence_secret, nonce_store=nonce_store,
         )
         rendered = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
         if args.output:
