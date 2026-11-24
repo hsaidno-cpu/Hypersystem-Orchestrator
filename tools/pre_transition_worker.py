@@ -199,7 +199,7 @@ def request_from_page(page: dict[str, Any]) -> dict[str, Any]:
         "project_id": rich_text_value(props.get("Project ID")),
         "scope_id": rich_text_value(props.get("Scope ID")),
         "from_stage": stage_id(select_value(props.get("From Stage"))),
-        "to_stage": stage_id(select_value(props.get("Requested Stage")),
+        "to_stage": stage_id(select_value(props.get("Requested Stage"))),
         "requested_by_actor_id": rich_text_value(props.get("Requested By Actor ID")),
         "evidence": evidence,
         "approvals": approvals,
