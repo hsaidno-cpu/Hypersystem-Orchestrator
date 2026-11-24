@@ -29,16 +29,46 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install pinned PRE dependencies
+        run: python -m pip install --requirement requirements-pre.txt
+
       - name: Run PRE transition policy tests
         run: python -m unittest discover -s tests -p 'test_pre_policy_engine.py' -v
 
       - name: Run PRE Notion queue worker tests
         run: python -m unittest discover -s tests -p 'test_pre_transition_worker.py' -v
 
-      - name: Evaluate the canonical R0 to R1 fixture
+      - name: Sign canonical fixture with an ephemeral CI-only issuer key
         run: |
-          python tools/pre_policy_engine.py evaluate \
-            --request-file examples/pre-transition-r0-r1.example.json \
+          python - <<'PY'
+          import base64
+          import json
+          from pathlib import Path
+          from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+          from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+          from tools.pre_policy_engine import canonical_json, evidence_attestation_payload
+
+          request = json.loads(Path("examples/pre-transition-r0-r1.example.json").read_text(encoding="utf-8"))
+          private_key = Ed25519PrivateKey.generate()
+          public_key = private_key.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+          evidence = request["evidence"][0]
+          signature = private_key.sign(
+              canonical_json(evidence_attestation_payload(evidence)).encode("utf-8")
+          )
+          evidence["signature"] = base64.b64encode(signature).decode("ascii")
+          Path("/tmp/pre-request-signed.json").write_text(
+              json.dumps(request, ensure_ascii=False, indent=2), encoding="utf-8"
+          )
+          Path("/tmp/pre-evidence-public-key").write_text(
+              base64.b64encode(public_key).decode("ascii"), encoding="utf-8"
+          )
+          PY
+
+      - name: Evaluate the signed canonical R0 to R1 fixture
+        run: |
+          export HSO_EVIDENCE_ISSUER_PUBLIC_KEY="$(cat /tmp/pre-evidence-public-key)"
+          python -m tools.pre_policy_engine evaluate \
+            --request-file /tmp/pre-request-signed.json \
             --output /tmp/pre-evaluation.json
           python - <<'PY'
           import json
@@ -51,6 +81,7 @@ jobs:
           print(json.dumps({
               "decision": result["decision"],
               "gate_state": result["gate_state"],
+              "input_digest": result["input_digest"],
               "evaluation_digest": result["evaluation_digest"],
               "stage_mutation_performed": result["stage_mutation_performed"],
           }, indent=2))
