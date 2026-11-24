@@ -73,7 +73,7 @@ def read_gitlink_sha(path: str) -> str:
 
 def git_blob_sha(content: bytes) -> str:
     """Return Git's SHA-1 object ID for a blob's exact byte content."""
-    header = b"blob " + str(len(content)).encode("ascii") + b"\\0"
+    header = b"blob " + str(len(content)).encode("ascii") + b"\0"
     return hashlib.sha1(header + content).hexdigest()
 
 
