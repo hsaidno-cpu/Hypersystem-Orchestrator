@@ -52,6 +52,13 @@ def main() -> int:
     environment_approval = json.loads(args.environment_approval.read_text(encoding="utf-8"))
     approver = str(environment_approval.get("reviewer_login") or "").strip()
     reviewer_id = environment_approval.get("reviewer_id")
+    allowed_logins = {
+        item.strip().lower()
+        for item in os.environ.get("HSO_P0_ALLOWED_REVIEWER_LOGINS", "").split(",")
+        if item.strip()
+    }
+    if not allowed_logins or approver.lower() not in allowed_logins:
+        raise SystemExit("authenticated Environment approver is not in HSO_P0_ALLOWED_REVIEWER_LOGINS")
     if (
         environment_approval.get("environment") != "hso-p0-remote-mcp-live"
         or environment_approval.get("workflow_run_id") != run_id
