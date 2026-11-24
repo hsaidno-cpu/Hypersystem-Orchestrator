@@ -132,6 +132,8 @@ def validate():
                 fail(f"{key}: candidate source must be marked candidate_not_integrated")
         if state == "integrated_submodule":
             repo = next(r for r in repositories if r["repository_id"] == repo_id)
+            if plugin.get("repository_version") != repo.get("source_manifest_version"):
+                fail(f"{key}: repository_version differs from the registered source manifest version")
             if repo.get("status") not in {"integrated_submodule", "integrated_submodule_private"}:
                 fail(f"{key}: integrated plugin repository is not marked integrated")
             if not repo.get("submodule_path") or not repo.get("pinned_commit"):
@@ -149,6 +151,8 @@ def validate():
             fail(f"{key}: platform_metadata_observed_at must be an ISO-8601 date")
         if observed_date > date.today():
             fail(f"{key}: Plugin Creator metadata observation date is in the future")
+        if observed_date > catalog_revision:
+            fail(f"{key}: Plugin Creator metadata observation date is later than catalog_revision")
         metadata_age_days = (date.today() - observed_date).days
         if metadata_age_days > 30:
             fail(
