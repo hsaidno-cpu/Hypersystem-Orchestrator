@@ -1,0 +1,37 @@
+name: P1 sync module validation
+
+on:
+  push:
+    branches: [feat/github-notion-evidence-sync-20261124]
+  pull_request:
+    branches: [fix/ponytail-c2-c3-test-contract-20261124]
+
+permissions:
+  contents: read
+
+jobs:
+  sync-unit-and-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out proposed changes
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned test dependencies
+        run: python -m pip install -r requirements-test.txt
+
+      - name: Validate catalog and distribution registries
+        run: |
+          python tools/validate_catalog.py
+          python tools/validate_distribution.py
+
+      - name: Run full unit and integration test suite
+        run: python -m unittest discover -s tests -v
