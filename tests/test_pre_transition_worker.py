@@ -38,6 +38,7 @@ def evidence():
 def queue_page(*, evidence_raw=None, page_id="page-001"):
     props = {
         "Idempotency Key": text_prop("PRE-REQ-001"),
+        "Request State": select_prop("PENDING"),
         "Project ID": text_prop("HSO"),
         "Scope ID": text_prop("HSO:WI-001:baseline-v1"),
         "From Stage": select_prop("R0 Intake"),
@@ -82,7 +83,8 @@ class PRETransitionWorkerTests(unittest.TestCase):
         self.assertEqual(result["gate_state"], "PASS")
         self.assertTrue(result["read_back_verified"])
         self.assertFalse(result["stage_mutation_performed"])
-        self.assertEqual(len(client.updated), 1)
+        self.assertEqual(len(client.updated), 2)
+        self.assertEqual(select_value(client.updated[0][1]["Request State"]), "EVALUATING")
         self.assertEqual(select_value(page["properties"]["Request State"]), "POLICY_PASSED")
         self.assertEqual(select_value(page["properties"]["Gate Decision"]), "ALLOW")
         self.assertEqual(rich_text_value(page["properties"]["Evaluation Digest"]), result["evaluation_digest"])
@@ -154,7 +156,9 @@ class PRETransitionWorkerTests(unittest.TestCase):
         self.assertEqual([page["id"] for page in pages], ["first", "second"])
         self.assertNotIn("start_cursor", requests[0])
         self.assertEqual(requests[1]["start_cursor"], "next-page")
-        self.assertEqual(requests[0]["filter"]["property"], "Request State")
+        self.assertEqual(len(requests[0]["filter"]["or"]), 2)
+        self.assertEqual(requests[0]["filter"]["or"][0]["select"]["equals"], "PENDING")
+        self.assertEqual(requests[0]["filter"]["or"][1]["select"]["equals"], "EVALUATING")
 
     def test_page_without_id_is_rejected_before_mutation(self):
         page = queue_page()
