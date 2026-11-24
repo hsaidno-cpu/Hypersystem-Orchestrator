@@ -226,6 +226,34 @@ class GitHubNotionSyncTests(unittest.TestCase):
         self.assertEqual(sum(url.endswith("/pages") for url in opener.calls), 1)
         self.assertEqual(sum("/data_sources/" in url for url in opener.calls), 1)
 
+    def test_non_retryable_create_http_error_is_not_misreported_as_ambiguous(self):
+        class FailingRequest:
+            def __enter__(self):
+                raise urllib.error.HTTPError(
+                    "https://api.notion.com/v1/pages", 400, "Bad Request",
+                    {"Content-Type": "application/json"}, None
+                )
+            def __exit__(self, *args):
+                return False
+        class InvalidRequestOpener:
+            def __init__(self):
+                self.calls = []
+            def __call__(self, request, timeout=20):
+                self.calls.append(request.full_url)
+                return FailingRequest()
+
+        opener = InvalidRequestOpener()
+        from tools.github_notion_sync import NotionClient
+        client = NotionClient(
+            "not-a-real-token", "42299868-397f-817c-bb25-000b49b243fa",
+            opener=opener, sleeper=lambda delay: None
+        )
+        locator = "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/15"
+        with self.assertRaisesRegex(SyncError, "HTTP 400"):
+            client.create_page({"Source Locator": {"url": locator}}, locator)
+        self.assertEqual(sum(url.endswith("/pages") for url in opener.calls), 1)
+        self.assertFalse(any("/data_sources/" in url for url in opener.calls))
+
     def test_duplicate_locator_fails_closed(self):
         client = FakeNotion()
         record = build_event_record("pull_request", sample_pr(), CONFIG)
