@@ -1,0 +1,37 @@
+name: HSO Mission Control app CI
+
+on:
+  pull_request:
+    paths:
+      - "apps/mission-control/**"
+      - ".github/workflows/hso-mission-control-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  app-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mission-control
+    steps:
+      - name: Check out HSO
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --no-package-lock
+      - name: Type check
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co"
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_build_placeholder"
+        run: npm run typecheck
+      - name: Build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co"
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_build_placeholder"
+        run: npm run build

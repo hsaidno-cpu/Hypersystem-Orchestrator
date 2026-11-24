@@ -37,7 +37,13 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
           GITHUB_SHA: ${{ github.sha }}
-        run: python tools/emit_hso_sync_event.py --mode event
+        run: |
+          if [ -z "$HSO_SYNC_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
+            echo "::warning::HSO integration NOT_CONFIGURED. Set HSO_GITHUB_WEBHOOK_URL and HSO_SYNC_TOKEN to enable signed event delivery."
+            echo "Event delivery skipped: required repository variable/secret is not configured." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          python tools/emit_hso_sync_event.py --mode event
 
   scheduled-reconciliation:
     if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
@@ -50,4 +56,10 @@ jobs:
           HSO_SYNC_URL: ${{ vars.HSO_GITHUB_WEBHOOK_URL }}
           HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
           GITHUB_RUN_ID: ${{ github.run_id }}
-        run: python tools/emit_hso_sync_event.py --mode reconcile
+        run: |
+          if [ -z "$HSO_SYNC_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
+            echo "::warning::HSO reconciliation NOT_CONFIGURED. Set HSO_GITHUB_WEBHOOK_URL and HSO_SYNC_TOKEN to enable scheduled sync."
+            echo "Scheduled reconciliation skipped: required repository variable/secret is not configured." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          python tools/emit_hso_sync_event.py --mode reconcile
