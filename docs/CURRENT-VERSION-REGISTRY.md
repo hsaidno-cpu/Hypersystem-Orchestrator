@@ -66,22 +66,6 @@ The following entries are not automatically repaired by changing a version strin
 - Version evidence: Canonical Git source manifest and current Plugin Creator package both identify 0.1.0, but their master SKILL.md bodies differ substantially. Version metadata is aligned; instruction-content synchronization remains pending.
 - Parity evidence: Full 4-file instruction/reference comparison against Plugin Creator USER/PRIVATE v0.1.0 and pinned Git source v0.1.0: 0/4 files match exactly. Master SKILL.md is 23,651 vs 10,573 chars; audit-matrix.md 4,874 vs 3,111; github-change-protocol.md 4,596 vs 2,497; regression-and-release-gates.md 4,500 vs 3,030. Plugin Creator bodies are longer; package and source versions match but content does not. Preserve both until the source owner selects the canonical body and updates/tests the other side.
 
-### Evaluator Team
-
-- Plugin Creator: 1.0.0 / pluginrel_6afdee5a10108191a38e1ee7f84f7524.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### Master Photo Restoration
-
-- Plugin Creator: 1.0.0 / pluginrel_6ae29cf38e4881918f892e746050891d.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
 ### SKILL ANALYZER
 
 - Plugin Creator: 1.0.0 / pluginrel_6af1a98cdbe881918f30895f5af93afc.
@@ -89,46 +73,6 @@ The following entries are not automatically repaired by changing a version strin
 - Alignment: SOURCE_AHEAD_OF_PLATFORM; parity: DRIFT_DETECTED.
 - Version evidence: Canonical public GitHub README and manifest identify 1.3.0; current Plugin Creator package metadata reports 1.0.0. Parent source baseline is 1.3.0; platform republishing is a separate action.
 - Parity evidence: Full 12-file skill comparison against Plugin Creator USER/PRIVATE v1.0.0 release and pinned Git source 1.3.0: 11/12 SKILL.md files are exact after CRLF normalization. The only mismatch is skills/platform-compatibility/SKILL.md: Plugin Creator has 71 lines; Git source has 81 lines and appends a HOSTED GATEWAY PROFILE section. Git source is ahead; do not auto-overwrite or relabel the package. Version alignment remains SOURCE_AHEAD_OF_PLATFORM.
-
-### GODEX Motion Audio
-
-- Plugin Creator: 2.0.0 / pluginrel_6ae56ef615688191ba0b357fc7b1fd32.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### AI Prompt Finder & Creator
-
-- Plugin Creator: 1.0.0 / pluginrel_6ae57d451eac81918ae3d05fd7bb0a85.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### Agent Jailbreak Skill DS
-
-- Plugin Creator: 0.2.0 / pluginrel_6ae8691261c08191a69065ccbea28965.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### Motion Graphic by arifanara V.01
-
-- Plugin Creator: 0.2.0 / pluginrel_6ae97fb29a408191b4ce949723bc460d.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: V.01 is a product label, not SemVer; the current Plugin Creator package version is 0.2.0.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### Plugin Agent Orchestrator
-
-- Plugin Creator: 2.0.0 / pluginrel_6afdff8b11848191be8765373812262f.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
 
 ### Photo Fixer
 
@@ -154,54 +98,6 @@ The following entries are not automatically repaired by changing a version strin
 - Version evidence: Version 1.0.4 belongs only to the compatibility redirect shell and is not the canonical A.S.F.R.E.E product version.
 - Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
 
-### Cortex Workbench
-
-- Plugin Creator: 1.0.0 / pluginrel_6aff571bb43c819192f2dad006d28d3d.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### CommandCraft 56
-
-- Plugin Creator: 0.1.0 / pluginrel_6aff5856da608191b6451e8d19a7b44a.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### Agent Skills Atlas
-
-- Plugin Creator: 0.3.1 / pluginrel_6b000c2b186c819199e6bf1e08d4b646.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### People & Business Competency Academy
-
-- Plugin Creator: 0.1.0 / pluginrel_6b039efc6dfc81919fffbe265e8f84c9.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Plugin Creator package version 0.1.0 and release are verified. No independent canonical Git repository/version exists; the parent repository can store a read-only instruction snapshot and catalog record but is not the child source of truth.
-- Parity evidence: No independent Git source exists for a source/snapshot parity comparison. Reassess after a canonical child repository and license are established.
-
-### AI Workflow Systems Orchestrator
-
-- Plugin Creator: 0.2.0 / pluginrel_6b015fe943608191b46d0a439dd4f55e.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
-### GrowthForge Business OS
-
-- Plugin Creator: 1.1.1 / pluginrel_6b023e6d011481919323471664b9d286.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.
-- Parity evidence: No independent source/snapshot content comparison applies while no canonical source package is integrated.
-
 ### PVEE Promkes Super Orchestrator
 
 - Plugin Creator: 2.0.2 / pluginrel_6b029dfa21e88191957129cfce63353f.
@@ -217,14 +113,6 @@ The following entries are not automatically repaired by changing a version strin
 - Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_COMPARED.
 - Version evidence: Plugin Creator version 0.1.1 is verified. No canonical independent Git source repository has been identified; the parent repository stores only a public instruction snapshot.
 - Parity evidence: No canonical PRE source repository exists in the registry to compare against the current Plugin Creator skill snapshot.
-
-### Ponytail Engineering System
-
-- Plugin Creator: 0.1.0 / pluginrel_6b044f37640081918df7f449298d72cf.
-- Git source: NOT_IDENTIFIED.
-- Alignment: PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED; parity: NOT_APPLICABLE.
-- Version evidence: The private Plugin Creator release is verified at 0.1.0. No dedicated canonical Git source for this derivative package has been accepted. Upstream Ponytail v5.3.3 is methodology provenance, not this package's source release.
-- Parity evidence: No independent canonical Git source exists for parity comparison. The full USER/PRIVATE instruction files remain in the private Plugin Creator package; the public parent repository stores only a metadata pointer and concise skill index.
 
 ## Canonical source manifest evidence
 
