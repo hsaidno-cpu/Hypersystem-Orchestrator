@@ -93,6 +93,21 @@ This patch is limited to the parent repository's registry and static CI. It does
 
 GitHub Actions does not have a verified live Plugin Creator metadata API integration in this workflow. The freshness gate checks the recorded read-back date and internal consistency; it does not query Plugin Creator itself. The static gate also does not re-download every private package file or prove host execution. Those checks require authorized read-back and evidence capture.
 
+
+
+## 5A. Source manifest provenance gate — automated review P2 remediation
+
+A subsequent exact-head automated review identified that the first validator iteration checked only the manifest SHA format and internal version-field consistency; it did not retrieve manifest bytes from the pinned child commit. That was a valid provenance gap. The current branch closes it for public child repositories:
+
+- The validator constructs a raw.githubusercontent.com URL using the registered owner/repository, immutable `pinned_commit` and exact `source_manifest_path`.
+- It downloads the UTF-8 JSON manifest (bounded to 1 MiB), computes Git's blob object SHA-1 over the exact bytes, and compares it with `source_manifest_blob_sha`.
+- It parses the manifest and compares the declared `version` with both `source_manifest_version` and the repository registry's `package_version`.
+- URL host is fixed to raw.githubusercontent.com; owner/repository and relative manifest path are validated before fetch. Network, HTTP, hash or version mismatch fails closed.
+- Four public child manifests use `CI_RAW_CONTENT_GIT_BLOB`: SKILL ANALYZER, A.S.F.R.E.E, Video Explainer Promkes and SDO.
+- The private Anatomi source uses `PRIVATE_MANUAL_READBACK_ONLY`. The public workflow has no credential for that private repository, so CI explicitly reports the manual limitation instead of claiming to verify its content.
+
+A regression fixture asserts Git blob hashing against the known Git object ID for `test\\n`. The generated registry now displays each source manifest verification mode. This control ties the recorded manifest digest and version to actual bytes fetched from the pinned commit for public repositories; it still does not fetch or compare all child skill files in CI.
+
 ## 6. Required remediation order
 
 | Priority | Action | Owner | Gate |
