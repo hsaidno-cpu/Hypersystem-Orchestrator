@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_inventory_date": "2026-11-22",
+  "last_inventory_date": "2026-11-24",
   "repositories": [
     {
       "repository_id": "hypersystem-orchestrator",
@@ -10,8 +10,9 @@
       "default_branch": "main",
       "role": "central_ecosystem_repository",
       "status": "target_repository",
-      "baseline_commit": "99f715f0868248dce40b0f499cad1ab74f4c0896",
-      "notes": "Parent ecosystem registry, architecture, contracts, governance and roadmap. Not the canonical source for child plugin implementations."
+      "baseline_commit": "4fb839a67db79b32f65f82e04c3631ade5d27c9c",
+      "notes": "Parent ecosystem registry, architecture, contracts, governance and roadmap. Not the canonical source for child plugin implementations.",
+      "verified_artifact": "Parent main rechecked on 2026-11-24 at 4fb839a67db79b32f65f82e04c3631ade5d27c9c before version-sync guardrail work."
     },
     {
       "repository_id": "skill-analyzer",
@@ -23,7 +24,7 @@
       "status": "integrated_submodule",
       "pinned_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
       "submodule_path": "plugins/skill-analyzer",
-      "verified_artifact": "README.md identifies SKILL ANALYZER 1.3.0 and its modular architecture; inspected 2026-11-22.",
+      "verified_artifact": "Rechecked 2026-11-24: hsaidno-cpu/skill-analyzer main HEAD exactly matches parent submodule pin c469af7977c9bf6dcb3f5ab7b085a6de20d87004; plugin.json declares 1.3.0; manifest blob 743b2c91339d19a9c915a8decad264092e2725c5.",
       "source_classification": "OFFICIAL_PUBLIC_SOURCE",
       "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
       "license_note": "LICENSE path was not found during the 2026-11-22 inspection. Do not assume parent Apache-2.0 applies.",
@@ -31,7 +32,12 @@
       "package_version_evidence": [
         "README.md",
         "plugin.json"
-      ]
+      ],
+      "source_manifest_path": "plugin.json",
+      "source_manifest_blob_sha": "743b2c91339d19a9c915a8decad264092e2725c5",
+      "source_manifest_version": "1.3.0",
+      "source_manifest_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
+      "source_manifest_verified_at": "2026-11-24"
     },
     {
       "repository_id": "asfree",
@@ -43,13 +49,18 @@
       "status": "integrated_submodule",
       "pinned_commit": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
       "submodule_path": "plugins/asfree",
-      "verified_artifact": "README.md and plugin/plugin.json inspected 2026-11-22; package version 0.5.0-rc.1 is a release candidate.",
+      "verified_artifact": "Rechecked 2026-11-24: hsaidno-cpu/A.S.F.R.E.E main HEAD exactly matches parent submodule pin a5eb55db0f6c2c6126a7fbcba645caf44c660c93; plugin/plugin.json declares 0.5.0-rc.1; manifest blob f0211b1dc94fb61efe1b7aa011cec7018a7e4c07.",
       "source_classification": "OFFICIAL_PUBLIC_SOURCE",
       "license_status": "POLYFORM_NONCOMMERCIAL_1_0_0",
       "license_url": "https://polyformproject.org/licenses/noncommercial/1.0.0",
       "required_notice": "Copyright (c) 2026 Hary Saidno and A.S.F.R.E.E contributors.",
       "package_version": "0.5.0-rc.1",
-      "package_version_status": "RELEASE_CANDIDATE"
+      "package_version_status": "RELEASE_CANDIDATE",
+      "source_manifest_path": "plugin/plugin.json",
+      "source_manifest_blob_sha": "f0211b1dc94fb61efe1b7aa011cec7018a7e4c07",
+      "source_manifest_version": "0.5.0-rc.1",
+      "source_manifest_commit": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
+      "source_manifest_verified_at": "2026-11-24"
     },
     {
       "repository_id": "anatomi-prompt-strategis",
@@ -61,7 +72,7 @@
       "status": "integrated_submodule_private",
       "pinned_commit": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
       "submodule_path": "plugins/anatomi-prompt-strategis",
-      "verified_artifact": "README.md identifies Anatomi Prompt V3.0 — Octa-Prompt; private repository access is required to initialize this submodule.",
+      "verified_artifact": "Rechecked 2026-11-24: hsaidno-cpu/anatomi-prompt-strategis main HEAD exactly matches parent submodule pin 06b46b88ed7eddc437792fae715f255cbe4eb13d; .agents/skills/anatomi-prompt/package/plugin.json declares 3.0.0; manifest blob e3781f3d9d257da6092807e3b565dda251cb5f8b.",
       "source_classification": "OFFICIAL_PRIVATE_SOURCE",
       "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
       "license_note": "Root LICENSE path was not found during the 2026-11-22 inspection; keep source private and do not infer a license.",
@@ -69,7 +80,12 @@
       "package_version_evidence": [
         "README.md"
       ],
-      "public_snapshot_allowed": false
+      "public_snapshot_allowed": false,
+      "source_manifest_path": ".agents/skills/anatomi-prompt/package/plugin.json",
+      "source_manifest_blob_sha": "e3781f3d9d257da6092807e3b565dda251cb5f8b",
+      "source_manifest_version": "3.0.0",
+      "source_manifest_commit": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
+      "source_manifest_verified_at": "2026-11-24"
     },
     {
       "repository_id": "photo-fixer-candidate",
@@ -117,7 +133,13 @@
       "plugin_creator_current_release_id": "pluginrel_6b02a0f630208191b71ad994703aed68",
       "plugin_creator_visibility": "PRIVATE",
       "license_status": "NOT_DECLARED_AT_REPOSITORY_ROOT",
-      "notes": "Current Plugin Creator deployment is 4.1.12 while public GitHub source is 4.1.9. Pinned as official source but explicitly marked behind. Parent contains only the 16 current SKILL.md instructions at owner's request; binaries and unrelated assets are excluded."
+      "notes": "Current Plugin Creator deployment is 4.1.12 while public GitHub source is 4.1.9. Pinned as official source but explicitly marked behind. Parent contains only the 16 current SKILL.md instructions at owner's request; binaries and unrelated assets are excluded.",
+      "source_manifest_path": "plugin.json",
+      "source_manifest_blob_sha": "c16b81bbf8a30eda93ed0c3e6223748d6cb13466",
+      "source_manifest_version": "4.1.9",
+      "source_manifest_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
+      "source_manifest_verified_at": "2026-11-24",
+      "verified_artifact": "Rechecked 2026-11-24: promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR main HEAD exactly matches parent submodule pin f8f8c0f29ff9d851fa75eba764978c24bdd79416; plugin.json declares 4.1.9; manifest blob c16b81bbf8a30eda93ed0c3e6223748d6cb13466."
     },
     {
       "repository_id": "skill-developer-orchestrator",
@@ -131,7 +153,7 @@
       "submodule_path": "plugins/skill-developer-orchestrator",
       "commit_signature_verified": true,
       "commit_tree_sha": "9783998995a2b868575b0938372da24833ccd9df",
-      "verified_artifact": "README.md, plugin.json, skills/skill-developer-orchestrator/SKILL.md, three reference files and tests/acceptance-cases.json inspected. README/package identity and version match current Plugin Creator SDO 0.1.0. Commit signature verified.",
+      "verified_artifact": "Rechecked 2026-11-24: promkespkmbinuang-coder/SPDO main HEAD exactly matches parent submodule pin 9d3c4bc09179ff857df4f3819be83e1847571add; plugin.json declares 0.1.0; manifest blob 3be086c8917cdd5e77b1d051042359e9b300792a.",
       "source_classification": "OFFICIAL_PUBLIC_SOURCE",
       "license_status": "APACHE-2.0",
       "package_version": "0.1.0",
@@ -141,7 +163,12 @@
       ],
       "plugin_creator_id": "Plugin_a5294996e38c8191b8e20b2d9f61447a",
       "plugin_creator_current_release_id": "pluginrel_6afdee10a5688191ad8fc37a9d0d827b",
-      "source_version_status": "MATCHES_PLUGIN_CREATOR_PACKAGE"
+      "source_version_status": "MATCHES_PLUGIN_CREATOR_PACKAGE",
+      "source_manifest_path": "plugin.json",
+      "source_manifest_blob_sha": "3be086c8917cdd5e77b1d051042359e9b300792a",
+      "source_manifest_version": "0.1.0",
+      "source_manifest_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
+      "source_manifest_verified_at": "2026-11-24"
     },
     {
       "repository_id": "pvee-promkes-candidate",
