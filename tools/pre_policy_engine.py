@@ -249,6 +249,14 @@ def evaluate_transition(
     missing = sorted(required_fields - set(request))
     if missing:
         denials.append("REQUEST_FIELDS_MISSING:" + ",".join(missing))
+    empty_fields = sorted(
+        key for key in required_fields - {"evidence"}
+        if key in request and (not isinstance(request[key], str) or not request[key].strip())
+    )
+    if empty_fields:
+        denials.append("REQUEST_FIELDS_EMPTY:" + ",".join(empty_fields))
+    if "evidence" in request and not isinstance(request["evidence"], list):
+        denials.append("EVIDENCE_FIELD_MALFORMED")
     stage_ids = [item["id"] for item in policy["lifecycle"]]
     source = request.get("from_stage")
     target = request.get("to_stage")
