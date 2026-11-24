@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 from tools.pre_policy_engine import (
-    NonceStore, canonical_json, evaluate_transition, load_policy,
+    NonceStore, approval_binding_digest, canonical_json, evaluate_transition, load_policy,
     evidence_attestation_payload,
 )
 
@@ -82,6 +82,7 @@ def signed_approval(req, role="HUMAN_DECISION_OWNER", *, now=NOW, subject="user:
     unsigned = {
         "approval_id": "APR-001-" + role,
         "decision": "APPROVED",
+        "request_digest": approval_binding_digest(req),
         "scope_id": req["scope_id"],
         "from_stage": req["from_stage"],
         "to_stage": req["to_stage"],
@@ -195,6 +196,22 @@ class PREPolicyEngineTests(unittest.TestCase):
             )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("SELF_APPROVAL_PROHIBITED", result["reasons"])
+
+    def test_approval_is_bound_to_exact_evidence_set(self):
+        req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
+        req["approvals"] = [signed_approval(req)]
+        # Replace an evidence object after approval issuance. The signature on
+        # the approval remains cryptographically valid, but its request binding
+        # must no longer match the evidence set.
+        req["evidence"][0]["sha256"] = "b" * 64
+        with tempfile.TemporaryDirectory() as folder:
+            result = evaluate_transition(
+                req, POLICY, approval_public_key=APPROVAL_PUBLIC,
+                evidence_public_key=EVIDENCE_PUBLIC,
+                nonce_store=NonceStore(Path(folder) / "nonces.sqlite"), now=NOW,
+            )
+        self.assertEqual(result["decision"], "DENY")
+        self.assertIn("APPROVAL_REQUEST_DIGEST_MISMATCH", result["reasons"])
 
     def test_approval_signature_is_verified(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
