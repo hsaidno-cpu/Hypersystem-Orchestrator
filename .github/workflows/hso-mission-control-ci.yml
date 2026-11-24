@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - "apps/mission-control/**"
+      - "supabase/functions/hso-decision-engine/**"
+      - "supabase/migrations/**"
+      - "docs/HSO-MISSION-CONTROL-INTELLIGENCE-SPEC.md"
       - ".github/workflows/hso-mission-control-ci.yml"
   workflow_dispatch:
 
@@ -23,6 +26,9 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "22"
+      - name: Test deterministic decision policy
+        working-directory: ${{ github.workspace }}
+        run: node --test supabase/functions/hso-decision-engine/policy.test.mjs
       - name: Install dependencies
         run: npm install --no-audit --no-fund --no-package-lock
       - name: Type check

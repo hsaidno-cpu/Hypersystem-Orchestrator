@@ -1,14 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 const POLICY = "strategic-priority-v1";
 const ENGINE = "hso-decision-engine-v1";
-const WEIGHTS = {
-  dependency_unlock_value: 0.25,
-  risk_reduction: 0.25,
-  critical_path_impact: 0.20,
-  urgency: 0.15,
-  effort_efficiency: 0.10,
-  evidence_confidence: 0.05,
-};
+import { PRIORITY_WEIGHTS as WEIGHTS, normalizeWorkKey, taskId, calculatePriorityScore, calculateWeightedProgress } from "./policy.mjs";
 const REQUIRED = ["notion-control-center","notion-roadmap","notion-execution-ledger","notion-evidence-registry","github-hso-parent"];
 
 function reply(data: unknown, status = 200) {
@@ -34,14 +27,6 @@ function arr(value: unknown): string[] {
   } catch { /* use delimiter form */ }
   return value.split(/[\n,;]+/).map((x) => x.trim()).filter(Boolean);
 }
-function score(item: any): number | null {
-  const keys = Object.keys(WEIGHTS);
-  for (const key of keys) {
-    const v = item[key];
-    if (v === null || v === undefined || !Number.isFinite(Number(v)) || Number(v) < 0 || Number(v) > 100) return null;
-  }
-  return keys.reduce((sum, key) => sum + Number(item[key]) * WEIGHTS[key as keyof typeof WEIGHTS], 0);
-}
 function verified(item: any, evidence: any[]) {
   if (!["Verified", "Accepted"].includes(item.execution_state) || item.gate_state !== "PASS") return false;
   if (!item.source_verified_at || !fresh(item.source_verified_at, 604800)) return false;
@@ -60,17 +45,6 @@ function severity(reason: string, risk: string | null) {
   if (risk === "HIGH" || /APPROVAL|DEPENDENCY|BRANCH|HEAD_SHA|CI_NOT|SOURCE_FRESHNESS/.test(reason)) return "HIGH";
   if (/WEIGHT|PRIORITY|GATE|EVIDENCE/.test(reason)) return "MEDIUM";
   return "LOW";
-}
-function normalizeWorkKey(value: unknown) {
-  const raw = String(value ?? "").trim().toUpperCase().replace(/^HSO[-_]?/, "");
-  if (!raw) return "";
-  if (/^\\d+$/.test(raw)) return String(Number(raw));
-  return raw;
-}
-function taskId(item: any) {
-  const raw = normalizeWorkKey(item.item_key);
-  if (!raw) return item.external_id;
-  return "HSO-" + (/^\\d+$/.test(raw) ? raw.padStart(3, "0") : raw);
 }
 function compilePrompt(item: any, ctx: any) {
   const steps = [
@@ -181,7 +155,7 @@ Deno.serve(async (req) => {
   const sources = sq.data || [];
   const allRoadmapRows = iq.data || [];
   const items = allRoadmapRows.filter((x: any) => x.record_type === "Work Item");
-  const milestoneRows = allRoadmapRows.filter((x: any) => x.record_type === "Milestone");
+  const milestoneRows = allRoadmapRows.filter((x: any) => ["Milestone","Phase"].includes(String(x.record_type)));
   const evidence = eq.data || [], snapshots = snq.data || [], criteria = cq.data || [];
   const milestoneById = new Map(milestoneRows.filter((x: any) => x.item_key !== null && x.item_key !== undefined).map((x: any) => [String(x.item_key), x]));
   const sourceMap = new Map(sources.map((s: any) => [s.source_key, s]));
@@ -249,7 +223,7 @@ Deno.serve(async (req) => {
     }
     if (["HIGH","CRITICAL"].includes(item.execution_risk) && !["PASS","NOT_REQUIRED"].includes(item.security_disposition)) reasons.push("SECURITY_DISPOSITION_NOT_PASS");
     if (["HOLD","FAIL"].includes(item.security_disposition)) reasons.push("SECURITY_DISPOSITION_BLOCKS");
-    const priority = score(item);
+    const priority = calculatePriorityScore(item);
     if (priority === null) reasons.push("PRIORITY_INPUTS_INCOMPLETE");
 
     if (item.approval_state === "PENDING" || (item.requires_human_approval === true && item.approval_state !== "APPROVED")) {
@@ -310,11 +284,8 @@ Deno.serve(async (req) => {
   }
   const progressRows: any[] = [];
   for (const [key, group] of groups) {
-    const weighted = group.filter((x) => Number(x.scope_weight) > 0);
-    const totalWeight = weighted.reduce((s, x) => s + Number(x.scope_weight), 0);
-    const completedWeight = weighted.filter((x) => verifiedById.get(x.id)).reduce((s, x) => s + Number(x.scope_weight), 0);
-    const pct = totalWeight ? Math.round(completedWeight / totalWeight * 10000) / 100 : null;
-    const coverage = group.length ? Math.round(weighted.length / group.length * 10000) / 100 : null;
+    const verifiedIds = new Set(group.filter((x) => verifiedById.get(x.id)).map((x) => String(x.id)));
+    const progress = calculateWeightedProgress(group, verifiedIds);
     progressRows.push({
       project_key: "hso",
       milestone_key: key === "__GLOBAL__" ? null : key,
@@ -323,14 +294,7 @@ Deno.serve(async (req) => {
       expected_progress_pct: key === "__GLOBAL__" ? null : (groupLabels.get(key)?.expected_progress_pct ?? null),
       baseline_start_date: key === "__GLOBAL__" ? null : (groupLabels.get(key)?.baseline_start_date ?? null),
       target_date: key === "__GLOBAL__" ? null : (groupLabels.get(key)?.target_date ?? null),
-      total_work_items: group.length, weighted_work_items: weighted.length, unweighted_work_items: group.length - weighted.length,
-      scope_weight_total: totalWeight, verified_weight: completedWeight, weighted_progress_pct: pct,
-      weight_coverage_pct: coverage, verified_count: group.filter((x) => verifiedById.get(x.id)).length,
-      active_count: group.filter((x) => x.execution_state === "In progress").length,
-      blocked_count: group.filter((x) => x.execution_state === "Blocked" || ["BLOCKED","HOLD","FAIL"].includes(x.gate_state)).length,
-      failed_count: group.filter((x) => x.gate_state === "FAIL").length,
-      pending_approval_count: group.filter((x) => x.approval_state === "PENDING").length,
-      measurement_state: weighted.length === 0 ? "UNMEASURED" : weighted.length === group.length ? "MEASURED" : "PARTIAL_COVERAGE",
+      ...progress,
       methodology_version: "weighted-evidence-v1",
       computed_at: now
     });
