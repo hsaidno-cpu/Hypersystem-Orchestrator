@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "HSO-ECIG",
+  "policy_version": "1.0.0",
+  "status": "PROPOSED_NORMATIVE_CONTRACT",
+  "record_grain": [
+    "plugin_key",
+    "platform",
+    "target_scope"
+  ],
+  "authority": {
+    "plugin_implementation": "canonical_child_git_repository",
+    "ecosystem_identity_and_contracts": "hso_parent_repository",
+    "package_release_metadata": "live_package_registry_readback",
+    "installed_and_runtime_state": "named_target_platform_readback",
+    "effective_instructions": "canonical_source_bundle_plus_package_or_runtime_readback",
+    "generated_technical_documentation": "github_canonical_inputs_and_ci_generator",
+    "human_decisions_and_roadmap": "approved_notion_decision_records"
+  },
+  "hashing": {
+    "algorithm": "SHA-256",
+    "manifest_version": "1.0.0",
+    "path_format": "relative-posix-utf8-nfc-case-preserving",
+    "text_line_endings": "CRLF_AND_CR_TO_LF",
+    "preserve_whitespace": true,
+    "sort_entries_by": "normalized_relative_path_ordinal",
+    "file_digest": "sha256(normalized_file_content)",
+    "bundle_digest": "sha256(canonical_utf8_json_of_complete_file_manifest)",
+    "include_file_set_membership": true,
+    "reject_absolute_paths": true,
+    "reject_parent_traversal": true,
+    "reject_escaping_symlinks": true,
+    "documentation_digest_scope": "explicitly_sync_managed_projection_fields_only"
+  },
+  "freshness_hours_or_days": {
+    "source_commit_hours": 24,
+    "package_metadata_days": 30,
+    "installation_runtime_receipt_hours": 24,
+    "instruction_parity_hours": 24,
+    "documentation_projection_days": 7,
+    "rights_decision": "revalidate_on_source_license_or_terms_change"
+  },
+  "states": {
+    "plane": [
+      "MATCH",
+      "DRIFT",
+      "STALE",
+      "UNKNOWN",
+      "BLOCKED",
+      "NOT_APPLICABLE",
+      "NOT_COMPARED"
+    ],
+    "overall": [
+      "SYNCED",
+      "DRIFT",
+      "STALE",
+      "UNKNOWN",
+      "BLOCKED",
+      "APPROVAL_REQUIRED",
+      "RECONCILING"
+    ]
+  },
+  "auto_actions": [
+    "capture_github_pr_commit_release_and_ci_evidence",
+    "calculate_deterministic_digests",
+    "compare_source_package_instruction_and_documentation_projections",
+    "generate_github_registry_documentation",
+    "upsert_allowlisted_notion_integrity_and_evidence_fields",
+    "mark_expired_observations_stale",
+    "open_or_update_reconciliation_issue_or_pull_request",
+    "read_back_and_verify_automated_writes"
+  ],
+  "human_approval_required": [
+    "canonical_source_selection_or_replacement",
+    "ownership_license_or_redistribution_disposition",
+    "package_publication_republication_or_release_channel_promotion",
+    "target_install_upgrade_enable_disable_or_uninstall",
+    "instruction_overwrite_or_cross_plane_content_replacement",
+    "production_permission_secret_scope_or_trust_policy_change",
+    "milestone_acceptance_security_disposition_or_production_readiness"
+  ],
+  "never_automatic": [
+    "copy_arbitrary_notion_prose_into_canonical_source",
+    "rewrite_source_or_package_to_force_checksum_match",
+    "publish_or_install_because_a_newer_git_commit_exists",
+    "infer_human_approval_from_ci_success",
+    "delete_evidence_to_clear_drift",
+    "widen_credentials_after_authorization_failure",
+    "promote_unknown_stale_or_not_compared_to_pass"
+  ],
+  "notion": {
+    "current_state_registry": "HSO Ecosystem Integrity Registry",
+    "evidence_history_registry": "HSO Evidence Registry",
+    "data_source_id_env": "HSO_ECIG_DATA_SOURCE_ID",
+    "api_key_secret": "HSO_NOTION_API_KEY",
+    "enable_variable": "HSO_ECIG_SYNC_ENABLED",
+    "write_mode": "allowlisted_properties_only",
+    "do_not_mutate": [
+      "work_item_progress",
+      "PRE_stage_or_gate",
+      "decision_status",
+      "approval",
+      "milestone_acceptance",
+      "human_owned_narrative"
+    ]
+  },
+  "github": {
+    "repository": "hsaidno-cpu/Hypersystem-Orchestrator",
+    "default_branch": "main",
+    "source_changes": "pull_request_only",
+    "evidence_permissions": [
+      "contents:read",
+      "pull-requests:read",
+      "actions:read"
+    ],
+    "privileged_pull_request_rule": "trusted_base_checkout_only_never_execute_untrusted_head_code"
+  },
+  "event_delivery": {
+    "semantics": "at_least_once",
+    "idempotency_key": "SHA256(policy_version|plugin_key|platform|target_scope|event_locator|desired_digest)",
+    "duplicate_record_behavior": "fail_closed",
+    "ambiguous_create_behavior": "read_back_by_record_key_before_any_retry",
+    "retry_policy": "bounded_exponential_backoff_with_jitter_for_safe_operations",
+    "concurrency": "one_reconciliation_lease_per_record_key_without_dropping_unrelated_deliveries"
+  }
+}
