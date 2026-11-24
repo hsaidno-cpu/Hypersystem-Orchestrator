@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "hsaidno-cpu/Hypersystem-Orchestrator",
+  "main_branch": "main",
+  "evidence_data_source_id": "42299868-397f-817c-bb25-000b49b243fa",
+  "stale_after_days": 14,
+  "workflow_names": ["Catalog and distribution validation"],
+  "pull_request_relation_map": {
+    "13": "42299868-397f-81fe-8349-c8e97800573a",
+    "14": "42299868-397f-81fe-8349-c8e97800573a",
+    "15": "42299868-397f-81fe-8349-c8e97800573a"
+  },
+  "branch_relation_map": {
+    "main": "42299868-397f-81fe-8349-c8e97800573a"
+  },
+  "default_relation_ids": ["42299868-397f-81fe-8349-c8e97800573a"]
+}
