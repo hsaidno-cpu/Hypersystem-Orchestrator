@@ -58,10 +58,10 @@ def read_gitlink_sha(path: str) -> str:
         )
     except (OSError, subprocess.CalledProcessError) as exc:
         fail(f"Cannot inspect gitlink for {path}: {exc}")
-    lines = [line for line in completed.stdout.splitlines() if line.endswith("\\t" + path)]
+    lines = [line for line in completed.stdout.splitlines() if line.endswith("\t" + path)]
     if len(lines) != 1:
         fail(f"Expected exactly one git tree entry for submodule {path}; found {len(lines)}")
-    metadata, _entry_path = lines[0].split("\\t", 1)
+    metadata, _entry_path = lines[0].split("\t", 1)
     parts = metadata.split()
     if len(parts) != 3 or parts[0] != "160000" or parts[1] != "commit":
         fail(f"{path}: expected a gitlink (mode 160000, type commit), got {metadata}")
