@@ -24,14 +24,18 @@ class SourceParityAuditTests(unittest.TestCase):
         item = self.plugins["skill-analyzer"]
         self.assertEqual(item["source_instruction_parity_status"], "DRIFT_DETECTED")
         self.assertEqual(item["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
-        self.assertIn("11/12", item["source_instruction_parity_note"])
+        self.assertIn("20", item["source_instruction_parity_note"])
+        self.assertIn("11/12 shared", item["source_instruction_parity_note"])
+        self.assertIn("eight skills absent", item["source_instruction_parity_note"])
         self.assertEqual(item["version_alignment_state"], "SOURCE_AHEAD_OF_PLATFORM")
 
     def test_asfree_release_candidate_has_partial_parity_only(self):
         item = self.plugins["asfree-canonical"]
         self.assertEqual(item["source_instruction_parity_status"], "DRIFT_DETECTED")
         self.assertEqual(item["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
-        self.assertIn("5/13", item["source_instruction_parity_note"])
+        self.assertIn("26", item["source_instruction_parity_note"])
+        self.assertIn("five shared files", item["source_instruction_parity_note"])
+        self.assertIn("13 alias/specialist skills absent", item["source_instruction_parity_note"])
         self.assertEqual(item["repository_version"], "0.5.0-rc.1")
         self.assertEqual(item["platform_package_version"], "0.3.2")
 
@@ -42,12 +46,14 @@ class SourceParityAuditTests(unittest.TestCase):
         self.assertEqual(item["repository_version"], "0.1.0")
         self.assertEqual(item["platform_package_version"], "0.1.0")
 
-    def test_video_source_and_deployment_remain_uncompared(self):
+    def test_video_source_and_deployment_have_verified_skill_drift(self):
         item = self.plugins["video-explainer-promkes-v4-1-12"]
-        self.assertEqual(item["source_instruction_parity_status"], "NOT_COMPARED")
+        self.assertEqual(item["source_instruction_parity_status"], "DRIFT_DETECTED")
+        self.assertEqual(item["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
         self.assertEqual(item["repository_version"], "4.1.9")
         self.assertEqual(item["platform_package_version"], "4.1.12")
-        self.assertIn("no SKILL.md", item["source_instruction_parity_note"])
+        self.assertIn("16 SKILL.md files", item["source_instruction_parity_note"])
+        self.assertIn("only social-accessibility-distribution/SKILL.md is exact", item["source_instruction_parity_note"])
 
     def test_pre_has_no_git_source_or_instruction_parity_baseline(self):
         item = self.plugins["progressive-roadmap-evaluator"]
