@@ -52,6 +52,7 @@ def main() -> int:
     environment_approval = json.loads(args.environment_approval.read_text(encoding="utf-8"))
     approver = str(environment_approval.get("reviewer_login") or "").strip()
     reviewer_id = environment_approval.get("reviewer_id")
+    workflow_actor_id = environment_approval.get("workflow_actor_id")
     allowed_logins = {
         item.strip().lower()
         for item in os.environ.get("HSO_P0_ALLOWED_REVIEWER_LOGINS", "").split(",")
@@ -67,6 +68,8 @@ def main() -> int:
         or environment_approval.get("approval_source") != "github_actions_workflow_run_approvals_api"
         or not approver
         or not isinstance(reviewer_id, int)
+        or not isinstance(workflow_actor_id, int)
+        or reviewer_id == workflow_actor_id
         or approver.lower() == actor.lower()
     ):
         raise SystemExit("authenticated Environment approver is missing, mismatched, or not independent")
@@ -99,6 +102,7 @@ def main() -> int:
         "approver": approver,
         "environment_reviewer_id": reviewer_id,
         "workflow_actor": actor,
+        "workflow_actor_id": workflow_actor_id,
         "environment": environment_approval["environment"],
         "approval_source": environment_approval["approval_source"],
         "environment_approval_observed_at": environment_approval.get("observed_at"),
@@ -133,6 +137,7 @@ def main() -> int:
         "action_id": ACTION_ID,
         "approver": approver,
         "workflow_actor": actor,
+        "workflow_actor_id": workflow_actor_id,
         "environment_reviewer_id": reviewer_id,
         "workflow_run_id": run_id,
         "mcp_server_label": adapter.SERVER_LABEL,
