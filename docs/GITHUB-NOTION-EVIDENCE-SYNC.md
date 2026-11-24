@@ -1,19 +1,19 @@
 # HSO GitHub-to-Notion Evidence Synchronization
 
 **Status:** IMPLEMENTED_IN_BRANCH / NOT_LIVE / CREDENTIALS_NOT_CONFIGURED / SECURITY_HARDENED_FOR_REVIEW  
-**Scope:** GitHub pull requests, commits pushed to \`main\`, completed Catalog and distribution validation runs, and a weekly stale-evidence sweep.  
+**Scope:** GitHub pull requests, commits pushed to `main`, completed Catalog and distribution validation runs, and a weekly stale-evidence sweep.  
 **Write boundary:** HSO Evidence Registry only. No roadmap status, gate, progress, decision, approval, or record deletion is performed.
 
 ## Architecture and idempotency
 
-GitHub event -> normalize -> exact \`Source Locator\` query -> create/update/no-op -> Notion Evidence Registry.
+GitHub event -> normalize -> exact `Source Locator` query -> create/update/no-op -> Notion Evidence Registry.
 
 Stable upsert keys:
 - PR: canonical PR URL (one current evidence record per PR).
 - CI: canonical workflow-run URL (one record per run).
 - Main commit: canonical commit URL (one record per commit).
 
-A SHA-256 digest detects unchanged events. More than one matching source locator fails closed. Notion 429/5xx and transport errors receive bounded retries for read/query and idempotent update calls; non-idempotent page creation is attempted once and reconciled by Source Locator before any later retry. Pagination is followed. A weekly sweep only changes old \`FRESH\` records to \`STALE\`; it never deletes records or alters evidence outcome.
+A SHA-256 digest detects unchanged events. More than one matching source locator fails closed. Notion 429/5xx and transport errors receive bounded retries for read/query and idempotent update calls; non-idempotent page creation is attempted once and reconciled by Source Locator before any later retry. Pagination is followed. A weekly sweep only changes old `FRESH` records to `STALE`; it never deletes records or alters evidence outcome.
 
 ## Event security boundary
 
@@ -27,8 +27,8 @@ A SHA-256 digest detects unchanged events. More than one matching source locator
 
 1. Create a Notion internal integration.
 2. Share the HSO Evidence Registry data source with that integration.
-3. Add GitHub Actions secret \`HSO_NOTION_API_KEY\`; never put the token in code, workflow inputs, issues, or Notion content.
-4. Add Actions variable \`HSO_NOTION_SYNC_ENABLED=true\`. Without this variable the sync job is skipped.
+3. Add GitHub Actions secret `HSO_NOTION_API_KEY`; never put the token in code, workflow inputs, issues, or Notion content.
+4. Add Actions variable `HSO_NOTION_SYNC_ENABLED=true`. Without this variable the sync job is skipped.
 5. Ensure this workflow exists on the default branch before expecting event-driven runs.
 6. Run a controlled test event and read back the resulting Notion page before enabling the workflow variable for normal operations.
 
