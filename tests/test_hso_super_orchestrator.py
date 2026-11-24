@@ -279,7 +279,11 @@ class HsoRuntimeTests(unittest.TestCase):
             "action_id": package["action_id"],
             "target_path": package["target_path"],
             "authority": data["action_authority"],
-            "approver": "hsaidno-cpu",
+            "approver": "independent-security-reviewer",
+            "environment_reviewer_id": 424242,
+            "workflow_actor": "hsaidno-cpu",
+            "environment": "hso-p0-remote-mcp-live",
+            "approval_source": "github_actions_workflow_run_approvals_api",
             "issued_at": now.isoformat(),
             "expires_at": (now + datetime.timedelta(minutes=5)).isoformat(),
             "nonce": "p0-remote-mcp-test-nonce",
@@ -340,6 +344,7 @@ class HsoRuntimeTests(unittest.TestCase):
             "HSO_APPROVAL_HMAC_KEY": secret,
             "GITHUB_RUN_ID": "different-run",
             "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_ACTOR": "hsaidno-cpu",
         }, clear=True):
             with self.assertRaisesRegex(hso.PolicyDenied, "exact workflow run"):
                 hso.verify_approval(
@@ -408,6 +413,7 @@ class HsoRuntimeTests(unittest.TestCase):
             "HSO_APPROVAL_HMAC_KEY": secret,
             "GITHUB_RUN_ID": "test-run-001",
             "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_ACTOR": "hsaidno-cpu",
         }, clear=True):
             with patch.object(hso.remote_mcp_responses_adapter, "probe_remote_mcp_host",
                               return_value=self._p0_preflight()):
