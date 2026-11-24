@@ -30,9 +30,12 @@ function milestoneHealth(row:Row) {
   if (row.failed_count > 0 || row.blocked_count > 0) return "BLOCKED / AT RISK";
   if (row.pending_approval_count > 0) return "PENDING DECISION";
   if (row.measurement_state === "UNMEASURED") return "UNMEASURED";
+  if (row.expected_progress_pct !== null && row.expected_progress_pct !== undefined &&
+      row.weighted_progress_pct !== null && Number(row.weighted_progress_pct) < Number(row.expected_progress_pct)) return "BEHIND PLAN";
   if (row.weight_coverage_pct < 100) return "PARTIAL COVERAGE";
   return "TRACKING";
 }
+const severityOrder:Record<string,number> = { CRITICAL:0, HIGH:1, MEDIUM:2, LOW:3, INFO:4 };
 function SparkBars({rows}:{rows:Row[]}) {
   const values=rows.filter(x=>x.weighted_progress_pct!==null && x.weighted_progress_pct!==undefined);
   if (!values.length) return <div className="empty">Belum ada tren progres berbobot yang dapat dihitung. Isi Scope Weight dan verifikasi penerimaan terlebih dahulu.</div>;
@@ -63,7 +66,7 @@ export default async function Home() {
   const [sourcesQ,runsQ,itemsQ,execQ,evidenceQ,decisionQ,globalProgressQ,milestoneQ,trendQ,issuesQ,changesQ,historyQ,verifiedQ,criteriaQ]=await Promise.all([
     supabase.from("hso_sources").select("source_key,display_name,authority_role,status,last_event_at,last_sync_at,last_success_at,freshness_seconds,last_error").order("display_name"),
     supabase.from("hso_sync_runs").select("id,status,trigger_kind,started_at,finished_at,records_seen,records_upserted,error_summary,source_results").order("started_at",{ascending:false}).limit(8),
-    supabase.from("hso_work_items").select("id,item_key,title,record_type,project_area,ecosystem_stage,milestone_key,parent_milestone_id,execution_state,verification_state,gate_state,priority,pre_stage,next_action,blocker,dependencies,dependency_work_item_ids,source_url,source_updated_at,scope_weight,weight_rationale,estimated_effort_hours,approval_state,requires_human_approval,security_disposition,execution_risk,change_surface,execution_target,target_branch,head_commit_sha,reviewed_commit_sha,ci_commit_sha,pr_url,ci_run_url,acceptance_criteria,source_verified_at,observed_at").eq("record_type","Work Item").order("observed_at",{ascending:false}).limit(100),
+    supabase.from("hso_work_items").select("id,item_key,title,record_type,project_area,accountable_role,ecosystem_stage,milestone_key,parent_milestone_id,execution_state,verification_state,gate_state,priority,pre_stage,next_action,blocker,dependencies,dependency_work_item_ids,source_url,source_updated_at,scope_weight,weight_rationale,estimated_effort_hours,approval_state,requires_human_approval,security_disposition,execution_risk,change_surface,execution_target,target_branch,head_commit_sha,reviewed_commit_sha,ci_commit_sha,pr_url,ci_run_url,acceptance_criteria,source_verified_at,observed_at").eq("record_type","Work Item").order("observed_at",{ascending:false}).limit(100),
     supabase.from("hso_executions").select("id,run_name,status,owner_role,executing_agent,run_type,source_commit,source_repository,target_branch,head_commit_sha,github_workflow_url,execution_receipt_url,audit_url,changed_files,validation_summary,acceptance_result,stop_reason,retry_count,completed_at,related_work_item,source_url").order("observed_at",{ascending:false}).limit(12),
     supabase.from("hso_evidence_records").select("id,title,evidence_type,evidence_state,freshness,commit_sha,branch_ref,ci_run_url,pr_url,source_url,source_locator,verified_at,verifier_role,known_limitation,related_work_item,payload,observed_at").order("observed_at",{ascending:false}).limit(30),
     supabase.from("hso_decision_runs").select("id,engine_version,policy_version,decision_state,source_health,primary_action,supporting_actions,blocked_actions,pending_decisions,ranking_snapshot,completion_gap,prompt_artifact_id,computed_at").order("computed_at",{ascending:false}).limit(1).maybeSingle(),
@@ -85,7 +88,7 @@ export default async function Home() {
   const verifiedIds=new Set(verifiedRows.filter(x=>x.verified_completion===true).map(x=>x.id));
   const verifiedCount=verifiedIds.size;
   const activeCount=items.filter(x=>x.execution_state==="In progress").length;
-  const openBlockers=issues.length+items.filter(x=>["BLOCKED","HOLD","FAIL"].includes(String(x.gate_state))).length;
+  const openBlockers=issues.length;
   const criticalCount=issues.filter(x=>x.severity==="CRITICAL").length;
   const pendingApprovals=items.filter(x=>x.approval_state==="PENDING" || (x.requires_human_approval===true && x.approval_state!=="APPROVED")).length;
   const connected=sources.filter(x=>x.status==="connected").length;
@@ -101,7 +104,7 @@ export default async function Home() {
   const completion=latest?.completion_gap as Row|null;
   const incompleteCriteria=(completion?.incomplete_criteria??[]) as Row[];
   const globalMeasurement=globalProgress?.measurement_state??"UNMEASURED";
-  const sortedIssues=[...issues].sort((a,b)=>({CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3,INFO:4}[a.severity as keyof typeof severityOrder]??9)-({CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3,INFO:4}[b.severity as keyof typeof severityOrder]??9));
+  const sortedIssues=[...issues].sort((a,b)=>(severityOrder[String(a.severity)]??9)-(severityOrder[String(b.severity)]??9));
   return <main className="shell">
     <header className="topbar">
       <div className="brand"><div className="brandmark">HSO</div><div><div className="eyebrow">Hypersystem Orchestrator · Decision & Execution Control</div><h1>Mission Control</h1><div className="subtitle">Satu rekomendasi utama. Semua klaim harus punya sumber dan bukti.</div></div></div>
@@ -147,11 +150,11 @@ export default async function Home() {
       <section className="panel"><div className="panel-heading"><h3>Progress trend</h3><span>{trend.filter(x=>x.weighted_progress_pct!==null).length} measured points</span></div><SparkBars rows={trend}/><div className="microcopy">Hanya snapshot dengan bobot terisi dan verified evidence yang tampil sebagai persentase. Jumlah checklist tidak menjadi pembagi.</div></section>
       <section className="panel"><div className="panel-heading"><h3>Execution health</h3><span>12 execution terakhir</span></div><div className="execution-health"><div><strong>{executionSuccess}</strong><span>Success</span></div><div><strong>{executionFailure}</strong><span>Failure</span></div><div><strong>{executions.filter(x=>String(x.status).toUpperCase()==="BLOCKED").length}</strong><span>Blocked</span></div><div><strong>{executions.filter(x=>String(x.verification_state).toUpperCase()==="PASS").length}</strong><span>Verified</span></div></div><div className="microcopy">Run yang sukses tidak otomatis membuktikan acceptance atau deployment.</div></section>
     </div>
-    <section className="panel"><div className="panel-heading"><h3>Milestone & ecosystem-stage progress</h3><span>Scope-weighted</span></div>
+    <section className="panel"><div className="panel-heading"><h3>Milestone & ecosystem-stage progress</h3><span>Actual weighted progress vs planned baseline</span></div>
       {milestones.length?<div className="milestone-list">{milestones.map(row=><div className="milestone-row" key={row.id}>
-        <div className="milestone-title"><strong>{row.milestone_title??row.milestone_key}</strong><small>{row.group_type} · {row.verified_count}/{row.total_work_items} verified · coverage {percent(row.weight_coverage_pct)}</small></div>
+        <div className="milestone-title"><strong>{row.milestone_title??row.milestone_key}</strong><small>{row.group_type} · {row.verified_count}/{row.total_work_items} verified · coverage {percent(row.weight_coverage_pct)}</small><small>Baseline {row.baseline_start_date??"—"} · target {row.target_date??"—"}</small></div>
         <div className="progress-track"><div className="progress-fill" style={{width:(row.weighted_progress_pct??0)+"%"}}/></div>
-        <div className="milestone-value">{percent(row.weighted_progress_pct)}</div><Pill value={row.failed_count>0||row.blocked_count>0?"BLOCKED":row.pending_approval_count>0?"AT_RISK":row.measurement_state}/>
+        <div className="milestone-value">{percent(row.weighted_progress_pct)}<small>{row.expected_progress_pct===null||row.expected_progress_pct===undefined?"Target belum ditetapkan":"vs "+percent(row.expected_progress_pct)}</small></div><Pill value={milestoneHealth(row)}/>
       </div>)}</div>:<div className="empty">Belum ada snapshot milestone. Data akan muncul setelah rekonsiliasi berhasil.</div>}
     </section>
 
