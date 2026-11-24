@@ -7,7 +7,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from tools.pre_policy_engine import (
-    NonceStore, evaluate_transition, load_policy, canonical_json, sign_evidence_envelope,
+    NonceStore, canonical_json, evaluate_transition, load_policy,
+    sign_evidence_envelope,
 )
 
 POLICY = load_policy()
@@ -58,7 +59,7 @@ def request(from_stage="R0", to_stage="R1", types=None):
     return result
 
 
-def signed_approval(req, role="HUMAN_DECISION_OWNER", *, evidence_secret=SECRET, now=NOW, subject="user:reviewer-1"):
+def signed_approval(req, role="HUMAN_DECISION_OWNER", *, now=NOW, subject="user:reviewer-1"):
     issued = now - timedelta(seconds=10)
     unsigned = {
         "approval_id": "APR-001-" + role,
@@ -82,15 +83,18 @@ def signed_approval(req, role="HUMAN_DECISION_OWNER", *, evidence_secret=SECRET,
 
 
 class PREPolicyEngineTests(unittest.TestCase):
-    def test_valid_r0_to_r1_transition_is_allowed(self):
+    def test_valid_r0_to_r1_transition_is_allowed_only_with_signed_scoped_evidence(self):
         result = evaluate_transition(request(), POLICY, evidence_secret=SECRET, now=NOW)
         self.assertEqual(result["decision"], "ALLOW")
         self.assertEqual(result["gate_state"], "PASS")
         self.assertFalse(result["stage_mutation_performed"])
         self.assertEqual(len(result["evaluation_digest"]), 64)
+        self.assertEqual(len(result["input_digest"]), 64)
 
     def test_skipping_a_stage_is_denied(self):
-        result = evaluate_transition(request("R0", "R2"), POLICY, now=NOW)
+        result = evaluate_transition(
+            request("R0", "R2"), POLICY, evidence_secret=SECRET, now=NOW
+        )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("NON_ADJACENT_STAGE_TRANSITION", result["reasons"])
 
@@ -100,29 +104,60 @@ class PREPolicyEngineTests(unittest.TestCase):
         self.assertEqual(result["decision"], "HOLD")
         self.assertIn("MISSING_EVIDENCE:INTAKE_BRIEF", result["blockers"])
 
-    def test_stale_or_unverified_evidence_cannot_pass(self):
+    def test_stale_evidence_cannot_pass(self):
         req = request()
         req["evidence"][0]["freshness"] = "STALE"
         result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
         self.assertEqual(result["decision"], "HOLD")
 
-    def test_invalid_evidence_digest_is_denied(self):
+    def test_invalid_content_digest_is_denied(self):
         req = request()
         req["evidence"][0]["sha256"] = "not-a-digest"
         result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("INVALID_EVIDENCE_DIGEST:INTAKE_BRIEF", result["reasons"])
 
-    def test_same_actor_cannot_be_evidence_verifier(self):
+    def test_same_actor_cannot_verify_own_evidence(self):
         req = request()
         req["evidence"][0]["verified_by"] = req["requested_by_actor_id"]
         result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("NON_INDEPENDENT_VERIFIER:INTAKE_BRIEF", result["reasons"])
 
+    def test_invalid_evidence_signature_is_denied(self):
+        req = request()
+        req["evidence"][0]["signature"] = "0" * 64
+        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        self.assertEqual(result["decision"], "DENY")
+        self.assertIn("EVIDENCE_SIGNATURE_INVALID:INTAKE_BRIEF", result["reasons"])
+
+    def test_evidence_cannot_be_replayed_across_project_or_scope(self):
+        req = request()
+        req["scope_id"] = "HSO:WI-OTHER:baseline-v1"
+        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        self.assertEqual(result["decision"], "DENY")
+        self.assertIn("EVIDENCE_SCOPE_MISMATCH:INTAKE_BRIEF", result["reasons"])
+
+    def test_missing_evidence_issuer_key_holds(self):
+        result = evaluate_transition(request(), POLICY, now=NOW)
+        self.assertEqual(result["decision"], "HOLD")
+        self.assertIn("EVIDENCE_SIGNING_KEY_NOT_CONFIGURED:INTAKE_BRIEF", result["blockers"])
+
+    def test_expired_evidence_attestation_holds(self):
+        req = request()
+        req["evidence"][0]["verified_at"] = (
+            NOW - timedelta(days=100)
+        ).isoformat().replace("+00:00", "Z")
+        req["evidence"][0]["signature"] = sign_evidence_envelope(req["evidence"][0], SECRET)
+        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        self.assertEqual(result["decision"], "HOLD")
+        self.assertIn("EVIDENCE_ATTESTATION_EXPIRED:INTAKE_BRIEF", result["blockers"])
+
     def test_r2_to_r3_requires_signed_independent_human_approval(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
-        result = evaluate_transition(req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(
+            req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, now=NOW
+        )
         self.assertEqual(result["decision"], "HOLD")
         self.assertIn("MISSING_APPROVAL:HUMAN_DECISION_OWNER", result["blockers"])
 
@@ -132,38 +167,41 @@ class PREPolicyEngineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             result = evaluate_transition(
                 req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
-                nonce_store=NonceStore(Path(folder) / "nonces.sqlite"), evidence_secret=SECRET, now=NOW,
+                nonce_store=NonceStore(Path(folder) / "nonces.sqlite"), now=NOW,
             )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("SELF_APPROVAL_PROHIBITED", result["reasons"])
 
-    def test_approval_signature_scope_and_role_are_verified(self):
+    def test_approval_signature_is_verified(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
         req["approvals"][0]["signature"] = "0" * 64
         with tempfile.TemporaryDirectory() as folder:
             result = evaluate_transition(
                 req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
-                nonce_store=NonceStore(Path(folder) / "nonces.sqlite"), evidence_secret=SECRET, now=NOW,
+                nonce_store=NonceStore(Path(folder) / "nonces.sqlite"), now=NOW,
             )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("APPROVAL_SIGNATURE_INVALID", result["reasons"])
 
-    def test_approval_nonce_retry_is_idempotent_for_same_request_but_replay_is_denied(self):
+    def test_approval_nonce_retry_is_idempotent_but_cross_request_replay_is_denied(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
         with tempfile.TemporaryDirectory() as folder:
             store = NonceStore(Path(folder) / "nonces.sqlite")
             first = evaluate_transition(
-                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, nonce_store=store, evidence_secret=SECRET, now=NOW,
+                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
+                nonce_store=store, now=NOW,
             )
             retry = evaluate_transition(
-                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, nonce_store=store, evidence_secret=SECRET, now=NOW,
+                req, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
+                nonce_store=store, now=NOW,
             )
             replay = dict(req)
             replay["request_id"] = "PRE-REQ-DIFFERENT"
             replayed = evaluate_transition(
-                replay, POLICY, approval_secret=SECRET, evidence_secret=SECRET, nonce_store=store, evidence_secret=SECRET, now=NOW,
+                replay, POLICY, approval_secret=SECRET, evidence_secret=SECRET,
+                nonce_store=store, now=NOW,
             )
         self.assertEqual(first["decision"], "ALLOW")
         self.assertEqual(retry["decision"], "ALLOW")
@@ -171,7 +209,7 @@ class PREPolicyEngineTests(unittest.TestCase):
         self.assertEqual(replayed["decision"], "DENY")
         self.assertTrue(any("nonce replay" in reason.lower() for reason in replayed["reasons"]))
 
-    def test_approval_receipt_without_signing_key_holds_instead_of_false_denial(self):
+    def test_missing_approval_signing_key_holds(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
         result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
@@ -181,12 +219,23 @@ class PREPolicyEngineTests(unittest.TestCase):
     def test_required_approval_without_nonce_store_holds(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
-        result = evaluate_transition(req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, now=NOW)
+        result = evaluate_transition(
+            req, POLICY, approval_secret=SECRET, evidence_secret=SECRET, now=NOW
+        )
         self.assertEqual(result["decision"], "HOLD")
         self.assertIn("APPROVAL_NONCE_STORE_NOT_CONFIGURED", result["blockers"])
 
+    def test_empty_actor_identity_is_denied(self):
+        req = request()
+        req["requested_by_actor_id"] = ""
+        result = evaluate_transition(req, POLICY, evidence_secret=SECRET, now=NOW)
+        self.assertEqual(result["decision"], "DENY")
+        self.assertTrue(any(reason.startswith("REQUEST_FIELDS_EMPTY") for reason in result["reasons"]))
+
     def test_terminal_r9_cannot_advance(self):
-        result = evaluate_transition(request("R9", "R9"), POLICY, now=NOW)
+        result = evaluate_transition(
+            request("R9", "R9"), POLICY, evidence_secret=SECRET, now=NOW
+        )
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("TERMINAL_STAGE_CANNOT_ADVANCE", result["reasons"])
 
