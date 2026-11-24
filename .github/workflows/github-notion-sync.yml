@@ -25,7 +25,9 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: hso-github-notion-evidence-sync
+  # Each delivery gets its own group. Idempotency handles duplicates;
+  # a shared group can replace an older pending run and silently drop evidence.
+  group: hso-github-notion-evidence-sync-${{ github.run_id }}
   cancel-in-progress: false
 
 jobs:
