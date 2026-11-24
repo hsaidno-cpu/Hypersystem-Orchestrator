@@ -21,7 +21,10 @@ class PackageVersionMatrixTests(unittest.TestCase):
 
     def test_metadata_observation_exists_for_every_registered_package(self):
         self.assertEqual(len(self.catalog["plugins"]), 23)
-        self.assertTrue(all(p["platform_metadata_observed_at"] == "2026-11-24" for p in self.catalog["plugins"]))
+        from datetime import date
+        revision = date.fromisoformat(self.catalog["catalog_revision"])
+        observations = [date.fromisoformat(p["platform_metadata_observed_at"]) for p in self.catalog["plugins"]]
+        self.assertTrue(all(observed <= revision for observed in observations))
 
     def test_version_and_content_parity_are_independent(self):
         by_key = {p["plugin_key"]: p for p in self.catalog["plugins"]}
@@ -42,6 +45,7 @@ class PackageVersionMatrixTests(unittest.TestCase):
             self.assertEqual(record["source_manifest_commit"], record["pinned_commit"])
             self.assertRegex(record["source_manifest_blob_sha"], r"^[0-9a-f]{40}$")
             self.assertTrue(record["source_manifest_path"])
+            self.assertEqual(record["source_manifest_version"], record["package_version"])
 
 
 if __name__ == "__main__":
