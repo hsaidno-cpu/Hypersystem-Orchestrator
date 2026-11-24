@@ -49,6 +49,7 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
             "workflow_run_id": RUN,
             "workflow_run_attempt": "1",
             "workflow_actor": ACTOR,
+            "workflow_actor_id": 100,
             "reviewer_login": "independent-security-reviewer",
             "reviewer_id": 424242,
             "state": "approved",
@@ -67,6 +68,7 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
         values = {
             "HSO_APPROVAL_HMAC_KEY": SECRET,
             "GITHUB_ACTOR": ACTOR,
+            "GITHUB_ACTOR_ID": "100",
             "GITHUB_RUN_ID": RUN,
             "GITHUB_RUN_ATTEMPT": "1",
             "HSO_P0_ALLOWED_REVIEWER_LOGINS": "independent-security-reviewer",
@@ -108,6 +110,7 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
         self.assertEqual(receipt["host"], "openai-responses-api")
         self.assertEqual(receipt["approver"], "independent-security-reviewer")
         self.assertEqual(receipt["workflow_actor"], ACTOR)
+        self.assertEqual(receipt["workflow_actor_id"], 100)
         self.assertEqual(receipt["environment_reviewer_id"], 424242)
         self.assertEqual(receipt["mcp_server_label"], "skill_analyzer_internal")
         self.assertEqual(receipt["mcp_tool_name"], "invoke_skill_analyzer")
