@@ -72,6 +72,20 @@ Deno.serve(async (req) => {
   }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
 
   if (error) return Response.json({ error: "event_store_failed", detail: error.message }, { status: 500, headers: cors });
+
+  await supabase.from("hso_change_events").upsert({
+    provider: "notion",
+    delivery_id: eventId,
+    event_type: eventType,
+    external_subject: externalSubject || null,
+    title: "Notion source changed: " + eventType,
+    impact: "UNKNOWN",
+    follow_up: "RECONCILE",
+    before_state: {},
+    after_state: payload,
+    event_at: event.timestamp ? new Date(String(event.timestamp)).toISOString() : new Date().toISOString()
+  }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
+
   await supabase.from("hso_sources").update({
     last_event_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),

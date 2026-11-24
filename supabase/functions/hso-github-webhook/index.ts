@@ -82,6 +82,29 @@ Deno.serve(async (req) => {
   }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
   if (error) return Response.json({ error: "event_store_failed", detail: error.message }, { status: 500, headers: cors });
 
+  const failedCi = eventType === "workflow_run" && compact.workflow_run?.conclusion === "failure";
+  const pullRequestChanged = eventType === "pull_request";
+  const changeTitle = failedCi
+    ? "CI failed: " + (compact.workflow_run?.name ?? "workflow")
+    : pullRequestChanged
+      ? "Pull request changed: " + (compact.pull_request?.title ?? ("#" + compact.number))
+      : "GitHub event: " + eventType;
+  const changeImpact = failedCi ? "HIGH" : pullRequestChanged ? "MEDIUM" : "UNKNOWN";
+  const changeFollowUp = failedCi ? "INVESTIGATE_AND_RECOMPUTE" : pullRequestChanged ? "REVALIDATE_EXACT_HEAD" : "RECONCILE";
+  await supabase.from("hso_change_events").upsert({
+    provider: "github",
+    delivery_id: delivery,
+    event_type: eventType,
+    external_subject: compact.repository.full_name ?? null,
+    title: changeTitle,
+    impact: changeImpact,
+    follow_up: changeFollowUp,
+    before_state: {},
+    after_state: compact,
+    source_url: compact.pull_request?.html_url ?? compact.workflow_run?.html_url ?? compact.repository.html_url,
+    event_at: new Date().toISOString()
+  }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
+
   await supabase.from("hso_sources").update({
     last_event_at: new Date().toISOString(), updated_at: new Date().toISOString(),
   }).eq("source_key", "github-hso-parent");

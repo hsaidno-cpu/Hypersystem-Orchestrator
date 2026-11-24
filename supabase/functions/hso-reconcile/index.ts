@@ -33,6 +33,8 @@ function prop(props: Record<string, any>, name: string): any {
   if (p.number !== undefined) return p.number;
   if (p.date?.start) return p.date.start;
   if (p.checkbox !== undefined) return p.checkbox;
+  if (p.unique_id?.number !== undefined) return p.unique_id.number;
+  if (p.relation) return p.relation.map((item: any) => item.id).filter(Boolean);
   return p;
 }
 function titleOf(props: Record<string, any>) {
@@ -48,39 +50,73 @@ function stringArray(value: any): string[] {
     const parsed = JSON.parse(value);
     if (Array.isArray(parsed)) return parsed.map((item) => String(item)).filter(Boolean);
   } catch { /* plain-text dependency value */ }
-  return value.split(/\\r?\\n/).map((item) => item.trim()).filter(Boolean);
+  return value.split(/[\\r\\n,;]+/).map((item) => item.trim()).filter(Boolean);
 }
 function mapPage(page: any, kind: string, sourceKey: string) {
   const p = page.properties ?? {};
   const title = titleOf(p);
-  if (kind === "work_items") return {
-    source_key: sourceKey, external_id: page.id, title,
-    execution_state: prop(p, "Status") ?? "UNKNOWN",
-    verification_state: "UNKNOWN",
-    gate_state: prop(p, "Gate State") ?? "NOT_ASSESSED",
-    priority: prop(p, "Priority"), pre_stage: prop(p, "PRE Stage"),
-    ecosystem_stage: prop(p, "Ecosystem Stage"),
-    item_key: prop(p, "Work Item ID"), dependencies: stringArray(prop(p, "Dependencies")),
-    next_action: prop(p, "Next Action"), blocker: prop(p, "Blocker / Risk"),
-    project_area: prop(p, "Project Area"), record_type: prop(p, "Record Type"),
-    acceptance_criteria: prop(p, "Acceptance Criteria"),
-    progress_percent: prop(p, "Progress %"), progress_basis: prop(p, "Progress Basis"),
-    source_commit: prop(p, "Source Commit"), target_date: prop(p, "Target Date"),
-    source_url: page.url, source_updated_at: page.last_edited_time,
-    observed_at: new Date().toISOString(), raw_properties: p,
-  };
+  if (kind === "work_items") {
+    const status = prop(p, "Status") ?? "UNKNOWN";
+    const gate = prop(p, "Gate State") ?? "NOT_ASSESSED";
+    const lastEvaluated = prop(p, "Last Evaluated");
+    const verifiedAt = ["Verified", "Accepted"].includes(String(status)) && gate === "PASS" && lastEvaluated
+      ? new Date(String(lastEvaluated)).toISOString() : null;
+    return {
+      source_key: sourceKey, external_id: page.id, title,
+      execution_state: status, verification_state: "UNKNOWN",
+      gate_state: gate, priority: prop(p, "Priority"), pre_stage: prop(p, "PRE Stage"),
+      ecosystem_stage: prop(p, "Ecosystem Stage"), milestone_key: prop(p, "Ecosystem Stage"),
+      parent_milestone_id: prop(p, "Parent Milestone ID"),
+      item_key: prop(p, "Work Item ID") === null ? null : String(prop(p, "Work Item ID")),
+      dependencies: stringArray(prop(p, "Dependencies")),
+      dependency_work_item_ids: stringArray(prop(p, "Dependency Work Item IDs")),
+      next_action: prop(p, "Next Action"), blocker: prop(p, "Blocker / Risk"),
+      project_area: prop(p, "Project Area"), record_type: prop(p, "Record Type"),
+      accountable_role: prop(p, "Accountable Role"),
+      expected_progress_pct: prop(p, "Expected Progress %"),
+      baseline_start_date: prop(p, "Baseline Start Date"),
+      acceptance_criteria: prop(p, "Acceptance Criteria"),
+      progress_percent: prop(p, "Progress %"), progress_basis: prop(p, "Progress Basis"),
+      source_commit: prop(p, "Source Commit"), target_date: prop(p, "Target Date"),
+      scope_weight: prop(p, "Scope Weight"), weight_rationale: prop(p, "Weight Rationale"),
+      estimated_effort_hours: prop(p, "Estimated Effort Hours"),
+      dependency_unlock_value: prop(p, "Dependency Unlock Value"),
+      risk_reduction: prop(p, "Risk Reduction"),
+      critical_path_impact: prop(p, "Critical Path Impact"),
+      urgency: prop(p, "Urgency"), effort_efficiency: prop(p, "Effort Efficiency"),
+      evidence_confidence: prop(p, "Evidence Confidence"),
+      requires_human_approval: prop(p, "Requires Human Approval"),
+      approval_state: prop(p, "Approval State"),
+      security_disposition: prop(p, "Security Disposition"),
+      execution_risk: prop(p, "Execution Risk"),
+      target_branch: prop(p, "Target Branch"), head_commit_sha: prop(p, "Head Commit SHA"),
+      reviewed_commit_sha: prop(p, "Reviewed Commit SHA"), ci_commit_sha: prop(p, "CI Commit SHA"),
+      change_surface: prop(p, "Change Surface"), execution_target: prop(p, "Execution Target"),
+      source_verified_at: verifiedAt,
+      source_url: page.url, source_updated_at: page.last_edited_time,
+      observed_at: new Date().toISOString(), raw_properties: p,
+    };
+  }
   if (kind === "executions") return {
     source_key: sourceKey, external_id: page.id,
     run_name: prop(p, "Run Name") ?? title, correlation_id: prop(p, "Case / Correlation ID"),
     owner_role: prop(p, "Primary Owner"), pre_stage: prop(p, "PRE Stage"),
     status: prop(p, "Run State") ?? "UNKNOWN", github_run_id: prop(p, "GitHub Run ID"),
     github_workflow_url: prop(p, "GitHub Workflow URL"),
-    execution_id: prop(p, "Execution ID"), run_type: prop(p, "Run Type"),
+    execution_id: prop(p, "Execution ID") === null ? null : String(prop(p, "Execution ID")),
+    run_type: prop(p, "Run Type"),
+    executing_agent: prop(p, "Executing Agent"),
+    target_branch: prop(p, "Target Branch"), head_commit_sha: prop(p, "Head Commit SHA"),
+    changed_files: stringArray(prop(p, "Changed Files")),
+    validation_summary: prop(p, "Validation Summary"),
+    acceptance_result: prop(p, "Acceptance Result"),
+    stop_reason: prop(p, "Stop Reason"),
     source_commit: prop(p, "Source Commit"), source_repository: prop(p, "Source Repository"),
     plan_artifact_url: prop(p, "Plan Artifact URL"),
     supporting_evidence: stringArray(prop(p, "Supporting Evidence")),
     supporting_specialists: stringArray(prop(p, "Supporting Specialists")),
     verification_state: prop(p, "Verification State"),
+    related_work_item: stringArray(prop(p, "Related Work Item"))[0] ?? null,
     execution_receipt_url: prop(p, "Execution Receipt URL"), audit_url: prop(p, "Audit URL"),
     failure_recovery_summary: prop(p, "Failure / Recovery Summary"),
     retry_count: Number(prop(p, "Retry Count") ?? 0), completed_at: prop(p, "Completed At"),
@@ -88,7 +124,7 @@ function mapPage(page: any, kind: string, sourceKey: string) {
   };
   return {
     source_key: sourceKey, external_id: page.id, title,
-    evidence_id: prop(p, "Evidence ID"),
+    evidence_id: prop(p, "Evidence ID") === null ? null : String(prop(p, "Evidence ID")),
     title: prop(p, "Evidence Title") ?? title,
     evidence_type: prop(p, "Evidence Type") ?? "External Source",
     evidence_state: prop(p, "Evidence State") ?? "UNKNOWN",
@@ -98,7 +134,7 @@ function mapPage(page: any, kind: string, sourceKey: string) {
     ci_run_url: prop(p, "CI Run URL"), artifact_url: prop(p, "Artifact URL"),
     content_digest: prop(p, "Content Digest"), source_locator: prop(p, "Source Locator"),
     verified_at: prop(p, "Verified At"), verifier_role: prop(p, "Verifier Role"),
-    related_work_item: prop(p, "Related Work Item"),
+    related_work_item: stringArray(prop(p, "Related Work Item"))[0] ?? null,
     claim_supported: prop(p, "Claim Supported"), known_limitation: prop(p, "Known Limitation"),
     observed_at: prop(p, "Observed At") ?? new Date().toISOString(),
     source_url: page.url, payload: p,
@@ -253,6 +289,57 @@ Deno.serve(async (req) => {
           if (rows.length) {
             const table = source.kind === "work_items" ? "hso_work_items" : source.kind === "executions" ? "hso_executions" : "hso_evidence_records";
             const conflict = "source_key,external_id";
+            if (source.kind === "work_items") {
+              const ids = rows.map((row: any) => row.external_id);
+              const { data: previous, error: previousError } = await db.from("hso_work_items")
+                .select("*").eq("source_key", source.key).in("external_id", ids);
+              if (previousError) throw previousError;
+              const previousById = new Map((previous ?? []).map((row: any) => [row.external_id, row]));
+              const history: any[] = [];
+              for (const row of rows) {
+                const prior: any = previousById.get(row.external_id);
+                if (!prior) continue;
+                const changedFields = Object.keys(row).filter((key) =>
+                  !["raw_properties", "observed_at"].includes(key) &&
+                  JSON.stringify(prior[key] ?? null) !== JSON.stringify(row[key] ?? null)
+                );
+                if (!changedFields.length) continue;
+                const transition = {
+                  source_key: source.key,
+                  external_id: row.external_id,
+                  from_execution_state: prior.execution_state,
+                  to_execution_state: row.execution_state,
+                  from_gate_state: prior.gate_state,
+                  to_gate_state: row.gate_state,
+                  from_verification_state: prior.verification_state,
+                  to_verification_state: row.verification_state,
+                  source_updated_at: row.source_updated_at,
+                  changed_fields: changedFields
+                };
+                history.push({
+                  work_item_id: prior.id,
+                  source_key: source.key,
+                  external_id: row.external_id,
+                  transition_key: await digest(transition),
+                  from_execution_state: prior.execution_state,
+                  to_execution_state: row.execution_state,
+                  from_gate_state: prior.gate_state,
+                  to_gate_state: row.gate_state,
+                  from_verification_state: prior.verification_state,
+                  to_verification_state: row.verification_state,
+                  changed_at: new Date().toISOString(),
+                  source_updated_at: row.source_updated_at,
+                  source_url: row.source_url,
+                  changed_fields: changedFields,
+                  observed_payload: Object.fromEntries(changedFields.map((key) => [key, row[key] ?? null]))
+                });
+              }
+              if (history.length) {
+                const { error: historyError } = await db.from("hso_work_item_history")
+                  .upsert(history, { onConflict: "transition_key", ignoreDuplicates: true });
+                if (historyError) throw historyError;
+              }
+            }
             const { error } = await db.from(table).upsert(rows, { onConflict: conflict });
             if (error) throw error;
           }
@@ -280,7 +367,25 @@ Deno.serve(async (req) => {
       status, finished_at: finishedAt, source_results: results, records_seen: seen, records_upserted: upserted,
       error_summary: errors.length ? errors.join(" | ").slice(0, 4000) : null,
     }).eq("id", run.id);
-    return jsonResponse({ run_id: run.id, status, records_seen: seen, records_upserted: upserted, sources: results, errors });
+
+    let decisionEngine: any = { status: "not_run" };
+    if (syncToken) {
+      try {
+        const decisionResponse = await fetch(supabaseUrl + "/functions/v1/hso-decision-engine", {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-hso-sync-token": syncToken },
+          body: JSON.stringify({ trigger_kind: triggerKind, sync_run_id: run.id }),
+          signal: AbortSignal.timeout(55000),
+        });
+        const decisionBody = await decisionResponse.json();
+        decisionEngine = decisionResponse.ok
+          ? { status: "computed", ...decisionBody }
+          : { status: "failed", detail: decisionBody };
+      } catch (error) {
+        decisionEngine = { status: "failed", detail: error instanceof Error ? error.message : "decision engine request failed" };
+      }
+    }
+    return jsonResponse({ run_id: run.id, status, records_seen: seen, records_upserted: upserted, sources: results, errors, decision_engine: decisionEngine });
   } catch (error) {
     const message = error instanceof Error ? error.message : "unexpected_sync_failure";
     await db.from("hso_sync_runs").update({ status: "failed", finished_at: new Date().toISOString(), error_summary: message }).eq("id", run.id);
