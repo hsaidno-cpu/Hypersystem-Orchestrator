@@ -1,6 +1,6 @@
 # HSO GitHub-to-Notion Evidence Synchronization
 
-**Status:** IMPLEMENTED_IN_BRANCH / NOT_LIVE / CREDENTIALS_NOT_CONFIGURED  
+**Status:** IMPLEMENTED_IN_BRANCH / NOT_LIVE / CREDENTIALS_NOT_CONFIGURED / SECURITY_HARDENED_FOR_REVIEW  
 **Scope:** GitHub pull requests, commits pushed to \`main\`, completed Catalog and distribution validation runs, and a weekly stale-evidence sweep.  
 **Write boundary:** HSO Evidence Registry only. No roadmap status, gate, progress, decision, approval, or record deletion is performed.
 
@@ -13,7 +13,15 @@ Stable upsert keys:
 - CI: canonical workflow-run URL (one record per run).
 - Main commit: canonical commit URL (one record per commit).
 
-A SHA-256 digest detects unchanged events. More than one matching source locator fails closed. Notion 429/5xx and transport errors receive bounded retries; permission and schema errors do not. Pagination is followed. A weekly sweep only changes old \`FRESH\` records to \`STALE\`; it never deletes records or alters evidence outcome.
+A SHA-256 digest detects unchanged events. More than one matching source locator fails closed. Notion 429/5xx and transport errors receive bounded retries for read/query and idempotent update calls; non-idempotent page creation is attempted once and reconciled by Source Locator before any later retry. Pagination is followed. A weekly sweep only changes old \`FRESH\` records to \`STALE\`; it never deletes records or alters evidence outcome.
+
+## Event security boundary
+
+- Pull request ingestion uses `pull_request_target` only for PRs targeting `main`.
+- The workflow checks out only the trusted default branch (`main`) with persisted checkout credentials disabled; it never checks out or executes pull-request head code.
+- Fork PRs are rejected by an explicit head-repository allowlist.
+- Workflow permissions remain read-only.
+- Notion page creation is non-idempotent: after an ambiguous create failure, the client queries the canonical Source Locator. If exactly one record exists, it reconciles to that record; if none or multiple exist, it stops without blindly replaying the create request.
 
 ## Enablement prerequisites
 
