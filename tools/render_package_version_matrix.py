@@ -104,7 +104,7 @@ def render(catalog: dict, repository_doc: dict) -> str:
     for plugin in plugins:
         alignment = plugin.get("version_alignment_state")
         parity = plugin.get("source_instruction_parity_status")
-        if alignment != "SOURCE_AND_PLATFORM_MATCH" or parity in {"DRIFT_DETECTED", "NOT_COMPARED"}:
+        if alignment in {"SOURCE_AHEAD_OF_PLATFORM", "DEPLOYMENT_AHEAD_OF_SOURCE", "CANDIDATE_SOURCE_INCOMPLETE", "LEGACY_REDIRECT_VERSION"} or parity in {"DRIFT_DETECTED", "NOT_COMPARED"}:
             flagged.append(plugin)
     if not flagged:
         lines.append("No entries are currently flagged.")
