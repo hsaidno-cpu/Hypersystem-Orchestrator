@@ -79,10 +79,10 @@ class VerifyEnvironmentApprovalTests(unittest.TestCase):
             self.run_main(history=history)
 
     def test_rejects_unconfigured_or_unallowlisted_reviewer(self):
-        with self.assertRaisesRegex(SystemExit, "not configured"):
-            self.run_main(allowlist="different-reviewer")
         with self.assertRaisesRegex(SystemExit, "must all be in"):
             self.run_main(allowlist="different-reviewer")
+        with self.assertRaisesRegex(SystemExit, "missing required configuration"):
+            self.run_main(allowlist="")
 
     def test_rejects_missing_approval_history(self):
         with self.assertRaisesRegex(SystemExit, "no authenticated approval record"):
