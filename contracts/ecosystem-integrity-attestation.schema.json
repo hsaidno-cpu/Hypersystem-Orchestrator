@@ -1,0 +1,552 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/contracts/ecosystem-integrity-attestation.schema.json",
+  "title": "HSO Ecosystem Integrity Attestation",
+  "description": "Evidence envelope for one plugin_key × platform × target_scope observation. An attestation is data, not an approval grant.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "attestation_id",
+    "policy_version",
+    "plugin_key",
+    "target",
+    "observed_at",
+    "source",
+    "package",
+    "installation",
+    "instructions",
+    "documentation",
+    "rights",
+    "overall_state",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "attestation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "plugin_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,127}$"
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "target_scope"
+      ],
+      "properties": {
+        "platform": {
+          "enum": [
+            "ChatGPT",
+            "Codex",
+            "Claude",
+            "Gemini",
+            "MCP Host",
+            "HTTP Gateway",
+            "Other"
+          ]
+        },
+        "target_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "Non-secret target alias. Do not store personal identifiers or credentials."
+        },
+        "host_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "installation_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository_url",
+        "ref",
+        "commit_sha",
+        "manifest_path",
+        "manifest_sha256",
+        "tree_digest",
+        "state"
+      ],
+      "properties": {
+        "repository_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "manifest_path": {
+          "type": "string"
+        },
+        "manifest_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "declared_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tree_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "state": {
+          "enum": [
+            "MATCH",
+            "DRIFT",
+            "STALE",
+            "UNKNOWN",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        }
+      }
+    },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publication_state",
+        "state"
+      ],
+      "properties": {
+        "package_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "release_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "artifact_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "visibility": {
+          "enum": [
+            "PUBLIC",
+            "PRIVATE",
+            "USER",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "publication_state": {
+          "enum": [
+            "PUBLISHED",
+            "NOT_PUBLISHED",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "state": {
+          "enum": [
+            "MATCH",
+            "DRIFT",
+            "STALE",
+            "UNKNOWN",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        }
+      }
+    },
+    "installation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "install_state",
+        "runtime_state",
+        "state"
+      ],
+      "properties": {
+        "install_state": {
+          "enum": [
+            "INSTALLED",
+            "NOT_INSTALLED",
+            "UNKNOWN",
+            "STALE",
+            "NOT_OBSERVED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "installed_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "installed_release_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "installed_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "runtime_state": {
+          "enum": [
+            "ACTIVE",
+            "INACTIVE",
+            "FAILED",
+            "NOT_PROBED",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "runtime_identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "probe_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "enum": [
+            "MATCH",
+            "DRIFT",
+            "STALE",
+            "UNKNOWN",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        }
+      }
+    },
+    "instructions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_version",
+        "bundle_digest",
+        "file_count",
+        "parity_state",
+        "state"
+      ],
+      "properties": {
+        "manifest_version": {
+          "type": "string"
+        },
+        "bundle_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "file_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "per_file_digests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        },
+        "parity_state": {
+          "enum": [
+            "MATCH",
+            "DRIFT",
+            "NOT_COMPARED",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "state": {
+          "enum": [
+            "MATCH",
+            "DRIFT",
+            "STALE",
+            "UNKNOWN",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        }
+      }
+    },
+    "documentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notion_page_url",
+        "projection_digest",
+        "state"
+      ],
+      "properties": {
+        "notion_page_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "github_documentation_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "documentation_revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "projection_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "state": {
+          "enum": [
+            "MATCH",
+            "DRIFT",
+            "STALE",
+            "UNKNOWN",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "CLEARED",
+            "UNCLEARED",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "license_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "decision_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "overall_state": {
+      "enum": [
+        "SYNCED",
+        "DRIFT",
+        "STALE",
+        "UNKNOWN",
+        "BLOCKED",
+        "APPROVAL_REQUIRED",
+        "RECONCILING"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "locator",
+          "observed_at",
+          "verifier"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "COMMIT",
+              "MANIFEST",
+              "PACKAGE_READBACK",
+              "INSTALL_RECEIPT",
+              "RUNTIME_PROBE",
+              "INSTRUCTION_COMPARISON",
+              "DOCUMENTATION_READBACK",
+              "CI_RUN",
+              "HUMAN_DECISION",
+              "SECURITY_REVIEW"
+            ]
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verifier": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "decision",
+          "decision_reference",
+          "decided_at"
+        ],
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "APPROVED",
+              "REJECTED",
+              "PENDING"
+            ]
+          },
+          "decision_reference": {
+            "type": "string"
+          },
+          "decided_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approver": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_action": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "signature": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "key_id",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "type": "string"
+        },
+        "key_id": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
