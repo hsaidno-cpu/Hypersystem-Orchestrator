@@ -22,7 +22,7 @@ The following values are independent and must never be collapsed into one generi
 
 | Plugin | Plugin Creator package | Current release ID | Git source version | Canonical source / pinned commit | Version alignment | Instruction parity | Source state | Metadata observed | Snapshot captured |
 |---|---:|---|---:|---|---|---|---|---|---|
-| Video Explainer Promkes V4.1.12 | 4.1.12 | pluginrel_6b02a0f630208191b71ad994703aed68 | 4.1.9 | promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR @ f8f8c0f29ff9d851fa75eba764978c24bdd79416 | DEPLOYMENT_AHEAD_OF_SOURCE | NOT_COMPARED | integrated_submodule | 2026-11-24 | 2026-11-22 |
+| Video Explainer Promkes V4.1.12 | 4.1.12 | pluginrel_6b02a0f630208191b71ad994703aed68 | 4.1.9 | promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR @ f8f8c0f29ff9d851fa75eba764978c24bdd79416 | DEPLOYMENT_AHEAD_OF_SOURCE | DRIFT_DETECTED | integrated_submodule | 2026-11-24 | 2026-11-22 |
 | Skill Developer Orchestrator | 0.1.0 | pluginrel_6afdee10a5688191ad8fc37a9d0d827b | 0.1.0 | promkespkmbinuang-coder/SPDO @ 9d3c4bc09179ff857df4f3819be83e1847571add | SOURCE_AND_PLATFORM_MATCH | DRIFT_DETECTED | integrated_submodule | 2026-11-24 | 2026-11-22 |
 | Evaluator Team | 1.0.0 | pluginrel_6afdee5a10108191a38e1ee7f84f7524 | — | NOT_IDENTIFIED | PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED | NOT_APPLICABLE | pending_repository | 2026-11-24 | 2026-11-22 |
 | Master Photo Restoration | 1.0.0 | pluginrel_6ae29cf38e4881918f892e746050891d | — | NOT_IDENTIFIED | PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED | NOT_APPLICABLE | pending_repository | 2026-11-24 | 2026-11-22 |
@@ -54,9 +54,9 @@ The following entries are not automatically repaired by changing a version strin
 
 - Plugin Creator: 4.1.12 / pluginrel_6b02a0f630208191b71ad994703aed68.
 - Git source: 4.1.9.
-- Alignment: DEPLOYMENT_AHEAD_OF_SOURCE; parity: NOT_COMPARED.
-- Version evidence: Current Plugin Creator deployment 4.1.12; official public GitHub source is 4.1.9. Embedded M00 header v4.0.9 is an internal skill version, not the package version. Source parity is pending.
-- Parity evidence: The Plugin Creator USER/PRIVATE archive is verified at 4.1.12, but its complete file inventory exposes no SKILL.md files for a direct file-level comparison against the 14 Git source skill files at 4.1.9. Plugin Creator plugin.json reports 4.1.12 while its README heading is V4.1.11; Git plugin.json and README report 4.1.9. Keep source_instruction_parity_status NOT_COMPARED and source sync blocked until the actual deployment skill files, package assets, manifest and source are mapped one-to-one.
+- Alignment: DEPLOYMENT_AHEAD_OF_SOURCE; parity: DRIFT_DETECTED.
+- Version evidence: Current Plugin Creator deployment 4.1.12; official public Git source is 4.1.9. Direct content audit confirms 16 installed package SKILL.md files versus 15 Git source files, 11 shared paths (only one exact), five package-only skills and four Git-only skills. Embedded M00 header v4.0.9 and package README heading V4.1.11 are separate internal/documentation labels. Source requires full controlled reconciliation; package contents are USER/PRIVATE.
+- Parity evidence: Direct one-to-one Plugin Creator USER/PRIVATE v4.1.12 vs pinned public Git source v4.1.9 skill inventory and content comparison at 2026-11-24: package contains 16 SKILL.md files and Git contains 15. Eleven skill paths are shared; only social-accessibility-distribution/SKILL.md is exact, while 10/11 shared files differ after CRLF normalization. Five package-only skills: executable-gate-engine, prompt-reference-video-engineering, renderer-code-engineering, video-explainer-promkes, voice-audio-intelligence. Four Git-only skills: ai-video-reference-engineering, editing-postproduction, master-orchestrator, voice-sound-design. This is DRIFT_DETECTED, not NOT_COMPARED. Plugin Creator manifest says 4.1.12; its README heading says V4.1.11; installed M00 documentation contains v4.0.9 as a separate internal skill label. Git plugin.json and README state 4.1.9. Reconciliation requires mapping skill rename/ownership, schemas, docs, scripts, tests, assets and release evidence across all 215 package files; do not copy private package-only content into public Git without explicit publication permission.
 
 ### Skill Developer Orchestrator
 
@@ -72,7 +72,7 @@ The following entries are not automatically repaired by changing a version strin
 - Git source: 1.3.0.
 - Alignment: SOURCE_AHEAD_OF_PLATFORM; parity: DRIFT_DETECTED.
 - Version evidence: Canonical public GitHub README and manifest identify 1.3.0; current Plugin Creator package metadata reports 1.0.0. Parent source baseline is 1.3.0; platform republishing is a separate action.
-- Parity evidence: Full 12-file skill comparison against Plugin Creator USER/PRIVATE v1.0.0 release and pinned Git source 1.3.0: 11/12 SKILL.md files are exact after CRLF normalization. The only mismatch is skills/platform-compatibility/SKILL.md: Plugin Creator has 71 lines; Git source has 81 lines and appends a HOSTED GATEWAY PROFILE section. Git source is ahead; do not auto-overwrite or relabel the package. Version alignment remains SOURCE_AHEAD_OF_PLATFORM.
+- Parity evidence: Full Plugin Creator USER/PRIVATE v1.0.0 vs pinned Git source 1.3.0 content audit at 2026-11-24: package contains 12 SKILL.md files; Git source contains 20. All 12 package skill paths exist in Git; 11/12 shared files are exact after CRLF normalization. The only shared-file difference is skills/platform-compatibility/SKILL.md (package 4,271 characters; source 5,262). Git source additionally contains eight skills absent from the package: api-key-manager, credential-vault, custom-api-connector, custom-mcp-connector, identity-policy-engine, invocation-gateway, mcp-access-manager, and universal-access-manager. This is partial shared-path parity, not whole-package parity. Reconciliation requires the eight new skills, the one changed skill, and manifest/readme/changelog review; preserve all current private package assets until individually assessed.
 
 ### Photo Fixer
 
@@ -88,7 +88,7 @@ The following entries are not automatically repaired by changing a version strin
 - Git source: 0.5.0-rc.1.
 - Alignment: SOURCE_AHEAD_OF_PLATFORM; parity: DRIFT_DETECTED.
 - Version evidence: Public Git source is 0.5.0-rc.1 and is ahead of Plugin Creator package 0.3.2. It is a release candidate, not a stable production release.
-- Parity evidence: Full 13-file skill comparison against Plugin Creator USER/PRIVATE v0.3.2 and pinned Git source 0.5.0-rc.1: 5/13 SKILL.md files match exactly; 8/13 differ, including the master orchestrator and O03/O04/O05/O06/O09/O11/O12. The Git source is materially longer in every differing file and is a release candidate. Treat the platform package as behind; do not promote RC or overwrite without owner review and release decision.
+- Parity evidence: Full Plugin Creator USER/PRIVATE v0.3.2 vs pinned Git source 0.5.0-rc.1 content audit at 2026-11-24: package contains 13 SKILL.md files; Git source contains 26. The 13 package skill paths are shared with Git; five shared files are exact and eight differ (master orchestrator and O03/O04/O05/O06/O09/O11/O12). Git additionally contains 13 alias/specialist skills absent from the package: anatomy-decomposition, artifact-intelligence, bug-detection-diagnosis, comparative-intelligence, evaluation-intelligence, integration-runtime-lab, negative-intelligence, positive-intelligence, reconstruction-adaptation, remediation-bug-fixing, rpeds-progressive-development, security-governance, and validation-quality-assurance. Source 0.5.0-rc.1 is a release candidate under PolyForm Noncommercial 1.0.0, not a stable release. Retain RC status and license terms; no automatic promotion.
 
 ### A.S.F.R.E.E Legacy
 
