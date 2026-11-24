@@ -29,6 +29,9 @@ jobs:
       - name: Test deterministic decision policy
         working-directory: ${{ github.workspace }}
         run: node --test supabase/functions/hso-decision-engine/policy.test.mjs
+      - name: Test deterministic decision policy
+        working-directory: ${{ github.workspace }}
+        run: node --test supabase/functions/hso-decision-engine/policy.test.mjs
       - name: Install dependencies
         run: npm install --no-audit --no-fund --no-package-lock
       - name: Type check
