@@ -21,6 +21,12 @@ class SyncError(RuntimeError):
     pass
 
 
+class NotionHTTPError(SyncError):
+    def __init__(self, status_code: int):
+        self.status_code = status_code
+        super().__init__(f"Notion API request failed with HTTP {status_code}")
+
+
 def canonical_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
@@ -323,7 +329,7 @@ class NotionClient:
                     return json.loads(raw) if raw else {}
             except urllib.error.HTTPError as exc:
                 if not retry_transient or exc.code not in RETRYABLE or attempt == 4:
-                    raise SyncError(f"Notion API request failed with HTTP {exc.code}") from None
+                    raise NotionHTTPError(exc.code) from None
                 retry_after = exc.headers.get("Retry-After")
                 try:
                     delay = min(30, max(1, int(retry_after))) if retry_after else min(2 ** attempt, 16)
@@ -368,6 +374,21 @@ class NotionClient:
             # Page creation is non-idempotent. Never blindly retry a POST /pages
             # after an ambiguous timeout/5xx; first reconcile by canonical locator.
             return self.request("POST", "pages", body, retry_transient=False)
+        except NotionHTTPError as exc:
+            # Deterministic 4xx errors cannot have succeeded; surface the actual
+            # rejection instead of mislabeling it as an ambiguous create.
+            if exc.status_code not in RETRYABLE:
+                raise
+            matches = self.query_by_locator(source_locator)
+            if len(matches) == 1:
+                return matches[0]
+            if len(matches) > 1:
+                raise SyncError(
+                    f"Duplicate Source Locator after ambiguous create ({len(matches)} rows); manual reconciliation required"
+                ) from None
+            raise SyncError(
+                f"Page create returned retryable HTTP {exc.status_code}; outcome is ambiguous and no matching Source Locator exists"
+            ) from None
         except SyncError:
             matches = self.query_by_locator(source_locator)
             if len(matches) == 1:
