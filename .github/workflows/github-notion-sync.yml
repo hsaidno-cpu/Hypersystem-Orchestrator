@@ -7,7 +7,11 @@ on:
   push:
     branches: [main]
   workflow_run:
-    workflows: ["Catalog and distribution validation"]
+    workflows:
+      - "Catalog and distribution validation"
+      - "P1 sync module validation"
+      - "PRE R0-R9 policy enforcement validation"
+      - "PRE R0-R9 transition queue worker"
     types: [completed]
   schedule:
     - cron: "17 3 * * 1"
