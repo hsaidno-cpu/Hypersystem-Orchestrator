@@ -5,17 +5,22 @@
   "evidence_data_source_id": "42299868-397f-817c-bb25-000b49b243fa",
   "stale_after_days": 14,
   "workflow_names": [
-    "Catalog and distribution validation"
+    "Catalog and distribution validation",
+    "P1 sync module validation",
+    "PRE R0-R9 policy enforcement validation",
+    "PRE R0-R9 transition queue worker"
   ],
   "pull_request_relation_map": {
     "13": "42299868-397f-81fe-8349-c8e97800573a",
     "14": "42299868-397f-81fe-8349-c8e97800573a",
     "15": "42299868-397f-81fe-8349-c8e97800573a",
-    "16": "42299868-397f-8167-afb4-c4fbb98b6e06"
+    "16": "42299868-397f-8167-afb4-c4fbb98b6e06",
+    "17": "42299868-397f-8127-9549-e1dbdfa5c037"
   },
   "branch_relation_map": {
     "fix/ponytail-c2-c3-test-contract-20261124": "42299868-397f-81fe-8349-c8e97800573a",
-    "feat/github-notion-evidence-sync-20261124": "42299868-397f-8167-afb4-c4fbb98b6e06"
+    "feat/github-notion-evidence-sync-20261124": "42299868-397f-8167-afb4-c4fbb98b6e06",
+    "feat/pre-policy-enforcement-v1-20261124": "42299868-397f-8127-9549-e1dbdfa5c037"
   },
   "default_relation_ids": []
 }
