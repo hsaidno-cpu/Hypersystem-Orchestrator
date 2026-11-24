@@ -284,6 +284,7 @@ def read_back_matches(page: dict[str, Any], result: dict[str, Any]) -> bool:
 def process_page(
     page: dict[str, Any], client: NotionAPI, policy: dict[str, Any],
     approval_secret: str | None, nonce_store: NonceStore,
+    evidence_secret: str | None = None,
 ) -> dict[str, Any]:
     page_id = page.get("id")
     if not isinstance(page_id, str) or not page_id:
@@ -306,7 +307,7 @@ def process_page(
         request = request_from_page(claimed_page)
         result = evaluate_transition(
             request, policy, approval_secret=approval_secret,
-            nonce_store=nonce_store,
+            evidence_secret=evidence_secret, nonce_store=nonce_store,
         )
     except NotionWorkerError as exc:
         result = malformed_result(claimed_page, str(exc), policy)
@@ -330,12 +331,15 @@ def process_page(
 
 def run_once(
     client: NotionAPI, policy: dict[str, Any], approval_secret: str | None,
-    nonce_store: NonceStore,
+    nonce_store: NonceStore, evidence_secret: str | None = None,
 ) -> dict[str, Any]:
     pages = client.query_pending()
     results: list[dict[str, Any]] = []
     for page in pages:
-        results.append(process_page(page, client, policy, approval_secret, nonce_store))
+        results.append(process_page(
+            page, client, policy, approval_secret, nonce_store,
+            evidence_secret=evidence_secret,
+        ))
     return {
         "service": "hso.pre.r0-r9",
         "policy_version": policy["version"],
@@ -364,6 +368,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         client = NotionAPI(token, data_source_id)
         approval_secret = os.environ.get(policy["approval"]["key_environment_variable"])
+        evidence_secret = os.environ.get(policy["evidence"]["attestation"]["key_environment_variable"])
         nonce_store = NonceStore(args.nonce_store)
         if args.dry_run:
             pages = client.query_pending()
@@ -374,7 +379,7 @@ def main(argv: list[str] | None = None) -> int:
                 "stage_mutations_performed": 0,
             }, indent=2))
             return 0
-        result = run_once(client, policy, approval_secret, nonce_store)
+        result = run_once(client, policy, approval_secret, nonce_store, evidence_secret)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     except (OSError, ValueError, PREPolicyError, NotionWorkerError) as exc:
