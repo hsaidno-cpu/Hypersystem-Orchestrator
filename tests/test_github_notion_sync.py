@@ -74,6 +74,17 @@ class GitHubNotionSyncTests(unittest.TestCase):
         self.assertEqual(record["evidence_type"], "Pull Request")
         self.assertEqual(record["evidence_state"], "UNKNOWN")
 
+    def test_p1_sync_pr_maps_to_its_own_work_item(self):
+        event = sample_pr()
+        event["number"] = 16
+        event["pull_request"]["number"] = 16
+        event["pull_request"]["head"]["ref"] = "feat/github-notion-evidence-sync-20261124"
+        event["pull_request"]["html_url"] = "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/16"
+        CONFIG["pull_request_relation_map"]["16"] = "42299868-397f-8167-afb4-c4fbb98b6e06"
+        record = build_event_record("pull_request_target", event, CONFIG)
+        self.assertEqual(record["related_work_item_ids"], ["42299868-397f-8167-afb4-c4fbb98b6e06"])
+
+
     def test_workflow_failure_maps_to_fail_without_gate_claim(self):
         event = {"workflow_run": {
             "id": 987, "run_number": 74, "name": "Catalog and distribution validation",
