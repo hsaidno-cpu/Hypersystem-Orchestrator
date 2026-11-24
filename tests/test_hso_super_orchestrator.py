@@ -476,5 +476,29 @@ class HsoRuntimeTests(unittest.TestCase):
         result = self.run_workflow(data)
         self.assertEqual(result["package_outcomes"][item["package_id"]]["status"], "BLOCKED_CAPABILITY")
 
+    def test_ponytail_engineering_route_is_selected_but_blocked_without_host_adapter(self):
+        _, routes, _, catalog = hso._load_registries()
+        route = hso.resolve_route("plugin.engineering_method", routes, catalog)
+        self.assertEqual(route["primary_owner"], "ponytail-engineering-optimizer")
+        self.assertEqual(route["supporting_specialists"], ["skill-developer-orchestrator", "evaluator-team"])
+        self.assertEqual(route["action_id"], "plugin.skill.invoke")
+        self.assertEqual(route["required_capabilities"], ["plugin.skill.invoke"])
+
+        capability_states = {
+            item["capability_id"]: item["status"]
+            for item in hso.discover_capabilities()["capabilities"]
+        }
+        self.assertEqual(capability_states["plugin.skill.invoke"], "NOT_CONFIGURED")
+
+        data = self.workflow()
+        item = data["work_packages"][0]
+        item["task_type"] = "plugin.engineering_method"
+        item["action_id"] = "plugin.skill.invoke"
+        result = self.run_workflow(data)
+        outcome = result["package_outcomes"][item["package_id"]]
+        self.assertEqual(outcome["status"], "BLOCKED_CAPABILITY")
+        self.assertIn("plugin.skill.invoke", outcome["missing_capabilities"])
+        self.assertFalse((self.workspace / item["target_path"]).exists())
+
 if __name__ == "__main__":
     unittest.main()
