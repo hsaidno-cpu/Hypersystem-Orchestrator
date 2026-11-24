@@ -3,40 +3,153 @@
   "policy_id": "hso.pre.r0-r9",
   "version": "1.0.0",
   "lifecycle": [
-    {"id": "R0", "name": "Intake"},
-    {"id": "R1", "name": "Strategy & Baseline"},
-    {"id": "R2", "name": "Roadmap Design"},
-    {"id": "R3", "name": "Approval & Baseline Freeze"},
-    {"id": "R4", "name": "Iteration Execution"},
-    {"id": "R5", "name": "Formative Check"},
-    {"id": "R6", "name": "Milestone Acceptance"},
-    {"id": "R7", "name": "Outcome & Impact"},
-    {"id": "R8", "name": "Adaptation"},
-    {"id": "R9", "name": "Closure & Learning"}
+    {
+      "id": "R0",
+      "name": "Intake"
+    },
+    {
+      "id": "R1",
+      "name": "Strategy & Baseline"
+    },
+    {
+      "id": "R2",
+      "name": "Roadmap Design"
+    },
+    {
+      "id": "R3",
+      "name": "Approval & Baseline Freeze"
+    },
+    {
+      "id": "R4",
+      "name": "Iteration Execution"
+    },
+    {
+      "id": "R5",
+      "name": "Formative Check"
+    },
+    {
+      "id": "R6",
+      "name": "Milestone Acceptance"
+    },
+    {
+      "id": "R7",
+      "name": "Outcome & Impact"
+    },
+    {
+      "id": "R8",
+      "name": "Adaptation"
+    },
+    {
+      "id": "R9",
+      "name": "Closure & Learning"
+    }
   ],
   "transitions": {
-    "R0->R1": {"required_evidence_types": ["INTAKE_BRIEF"], "required_approval_roles": []},
-    "R1->R2": {"required_evidence_types": ["BASELINE_EVIDENCE"], "required_approval_roles": []},
-    "R2->R3": {"required_evidence_types": ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"], "required_approval_roles": ["HUMAN_DECISION_OWNER"]},
-    "R3->R4": {"required_evidence_types": ["BASELINE_FREEZE_RECEIPT"], "required_approval_roles": []},
-    "R4->R5": {"required_evidence_types": ["EXECUTION_RECEIPT", "CI_RUN"], "required_approval_roles": []},
-    "R5->R6": {"required_evidence_types": ["FORMATIVE_EVALUATION", "ACCEPTANCE_EVIDENCE"], "required_approval_roles": ["HUMAN_ACCEPTANCE_OWNER"]},
-    "R6->R7": {"required_evidence_types": ["ACCEPTANCE_RECEIPT"], "required_approval_roles": []},
-    "R7->R8": {"required_evidence_types": ["OUTCOME_MEASUREMENT"], "required_approval_roles": ["HUMAN_DECISION_OWNER"]},
-    "R8->R9": {"required_evidence_types": ["ADAPTATION_DECISION", "CLOSURE_EVIDENCE"], "required_approval_roles": ["HUMAN_DECISION_OWNER"]}
+    "R0->R1": {
+      "required_evidence_types": [
+        "INTAKE_BRIEF"
+      ],
+      "required_approval_roles": []
+    },
+    "R1->R2": {
+      "required_evidence_types": [
+        "BASELINE_EVIDENCE"
+      ],
+      "required_approval_roles": []
+    },
+    "R2->R3": {
+      "required_evidence_types": [
+        "ROADMAP_PLAN",
+        "DEPENDENCY_GRAPH"
+      ],
+      "required_approval_roles": [
+        "HUMAN_DECISION_OWNER"
+      ]
+    },
+    "R3->R4": {
+      "required_evidence_types": [
+        "BASELINE_FREEZE_RECEIPT"
+      ],
+      "required_approval_roles": []
+    },
+    "R4->R5": {
+      "required_evidence_types": [
+        "EXECUTION_RECEIPT",
+        "CI_RUN"
+      ],
+      "required_approval_roles": []
+    },
+    "R5->R6": {
+      "required_evidence_types": [
+        "FORMATIVE_EVALUATION",
+        "ACCEPTANCE_EVIDENCE"
+      ],
+      "required_approval_roles": [
+        "HUMAN_ACCEPTANCE_OWNER"
+      ]
+    },
+    "R6->R7": {
+      "required_evidence_types": [
+        "ACCEPTANCE_RECEIPT"
+      ],
+      "required_approval_roles": []
+    },
+    "R7->R8": {
+      "required_evidence_types": [
+        "OUTCOME_MEASUREMENT"
+      ],
+      "required_approval_roles": [
+        "HUMAN_DECISION_OWNER"
+      ]
+    },
+    "R8->R9": {
+      "required_evidence_types": [
+        "ADAPTATION_DECISION",
+        "CLOSURE_EVIDENCE"
+      ],
+      "required_approval_roles": [
+        "HUMAN_DECISION_OWNER"
+      ]
+    }
   },
   "evidence": {
-    "accepted_states": ["PASS", "ACCEPTED", "MEASURED"],
-    "accepted_freshness": ["FRESH"],
+    "accepted_states": [
+      "PASS",
+      "ACCEPTED",
+      "MEASURED"
+    ],
+    "accepted_freshness": [
+      "FRESH"
+    ],
     "require_https_source_locator": true,
     "require_independent_verifier": true,
-    "sha256_pattern": "^[a-fA-F0-9]{64}$"
+    "sha256_pattern": "^[a-fA-F0-9]{64}$",
+    "attestation": {
+      "algorithm": "HMAC-SHA256",
+      "key_environment_variable": "HSO_EVIDENCE_ENVELOPE_HMAC_KEY",
+      "allowed_issuers": [
+        "hso-evidence-issuer"
+      ],
+      "allowed_verifier_roles": [
+        "HSO",
+        "PRE",
+        "SDO",
+        "Evaluator Team",
+        "Security reviewer",
+        "Human decision owner",
+        "Automated CI"
+      ],
+      "max_age_seconds": 7776000,
+      "require_identity_verified": true
+    }
   },
   "approval": {
     "algorithm": "HMAC-SHA256",
     "key_environment_variable": "HSO_PRE_APPROVAL_HMAC_KEY",
     "max_validity_seconds": 900,
-    "allowed_issuers": ["hso-approval-issuer"],
+    "allowed_issuers": [
+      "hso-approval-issuer"
+    ],
     "require_identity_verified": true,
     "require_independent": true,
     "require_scope_binding": true
