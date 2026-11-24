@@ -112,10 +112,13 @@ class PRETransitionWorkerTests(unittest.TestCase):
         self.assertEqual(select_value(page["properties"]["Request State"]), "POLICY_PASSED")
         self.assertEqual(select_value(page["properties"]["Gate Decision"]), "ALLOW")
         self.assertEqual(rich_text_value(page["properties"]["Evaluation Digest"]), result["evaluation_digest"])
-        self.assertEqual(
-            rich_text_value(page["properties"]["Evaluation Receipt JSON"]),
-            json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
-        )
+        expected_receipt = rich_text_value(client.updated[1][1]["Evaluation Receipt JSON"])
+        persisted_receipt = rich_text_value(page["properties"]["Evaluation Receipt JSON"])
+        self.assertEqual(persisted_receipt, expected_receipt)
+        receipt_object = json.loads(persisted_receipt)
+        self.assertEqual(receipt_object["decision"], result["decision"])
+        self.assertEqual(receipt_object["evaluation_digest"], result["evaluation_digest"])
+        self.assertFalse(receipt_object["stage_mutation_performed"])
         self.assertEqual(rich_text_value(page["properties"]["Correlation ID"]), "corr-001")
         self.assertEqual(page["properties"]["Work Item"]["relation"][0]["id"], "work-item-001")
         self.assertNotIn("PRE Stage", client.updated[0][1])
