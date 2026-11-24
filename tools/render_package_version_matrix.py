@@ -123,8 +123,8 @@ def render(catalog: dict, repository_doc: dict) -> str:
     lines.extend([
         "## Canonical source manifest evidence",
         "",
-        "| Repository | Manifest path | Manifest version | Manifest blob SHA | Pinned commit | Verified at |",
-        "|---|---|---:|---|---|---|",
+        "| Repository | Manifest path | Manifest version | Manifest blob SHA | Pinned commit | Verified at | Verification mode |",
+        "|---|---|---:|---|---|---|---|",
     ])
     for repo in repository_doc["repositories"]:
         if repo.get("status") not in {"integrated_submodule", "integrated_submodule_private"}:
@@ -136,6 +136,7 @@ def render(catalog: dict, repository_doc: dict) -> str:
             cell(repo.get("source_manifest_blob_sha")),
             cell(repo.get("pinned_commit")),
             cell(repo.get("source_manifest_verified_at")),
+            cell(repo.get("source_manifest_verification_mode")),
         ]) + " |")
 
     lines.extend([
@@ -152,7 +153,7 @@ def render(catalog: dict, repository_doc: dict) -> str:
         "",
         "## CI and freshness boundary",
         "",
-        "tools/validate_catalog.py checks that every Plugin Creator metadata observation is at most 30 days old, that each integrated source manifest is pinned to the registered commit, and that the actual parent Git tree gitlink SHA equals catalog/repositories.json. tools/render_package_version_matrix.py --check ensures this document is generated from the canonical registry.",
+        "tools/validate_catalog.py checks that every Plugin Creator metadata observation is at most 30 days old, that each integrated source manifest is tied to the parent gitlink, and that the actual parent Git tree gitlink SHA equals catalog/repositories.json. For four public child repositories it fetches the raw manifest at the pinned commit, verifies the exact Git blob SHA and declared JSON version. The private Anatomi source is explicitly marked PRIVATE_MANUAL_READBACK_ONLY because this public workflow has no credential to read it. tools/render_package_version_matrix.py --check ensures this document is generated from the canonical registry.",
         "",
         "**Important limitation:** the public GitHub Actions workflow does not query the private Plugin Creator service. The 30-day gate checks the recorded read-back date; it cannot independently prove that the date or external metadata is current. An authorized connector read-back must precede updates to the catalog.",
         "",
