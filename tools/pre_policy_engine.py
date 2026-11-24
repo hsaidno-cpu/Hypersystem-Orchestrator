@@ -50,7 +50,7 @@ def digest_json(value: Any) -> str:
 
 EVIDENCE_ATTESTED_FIELDS = (
     "schema_version", "evidence_id", "evidence_type", "project_id", "scope_id",
-    "state", "freshness", "verified", "verified_by", "verifier_role",
+    "state", "freshness", "verified", "identity_verified", "verified_by", "verifier_role",
     "verified_at", "issuer", "source_locator", "sha256",
 )
 
