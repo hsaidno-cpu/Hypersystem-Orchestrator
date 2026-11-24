@@ -8,7 +8,8 @@
     "schema_version",
     "catalog_revision",
     "expected_plugin_count",
-    "plugins"
+    "plugins",
+    "platform_metadata_observed_at"
   ],
   "properties": {
     "schema_version": {
@@ -268,6 +269,11 @@
           }
         }
       }
+    },
+    "platform_metadata_observed_at": {
+      "type": "string",
+      "format": "date",
+      "description": "Date on which the current Plugin Creator release metadata was read back by the authorized connector. This does not certify package-file parity."
     }
   }
 }
