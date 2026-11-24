@@ -1,0 +1,21 @@
+{
+  "request_id": "PRE-EXAMPLE-R0-R1",
+  "project_id": "HSO-EXAMPLE",
+  "scope_id": "HSO-EXAMPLE:baseline-v1",
+  "from_stage": "R0",
+  "to_stage": "R1",
+  "requested_by_actor_id": "agent:hso-orchestrator",
+  "evidence": [
+    {
+      "evidence_id": "EV-INTAKE-001",
+      "evidence_type": "INTAKE_BRIEF",
+      "state": "PASS",
+      "freshness": "FRESH",
+      "verified": true,
+      "verified_by": "evaluator:independent",
+      "source_locator": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/README.md",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "approvals": []
+}
