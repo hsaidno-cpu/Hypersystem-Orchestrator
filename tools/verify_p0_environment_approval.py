@@ -41,13 +41,18 @@ def main() -> int:
     run_id = os.environ.get("GITHUB_RUN_ID", "").strip()
     run_attempt = os.environ.get("GITHUB_RUN_ATTEMPT", "1").strip()
     workflow_actor = os.environ.get("GITHUB_ACTOR", "").strip()
+    workflow_actor_id_raw = os.environ.get("GITHUB_ACTOR_ID", "").strip()
+    try:
+        workflow_actor_id = int(workflow_actor_id_raw)
+    except ValueError:
+        workflow_actor_id = 0
     allowed_logins = {
         item.strip().lower()
         for item in os.environ.get("HSO_P0_ALLOWED_REVIEWER_LOGINS", "").split(",")
         if item.strip()
     }
     api_root = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
-    if not all((token, repository, run_id, workflow_actor, allowed_logins)):
+    if not all((token, repository, run_id, workflow_actor, workflow_actor_id, allowed_logins)):
         raise SystemExit("P0 authenticated reviewer verification is missing required configuration")
     if run_attempt != "1":
         raise SystemExit("P0 only permits a first-attempt workflow run")
@@ -67,11 +72,12 @@ def main() -> int:
     if required_rules[0].get("prevent_self_review") is not True:
         raise SystemExit("P0 Environment must prevent requester self-review")
     configured_users = {
-        (item.get("reviewer") or {}).get("login", "").lower()
+        (item.get("reviewer") or {}).get("login", "").lower():
+            (item.get("reviewer") or {}).get("id")
         for item in reviewers
         if item.get("type") == "User" and isinstance(item.get("reviewer"), dict)
     }
-    if not configured_users:
+    if not configured_users or any(not isinstance(value, int) for value in configured_users.values()):
         raise SystemExit("P0 Environment must configure an individually identifiable User reviewer")
     if not configured_users.issubset(allowed_logins):
         raise SystemExit("Configured Environment reviewers must all be in HSO_P0_ALLOWED_REVIEWER_LOGINS")
@@ -103,7 +109,9 @@ def main() -> int:
         raise SystemExit("GitHub approval record does not expose a stable reviewer login and ID")
     if reviewer_login.lower() not in configured_users or reviewer_login.lower() not in allowed_logins:
         raise SystemExit("Authenticated approver is not an individually configured and allow-listed Environment reviewer")
-    if reviewer_login.lower() == workflow_actor.lower():
+    if configured_users[reviewer_login.lower()] != reviewer_id:
+        raise SystemExit("Authenticated approver GitHub numeric ID does not match the configured Environment reviewer")
+    if reviewer_login.lower() == workflow_actor.lower() or reviewer_id == workflow_actor_id:
         raise SystemExit("P0 workflow requester cannot approve their own invocation")
 
     record = {
@@ -112,6 +120,7 @@ def main() -> int:
         "workflow_run_id": run_id,
         "workflow_run_attempt": run_attempt,
         "workflow_actor": workflow_actor,
+        "workflow_actor_id": workflow_actor_id,
         "reviewer_login": reviewer_login,
         "reviewer_id": reviewer_id,
         "state": "approved",
@@ -131,6 +140,7 @@ def main() -> int:
         "environment": ENVIRONMENT,
         "workflow_run_id": run_id,
         "workflow_actor": workflow_actor,
+        "workflow_actor_id": workflow_actor_id,
         "authenticated_reviewer_login": reviewer_login,
         "authenticated_reviewer_id": reviewer_id,
         "approval_verified": True,
