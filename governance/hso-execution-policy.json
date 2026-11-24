@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0.0",
+  "default_decision": "DENY",
+  "authority_order": [
+    "S0",
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5"
+  ],
+  "approval_contract": {
+    "type": "HMAC_SHA256_SCOPED_RECEIPT",
+    "secret_environment_variable": "HSO_APPROVAL_HMAC_KEY",
+    "requirements": [
+      "case_id",
+      "action_id",
+      "target_path",
+      "authority",
+      "approver",
+      "issued_at",
+      "expires_at",
+      "nonce",
+      "host",
+      "mcp_server_label",
+      "mcp_tool_name",
+      "mcp_server_url_sha256",
+      "tool_arguments_sha256",
+      "plugin_source_commit",
+      "skill_sha256",
+      "signature",
+      "workflow_run_id",
+      "workflow_run_attempt"
+    ],
+    "fail_closed": true
+  },
+  "actions": {
+    "sandbox.write_text": {
+      "adapter_id": "builtin.python.sandbox",
+      "minimum_authority": "S3",
+      "allowed_environments": [
+        "SANDBOX"
+      ],
+      "approval_required": false,
+      "idempotent": true,
+      "max_attempts": 3,
+      "test_only": false,
+      "side_effect_class": "EPHEMERAL_SANDBOX_ONLY",
+      "overwrite": false
+    },
+    "sandbox.verify_sha256": {
+      "adapter_id": "builtin.python.verifier",
+      "minimum_authority": "S0",
+      "allowed_environments": [
+        "SANDBOX"
+      ],
+      "approval_required": false,
+      "idempotent": true,
+      "max_attempts": 1,
+      "test_only": false,
+      "side_effect_class": "READ_ONLY"
+    },
+    "test.flaky_write_text": {
+      "adapter_id": "builtin.python.test-fault-injector",
+      "minimum_authority": "S3",
+      "allowed_environments": [
+        "SANDBOX"
+      ],
+      "approval_required": false,
+      "idempotent": true,
+      "max_attempts": 3,
+      "test_only": true,
+      "side_effect_class": "TEST_FIXTURE_ONLY",
+      "overwrite": false
+    },
+    "plugin.skill.invoke.remote-mcp.skill-analyzer": {
+      "adapter_id": "builtin.openai.responses-remote-mcp",
+      "minimum_authority": "S4",
+      "allowed_environments": [
+        "SANDBOX"
+      ],
+      "approval_required": true,
+      "idempotent": false,
+      "max_attempts": 1,
+      "test_only": false,
+      "side_effect_class": "BILLABLE_MODEL_INFERENCE_READ_ONLY_DATA_SCOPE",
+      "outcome_unknown_on_failure": true,
+      "verify_digest_from_action_result": true,
+      "overwrite": false
+    }
+  },
+  "non_implemented_scopes": {
+    "CHILD_REPOSITORY_CHANGE": "NOT_REGISTERED",
+    "EXTERNAL_SIDE_EFFECT": "NOT_REGISTERED",
+    "STAGING_RELEASE": "NOT_REGISTERED",
+    "PRODUCTION_RELEASE": "NOT_REGISTERED",
+    "PLUGIN_SKILL_INVOCATION": "ONLY_ONE_PINNED_SKILL_ANALYZER_REMOTE_MCP_TOOL_REGISTERED; GENERIC_PLUGIN_HOST_BRIDGE_NOT_CONFIGURED",
+    "REMOTE_MCP": "ONLY_ONE_SKILL_ANALYZER_MCP_TOOL_ISOLATED_BY_EXACT_ALLOWLIST; PUBLIC_ENDPOINT_AND_CREDENTIALS_MUST_BE_PROVISIONED_AND_VERIFIED",
+    "HTTP_API": "NO_HSO_HTTP_API_ADAPTER_REGISTERED"
+  }
+}

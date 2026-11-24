@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "case_id": "HSO-PLAN-EXAMPLE-001",
+  "intent": "Prepare an evidence-led plugin ecosystem change plan.",
+  "action_authority": "S2",
+  "dispatch_requested": false,
+  "work_packages": [
+    {
+      "package_id": "WP-01-AUDIT",
+      "primary_owner": "skill-analyzer",
+      "supporting_specialists": ["asfree-canonical"],
+      "depends_on": [],
+      "capability_status": "READY_WITH_LIMITATIONS",
+      "capability_evidence": "Installed skill procedures are available in this ChatGPT session; separate autonomous invocation is not established.",
+      "write_scope": "READ_ONLY",
+      "requires_approval": false,
+      "approval_status": "NOT_REQUIRED",
+      "approval_reference": null,
+      "expected_output": "Evidence-backed analysis dossier",
+      "acceptance_criteria": [
+        "Claims are separated from assumptions and hypotheses.",
+        "Material findings have traceable repository or Notion evidence."
+      ]
+    },
+    {
+      "package_id": "WP-02-DESIGN",
+      "primary_owner": "anatomi-prompt-v3-octa-prompt",
+      "supporting_specialists": ["workflow-systems-orchestrator"],
+      "depends_on": ["WP-01-AUDIT"],
+      "capability_status": "NOT_CHECKED",
+      "capability_evidence": null,
+      "write_scope": "READ_ONLY",
+      "requires_approval": false,
+      "approval_status": "NOT_REQUIRED",
+      "approval_reference": null,
+      "expected_output": "Eight-pillar architecture and workflow specification",
+      "acceptance_criteria": [
+        "All eight pillars are represented in canonical order.",
+        "Each work package has one primary decision owner."
+      ]
+    },
+    {
+      "package_id": "WP-03-IMPLEMENT",
+      "primary_owner": "skill-developer-orchestrator",
+      "supporting_specialists": ["evaluator-team"],
+      "depends_on": ["WP-02-DESIGN"],
+      "capability_status": "NOT_CHECKED",
+      "capability_evidence": null,
+      "write_scope": "PARENT_REPOSITORY_BRANCH_WRITE",
+      "requires_approval": false,
+      "approval_status": "NOT_REQUIRED",
+      "approval_reference": null,
+      "expected_output": "Branch-based implementation with regression evidence",
+      "acceptance_criteria": [
+        "Only files mapped to accepted requirements are changed.",
+        "The branch is read back and CI is evaluated on the exact head SHA."
+      ]
+    }
+  ]
+}

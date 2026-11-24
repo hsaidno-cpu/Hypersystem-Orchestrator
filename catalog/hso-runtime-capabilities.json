@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0.0",
+  "registry_status": "CONTROLLED_BUILTIN_AND_ONE_REMOTE_MCP_HOST_SKILL_CAPABILITY",
+  "capabilities": [
+    {
+      "capability_id": "sandbox.write_text",
+      "adapter_id": "builtin.python.sandbox",
+      "handler": "write_text",
+      "enabled": true,
+      "test_only": false,
+      "scope": "ephemeral_workspace_file",
+      "description": "Create a new UTF-8 file in an isolated workspace; never overwrite different content."
+    },
+    {
+      "capability_id": "sandbox.verify_sha256",
+      "adapter_id": "builtin.python.verifier",
+      "handler": "verify_sha256",
+      "enabled": true,
+      "test_only": false,
+      "scope": "ephemeral_workspace_read",
+      "description": "Read an actual sandbox target and verify its SHA-256 digest."
+    },
+    {
+      "capability_id": "test.flaky_write_text",
+      "adapter_id": "builtin.python.test-fault-injector",
+      "handler": "flaky_write_text",
+      "enabled": true,
+      "test_only": true,
+      "scope": "test_workspace_only",
+      "description": "CI-only fault injector that fails once before mutation, then delegates to the idempotent sandbox writer."
+    },
+    {
+      "capability_id": "plugin.skill.invoke.remote-mcp.skill-analyzer",
+      "adapter_id": "builtin.openai.responses-remote-mcp",
+      "handler": "remote_mcp_skill_invoke",
+      "enabled": true,
+      "test_only": false,
+      "scope": "single_tool_read_only_analysis_over_remote_mcp_streamable_http",
+      "accepted_probe_statuses": [
+        "READY_WITH_LIMITATIONS"
+      ],
+      "plugin_id": "plugins_6ae2a122f5c881919193c9b0ba51961e",
+      "plugin_key": "skill-analyzer",
+      "source_repository": "hsaidno-cpu/skill-analyzer",
+      "source_version": "1.3.0",
+      "source_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
+      "remote_mcp_server_label": "skill_analyzer_internal",
+      "remote_mcp_tool_name": "invoke_skill_analyzer",
+      "allowed_tools": [
+        "invoke_skill_analyzer"
+      ],
+      "transport": "STREAMABLE_HTTP",
+      "approval_policy": "ALWAYS",
+      "description": "Exactly one scoped SKILL ANALYZER invocation through OpenAI Responses API and its canonical Remote MCP gateway. Probe validates HTTPS, OIDC client-credentials token, Streamable HTTP handshake and tool discovery without inference; model/API entitlement is tested only on the explicitly approved live invocation."
+    }
+  ]
+}

@@ -173,7 +173,7 @@ def validate():
 
     snapshot_index = load_json(ROOT / "catalog" / "instruction-snapshots.json")
     if len(snapshot_index.get("plugins", [])) != len(plugins):
-        fail("Instruction snapshot index must contain all 20 plugin identities")
+        fail("Instruction snapshot index must contain all registered plugin identities")
     if snapshot_index.get("total_skill_records") != sum(p["instruction_skill_count"] for p in plugins):
         fail("Instruction snapshot skill total does not match the plugin catalog")
     index_by_key = {p["plugin_key"]: p for p in snapshot_index["plugins"]}
@@ -217,8 +217,8 @@ def validate():
             fail(f"Compatibility edge {edge['integration_id']}: CONTRACT_TESTED requires C2 and C3 PASS")
         if edge["status"] == "CONTRACT_TESTED" and (edge["host_activation_test"] != "NOT_RUN" or edge["runtime_execution_test"] != "NOT_RUN"):
             fail(f"Compatibility edge {edge['integration_id']}: C4/C5 must remain independent from C2/C3")
-    if len(integration_edges) != 14:
-        fail("Expected 14 defined compatibility edges for the current matrix")
+    if len(integration_edges) != 15:
+        fail("Expected 15 defined compatibility edges for the current matrix")
     print(f"PASS: {len(integration_edges)} cross-plugin compatibility edges with explicit ownership and test states")
     print("NOTE: static checks do not prove host activation or runtime execution")
 
