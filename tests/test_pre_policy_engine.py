@@ -132,7 +132,7 @@ class PREPolicyEngineTests(unittest.TestCase):
         self.assertEqual(result["decision"], "DENY")
         self.assertIn("APPROVAL_SIGNATURE_INVALID", result["reasons"])
 
-    def test_valid_approval_is_single_use(self):
+    def test_approval_nonce_retry_is_idempotent_for_same_request_but_replay_is_denied(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
         req["approvals"] = [signed_approval(req)]
         with tempfile.TemporaryDirectory() as folder:
@@ -140,12 +140,26 @@ class PREPolicyEngineTests(unittest.TestCase):
             first = evaluate_transition(
                 req, POLICY, approval_secret=SECRET, nonce_store=store, now=NOW,
             )
-            second = evaluate_transition(
+            retry = evaluate_transition(
                 req, POLICY, approval_secret=SECRET, nonce_store=store, now=NOW,
             )
+            replay = dict(req)
+            replay["request_id"] = "PRE-REQ-DIFFERENT"
+            replayed = evaluate_transition(
+                replay, POLICY, approval_secret=SECRET, nonce_store=store, now=NOW,
+            )
         self.assertEqual(first["decision"], "ALLOW")
-        self.assertEqual(second["decision"], "DENY")
-        self.assertTrue(any("nonce replay" in reason.lower() for reason in second["reasons"]))
+        self.assertEqual(retry["decision"], "ALLOW")
+        self.assertEqual(retry["evaluation_digest"], first["evaluation_digest"])
+        self.assertEqual(replayed["decision"], "DENY")
+        self.assertTrue(any("nonce replay" in reason.lower() for reason in replayed["reasons"]))
+
+    def test_approval_receipt_without_signing_key_holds_instead_of_false_denial(self):
+        req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
+        req["approvals"] = [signed_approval(req)]
+        result = evaluate_transition(req, POLICY, now=NOW)
+        self.assertEqual(result["decision"], "HOLD")
+        self.assertIn("APPROVAL_SIGNING_KEY_NOT_CONFIGURED", result["blockers"])
 
     def test_required_approval_without_nonce_store_holds(self):
         req = request("R2", "R3", ["ROADMAP_PLAN", "DEPENDENCY_GRAPH"])
