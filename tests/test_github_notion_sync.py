@@ -2,7 +2,7 @@ import unittest
 from datetime import date
 import json
 import urllib.error
-from tools.github_notion_sync import SyncError, build_event_record, upsert_record, stale_sweep
+from tools.github_notion_sync import SyncError, build_event_record, digest_record, upsert_record, stale_sweep
 
 CONFIG = {
     "repository": "hsaidno-cpu/Hypersystem-Orchestrator",
@@ -113,6 +113,13 @@ class GitHubNotionSyncTests(unittest.TestCase):
         self.assertEqual(record["evidence_type"], "Commit")
         self.assertEqual(record["evidence_state"], "UNKNOWN")
         self.assertIn("not a successful test", record["limitation"])
+
+    def test_source_digest_ignores_observation_timestamps_on_replay(self):
+        first = build_event_record("pull_request", sample_pr(), CONFIG, today=date(2026, 11, 24))
+        replay = build_event_record("pull_request", sample_pr(), CONFIG, today=date(2026, 11, 25))
+        self.assertNotEqual(first["observed_at"], replay["observed_at"])
+        self.assertNotEqual(first["verified_at"], replay["verified_at"])
+        self.assertEqual(digest_record(first), digest_record(replay))
 
     def test_upsert_create_then_noop(self):
         client = FakeNotion()
