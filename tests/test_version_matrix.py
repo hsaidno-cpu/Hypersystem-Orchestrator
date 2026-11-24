@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.render_package_version_matrix import render
+from tools.validate_catalog import git_blob_sha
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -34,6 +35,26 @@ class PackageVersionMatrixTests(unittest.TestCase):
         analyzer = by_key["skill-analyzer"]
         self.assertNotEqual(analyzer["repository_version"], analyzer["platform_package_version"])
         self.assertEqual(analyzer["source_instruction_parity_status"], "DRIFT_DETECTED")
+
+    def test_git_blob_sha_matches_git_object_format(self):
+        self.assertEqual(
+            git_blob_sha(b"test\\n"),
+            "9daeafb9864cf43055ae93beb0afd6c7d144bfa4",
+        )
+
+    def test_source_manifest_verification_mode_is_explicit(self):
+        integrated = [
+            r for r in self.repositories["repositories"]
+            if r.get("status") in {"integrated_submodule", "integrated_submodule_private"}
+        ]
+        self.assertEqual(
+            sum(r.get("source_manifest_verification_mode") == "CI_RAW_CONTENT_GIT_BLOB" for r in integrated),
+            4,
+        )
+        self.assertEqual(
+            sum(r.get("source_manifest_verification_mode") == "PRIVATE_MANUAL_READBACK_ONLY" for r in integrated),
+            1,
+        )
 
     def test_current_source_manifest_evidence_covers_all_integrated_sources(self):
         source_records = [
