@@ -241,6 +241,10 @@ class PREPolicyEngineTests(unittest.TestCase):
             )
             replay = dict(req)
             replay["request_id"] = "PRE-REQ-DIFFERENT"
+            # Re-sign the changed request using the same nonce. This passes
+            # request-digest binding but must still be rejected by the nonce
+            # store because this nonce was already consumed by another request.
+            replay["approvals"] = [signed_approval(replay)]
             replayed = evaluate_transition(
                 replay, POLICY, approval_public_key=APPROVAL_PUBLIC,
                 evidence_public_key=EVIDENCE_PUBLIC, nonce_store=store, now=NOW,
