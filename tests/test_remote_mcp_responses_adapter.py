@@ -1,15 +1,19 @@
 """Contract and safety tests for the single OpenAI Responses API / Remote MCP P0 adapter."""
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from tools import remote_mcp_responses_adapter as adapter
+
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "examples" / "hso-p0-skill-invocation-request.json"
@@ -56,7 +60,11 @@ class RemoteMCPAdapterTests(unittest.TestCase):
             "tool_arguments_sha256": adapter.sha256_json(self.arguments),
             "plugin_source_commit": adapter.SOURCE_PIN,
             "skill_sha256": SKILL_HASH,
-            "approver": "hsaidno-cpu",
+            "approver": "independent-security-reviewer",
+            "environment_reviewer_id": 424242,
+            "workflow_actor": "hsaidno-cpu",
+            "environment": "hso-p0-remote-mcp-live",
+            "approval_source": "github_actions_workflow_run_approvals_api",
             "nonce": "single-use-test-nonce",
         }
         self.context = {
@@ -65,7 +73,20 @@ class RemoteMCPAdapterTests(unittest.TestCase):
             "approval_receipt": self.approval,
             "approval_verified": True,
         }
+        private_key = Ed25519PrivateKey.generate()
+        private_raw = private_key.private_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PrivateFormat.Raw,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+        public_raw = private_key.public_key().public_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PublicFormat.Raw,
+        )
         self.env = {
+            "HSO_P0_RECEIPT_ED25519_PRIVATE_KEY_B64": base64.b64encode(private_raw).decode("ascii"),
+            "HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64": base64.b64encode(public_raw).decode("ascii"),
+            "HSO_P0_RECEIPT_ED25519_KEY_ID": "test-ed25519-key",
             "OPENAI_API_KEY": "test-openai-key-not-real",
             "MCP_SERVER_URL": SERVER_URL,
             "MCP_OIDC_TOKEN_URL": TOKEN_URL,
@@ -197,6 +218,14 @@ class RemoteMCPAdapterTests(unittest.TestCase):
         self.assertEqual(receipt["host_session"]["mcp_call_id"], "mcp-call-001")
         self.assertEqual(receipt["remote_mcp"]["allowed_tools"], [adapter.TOOL_NAME])
         self.assertTrue(receipt["verification"]["mcp_call_completed"])
+        signature = receipt.pop("signature")
+        self.assertEqual(signature["algorithm"], "Ed25519")
+        public_raw = base64.b64decode(self.env["HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64"])
+        Ed25519PublicKey.from_public_bytes(public_raw).verify(
+            base64.b64decode(signature["signature_base64"]),
+            adapter.canonical_json(receipt).encode("utf-8"),
+        )
+        self.assertEqual(receipt["approval"]["approver"], "independent-security-reviewer")
         self.assertEqual(receipt["verification"]["remote_source_attestation"], "NOT_EXPOSED_BY_CURRENT_GATEWAY")
 
     def test_invoke_rejects_altered_approval_arguments_before_approval_response(self):
@@ -271,6 +300,58 @@ class RemoteMCPAdapterTests(unittest.TestCase):
         self.assertEqual(payload["grant_type"], "client_credentials")
         self.assertEqual(payload["scope"], "analyzer:invoke")
         self.assertEqual(payload["audience"], SERVER_URL)
+
+
+    def test_approval_binding_rejects_workflow_actor_as_environment_reviewer(self):
+        approval = dict(self.approval, approver="hsaidno-cpu")
+        with self.assertRaisesRegex(adapter.RemoteMCPError, "independent authenticated Environment reviewer"):
+            adapter._validate_approval_binding(
+                approval, server_url=SERVER_URL, arguments=self.arguments, source_commit=adapter.SOURCE_PIN
+            )
+
+    def test_dns_resolution_returns_only_public_addresses(self):
+        answer = (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443))
+        with patch.object(adapter.socket, "getaddrinfo", return_value=[answer]) as resolver:
+            self.assertEqual(adapter._resolve_public_addresses("gateway.example.com"), ["93.184.216.34"])
+        resolver.assert_called_once_with("gateway.example.com", 443, type=socket.SOCK_STREAM)
+        private_answer = (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("127.0.0.1", 443))
+        with patch.object(adapter.socket, "getaddrinfo", return_value=[private_answer]):
+            with self.assertRaisesRegex(adapter.RemoteMCPError, "non-public"):
+                adapter._resolve_public_addresses("gateway.example.com")
+
+    def test_pinned_https_socket_uses_ip_but_preserves_tls_hostname(self):
+        raw = MagicMock()
+        wrapped = MagicMock()
+        context = MagicMock()
+        context.wrap_socket.return_value = wrapped
+        conn = adapter._PinnedHTTPSConnection("gateway.example.com", "93.184.216.34", 443, 5)
+        conn._context = context
+        with patch.object(adapter.socket, "socket", return_value=raw) as socket_factory:
+            conn.connect()
+        socket_factory.assert_called_once_with(adapter.socket.AF_INET, adapter.socket.SOCK_STREAM)
+        raw.connect.assert_called_once_with(("93.184.216.34", 443))
+        context.wrap_socket.assert_called_once_with(raw, server_hostname="gateway.example.com")
+        conn.close()
+
+    def test_http_json_pins_the_actual_connection_and_rejects_redirects(self):
+        connection = MagicMock()
+        response = MagicMock()
+        response.status = 200
+        response.read.return_value = b'{"ok":true}'
+        response.getheaders.return_value = [("Content-Type", "application/json")]
+        connection.getresponse.return_value = response
+        with patch.object(adapter, "_resolve_public_addresses", return_value=["93.184.216.34"]), \
+             patch.object(adapter, "_PinnedHTTPSConnection", return_value=connection) as pinned:
+            result, headers, status = adapter._http_json("https://gateway.example.com/mcp", {}, {})
+        pinned.assert_called_once_with("gateway.example.com", "93.184.216.34", 443, adapter.HTTP_TIMEOUT_SECONDS)
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["content-type"], "application/json")
+        response.status = 302
+        with patch.object(adapter, "_resolve_public_addresses", return_value=["93.184.216.34"]), \
+             patch.object(adapter, "_PinnedHTTPSConnection", return_value=connection):
+            with self.assertRaisesRegex(adapter.RemoteMCPError, "redirects are prohibited"):
+                adapter._http_json("https://gateway.example.com/mcp", {}, {})
 
     def test_invalid_approval_binding_is_rejected(self):
         context = dict(self.context)
