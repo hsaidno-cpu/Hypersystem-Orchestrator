@@ -1,0 +1,57 @@
+name: PRE R0-R9 transition queue worker
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hso-pre-transition-queue-worker
+  cancel-in-progress: false
+
+jobs:
+  evaluate-pending:
+    if: vars.HSO_PRE_ENFORCEMENT_ENABLED == 'true'
+    runs-on: [self-hosted, linux, x64, hso-pre-enforcement]
+    timeout-minutes: 10
+    environment: hso-pre-runtime
+    steps:
+      - name: Check out the trusted default branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+          submodules: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Evaluate pending PRE transition requests
+        env:
+          HSO_PRE_NOTION_API_KEY: ${{ secrets.HSO_PRE_NOTION_API_KEY }}
+          HSO_PRE_APPROVAL_HMAC_KEY: ${{ secrets.HSO_PRE_APPROVAL_HMAC_KEY }}
+          HSO_PRE_NOTION_DATA_SOURCE_ID: ${{ vars.HSO_PRE_NOTION_DATA_SOURCE_ID }}
+          HSO_PRE_NONCE_STORE_PATH: ${{ vars.HSO_PRE_NONCE_STORE_PATH }}
+        run: |
+          set -euo pipefail
+          test -n "${HSO_PRE_NOTION_API_KEY}"
+          test -n "${HSO_PRE_NOTION_DATA_SOURCE_ID}"
+          test -n "${HSO_PRE_NONCE_STORE_PATH}"
+          mkdir -p "$(dirname "${HSO_PRE_NONCE_STORE_PATH}")"
+          python tools/pre_transition_worker.py \
+            --nonce-store "${HSO_PRE_NONCE_STORE_PATH}" \
+            | tee /tmp/pre-transition-worker-receipt.json
+
+      - name: Preserve worker receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pre-transition-worker-${{ github.run_id }}
+          path: /tmp/pre-transition-worker-receipt.json
+          if-no-files-found: warn
+          retention-days: 30
