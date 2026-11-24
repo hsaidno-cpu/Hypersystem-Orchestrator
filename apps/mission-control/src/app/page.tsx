@@ -136,12 +136,17 @@ export default async function Home() {
         <div><h4>Expected outcome</h4><p>{primary.expected_outcome??"Kriteria penerimaan belum dicatat pada sumber roadmap."}</p><h4>Priority breakdown</h4><div className="score-breakdown">{Object.entries(primary.score_breakdown??{}).map(([key,value]:[string,any])=><div key={key}><span>{key.replaceAll("_"," ")}</span><strong>{value.value} × {Math.round(value.weight*100)}%</strong></div>)}</div></div>
       </div>
       {latestPrompt?.prompt_text?<PromptPanel text={latestPrompt.prompt_text} taskId={String(latestPrompt.task_key??primary.task_id)}/>:<div className="empty">Prompt belum dibuat untuk decision run ini. Jalankan REFRESH & RECOMPUTE setelah integrasi dan hard gates tersedia.</div>}
+      <div className="two-col followup-actions">
+        <div><h4>Supporting actions</h4>{(latest?.supporting_actions??[]).length?<ul>{latest.supporting_actions.map((x:Row,i:number)=><li key={i}><strong>{x.task_id}</strong> · {x.title} <span className="muted">score {Number(x.score).toFixed(1)}</span></li>)}</ul>:<div className="empty">Tidak ada supporting action yang lolos gate.</div>}</div>
+        <div><h4>Blocked actions & dependency gaps</h4>{(latest?.blocked_actions??[]).length?<ul>{latest.blocked_actions.slice(0,8).map((x:Row,i:number)=><li key={i}><strong>{x.task_id}</strong> · {x.reasons.join(", ")}</li>)}</ul>:<div className="empty">Tidak ada blocked action yang tercatat.</div>}</div>
+      </div>
     </section>:<section className="panel no-action">
       <div className="action-kicker">NO ELIGIBLE ACTION</div>
       <h2>Belum ada pekerjaan yang aman direkomendasikan.</h2>
       <p>Engine tidak akan memilih pekerjaan hanya karena terlihat mendesak. Periksa sumber kedaluwarsa, bukti, dependency ID, commit, CI, approval, dan input bobot prioritas yang belum lengkap.</p>
       <div className="source-alerts">{sourceMissing.slice(0,5).map(([key,value])=><div key={key}><strong>{key}</strong><Pill value={(value as Row)?.status}/><span>{(value as Row)?.last_error??"Freshness SLA tidak terpenuhi."}</span></div>)}</div>
       <div className="blocked-summary"><strong>{(latest?.blocked_actions??[]).length} pekerjaan terblokir oleh hard gate</strong><strong>{(latest?.pending_decisions??[]).length} keputusan menunggu manusia</strong></div>
+      {(latest?.blocked_actions??[]).length?<ul className="compact-list">{latest.blocked_actions.slice(0,12).map((x:Row,i:number)=><li key={i}><strong>{x.task_id} · {x.title}</strong><div className="microcopy">{x.reasons.join(" · ")}</div></li>)}</ul>:null}
       <p className="muted">Decision state: {latest?.decision_state??"BELUM DIHITUNG"} · {dateLabel(latest?.computed_at)}</p>
     </section>}
 
@@ -159,11 +164,11 @@ export default async function Home() {
     </section>
 
     <div className="section-title"><h2>Workflow Execution Tracker</h2><span>{items.length} latest work items</span></div>
-    <section className="panel table-wrap"><table><thead><tr><th>Task ID / Work item</th><th>Status</th><th>Verification</th><th>Gate</th><th>Priority</th><th>Milestone / Stage</th><th>Dependencies</th><th>Source</th></tr></thead>
+    <section className="panel table-wrap"><table><thead><tr><th>Task ID / Work item</th><th>Status</th><th>Verification</th><th>Gate</th><th>Priority</th><th>Scope weight</th><th>Approval</th><th>Milestone / Stage</th><th>Dependencies</th><th>Source</th></tr></thead>
       <tbody>{items.map(item=><tr key={item.id}>
         <td><Link href={"/tasks/"+item.id}>{item.item_key?"HSO-"+String(item.item_key).padStart(3,"0"):item.id.slice(0,8)} · {item.title}</Link><div className="microcopy">{item.accountable_role??item.project_area??"Owner/source role in Notion"}</div></td>
         <td><Pill value={item.execution_state}/></td><td><Pill value={verifiedIds.has(item.id)?"VERIFIED":item.verification_state??"NOT_VERIFIED"}/></td>
-        <td><Pill value={item.gate_state}/></td><td><Pill value={item.priority}/></td><td>{item.parent_milestone_id?"Milestone "+item.parent_milestone_id:item.ecosystem_stage??"Unassigned"}</td>
+        <td><Pill value={item.gate_state}/></td><td><Pill value={item.priority}/></td><td>{item.scope_weight??"Unweighted"}</td><td><Pill value={item.approval_state??"UNSET"}/></td><td>{item.parent_milestone_id?"Milestone "+item.parent_milestone_id:item.ecosystem_stage??"Unassigned"}</td>
         <td>{(item.dependency_work_item_ids??[]).length?item.dependency_work_item_ids.join(", "):item.dependencies?"Narrative dependency; ID mapping required":"—"}</td>
         <td>{item.source_url?<a href={item.source_url} target="_blank" rel="noreferrer">Notion ↗</a>:"Not available"}</td>
       </tr>)}</tbody></table>
