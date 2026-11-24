@@ -125,8 +125,8 @@
     "require_independent_verifier": true,
     "sha256_pattern": "^[a-fA-F0-9]{64}$",
     "attestation": {
-      "algorithm": "HMAC-SHA256",
-      "key_environment_variable": "HSO_EVIDENCE_ENVELOPE_HMAC_KEY",
+      "algorithm": "Ed25519",
+      "public_key_environment_variable": "HSO_EVIDENCE_ISSUER_PUBLIC_KEY",
       "allowed_issuers": [
         "hso-evidence-issuer"
       ],
@@ -144,8 +144,8 @@
     }
   },
   "approval": {
-    "algorithm": "HMAC-SHA256",
-    "key_environment_variable": "HSO_PRE_APPROVAL_HMAC_KEY",
+    "algorithm": "Ed25519",
+    "public_key_environment_variable": "HSO_PRE_APPROVAL_PUBLIC_KEY",
     "max_validity_seconds": 900,
     "allowed_issuers": [
       "hso-approval-issuer"
