@@ -82,6 +82,15 @@ def put_and_readback(bucket: str, key: str, body: Path, digest: str, retention_d
     )
     if head.get("ObjectLockMode") != "COMPLIANCE":
         raise RuntimeError("S3 read-back does not confirm COMPLIANCE retention mode")
+    actual_retain_until = head.get("ObjectLockRetainUntilDate")
+    if not actual_retain_until:
+        raise RuntimeError("S3 read-back does not expose the COMPLIANCE retain-until timestamp")
+    try:
+        actual_retention = datetime.fromisoformat(str(actual_retain_until).replace("Z", "+00:00"))
+    except ValueError:
+        raise RuntimeError("S3 returned an invalid retain-until timestamp") from None
+    if actual_retention.tzinfo is None or actual_retention < retain_until:
+        raise RuntimeError("S3 COMPLIANCE retention is shorter than the requested policy")
     if (head.get("Metadata") or {}).get("hso-sha256") != digest:
         raise RuntimeError("S3 read-back metadata digest mismatch")
     if int(head.get("ContentLength", -1)) != body.stat().st_size:
