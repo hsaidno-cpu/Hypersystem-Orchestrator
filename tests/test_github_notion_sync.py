@@ -1,5 +1,7 @@
 import unittest
 from datetime import date
+import json
+import urllib.error
 from tools.github_notion_sync import SyncError, build_event_record, upsert_record, stale_sweep
 
 CONFIG = {
@@ -19,7 +21,7 @@ class FakeNotion:
     def query_by_locator(self, locator):
         return [row for row in self.rows if row["properties"]["Source Locator"]["url"] == locator]
 
-    def create_page(self, properties):
+    def create_page(self, properties, source_locator):
         self.created += 1
         row = {"id": f"page-{self.created}", "properties": properties}
         self.rows.append(row)
@@ -65,6 +67,12 @@ class GitHubNotionSyncTests(unittest.TestCase):
         event = sample_pr()
         event["pull_request"]["head"]["repo"]["full_name"] = "external/fork"
         self.assertIsNone(build_event_record("pull_request", event, CONFIG))
+        self.assertIsNone(build_event_record("pull_request_target", event, CONFIG))
+
+    def test_pull_request_target_event_is_normalized(self):
+        record = build_event_record("pull_request_target", sample_pr(), CONFIG)
+        self.assertEqual(record["evidence_type"], "Pull Request")
+        self.assertEqual(record["evidence_state"], "UNKNOWN")
 
     def test_workflow_failure_maps_to_fail_without_gate_claim(self):
         event = {"workflow_run": {
@@ -115,6 +123,34 @@ class GitHubNotionSyncTests(unittest.TestCase):
         self.assertEqual(result["operation"], "UPDATED")
         self.assertEqual(client.created, 1)
         self.assertEqual(client.updated, 1)
+
+    def test_page_create_does_not_blindly_retry_ambiguous_post(self):
+        class FakeResponse:
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self):
+                return json.dumps({"results": [], "has_more": False}).encode("utf-8")
+
+        class FailingCreateOpener:
+            def __init__(self):
+                self.calls = []
+            def __call__(self, request, timeout=20):
+                self.calls.append(request.full_url)
+                if request.full_url.endswith("/pages"):
+                    raise urllib.error.URLError("connection reset after request")
+                return FakeResponse()
+
+        opener = FailingCreateOpener()
+        from tools.github_notion_sync import NotionClient
+        client = NotionClient("not-a-real-token", "42299868-397f-817c-bb25-000b49b243fa",
+                              opener=opener, sleeper=lambda delay: None)
+        locator = "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/15"
+        with self.assertRaisesRegex(SyncError, "outcome is ambiguous"):
+            client.create_page({"Source Locator": {"url": locator}}, locator)
+        self.assertEqual(sum(url.endswith("/pages") for url in opener.calls), 1)
+        self.assertEqual(sum("/data_sources/" in url for url in opener.calls), 1)
 
     def test_duplicate_locator_fails_closed(self):
         client = FakeNotion()
