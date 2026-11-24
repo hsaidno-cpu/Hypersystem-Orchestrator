@@ -63,7 +63,7 @@ export default async function Home() {
   const {data:member}=await supabase.from("hso_members").select("role,active").eq("user_id",userData.user.id).maybeSingle();
   if (!member?.active) return <main className="auth-wrap"><section className="panel auth-card"><div className="eyebrow">Access control</div><h1>Akses belum diberikan.</h1><p className="subtitle">Akun telah terautentikasi, tetapi belum menjadi anggota aktif HSO. Admin perlu mengizinkan user ID di public.hso_members.</p><form action="/api/logout" method="post"><button className="button secondary">Keluar</button></form></section></main>;
 
-  const [sourcesQ,runsQ,itemsQ,execQ,evidenceQ,decisionQ,globalProgressQ,milestoneQ,trendQ,issuesQ,changesQ,historyQ,verifiedQ,criteriaQ]=await Promise.all([
+  const [sourcesQ,runsQ,itemsQ,execQ,evidenceQ,decisionQ,globalProgressQ,milestoneQ,trendQ,issuesQ,changesQ,historyQ,verifiedQ,criteriaQ,workItemCountQ,activeCountQ,verifiedCountQ,blockerCountQ,criticalCountQ,pendingApprovalCountQ]=await Promise.all([
     supabase.from("hso_sources").select("source_key,display_name,authority_role,status,last_event_at,last_sync_at,last_success_at,freshness_seconds,last_error").order("display_name"),
     supabase.from("hso_sync_runs").select("id,status,trigger_kind,started_at,finished_at,records_seen,records_upserted,error_summary,source_results").order("started_at",{ascending:false}).limit(8),
     supabase.from("hso_work_items").select("id,item_key,title,record_type,project_area,accountable_role,ecosystem_stage,milestone_key,parent_milestone_id,execution_state,verification_state,gate_state,priority,pre_stage,next_action,blocker,dependencies,dependency_work_item_ids,source_url,source_updated_at,scope_weight,weight_rationale,estimated_effort_hours,approval_state,requires_human_approval,security_disposition,execution_risk,change_surface,execution_target,target_branch,head_commit_sha,reviewed_commit_sha,ci_commit_sha,pr_url,ci_run_url,acceptance_criteria,source_verified_at,observed_at").eq("record_type","Work Item").order("observed_at",{ascending:false}).limit(100),
@@ -72,25 +72,36 @@ export default async function Home() {
     supabase.from("hso_decision_runs").select("id,engine_version,policy_version,decision_state,source_health,primary_action,supporting_actions,blocked_actions,pending_decisions,ranking_snapshot,completion_gap,prompt_artifact_id,computed_at").order("computed_at",{ascending:false}).limit(1).maybeSingle(),
     supabase.from("hso_progress_snapshots").select("*").is("milestone_key",null).order("computed_at",{ascending:false}).limit(1).maybeSingle(),
     supabase.from("hso_progress_snapshots").select("*").not("milestone_key","is",null).order("computed_at",{ascending:false}).limit(30),
-    supabase.from("hso_progress_snapshots").select("id,milestone_key,weighted_progress_pct,weight_coverage_pct,measurement_state,computed_at").is("milestone_key",null).order("computed_at",{ascending:true}).limit(30),
+    supabase.from("hso_progress_snapshots").select("id,milestone_key,weighted_progress_pct,weight_coverage_pct,measurement_state,computed_at").is("milestone_key",null).order("computed_at",{ascending:false}).limit(30),
     supabase.from("hso_issue_records").select("*").eq("verification_state","OPEN").order("detected_at",{ascending:false}).limit(40),
     supabase.from("hso_change_events").select("*").order("event_at",{ascending:false}).limit(12),
     supabase.from("hso_work_item_history").select("id,work_item_id,from_execution_state,to_execution_state,from_gate_state,to_gate_state,changed_at,changed_fields,source_url").order("changed_at",{ascending:false}).limit(20),
     supabase.from("hso_verified_work_items_v").select("id,verified_completion"),
-    supabase.from("hso_completion_criteria").select("id,criterion_key,title,state,required,scope_weight,last_evaluated_at").eq("project_key","hso").eq("required",true).order("criterion_key")
+    supabase.from("hso_completion_criteria").select("id,criterion_key,title,state,required,scope_weight,last_evaluated_at").eq("project_key","hso").eq("required",true).order("criterion_key"),
+    supabase.from("hso_work_items").select("id",{count:"exact",head:true}).eq("record_type","Work Item"),
+    supabase.from("hso_work_items").select("id",{count:"exact",head:true}).eq("record_type","Work Item").eq("execution_state","In progress"),
+    supabase.from("hso_verified_work_items_v").select("id",{count:"exact",head:true}).eq("verified_completion",true),
+    supabase.from("hso_issue_records").select("id",{count:"exact",head:true}).eq("verification_state","OPEN"),
+    supabase.from("hso_issue_records").select("id",{count:"exact",head:true}).eq("verification_state","OPEN").eq("severity","CRITICAL"),
+    supabase.from("hso_work_items").select("id",{count:"exact",head:true}).eq("record_type","Work Item").or("approval_state.eq.PENDING,and(requires_human_approval.eq.true,approval_state.neq.APPROVED)")
   ]);
   const sources=(sourcesQ.data??[]) as Row[],runs=(runsQ.data??[]) as Row[],items=(itemsQ.data??[]) as Row[];
   const executions=(execQ.data??[]) as Row[],evidence=(evidenceQ.data??[]) as Row[];
   const decision=decisionQ.data as Row|null,globalProgress=globalProgressQ.data as Row|null;
-  const milestones=(milestoneQ.data??[]) as Row[],trend=(trendQ.data??[]) as Row[];
+  const milestoneRaw=(milestoneQ.data??[]) as Row[];
+  const milestoneMap=new Map<string,Row>();
+  for(const row of milestoneRaw) if(row.milestone_key && !milestoneMap.has(String(row.milestone_key))) milestoneMap.set(String(row.milestone_key),row);
+  const milestones=[...milestoneMap.values()];
+  const trend=((trendQ.data??[]) as Row[]).reverse();
   const issues=(issuesQ.data??[]) as Row[],changes=(changesQ.data??[]) as Row[],history=(historyQ.data??[]) as Row[];
   const verifiedRows=(verifiedQ.data??[]) as Row[],criteria=(criteriaQ.data??[]) as Row[];
   const verifiedIds=new Set(verifiedRows.filter(x=>x.verified_completion===true).map(x=>x.id));
-  const verifiedCount=verifiedIds.size;
-  const activeCount=items.filter(x=>x.execution_state==="In progress").length;
-  const openBlockers=issues.length;
-  const criticalCount=issues.filter(x=>x.severity==="CRITICAL").length;
-  const pendingApprovals=items.filter(x=>x.approval_state==="PENDING" || (x.requires_human_approval===true && x.approval_state!=="APPROVED")).length;
+  const totalWorkItems=workItemCountQ.count??0;
+  const verifiedCount=verifiedCountQ.count??verifiedIds.size;
+  const activeCount=activeCountQ.count??items.filter(x=>x.execution_state==="In progress").length;
+  const openBlockers=blockerCountQ.count??issues.length;
+  const criticalCount=criticalCountQ.count??issues.filter(x=>x.severity==="CRITICAL").length;
+  const pendingApprovals=pendingApprovalCountQ.count??items.filter(x=>x.approval_state==="PENDING" || (x.requires_human_approval===true && x.approval_state!=="APPROVED")).length;
   const connected=sources.filter(x=>x.status==="connected").length;
   const latest=decision;
   const primary=latest?.primary_action as Row|null;
@@ -163,7 +174,7 @@ export default async function Home() {
       </div>)}</div>:<div className="empty">Belum ada snapshot milestone. Data akan muncul setelah rekonsiliasi berhasil.</div>}
     </section>
 
-    <div className="section-title"><h2>Workflow Execution Tracker</h2><span>{items.length} latest work items</span></div>
+    <div className="section-title"><h2>Workflow Execution Tracker</h2><span>{items.length} displayed · {totalWorkItems} total work items</span></div>
     <section className="panel table-wrap"><table><thead><tr><th>Task ID / Work item</th><th>Status</th><th>Verification</th><th>Gate</th><th>Priority</th><th>Scope weight</th><th>Approval</th><th>Milestone / Stage</th><th>Dependencies</th><th>Source</th></tr></thead>
       <tbody>{items.map(item=><tr key={item.id}>
         <td><Link href={"/tasks/"+item.id}>{item.item_key?"HSO-"+String(item.item_key).padStart(3,"0"):item.id.slice(0,8)} · {item.title}</Link><div className="microcopy">{item.accountable_role??item.project_area??"Owner/source role in Notion"}</div></td>
