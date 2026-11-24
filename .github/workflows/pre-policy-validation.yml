@@ -32,6 +32,9 @@ jobs:
       - name: Run PRE transition policy tests
         run: python -m unittest discover -s tests -p 'test_pre_policy_engine.py' -v
 
+      - name: Run PRE Notion queue worker tests
+        run: python -m unittest discover -s tests -p 'test_pre_transition_worker.py' -v
+
       - name: Evaluate the canonical R0 to R1 fixture
         run: |
           python tools/pre_policy_engine.py evaluate \
