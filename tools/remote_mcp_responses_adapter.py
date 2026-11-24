@@ -2,15 +2,16 @@
 """Narrow HSO host adapter: OpenAI Responses API -> one SKILL ANALYZER Remote MCP tool."""
 from __future__ import annotations
 
+import base64
 import hashlib
+import http.client
 import ipaddress
 import json
 import os
 import socket
+import ssl
 import subprocess
-import urllib.error
 import urllib.parse
-import urllib.request
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -81,13 +82,17 @@ def _require_https_public_url(value: str, *, expected_path: str | None = None) -
     return value.strip().rstrip("/") if expected_path == "/mcp" else value.strip()
 
 
-def _check_public_dns(host: str) -> None:
-    """Reject DNS names resolving to private, loopback, link-local or reserved addresses."""
+def _resolve_public_addresses(host: str, port: int = 443) -> list[str]:
+    """Resolve once, validate every answer and return the exact IPs eligible for pinning."""
     try:
-        records = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)
-    except OSError as exc:
-        raise RemoteMCPError("endpoint DNS resolution failed") from exc
-    addresses = {record[4][0] for record in records}
+        literal = ipaddress.ip_address(host)
+        addresses = [str(literal)]
+    except ValueError:
+        try:
+            records = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+        except OSError as exc:
+            raise RemoteMCPError("endpoint DNS resolution failed") from exc
+        addresses = sorted({record[4][0].split("%", 1)[0] for record in records})
     if not addresses:
         raise RemoteMCPError("endpoint DNS resolution returned no addresses")
     for raw in addresses:
@@ -97,11 +102,39 @@ def _check_public_dns(host: str) -> None:
             raise RemoteMCPError("endpoint DNS returned an invalid address") from exc
         if not parsed.is_global:
             raise RemoteMCPError("endpoint DNS resolves to a non-public address")
+    return addresses
 
 
-class _NoRedirect(urllib.request.HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        return None
+def _check_public_dns(host: str) -> None:
+    """Compatibility preflight; actual requests independently resolve and pin their socket."""
+    _resolve_public_addresses(host, 443)
+
+
+class _PinnedHTTPSConnection(http.client.HTTPSConnection):
+    """HTTPS connection pinned to one validated IP while retaining hostname TLS checks."""
+
+    def __init__(self, host: str, pinned_ip: str, port: int, timeout: int):
+        super().__init__(host, port=port, timeout=timeout, context=ssl.create_default_context())
+        self._pinned_ip = ipaddress.ip_address(pinned_ip)
+
+    def connect(self) -> None:
+        if self._tunnel_host:
+            raise RemoteMCPError("HTTPS proxy tunneling is disabled for pinned P0 requests")
+        family = socket.AF_INET6 if self._pinned_ip.version == 6 else socket.AF_INET
+        raw = socket.socket(family, socket.SOCK_STREAM)
+        try:
+            raw.settimeout(self.timeout)
+            if self.source_address:
+                raw.bind(self.source_address)
+            if family == socket.AF_INET6:
+                raw.connect((str(self._pinned_ip), self.port, 0, 0))
+            else:
+                raw.connect((str(self._pinned_ip), self.port))
+            # self.host remains the original DNS hostname for SNI and certificate validation.
+            self.sock = self._context.wrap_socket(raw, server_hostname=self.host)
+        except Exception:
+            raw.close()
+            raise
 
 
 def _http_json(
@@ -111,18 +144,33 @@ def _http_json(
     *,
     timeout: int = HTTP_TIMEOUT_SECONDS,
 ) -> tuple[dict[str, Any], dict[str, str], int]:
+    parsed_url = urlsplit(url)
+    if parsed_url.scheme != "https" or not parsed_url.hostname or parsed_url.username or parsed_url.password:
+        raise RemoteMCPError("pinned HTTPS transport requires an HTTPS URL without embedded credentials")
+    if parsed_url.port not in (None, 443) or parsed_url.fragment:
+        raise RemoteMCPError("pinned HTTPS transport rejects non-standard ports and URL fragments")
+    host = parsed_url.hostname
+    port = parsed_url.port or 443
+    # Resolution and address validation happen immediately before constructing the socket.
+    # The connection's connect() method uses the chosen numeric address and never resolves host.
+    pinned_ip = _resolve_public_addresses(host, port)[0]
+    path = parsed_url.path or "/"
+    if parsed_url.query:
+        path += "?" + parsed_url.query
     encoded = json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-    request = urllib.request.Request(url, data=encoded, headers=headers, method="POST")
-    opener = urllib.request.build_opener(_NoRedirect())
+    connection = _PinnedHTTPSConnection(host, pinned_ip, port, timeout)
     try:
-        with opener.open(request, timeout=timeout) as response:
-            status = int(response.status)
-            raw = response.read(MAX_HTTP_BYTES + 1)
-            response_headers = {k.lower(): v for k, v in response.headers.items()}
-    except urllib.error.HTTPError as exc:
-        raise RemoteMCPError(f"HTTPS endpoint rejected the request (HTTP {exc.code})") from exc
-    except (urllib.error.URLError, TimeoutError, OSError) as exc:
-        raise RemoteMCPError(f"HTTPS endpoint is unreachable ({type(exc).__name__})") from exc
+        connection.request("POST", path, body=encoded, headers=headers)
+        response = connection.getresponse()
+        status = int(response.status)
+        raw = response.read(MAX_HTTP_BYTES + 1)
+        response_headers = {k.lower(): v for k, v in response.getheaders()}
+    except (OSError, TimeoutError, http.client.HTTPException, ssl.SSLError) as exc:
+        raise RemoteMCPError(f"pinned HTTPS endpoint is unreachable ({type(exc).__name__})") from exc
+    finally:
+        connection.close()
+    if 300 <= status < 400:
+        raise RemoteMCPError("HTTPS redirects are prohibited for P0 pinned requests")
     if len(raw) > MAX_HTTP_BYTES:
         raise RemoteMCPError("HTTPS response exceeds the P0 response-size limit")
     if status < 200 or status >= 300:
@@ -137,6 +185,39 @@ def _http_json(
         raise RemoteMCPError("HTTPS endpoint returned a non-object JSON-RPC response")
     return parsed, response_headers, status
 
+
+def _sign_execution_receipt(receipt: dict[str, Any]) -> dict[str, str]:
+    """Sign the exact invocation receipt with an Ed25519 key supplied by protected CI secret."""
+    private_b64 = os.environ.get("HSO_P0_RECEIPT_ED25519_PRIVATE_KEY_B64", "").strip()
+    public_b64 = os.environ.get("HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64", "").strip()
+    key_id = os.environ.get("HSO_P0_RECEIPT_ED25519_KEY_ID", "").strip()
+    if not all((private_b64, public_b64, key_id)):
+        raise RemoteMCPError("production Ed25519 receipt signing configuration is missing")
+    try:
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
+        private_raw = base64.b64decode(private_b64, validate=True)
+        public_raw = base64.b64decode(public_b64, validate=True)
+        if len(private_raw) != 32 or len(public_raw) != 32:
+            raise ValueError("Ed25519 keys must be exactly 32 raw bytes")
+        private_key = Ed25519PrivateKey.from_private_bytes(private_raw)
+        derived_public = private_key.public_key().public_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PublicFormat.Raw,
+        )
+        if not hmac.compare_digest(derived_public, public_raw):
+            raise ValueError("public key does not match private key")
+        message = canonical_json(receipt).encode("utf-8")
+        signature = private_key.sign(message)
+        Ed25519PublicKey.from_public_bytes(public_raw).verify(signature, message)
+    except Exception as exc:
+        raise RemoteMCPError(f"Ed25519 receipt signing or self-verification failed ({type(exc).__name__})") from exc
+    return {
+        "algorithm": "Ed25519",
+        "key_id": key_id,
+        "signature_base64": base64.b64encode(signature).decode("ascii"),
+        "signed_payload_sha256": sha256_bytes(canonical_json(receipt).encode("utf-8")),
+    }
 
 def _parse_sse(text: str) -> dict[str, Any]:
     messages = []
@@ -323,35 +404,19 @@ def _responses_post(payload: dict[str, Any]) -> dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
         raise RemoteMCPError("OPENAI_API_KEY is not configured")
-    request = urllib.request.Request(
+    result, _, _ = _http_json(
         "https://api.openai.com/v1/responses",
-        data=json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8"),
-        headers={
+        payload,
+        {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
             "Accept": "application/json",
         },
-        method="POST",
+        timeout=API_TIMEOUT_SECONDS,
     )
-    opener = urllib.request.build_opener(_NoRedirect())
-    try:
-        with opener.open(request, timeout=API_TIMEOUT_SECONDS) as response:
-            raw = response.read(MAX_HTTP_BYTES + 1)
-            status = int(response.status)
-    except urllib.error.HTTPError as exc:
-        raise RemoteMCPError(f"OpenAI Responses API rejected the request (HTTP {exc.code})") from exc
-    except (urllib.error.URLError, TimeoutError, OSError) as exc:
-        raise RemoteMCPError(f"OpenAI Responses API is unreachable ({type(exc).__name__})") from exc
-    if status < 200 or status >= 300 or len(raw) > MAX_HTTP_BYTES:
-        raise RemoteMCPError("OpenAI Responses API returned an invalid status or oversized body")
-    try:
-        result = json.loads(raw.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise RemoteMCPError("OpenAI Responses API returned malformed JSON") from exc
     if not isinstance(result, dict) or not isinstance(result.get("id"), str):
         raise RemoteMCPError("OpenAI Responses API response is missing its response ID")
     return result
-
 
 def _output_items(response: dict[str, Any]) -> list[dict[str, Any]]:
     output = response.get("output")
@@ -465,8 +530,6 @@ def probe_remote_mcp_host(_workspace: Path | None = None, _skill_source_path: st
         token_url = _require_https_public_url(os.environ["MCP_OIDC_TOKEN_URL"])
         server_host = urlsplit(server_url).hostname
         token_host = urlsplit(token_url).hostname
-        _check_public_dns(server_host)
-        _check_public_dns(token_host)
         token = _obtain_mcp_token()
         tools, session_id, protocol = _discover_remote_tools(server_url, token)
         names = [item.get("name") for item in tools if isinstance(item, dict)]
@@ -509,8 +572,6 @@ def invoke_remote_mcp_skill(
         os.environ.get("MCP_SERVER_URL", ""), expected_path="/mcp"
     )
     token_url = _require_https_public_url(os.environ.get("MCP_OIDC_TOKEN_URL", ""))
-    _check_public_dns(urlsplit(server_url).hostname)
-    _check_public_dns(urlsplit(token_url).hostname)
     if not os.environ.get("OPENAI_API_KEY", "").strip():
         raise RemoteMCPError("OPENAI_API_KEY is not configured")
 
@@ -693,8 +754,12 @@ def invoke_remote_mcp_skill(
             "result_chars": len(result_text),
         },
         "approval": {
-            "basis": "HSO_HMAC_SCOPED_APPROVAL_PLUS_RESPONSES_API_MCP_APPROVAL",
+            "basis": "GITHUB_ENVIRONMENT_APPROVAL_API_PLUS_HSO_HMAC_SCOPE_PLUS_RESPONSES_API_MCP_APPROVAL",
             "approver": approval_receipt.get("approver"),
+            "approver_github_id": approval_receipt.get("environment_reviewer_id"),
+            "workflow_actor": approval_receipt.get("workflow_actor"),
+            "environment": approval_receipt.get("environment"),
+            "approval_source": approval_receipt.get("approval_source"),
             "nonce_sha256": sha256_bytes(str(approval_receipt["nonce"]).encode("utf-8")),
             "issued_at": approval_receipt.get("issued_at"),
             "expires_at": approval_receipt.get("expires_at"),
@@ -711,10 +776,13 @@ def invoke_remote_mcp_skill(
             "remote_source_attestation": "NOT_EXPOSED_BY_CURRENT_GATEWAY",
             "external_data_mutation": "NOT_REQUESTED",
             "metadata_audit_only": True,
+            "execution_receipt_signature_verified": True,
         },
+        "independent_target_result_sha256": output_digest,
         "request_sha256": sha256_json(expected_arguments),
         "usage": usage,
     }
+    receipt["signature"] = _sign_execution_receipt(receipt)
     artifact = json.dumps(
         {"invocation_receipt": receipt, "analysis_result": output},
         ensure_ascii=False,
