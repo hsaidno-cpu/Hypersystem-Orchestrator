@@ -116,13 +116,13 @@ The following entries are not automatically repaired by changing a version strin
 
 ## Canonical source manifest evidence
 
-| Repository | Manifest path | Manifest version | Manifest blob SHA | Pinned commit | Verified at |
-|---|---|---:|---|---|---|
-| hsaidno-cpu/skill-analyzer | plugin.json | 1.3.0 | 743b2c91339d19a9c915a8decad264092e2725c5 | c469af7977c9bf6dcb3f5ab7b085a6de20d87004 | 2026-11-24 |
-| hsaidno-cpu/A.S.F.R.E.E | plugin/plugin.json | 0.5.0-rc.1 | f0211b1dc94fb61efe1b7aa011cec7018a7e4c07 | a5eb55db0f6c2c6126a7fbcba645caf44c660c93 | 2026-11-24 |
-| hsaidno-cpu/anatomi-prompt-strategis | .agents/skills/anatomi-prompt/package/plugin.json | 3.0.0 | e3781f3d9d257da6092807e3b565dda251cb5f8b | 06b46b88ed7eddc437792fae715f255cbe4eb13d | 2026-11-24 |
-| promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR | plugin.json | 4.1.9 | c16b81bbf8a30eda93ed0c3e6223748d6cb13466 | f8f8c0f29ff9d851fa75eba764978c24bdd79416 | 2026-11-24 |
-| promkespkmbinuang-coder/SPDO | plugin.json | 0.1.0 | 3be086c8917cdd5e77b1d051042359e9b300792a | 9d3c4bc09179ff857df4f3819be83e1847571add | 2026-11-24 |
+| Repository | Manifest path | Manifest version | Manifest blob SHA | Pinned commit | Verified at | Verification mode |
+|---|---|---:|---|---|---|---|
+| hsaidno-cpu/skill-analyzer | plugin.json | 1.3.0 | 743b2c91339d19a9c915a8decad264092e2725c5 | c469af7977c9bf6dcb3f5ab7b085a6de20d87004 | 2026-11-24 | CI_RAW_CONTENT_GIT_BLOB |
+| hsaidno-cpu/A.S.F.R.E.E | plugin/plugin.json | 0.5.0-rc.1 | f0211b1dc94fb61efe1b7aa011cec7018a7e4c07 | a5eb55db0f6c2c6126a7fbcba645caf44c660c93 | 2026-11-24 | CI_RAW_CONTENT_GIT_BLOB |
+| hsaidno-cpu/anatomi-prompt-strategis | .agents/skills/anatomi-prompt/package/plugin.json | 3.0.0 | e3781f3d9d257da6092807e3b565dda251cb5f8b | 06b46b88ed7eddc437792fae715f255cbe4eb13d | 2026-11-24 | PRIVATE_MANUAL_READBACK_ONLY |
+| promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR | plugin.json | 4.1.9 | c16b81bbf8a30eda93ed0c3e6223748d6cb13466 | f8f8c0f29ff9d851fa75eba764978c24bdd79416 | 2026-11-24 | CI_RAW_CONTENT_GIT_BLOB |
+| promkespkmbinuang-coder/SPDO | plugin.json | 0.1.0 | 3be086c8917cdd5e77b1d051042359e9b300792a | 9d3c4bc09179ff857df4f3819be83e1847571add | 2026-11-24 | CI_RAW_CONTENT_GIT_BLOB |
 
 ## Interpretation and release gates
 
@@ -136,7 +136,7 @@ The following entries are not automatically repaired by changing a version strin
 
 ## CI and freshness boundary
 
-tools/validate_catalog.py checks that every Plugin Creator metadata observation is at most 30 days old, that each integrated source manifest is pinned to the registered commit, and that the actual parent Git tree gitlink SHA equals catalog/repositories.json. tools/render_package_version_matrix.py --check ensures this document is generated from the canonical registry.
+tools/validate_catalog.py checks that every Plugin Creator metadata observation is at most 30 days old, that each integrated source manifest is tied to the parent gitlink, and that the actual parent Git tree gitlink SHA equals catalog/repositories.json. For four public child repositories it fetches the raw manifest at the pinned commit, verifies the exact Git blob SHA and declared JSON version. The private Anatomi source is explicitly marked PRIVATE_MANUAL_READBACK_ONLY because this public workflow has no credential to read it. tools/render_package_version_matrix.py --check ensures this document is generated from the canonical registry.
 
 **Important limitation:** the public GitHub Actions workflow does not query the private Plugin Creator service. The 30-day gate checks the recorded read-back date; it cannot independently prove that the date or external metadata is current. An authorized connector read-back must precede updates to the catalog.
 
