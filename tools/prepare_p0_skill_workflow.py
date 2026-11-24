@@ -30,6 +30,7 @@ def canonical_json(value):
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--approval-receipt", required=True, type=Path)
+    parser.add_argument("--environment-approval", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
 
@@ -45,9 +46,25 @@ def main() -> int:
         raise SystemExit("fixed P0 workflow template is missing or unsafe")
     if not args.approval_receipt.is_file() or args.approval_receipt.is_symlink():
         raise SystemExit("approval receipt is missing or unsafe")
+    if not args.environment_approval.is_file() or args.environment_approval.is_symlink():
+        raise SystemExit("authenticated Environment approval record is missing or unsafe")
 
     workflow = json.loads(TEMPLATE.read_text(encoding="utf-8"))
     approval = json.loads(args.approval_receipt.read_text(encoding="utf-8"))
+    environment_approval = json.loads(args.environment_approval.read_text(encoding="utf-8"))
+    approver = str(environment_approval.get("reviewer_login") or "").strip()
+    reviewer_id = environment_approval.get("reviewer_id")
+    if (
+        environment_approval.get("environment") != "hso-p0-remote-mcp-live"
+        or environment_approval.get("workflow_run_id") != run_id
+        or environment_approval.get("workflow_run_attempt") != attempt
+        or environment_approval.get("workflow_actor") != actor
+        or environment_approval.get("approval_source") != "github_actions_workflow_run_approvals_api"
+        or not approver
+        or not isinstance(reviewer_id, int)
+        or approver.lower() == actor.lower()
+    ):
+        raise SystemExit("authenticated Environment approval is not valid or independent")
     source = adapter.inspect_local_skill_source(ROOT)
     server_url = adapter._require_https_public_url(
         os.environ.get("MCP_SERVER_URL", ""), expected_path="/mcp"
@@ -57,7 +74,12 @@ def main() -> int:
         "action_id": ACTION_ID,
         "target_path": TARGET,
         "authority": "S4",
-        "approver": actor,
+        "approver": approver,
+        "workflow_actor": actor,
+        "environment_reviewer_id": reviewer_id,
+        "environment": environment_approval["environment"],
+        "approval_source": environment_approval["approval_source"],
+        "environment_approval_observed_at": environment_approval.get("observed_at"),
         "workflow_run_id": run_id,
         "workflow_run_attempt": attempt,
         "host": adapter.HOST_ID,
