@@ -7,10 +7,22 @@ from tools.github_notion_sync import SyncError, build_event_record, build_event_
 CONFIG = {
     "repository": "hsaidno-cpu/Hypersystem-Orchestrator",
     "main_branch": "main",
-    "pull_request_relation_map": {"15": "42299868-397f-81fe-8349-c8e97800573a"},
-    "branch_relation_map": {"main": "42299868-397f-81fe-8349-c8e97800573a"},
+    "pull_request_relation_map": {
+        "15": "42299868-397f-81fe-8349-c8e97800573a",
+        "16": "42299868-397f-8167-afb4-c4fbb98b6e06",
+        "17": "42299868-397f-8127-9549-e1dbdfa5c037",
+    },
+    "branch_relation_map": {
+        "main": "42299868-397f-81fe-8349-c8e97800573a",
+        "feat/pre-policy-enforcement-v1-20261124": "42299868-397f-8127-9549-e1dbdfa5c037",
+    },
     "default_relation_ids": [],
-    "workflow_names": ["Catalog and distribution validation"],
+    "workflow_names": [
+        "Catalog and distribution validation",
+        "P1 sync module validation",
+        "PRE R0-R9 policy enforcement validation",
+        "PRE R0-R9 transition queue worker",
+    ],
 }
 
 
@@ -108,6 +120,25 @@ class GitHubNotionSyncTests(unittest.TestCase):
             "head_repository": {"full_name": CONFIG["repository"]},
         }}
         self.assertIsNone(build_event_record("workflow_run", event, CONFIG))
+
+    def test_pre_workflow_run_is_whitelisted_and_maps_to_pre_work_item(self):
+        event = {"workflow_run": {
+            "id": 1234, "run_number": 88,
+            "name": "PRE R0-R9 policy enforcement validation",
+            "conclusion": "success",
+            "head_repository": {"full_name": CONFIG["repository"]},
+            "head_branch": "feat/pre-policy-enforcement-v1-20261124",
+            "head_sha": "a58e72e1c8a05fa7883c082ae21f26a587d29941",
+            "html_url": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/1234",
+            "pull_requests": [{"number": 17}],
+        }}
+        record = build_event_record("workflow_run", event, CONFIG)
+        self.assertEqual(record["evidence_type"], "CI Run")
+        self.assertEqual(record["evidence_state"], "PASS")
+        self.assertEqual(
+            record["related_work_item_ids"],
+            ["42299868-397f-8127-9549-e1dbdfa5c037"],
+        )
 
     def test_main_push_is_commit_evidence_only(self):
         event = {"ref": "refs/heads/main", "head_commit": {"id": "a" * 40, "message": "merge"}}
