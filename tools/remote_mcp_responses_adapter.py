@@ -767,6 +767,7 @@ def invoke_remote_mcp_skill(
             "approver": approval_receipt.get("approver"),
             "approver_github_id": approval_receipt.get("environment_reviewer_id"),
             "workflow_actor": approval_receipt.get("workflow_actor"),
+            "workflow_actor_github_id": approval_receipt.get("workflow_actor_id"),
             "environment": approval_receipt.get("environment"),
             "approval_source": approval_receipt.get("approval_source"),
             "nonce_sha256": sha256_bytes(str(approval_receipt["nonce"]).encode("utf-8")),
