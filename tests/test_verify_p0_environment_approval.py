@@ -49,6 +49,7 @@ class VerifyEnvironmentApprovalTests(unittest.TestCase):
             "GITHUB_RUN_ID": run_id,
             "GITHUB_RUN_ATTEMPT": attempt,
             "GITHUB_ACTOR": actor,
+            "GITHUB_ACTOR_ID": "100",
             "HSO_P0_ALLOWED_REVIEWER_LOGINS": allowlist,
         }
         with patch.dict(os.environ, values, clear=True), \
@@ -64,6 +65,7 @@ class VerifyEnvironmentApprovalTests(unittest.TestCase):
         record = json.loads(self.output.read_text(encoding="utf-8"))
         self.assertEqual(record["workflow_run_id"], RUN_ID)
         self.assertEqual(record["workflow_actor"], ACTOR)
+        self.assertEqual(record["workflow_actor_id"], 100)
         self.assertEqual(record["reviewer_login"], REVIEWER)
         self.assertEqual(record["reviewer_id"], REVIEWER_ID)
         self.assertEqual(record["approval_source"], "github_actions_workflow_run_approvals_api")
