@@ -23,13 +23,15 @@ Every edge has a policy-defined evidence requirement. R2→R3, R5→R6, R7→R8 
 
 ## Evidence envelope
 
-Every evidence entry must include a stable evidence ID, evidence type, state, freshness, a verifier distinct from the request actor, a canonical HTTPS source locator, and SHA-256 digest. Only accepted states and FRESH evidence count. Skipped, unknown, stale, unsigned, unverified or source-less evidence never counts as pass.
+Every evidence entry must include a stable evidence ID, type, project and scope binding, state, freshness, verifier subject and role, identity-verification assertion, verification time, trusted issuer, canonical HTTPS source locator, source SHA-256 digest, and Ed25519 signature. The signature covers all of those fields. The policy engine checks allowed issuer/role, scope binding, verifier independence, timestamp freshness, digest shape and signature using a public key. Only accepted states and FRESH evidence count. Skipped, unknown, stale, unsigned, unverified or source-less evidence never counts as pass.
+
+The private key belongs only to the trusted evidence issuer. The PRE worker receives the public key and cannot sign or mint evidence receipts. The issuer must authenticate the verifier (for example with a validated OIDC identity) and independently verify the source before signing; merely setting `identity_verified=true` is not sufficient unless it is protected by that issuer signature.
 
 ## Approval contract
 
-Approval receipts are HMAC-SHA256 signed by a trusted issuer and bound to the project scope, exact from/to stage, approver identity, role, issue/expiry time, and nonce. The evaluator rejects self-approval, unverified identity, untrusted issuer, role mismatch, signature mismatch, future/expired receipt, excessive validity window and nonce replay.
+Approval receipts are Ed25519 signed by a trusted approval issuer and bound to the project scope, exact from/to stage, immutable approver subject, authority role, issuer, issue/expiry time, and nonce. The evaluator verifies the signature using `HSO_PRE_APPROVAL_PUBLIC_KEY`; only the public key is available to the worker. The private key remains in the external approval issuer. The evaluator rejects self-approval, unverified identity, untrusted issuer, role mismatch, signature mismatch, future/expired receipt, excessive validity window and nonce replay.
 
-The key is supplied only as `HSO_PRE_APPROVAL_HMAC_KEY`; it must never be committed or placed in Notion. The SQLite nonce store included here is for tests and a single persistent service instance only. Multi-worker production requires a shared transactional nonce store. A GitHub-hosted ephemeral runner is not a durable replay-prevention service.
+The issuer must authenticate the approver through a real identity provider and apply the required role/scope policy before it signs. The GitHub workflow and the PRE evaluator must not generate human approvals. The SQLite nonce store included here is for tests and a single persistent service instance only. Multi-worker production requires a shared transactional nonce store. A GitHub-hosted ephemeral runner is not a durable replay-prevention service.
 
 ## Operational flow
 
@@ -51,9 +53,9 @@ The companion database is **PRE Transition Queue — Policy Evaluations**. It st
 
 - This PR implements the deterministic policy evaluator, queue worker, queue schema contract, unit tests, CI validation workflow, and a scheduled polling workflow.
 - The polling workflow is gated by repository variable `HSO_PRE_ENFORCEMENT_ENABLED=true` and requires a persistent self-hosted runner labelled `hso-pre-enforcement`; it must use a persistent nonce-store path.
-- The GitHub Actions environment `hso-pre-runtime` must be created and provisioned with `HSO_PRE_NOTION_API_KEY` and `HSO_PRE_APPROVAL_HMAC_KEY`; repository variables `HSO_PRE_NOTION_DATA_SOURCE_ID` and `HSO_PRE_NONCE_STORE_PATH` must also be configured.
+- The GitHub Actions environment `hso-pre-runtime` must be created and provisioned with `HSO_PRE_NOTION_API_KEY`; repository/environment variables `HSO_PRE_APPROVAL_PUBLIC_KEY` and `HSO_EVIDENCE_ISSUER_PUBLIC_KEY` must be set to the Ed25519 public keys; `HSO_PRE_NOTION_DATA_SOURCE_ID` and `HSO_PRE_NONCE_STORE_PATH` must also be configured.
 - The Notion integration must be shared with the PRE Transition Queue and have only the permissions required to read/update that queue. It must not have unrestricted permission to update canonical Work Item stage fields.
-- The HMAC key validates receipts from a trusted approval issuer; it must not be used as an ad-hoc key to mint human approvals. A production identity issuer must authenticate the approver and bind its immutable subject, role, scope, transition, expiry and nonce into the signed receipt.
+- Ed25519 private keys for evidence and approval receipts must remain in separate trusted issuer services or a secrets manager/HSM. Only public keys are provided to the PRE worker. A production identity issuer must authenticate the approver and bind its immutable subject, role, scope, transition, expiry and nonce into the signed receipt. An evidence issuer must authenticate the verifier and verify the source before signing. These issuer services are not deployed by this PR.
 - SQLite nonce storage is appropriate only for one persistent worker. Multi-worker production requires a shared transactional nonce store.
 - The current GitHub connector cannot configure repository secrets, variables, environments, self-hosted runners, or Notion integration sharing.
 - Therefore this branch is **not** a claim that live Notion enforcement is activated. It is a tested worker and scheduled-service implementation awaiting environment provisioning, runner registration, integration sharing, and live controlled acceptance. It evaluates gates and writes decision receipts; it does not automatically apply PRE Stage transitions.
@@ -61,16 +63,20 @@ The companion database is **PRE Transition Queue — Policy Evaluations**. It st
 ## Commands
 
 ```bash
-python -m tools.pre_policy_engine evaluate \
-  --request-file examples/pre-transition-r0-r1.example.json \
+python -m pip install --requirement requirements-pre.txt
+HSO_EVIDENCE_ISSUER_PUBLIC_KEY=<base64-ed25519-public-key> \
+  python -m tools.pre_policy_engine evaluate \
+  --request-file signed-request.json \
   --output /tmp/pre-evaluation.json
 ```
 
-For approval-gated transitions, supply `HSO_PRE_APPROVAL_HMAC_KEY` and a persistent nonce-store path:
+For approval-gated transitions, supply the issuer's public key and a persistent nonce-store path:
 
 ```bash
-HSO_PRE_APPROVAL_HMAC_KEY=<secret> python tools/pre_policy_engine.py evaluate \
-  --request-file request.json \
+HSO_PRE_APPROVAL_PUBLIC_KEY=<base64-ed25519-public-key> \
+HSO_EVIDENCE_ISSUER_PUBLIC_KEY=<base64-ed25519-public-key> \
+  python -m tools.pre_policy_engine evaluate \
+  --request-file signed-request.json \
   --nonce-store /var/lib/hso/pre-nonces.sqlite \
   --output evaluation.json
 ```
