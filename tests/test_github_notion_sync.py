@@ -80,8 +80,10 @@ class GitHubNotionSyncTests(unittest.TestCase):
         event["pull_request"]["number"] = 16
         event["pull_request"]["head"]["ref"] = "feat/github-notion-evidence-sync-20261124"
         event["pull_request"]["html_url"] = "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/16"
-        CONFIG["pull_request_relation_map"]["16"] = "42299868-397f-8167-afb4-c4fbb98b6e06"
-        record = build_event_record("pull_request_target", event, CONFIG)
+        config = dict(CONFIG)
+        config["pull_request_relation_map"] = dict(CONFIG["pull_request_relation_map"])
+        config["pull_request_relation_map"]["16"] = "42299868-397f-8167-afb4-c4fbb98b6e06"
+        record = build_event_record("pull_request_target", event, config)
         self.assertEqual(record["related_work_item_ids"], ["42299868-397f-8167-afb4-c4fbb98b6e06"])
 
 
