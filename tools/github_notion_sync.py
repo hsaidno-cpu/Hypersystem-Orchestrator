@@ -184,6 +184,89 @@ def build_event_record(
     return None
 
 
+
+def build_event_records(
+    event_name: str, payload: dict[str, Any], config: dict[str, Any],
+    *, today: date | None = None,
+) -> list[dict[str, Any]]:
+    """Normalize an event to every independent evidence record it contains.
+
+    A main push can contain multiple commits. Preserve every listed commit or
+    fail closed if GitHub reports a larger push than the payload contains.
+    """
+    if event_name != "push":
+        record = build_event_record(event_name, payload, config, today=today)
+        return [record] if record is not None else []
+
+    main_ref = "refs/heads/" + config.get("main_branch", "main")
+    if payload.get("ref") != main_ref:
+        return []
+    repo = config.get("repository", REPOSITORY)
+    payload_repo = (payload.get("repository") or {}).get("full_name")
+    if payload_repo and payload_repo != repo:
+        return []
+
+    commits = payload.get("commits") or []
+    if not isinstance(commits, list):
+        raise SyncError("push event commits field is not a list")
+    declared_counts = [
+        value for value in (payload.get("size"), payload.get("distinct_size"))
+        if isinstance(value, int) and not isinstance(value, bool)
+    ]
+    declared_count = max(declared_counts, default=len(commits))
+    if declared_count > len(commits):
+        raise SyncError(
+            f"push payload is incomplete: GitHub reports {declared_count} commits "
+            f"but the webhook contains {len(commits)}; refusing partial evidence sync"
+        )
+
+    head_commit = payload.get("head_commit") or {}
+    candidates = list(commits)
+    if head_commit.get("id") and all(
+        not isinstance(item, dict) or item.get("id") != head_commit.get("id")
+        for item in candidates
+    ):
+        candidates.append(head_commit)
+    if not candidates:
+        return []
+
+    observed = (today or datetime.now(timezone.utc).date()).isoformat()
+    repo_url = f"https://github.com/{repo}"
+    branch = config.get("main_branch", "main")
+    records: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for commit in candidates:
+        if not isinstance(commit, dict):
+            raise SyncError("push event contains a malformed commit entry")
+        sha = commit.get("id")
+        if not isinstance(sha, str) or not sha:
+            raise SyncError("push event contains a commit without an immutable SHA")
+        if sha in seen:
+            continue
+        seen.add(sha)
+        message = str(commit.get("message") or "not supplied")[:300]
+        records.append(base_record(
+            title=f"Main commit — {sha[:12]}",
+            evidence_type="Commit",
+            evidence_state="UNKNOWN",
+            claim=(
+                f"Commit {sha} was included in a push to {main_ref}; "
+                f"message={message}. Commit event confirms source movement only."
+            ),
+            limitation=(
+                "A commit is not a successful test, review, deployment, runtime invocation, "
+                "or accepted milestone. This record represents one commit from the push payload."
+            ),
+            locator=f"{repo_url}/commit/{sha}",
+            repository_url=repo_url,
+            observed_at=observed,
+            commit_sha=sha,
+            branch=branch,
+            related_work_item_ids=related_ids(config, None, branch),
+        ))
+    return records
+
+
 def notion_properties(record: dict[str, Any]) -> dict[str, Any]:
     props: dict[str, Any] = {
         "Evidence Title": {"title": [{"text": {"content": record["title"]}}]},
@@ -302,6 +385,22 @@ class NotionClient:
         return self.request("PATCH", f"pages/{page_id}", {"properties": properties})
 
 
+def _verify_read_back(
+    client: Any, record: dict[str, Any], expected_page_id: str | None,
+) -> dict[str, Any]:
+    matches = client.query_by_locator(record["source_locator"])
+    if len(matches) != 1:
+        raise SyncError(
+            f"Read-back expected exactly one Source Locator row, observed {len(matches)}"
+        )
+    page = matches[0]
+    if expected_page_id and page.get("id") != expected_page_id:
+        raise SyncError("Read-back returned a different Notion page than the mutation response")
+    if page_digest(page) != digest_record(record):
+        raise SyncError("Read-back Content Digest does not match the submitted source event")
+    return page
+
+
 def upsert_record(client: Any, record: dict[str, Any], *, apply: bool) -> dict[str, Any]:
     matches = client.query_by_locator(record["source_locator"])
     if len(matches) > 1:
@@ -311,14 +410,16 @@ def upsert_record(client: Any, record: dict[str, Any], *, apply: bool) -> dict[s
         if not apply:
             return {"operation": "CREATE", "source_locator": record["source_locator"]}
         page = client.create_page(props, record["source_locator"])
-        return {"operation": "CREATED", "page_id": page.get("id")}
+        read_back = _verify_read_back(client, record, page.get("id"))
+        return {"operation": "CREATED_AND_VERIFIED", "page_id": read_back.get("id")}
     existing = matches[0]
     if page_digest(existing) == digest_record(record):
-        return {"operation": "NO_OP", "page_id": existing.get("id")}
+        return {"operation": "NO_OP", "page_id": existing.get("id"), "read_back_verified": True}
     if not apply:
         return {"operation": "UPDATE", "page_id": existing.get("id")}
     page = client.update_page(existing["id"], props)
-    return {"operation": "UPDATED", "page_id": page.get("id", existing["id"])}
+    read_back = _verify_read_back(client, record, page.get("id", existing["id"]))
+    return {"operation": "UPDATED_AND_VERIFIED", "page_id": read_back.get("id")}
 
 
 def stale_sweep(client: Any, *, today: date, stale_after_days: int, apply: bool) -> dict[str, Any]:
@@ -373,8 +474,17 @@ def main(argv: list[str] | None = None) -> int:
             if not args.event_file or not args.event_file.is_file():
                 raise SyncError("GitHub event payload file is unavailable")
             payload = json.loads(args.event_file.read_text(encoding="utf-8"))
-            record = build_event_record(args.event_name, payload, config)
-            result = {"operation": "SKIPPED_UNSUPPORTED_OR_UNTRUSTED_EVENT"} if record is None else upsert_record(client, record, apply=args.apply)
+            records = build_event_records(args.event_name, payload, config)
+            if not records:
+                result = {"operation": "SKIPPED_UNSUPPORTED_OR_UNTRUSTED_EVENT"}
+            else:
+                results = [upsert_record(client, record, apply=args.apply) for record in records]
+                result = {
+                    "operation": "EVENT_BATCH",
+                    "event_name": args.event_name,
+                    "record_count": len(records),
+                    "results": results,
+                }
         print(json.dumps(result, ensure_ascii=False, sort_keys=True))
         return 0
     except (SyncError, ValueError) as exc:
