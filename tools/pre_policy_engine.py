@@ -51,6 +51,20 @@ def digest_json(value: Any) -> str:
     return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
+def approval_binding_digest(request: dict[str, Any]) -> str:
+    """Bind an approval to the exact scope, transition and evidence set.
+
+    Approval receipts are excluded to avoid a circular digest. The worker's
+    input_digest remains a digest of the full request, including receipts.
+    """
+    bound = {key: value for key, value in request.items() if key != "approvals"}
+    # These values are transport metadata, not part of the authority decision.
+    bound.pop("notion_page_id", None)
+    bound.pop("source_event", None)
+    bound.pop("source_commit", None)
+    return digest_json(bound)
+
+
 EVIDENCE_ATTESTED_FIELDS = (
     "schema_version", "evidence_id", "evidence_type", "project_id", "scope_id",
     "state", "freshness", "verified", "identity_verified", "verified_by", "verifier_role",
@@ -267,7 +281,7 @@ def _verify_approval(
     policy: dict[str, Any], public_key_b64: str, now: datetime,
 ) -> tuple[bool, str]:
     required = {
-        "approval_id", "decision", "scope_id", "from_stage", "to_stage",
+        "approval_id", "decision", "request_digest", "scope_id", "from_stage", "to_stage",
         "approver_subject", "approver_role", "identity_issuer",
         "identity_verified", "independent", "issued_at", "expires_at",
         "nonce", "signature",
@@ -278,6 +292,8 @@ def _verify_approval(
         return False, "APPROVAL_NOT_GRANTED"
     if receipt["scope_id"] != request["scope_id"]:
         return False, "APPROVAL_SCOPE_MISMATCH"
+    if receipt["request_digest"] != approval_binding_digest(request):
+        return False, "APPROVAL_REQUEST_DIGEST_MISMATCH"
     if receipt["from_stage"] != request["from_stage"] or receipt["to_stage"] != request["to_stage"]:
         return False, "APPROVAL_TRANSITION_MISMATCH"
     if receipt["approver_role"] != required_role:
