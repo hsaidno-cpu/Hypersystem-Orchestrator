@@ -20,15 +20,27 @@ Four source-backed package situations still require separate reconciliation. Equ
 
 | Plugin | ChatGPT package | Current release | Canonical Git source | Package/source relation | Instruction parity | Disposition |
 |---|---:|---|---:|---|---|---|
-| SKILL ANALYZER | 1.0.0 | pluginrel_6af1a98cdbe881918f30895f5af93afc | 1.3.0 | Source ahead | DRIFT_DETECTED (11/12 exact; platform-compatibility differs) | Keep Git 1.3.0 canonical; platform package update requires approved file reconciliation and read-back |
-| A.S.F.R.E.E Canonical | 0.3.2 | pluginrel_6b00fc6b23bc8191a5930132969e52c2 | 0.5.0-rc.1 | Source ahead; RC | DRIFT_DETECTED (5/13 exact) | Preserve RC status and PolyForm Noncommercial terms; owner acceptance and license review before any platform release |
+| SKILL ANALYZER | 1.0.0 | pluginrel_6af1a98cdbe881918f30895f5af93afc | 1.3.0 | Source ahead | DRIFT_DETECTED (12 package / 20 source; 11/12 shared exact) | Add eight source-only skills, reconcile platform-compatibility and package manifest before private package update |
+| A.S.F.R.E.E Canonical | 0.3.2 | pluginrel_6b00fc6b23bc8191a5930132969e52c2 | 0.5.0-rc.1 | Source ahead; RC | DRIFT_DETECTED (13 package / 26 source; 5/13 shared exact) | Add 13 source-only skills and reconcile eight differing shared skills; preserve RC status and PolyForm Noncommercial terms |
 | Anatomi Prompt V3.0 | 3.0.0 | pluginrel_6af18ad1d81481919e4c6fa6d512d0ee | 3.0.0 | Version metadata aligned | MATCH (9/9 exact) | Keep current; parity does not grant redistribution rights |
 | Skill Developer Orchestrator | 0.1.0 | pluginrel_6afdee10a5688191ad8fc37a9d0d827b | 0.1.0 | Version metadata aligned | DRIFT_DETECTED (0/4 exact) | Do not overwrite either side; choose canonical content with source owner and version decision |
-| Video Explainer Promkes | 4.1.12 | pluginrel_6b02a0f630208191b71ad994703aed68 | 4.1.9 | Deployment ahead | NOT_COMPARED | Package manifest says 4.1.12, package README says V4.1.11, older M00 header v4.0.9 is a separate internal label; map package and source trees before synchronization |
+| Video Explainer Promkes | 4.1.12 | pluginrel_6b02a0f630208191b71ad994703aed68 | 4.1.9 | Deployment ahead | DRIFT_DETECTED (16 package / 15 source; 1/11 shared exact) | Five package-only skills, four Git-only skills and ten differing shared skills; full 215-file mapping required before source update |
 | Evaluator Team | 1.0.0 | pluginrel_6afdee5a10108191a38e1ee7f84f7524 | Not identified | Platform-only | NOT_APPLICABLE | Preserve private package; establish canonical Git source and rights before claiming parity |
 | AI Workflow Systems Orchestrator | 0.2.0 | pluginrel_6b015fe943608191b46d0a439dd4f55e | Not identified | Platform-only | NOT_APPLICABLE | Preserve private package; Git source onboarding and rights review remain separate |
 
 The generated 23-plugin matrix, including every remaining package version, release ID, source state, candidate state, product label and snapshot date, is in docs/CURRENT-VERSION-REGISTRY.md.
+
+
+
+## 2A. Supplemental direct content comparison — 2026-11-24
+
+The initial audit compared the files available at the time. A subsequent complete inventory and direct read-back produced more precise parity evidence, now reflected in the catalog and generated matrix:
+
+- **SKILL ANALYZER:** 12 package skills vs 20 Git source skills; 12 shared paths, 11 exact, one differing platform-compatibility skill, eight source-only skills. This confirms that the earlier 11/12 value describes shared-path matching only, not complete package parity.
+- **A.S.F.R.E.E:** 13 package skills vs 26 Git source skills; 13 shared paths, five exact and eight differing; 13 Git source-only alias/specialist skills. The source remains 0.5.0-rc.1 under PolyForm Noncommercial 1.0.0.
+- **Video Explainer Promkes:** 16 package skills vs 15 Git source skills; 11 shared paths, only one exact, ten differing shared files, five package-only and four Git-only skills. The previous NOT_COMPARED state is superseded by DRIFT_DETECTED. The private package has 215 files, so a skill-only sync would be insufficient.
+
+These comparisons were made by reading the current Plugin Creator release files and exact pinned Git source files; line endings were normalized before exact comparisons. No package files or child Git repositories were modified by this supplemental audit.
 
 ## 3. Additional identity and ecosystem findings
 
