@@ -41,6 +41,15 @@ function titleOf(props: Record<string, any>) {
   }
   return "Untitled source record";
 }
+function stringArray(value: any): string[] {
+  if (Array.isArray(value)) return value.map((item) => String(item)).filter(Boolean);
+  if (typeof value !== "string" || !value.trim()) return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) return parsed.map((item) => String(item)).filter(Boolean);
+  } catch { /* plain-text dependency value */ }
+  return value.split(/\\r?\\n/).map((item) => item.trim()).filter(Boolean);
+}
 function mapPage(page: any, kind: string, sourceKey: string) {
   const p = page.properties ?? {};
   const title = titleOf(p);
@@ -51,8 +60,12 @@ function mapPage(page: any, kind: string, sourceKey: string) {
     gate_state: prop(p, "Gate State") ?? "NOT_ASSESSED",
     priority: prop(p, "Priority"), pre_stage: prop(p, "PRE Stage"),
     ecosystem_stage: prop(p, "Ecosystem Stage"),
-    item_key: prop(p, "Work Item ID"), dependencies: prop(p, "Dependencies") ?? [],
+    item_key: prop(p, "Work Item ID"), dependencies: stringArray(prop(p, "Dependencies")),
     next_action: prop(p, "Next Action"), blocker: prop(p, "Blocker / Risk"),
+    project_area: prop(p, "Project Area"), record_type: prop(p, "Record Type"),
+    acceptance_criteria: prop(p, "Acceptance Criteria"),
+    progress_percent: prop(p, "Progress %"), progress_basis: prop(p, "Progress Basis"),
+    source_commit: prop(p, "Source Commit"), target_date: prop(p, "Target Date"),
     source_url: page.url, source_updated_at: page.last_edited_time,
     observed_at: new Date().toISOString(), raw_properties: p,
   };
@@ -62,6 +75,12 @@ function mapPage(page: any, kind: string, sourceKey: string) {
     owner_role: prop(p, "Primary Owner"), pre_stage: prop(p, "PRE Stage"),
     status: prop(p, "Run State") ?? "UNKNOWN", github_run_id: prop(p, "GitHub Run ID"),
     github_workflow_url: prop(p, "GitHub Workflow URL"),
+    execution_id: prop(p, "Execution ID"), run_type: prop(p, "Run Type"),
+    source_commit: prop(p, "Source Commit"), source_repository: prop(p, "Source Repository"),
+    plan_artifact_url: prop(p, "Plan Artifact URL"),
+    supporting_evidence: stringArray(prop(p, "Supporting Evidence")),
+    supporting_specialists: stringArray(prop(p, "Supporting Specialists")),
+    verification_state: prop(p, "Verification State"),
     execution_receipt_url: prop(p, "Execution Receipt URL"), audit_url: prop(p, "Audit URL"),
     failure_recovery_summary: prop(p, "Failure / Recovery Summary"),
     retry_count: Number(prop(p, "Retry Count") ?? 0), completed_at: prop(p, "Completed At"),
@@ -69,12 +88,17 @@ function mapPage(page: any, kind: string, sourceKey: string) {
   };
   return {
     source_key: sourceKey, external_id: page.id, title,
+    evidence_id: prop(p, "Evidence ID"),
+    title: prop(p, "Evidence Title") ?? title,
     evidence_type: prop(p, "Evidence Type") ?? "External Source",
     evidence_state: prop(p, "Evidence State") ?? "UNKNOWN",
     freshness: prop(p, "Evidence Freshness") ?? "UNKNOWN",
     repository_url: prop(p, "Repository URL"), branch_ref: prop(p, "Branch / Ref"),
     commit_sha: prop(p, "Commit SHA"), pr_url: prop(p, "PR URL"),
     ci_run_url: prop(p, "CI Run URL"), artifact_url: prop(p, "Artifact URL"),
+    content_digest: prop(p, "Content Digest"), source_locator: prop(p, "Source Locator"),
+    verified_at: prop(p, "Verified At"), verifier_role: prop(p, "Verifier Role"),
+    related_work_item: prop(p, "Related Work Item"),
     claim_supported: prop(p, "Claim Supported"), known_limitation: prop(p, "Known Limitation"),
     observed_at: prop(p, "Observed At") ?? new Date().toISOString(),
     source_url: page.url, payload: p,

@@ -41,6 +41,11 @@ Deno.serve(async (req) => {
   let event: Record<string, unknown>;
   try { event = JSON.parse(raw); } catch { return Response.json({ error: "invalid_json" }, { status: 400, headers: cors }); }
 
+  // Notion sends a one-time signed webhook verification challenge.
+  if (event.verification_token === secret) {
+    return Response.json({ verified: true }, { status: 200, headers: cors });
+  }
+
   const eventId = String(event.id ?? event.event_id ?? "");
   const eventType = String(event.type ?? "unknown");
   const entity = (event.entity && typeof event.entity === "object") ? event.entity as Record<string, unknown> : {};
@@ -72,5 +77,21 @@ Deno.serve(async (req) => {
     updated_at: new Date().toISOString(),
   }).eq("provider", "notion").eq("enabled", true);
 
-  return Response.json({ accepted: true, provider: "notion", delivery_id: eventId }, { status: 202, headers: cors });
+  // Trigger a near-real-time canonical reconciliation. The 15-minute scheduled run
+  // remains the recovery path if this request cannot be made.
+  let syncTriggered = false;
+  const syncToken = Deno.env.get("HSO_SYNC_TOKEN");
+  if (syncToken) {
+    try {
+      const syncResponse = await fetch(url + "/functions/v1/hso-reconcile", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-hso-sync-token": syncToken },
+        body: JSON.stringify({ trigger_kind: "webhook", provider: "notion", delivery_id: eventId }),
+        signal: AbortSignal.timeout(55000),
+      });
+      syncTriggered = syncResponse.ok;
+    } catch { /* Event is already safely recorded; scheduled reconciliation repairs it. */ }
+  }
+
+  return Response.json({ accepted: true, provider: "notion", delivery_id: eventId, sync_triggered: syncTriggered }, { status: 202, headers: cors });
 });

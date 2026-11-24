@@ -1,15 +1,19 @@
-# Supabase deployment
+# HSO Mission Control Supabase deployment
 
-Project: `ehgmtkkppmceaffhwcpc` (HSMART).
+Project ref: `ehgmtkkppmceaffhwcpc` (HSMART).
 
-Migrations in this directory reproduce the HSO Mission Control schema and access model applied to the project. The HSO tables use the `hso_*` prefix; unrelated tables, schemas and functions are not managed by this project.
+## Migrations
+- `20261124063356_hso_mission_control_foundation_v1.sql`
+- `20261124063509_hso_mission_control_member_access_v1.sql`
+- `20261124074200_hso_mission_control_hardening_and_notion_field_parity_v1.sql`
 
-Deploy Edge Functions:
+All new data tables use the `hso_*` prefix. The migration sequence does not alter unrelated project functions or schemas.
+
+## Edge Functions
 - `functions/hso-notion-webhook`
 - `functions/hso-github-webhook`
 - `functions/hso-reconcile`
 
-Configure secrets through Supabase Dashboard > Edge Functions > Secrets:
-`HSO_SYNC_TOKEN`, `NOTION_API_TOKEN`, `NOTION_WEBHOOK_VERIFICATION_TOKEN`, optional `GITHUB_WEBHOOK_SECRET`, optional `GITHUB_TOKEN`.
+The deployed v3 source is committed in these directories. Secrets are set through the Supabase Dashboard, never committed: `HSO_SYNC_TOKEN`, `NOTION_API_TOKEN`, `NOTION_WEBHOOK_VERIFICATION_TOKEN`, optional `GITHUB_WEBHOOK_SECRET`, optional `GITHUB_TOKEN`.
 
-Never commit or expose `SUPABASE_SERVICE_ROLE_KEY`.
+The service-role key is only available to the trusted Edge Function runtime. Never expose it in browser variables.

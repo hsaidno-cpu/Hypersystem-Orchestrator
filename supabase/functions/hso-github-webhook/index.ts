@@ -85,5 +85,20 @@ Deno.serve(async (req) => {
   await supabase.from("hso_sources").update({
     last_event_at: new Date().toISOString(), updated_at: new Date().toISOString(),
   }).eq("source_key", "github-hso-parent");
-  return Response.json({ accepted: true, provider: "github", delivery_id: delivery }, { status: 202, headers: cors });
+  // Trigger near-real-time source reconciliation after event intake.
+  let syncTriggered = false;
+  const syncToken = Deno.env.get("HSO_SYNC_TOKEN");
+  if (syncToken) {
+    try {
+      const syncResponse = await fetch(url + "/functions/v1/hso-reconcile", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-hso-sync-token": syncToken },
+        body: JSON.stringify({ trigger_kind: "webhook", provider: "github", delivery_id: delivery }),
+        signal: AbortSignal.timeout(55000),
+      });
+      syncTriggered = syncResponse.ok;
+    } catch { /* Event is persisted; scheduled reconciliation is the recovery path. */ }
+  }
+
+  return Response.json({ accepted: true, provider: "github", delivery_id: delivery, sync_triggered: syncTriggered }, { status: 202, headers: cors });
 });
