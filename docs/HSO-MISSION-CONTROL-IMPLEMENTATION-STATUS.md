@@ -1,48 +1,15 @@
-# HSO Mission Control implementation status
+# HSO Mission Control — Implementation Status
 
-Updated: 2026-11-24
+Updated: 2026-11-24.
 
-## Current implementation
-
-- Canonical repository: `hsaidno-cpu/Hypersystem-Orchestrator`.
-- Feature branch: `feat/hso-mission-control-foundation-20261124`.
-- Draft PR: #21.
-- Next.js app: `apps/mission-control`.
+- Foundation PR #21 merged to main at `9853bde6d8484b486aa4d163e65f834fa632410b`.
+- Intelligence v2 branch: `feat/hso-mission-control-intelligence-v2-20261124` (not merged).
 - Supabase project: `ehgmtkkppmceaffhwcpc`.
-- Applied migration versions: `20261124063356`, `20261124063509`, `20261124074200`.
-- Edge Functions: `hso-notion-webhook` v3, `hso-github-webhook` v3, `hso-reconcile` v3.
-- GitHub app build/typecheck exact-head CI: passed on `6858d77c810a0785d14aa7acef363dc42a03c730`.
-- Integration workflow: passed in NOT_CONFIGURED skip mode; no claim of live sync.
-- Catalog validation: fails on pre-existing compatibility status assertion mismatch; isolated from this dashboard build.
-
-## Current gate state
-
-| Gate | State | Notes |
-|---|---|---|
-| Repository implementation | READY FOR REVIEW | Draft PR only |
-| Database foundation | APPLIED | HSO tables + RLS |
-| Edge Function deployment | ACTIVE | v3; secrets still required |
-| Dashboard build | PASS | Typecheck + Next build |
-| Live GitHub events | BLOCKED | Repository variable/secret absent |
-| Live Notion events | BLOCKED | Notion internal connection/token/webhook absent |
-| Scheduled reconciliation | BLOCKED | Workflow must be merged to default branch and secrets configured |
-| First admin access | BLOCKED | No active row in `hso_members` yet |
-| Vercel project | BLOCKED | Waiting for team consent; no deployment created |
-
-## Edge Function behavior (v3)
-
-- Notion webhook supports signed verification challenge and event HMAC verification.
-- Both Notion and GitHub event endpoints persist an idempotent event then attempt immediate reconciliation using `HSO_SYNC_TOKEN`.
-- Failed immediate invocation does not discard the inbox event; the 15-minute scheduled reconciler is the recovery mechanism.
-- Reconciler reads latest source state and maps actual Notion schema properties into normalized fields. Missing integration credentials remain explicitly not configured.
-- Event ingestion alone never promotes a source to connected.
-
-## Required external configuration
-
-1. Supabase Edge Function secrets: `HSO_SYNC_TOKEN`, `NOTION_API_TOKEN`, `NOTION_WEBHOOK_VERIFICATION_TOKEN`; optional `GITHUB_TOKEN` and `GITHUB_WEBHOOK_SECRET`.
-2. GitHub Actions variable `HSO_GITHUB_WEBHOOK_URL` and secret `HSO_SYNC_TOKEN`.
-3. Notion internal connection shared only with the four HSO source pages/databases, plus its webhook subscription.
-4. Vercel team consent, Git link, project environment variables.
-5. Add the first administrator to `public.hso_members` after Supabase Auth sign-in.
-
-Do not merge or deploy production based only on app build success. Complete data mapping, security, sync, access and preview acceptance first.
+- Applied migrations: foundation, member access, hardening, intelligence model, work-item history/milestone links, milestone target/execution links, and completion criteria baseline.
+- Edge Functions ACTIVE: Notion webhook v4, GitHub webhook v4, reconciler v7, decision engine v4.
+- 12 Project Completion Intelligence deliverables registered. Scope weights are intentionally unset pending owner assessment.
+- Dashboard v2 includes weighted verified progress, source freshness, primary action, supporting/blocked actions, snapshot-bound prompt, milestone health, workflow detail/history, diagnostics and change events.
+- Database currently has 0 work items/executions/evidence/sync runs. Five source registry rows are NOT_CONFIGURED. This means there is no operational progress value to compute yet.
+- Live Notion/GitHub source sync remains blocked on Supabase secrets, Notion internal connection/webhook, GitHub Actions URL/secret, and first admin membership.
+- Vercel project/deployment remains pending team authorization and Preview setup.
+- No automatic approvals, merges, releases, production deploys or canonical source writes.
