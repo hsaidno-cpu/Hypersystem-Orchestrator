@@ -14,7 +14,14 @@
       "verified": true,
       "verified_by": "evaluator:independent",
       "source_locator": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/README.md",
-      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "schema_version": "1.0.0",
+      "project_id": "HSO-EXAMPLE",
+      "scope_id": "HSO-EXAMPLE:baseline-v1",
+      "identity_verified": true,
+      "verifier_role": "Evaluator Team",
+      "verified_at": "2026-11-24T03:00:00Z",
+      "issuer": "hso-evidence-issuer"
     }
   ],
   "approvals": []
