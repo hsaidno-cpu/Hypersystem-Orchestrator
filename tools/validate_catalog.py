@@ -262,7 +262,7 @@ def validate():
             fail(f"{plugin['plugin_key']}: instruction snapshot path mismatch")
     print(f"PASS: {len(plugins)} unique plugin identities")
     print(f"PASS: {len(repositories)} repository records")
-    print(f"PASS: {len(submodules)} declared source submodules")
+    print(f"PASS: {len(submodules)} declared and pinned source submodules")
     print("PASS: parent gitlink SHAs equal registered source pins")
     print("PASS: integrated source manifest provenance is recorded and internally consistent")
     print("PASS: Plugin Creator metadata observations are no older than 30 days")
