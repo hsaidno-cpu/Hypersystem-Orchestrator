@@ -4,14 +4,18 @@
   "main_branch": "main",
   "evidence_data_source_id": "42299868-397f-817c-bb25-000b49b243fa",
   "stale_after_days": 14,
-  "workflow_names": ["Catalog and distribution validation"],
+  "workflow_names": [
+    "Catalog and distribution validation"
+  ],
   "pull_request_relation_map": {
     "13": "42299868-397f-81fe-8349-c8e97800573a",
     "14": "42299868-397f-81fe-8349-c8e97800573a",
-    "15": "42299868-397f-81fe-8349-c8e97800573a"
+    "15": "42299868-397f-81fe-8349-c8e97800573a",
+    "16": "42299868-397f-8167-afb4-c4fbb98b6e06"
   },
   "branch_relation_map": {
-    "main": "42299868-397f-81fe-8349-c8e97800573a"
+    "fix/ponytail-c2-c3-test-contract-20261124": "42299868-397f-81fe-8349-c8e97800573a",
+    "feat/github-notion-evidence-sync-20261124": "42299868-397f-8167-afb4-c4fbb98b6e06"
   },
-  "default_relation_ids": ["42299868-397f-81fe-8349-c8e97800573a"]
+  "default_relation_ids": []
 }
