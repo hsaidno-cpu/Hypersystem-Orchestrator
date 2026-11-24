@@ -26,7 +26,12 @@ def canonical_json(value: Any) -> str:
 
 
 def digest_record(record: dict[str, Any]) -> str:
-    return hashlib.sha256(canonical_json(record).encode("utf-8")).hexdigest()
+    # Observation timestamps change on replay; source-content digest must not.
+    stable_content = {
+        key: value for key, value in record.items()
+        if key not in {"observed_at", "verified_at"}
+    }
+    return hashlib.sha256(canonical_json(stable_content).encode("utf-8")).hexdigest()
 
 
 def read_rich_text(properties: dict[str, Any], name: str) -> str:
