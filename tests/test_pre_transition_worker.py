@@ -112,6 +112,11 @@ class PRETransitionWorkerTests(unittest.TestCase):
         self.assertEqual(select_value(page["properties"]["Request State"]), "POLICY_PASSED")
         self.assertEqual(select_value(page["properties"]["Gate Decision"]), "ALLOW")
         self.assertEqual(rich_text_value(page["properties"]["Evaluation Digest"]), result["evaluation_digest"])
+        self.assertEqual(
+            rich_text_value(page["properties"]["Evaluation Receipt JSON"]),
+            json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+        )
+        self.assertEqual(rich_text_value(page["properties"]["Correlation ID"]), "corr-001")
         self.assertEqual(page["properties"]["Work Item"]["relation"][0]["id"], "work-item-001")
         self.assertNotIn("PRE Stage", client.updated[0][1])
 
@@ -161,6 +166,37 @@ class PRETransitionWorkerTests(unittest.TestCase):
                 copied["properties"]["Evaluation Digest"] = text_prop("0" * 64)
                 return copied
         client = CorruptReadBack(page)
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaisesRegex(NotionWorkerError, "READ_BACK_MISMATCH"):
+                process_page(
+                    page, client, POLICY, None,
+                    NonceStore(Path(folder) / "nonces.sqlite"),
+                    evidence_public_key=EVIDENCE_PUBLIC,
+                )
+
+    def test_tampered_full_evaluation_receipt_fails_read_back(self):
+        page = queue_page()
+
+        class CorruptReceiptReadBack(MemoryNotion):
+            def __init__(self, original):
+                super().__init__(original)
+                self.read_count = 0
+
+            def get_page(self, page_id):
+                self.read_count += 1
+                copied = {
+                    "id": page_id,
+                    "properties": dict(self.page["properties"]),
+                }
+                # First read verifies the EVALUATING claim. Corrupt only the
+                # final persisted receipt while leaving summary fields intact.
+                if self.read_count == 2:
+                    copied["properties"]["Evaluation Receipt JSON"] = text_prop(
+                        '{"decision":"ALLOW","tampered":true}'
+                    )
+                return copied
+
+        client = CorruptReceiptReadBack(page)
         with tempfile.TemporaryDirectory() as folder:
             with self.assertRaisesRegex(NotionWorkerError, "READ_BACK_MISMATCH"):
                 process_page(
