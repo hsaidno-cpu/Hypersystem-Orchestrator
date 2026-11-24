@@ -25,14 +25,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: false
-      - name: Capture authenticated GitHub Environment reviewer identity
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HSO_P0_ALLOWED_REVIEWER_LOGINS: ${{ vars.HSO_P0_ALLOWED_REVIEWER_LOGINS }}
-        run: >-
-          python tools/verify_p0_environment_approval.py
-          --output /tmp/hso-p0-environment-approval.json
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -159,6 +151,14 @@ jobs:
               "secrets_are_not_read_or_printed": True,
           }, indent=2))
           PY
+
+      - name: Capture authenticated GitHub Environment reviewer identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HSO_P0_ALLOWED_REVIEWER_LOGINS: ${{ vars.HSO_P0_ALLOWED_REVIEWER_LOGINS }}
+        run: >-
+          python tools/verify_p0_environment_approval.py
+          --output /tmp/hso-p0-environment-approval.json
 
       - name: Set up Python
         uses: actions/setup-python@v5
