@@ -31,15 +31,21 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install pinned PRE runtime dependencies
+        run: python -m pip install --requirement requirements-pre.txt
+
       - name: Evaluate pending PRE transition requests
         env:
           HSO_PRE_NOTION_API_KEY: ${{ secrets.HSO_PRE_NOTION_API_KEY }}
-          HSO_PRE_APPROVAL_HMAC_KEY: ${{ secrets.HSO_PRE_APPROVAL_HMAC_KEY }}
+          HSO_PRE_APPROVAL_PUBLIC_KEY: ${{ vars.HSO_PRE_APPROVAL_PUBLIC_KEY }}
+          HSO_EVIDENCE_ISSUER_PUBLIC_KEY: ${{ vars.HSO_EVIDENCE_ISSUER_PUBLIC_KEY }}
           HSO_PRE_NOTION_DATA_SOURCE_ID: ${{ vars.HSO_PRE_NOTION_DATA_SOURCE_ID }}
           HSO_PRE_NONCE_STORE_PATH: ${{ vars.HSO_PRE_NONCE_STORE_PATH }}
         run: |
           set -euo pipefail
           test -n "${HSO_PRE_NOTION_API_KEY}"
+          test -n "${HSO_PRE_APPROVAL_PUBLIC_KEY}"
+          test -n "${HSO_EVIDENCE_ISSUER_PUBLIC_KEY}"
           test -n "${HSO_PRE_NOTION_DATA_SOURCE_ID}"
           test -n "${HSO_PRE_NONCE_STORE_PATH}"
           mkdir -p "$(dirname "${HSO_PRE_NONCE_STORE_PATH}")"
