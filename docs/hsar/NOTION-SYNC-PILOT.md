@@ -17,6 +17,7 @@
 - Duplicate stable keys fail closed. The stable identity is the canonical GitHub PR URL. The normalized source projection is SHA-256 hashed; unchanged events become no-ops. Every create/update is read back from Notion and hash-verified before both sync statuses are marked `Synced`.
 - Retry is bounded and applies only to transient HTTP/transport failures. A non-idempotent create request is not automatically retried after an ambiguous network/5xx outcome; later reconciliation checks the stable key before creating again.
 - Workflow permissions are limited to `contents: read`, `pull-requests: read`, and `actions: read`. No `pull_request_target`, repository write token or deployment permission is used.
+- A push to `main` resolves only the PRs associated with the pushed commit SHAs; it does not scan the full PR history. Full repository reconciliation is reserved for the daily schedule or manual dispatch.
 - The workflow's write gate is disabled unless `HSAR_NOTION_SYNC_ENABLED` equals `true`.
 
 ## One-time account configuration
@@ -46,6 +47,7 @@ The connected GitHub/Notion tools do not expose repository-secret management. Co
 | Fork-originated PR | Skip |
 | Human `Decision State` field | Preserve unchanged; never write it |
 | Dry-run | No Notion API request or write |
+| Push to main | Resolve pushed commit SHAs to associated PRs only; deduplicate PR numbers |
 | Scheduled/manual reconciliation | Re-read current GitHub PR state and reconcile by canonical URL |
 
 Unit-level contract tests run with `python -m unittest discover -s tests -v`. Passing local tests are not a live integration receipt. The pilot remains `NOT_CONFIGURED` / `BLOCKED` until the real Notion credential and narrowly scoped database share exist and a live create/update/no-op/read-back test passes. The script also checks `HSAR_NOTION_SYNC_ENABLED`; workflow gating is not the only control.
