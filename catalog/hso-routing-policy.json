@@ -84,6 +84,16 @@
         "plugin.skill.invoke.remote-mcp.skill-analyzer"
       ],
       "decision_rationale": "SKILL ANALYZER is the sole primary owner. The one P0 executor is OpenAI Responses API using one authenticated Streamable HTTP Remote MCP tool; no other skill, MCP tool or downstream capability is included."
+    },
+    "plugin.vibe_coding_mentor_prd": {
+      "rule_id": "ROUTE-PLUGIN-VCM-001",
+      "primary_owner": "vibe-coding-mentor",
+      "supporting_specialists": [],
+      "action_id": "plugin.skill.invoke",
+      "required_capabilities": [
+        "plugin.skill.invoke"
+      ],
+      "decision_rationale": "Vibe Coding Mentor owns non-IT product discovery, PRD/MVP specification and PRD-to-builder prompt compilation. This is a declarative route only. The generic plugin.skill.invoke capability remains NOT_CONFIGURED; HSO must return BLOCKED_CAPABILITY until a dedicated VCM private-source host adapter, endpoint, authentication/authorization contract and verified invocation receipt exist."
     }
   }
 }
