@@ -1,57 +1,58 @@
-# HSAR Four-Table Analysis Output Contract
+# HSAR Four-Core-Table Analysis Output Contract
 
-**Contract version:** 0.2.0  
+**Contract version:** 0.3.0  
 **Status:** Proposed in PR; not merged
 
-## Mandatory order
+## Mandatory four-table order
 
-Every substantive HSAR analysis must produce four separate tables in this order. They must not be collapsed into a generic SWOT, scorecard, or findings table.
+Every substantive HSAR analysis must produce four separate tables in this order. They must not be collapsed into a generic SWOT, scorecard or findings table.
 
 ## Table 1 — Cross-method analysis
 
 | Method ID | Methodology | Question addressed | Why selected | Evidence/input | Result/insight | Limitation/assumption | Confidence |
 |---|---|---|---|---|---|---|---|
 
-Select methods according to the question, system boundary, risk, and evidence. Candidate methods include first principles, systems thinking, causal-loop analysis, functional decomposition, MECE issue trees, morphology, root-cause analysis, 5 Whys, Ishikawa, dependency/data-flow/state-machine analysis, SWOT, PESTLE, capability mapping, value-stream analysis, FMEA/FMECA, fault-tree, bow-tie, STRIDE-style threat modeling, premortem, reliability engineering, architecture fitness functions, test-pyramid/contract testing, usability/cognitive-load analysis, and provenance/supply-chain analysis.
-
-For every selected method, explain the question, fit, input evidence, applied procedure, insight, limitations, assumptions, and confidence. Cross-check material/high-impact findings with an independent method when evidence allows. Candidate methods not selected are not reported as applied.
+The methodology registry is open-ended. Starter examples include First Principles, Systems Thinking, MECE, functional decomposition, causal-loop/root-cause analysis, 5 Whys, Ishikawa, morphology, dependency/data-flow/state-machine analysis, SWOT, PESTLE, FMEA/FMECA, Fault Tree, Bow-tie, STRIDE-style threat modelling, premortem, reliability engineering, Architecture Fitness Functions, ATAM-style trade-offs, test-pyramid/contract/property/fuzz testing, provenance/supply-chain analysis, usability/cognitive-load analysis, and later evidence-backed methods. For every selected method explain fit, required input, procedure, insight, assumptions, limitations and confidence. Candidate methods not selected are not reported as applied. A method must pass screening/pilot/validation before adoption as a standard.
 
 ## Table 2 — Positive analysis
 
-| Positive ID | Strength/advantage | Evidence | Mechanism/source of value | Benefit/potential leverage | Reuse boundary | Confidence |
-|---|---|---|---|---|---|---|
+| Positive ID | Target object | Strength/advantage | Evidence | Mechanism/source of value | Benefit/potential leverage | Reuse boundary | Confidence |
+|---|---|---|---|---|---|---|---|
 
-Assess strengths, differentiators, successful mechanisms, resilience, maintainability, scalability, reusable assets, operational leverage, positive side effects, attractiveness, strategic value, bargaining power, and future optionality where supported. Separate observed strengths from potential benefits and hypotheses.
+Assess strengths, differentiators, working mechanisms, resilience, maintainability, scalability, reusable assets, operational leverage, side effects, attractiveness, strategic value, bargaining power and future optionality where supported. Separate observed strengths from hypotheses and potential benefits.
 
 ## Table 3 — Negative analysis
 
-| Negative ID | Weakness/failure | Symptom | Direct/root cause | Vulnerability or worst credible scenario | Impact/loss | Severity | Evidence/confidence |
-|---|---|---|---|---|---|---|---|
+| Negative ID | Target object | Weakness/failure | Symptom | Direct/root cause | Vulnerability or worst credible scenario | Impact/loss | Severity | Evidence/confidence |
+|---|---|---|---|---|---|---|---|---|
 
-Separate symptom, direct cause, root cause/hypothesis, contributing condition, credible failure path, affected party, and impact. Classify evidence as `PROVEN`, `SUPPORTED`, `HYPOTHESIS`, `UNKNOWN`, or `CONTRADICTED`. Worst credible scenarios require a plausible trigger and failure chain. Never fabricate likelihood, financial loss, or numeric risk scores.
+Separate symptom, direct cause, root-cause hypothesis, contributing condition, plausible failure chain, affected party and impact. Classify evidence as PROVEN, SUPPORTED, HYPOTHESIS, UNKNOWN or CONTRADICTED. Do not fabricate likelihood, financial loss or numerical risk.
 
 ## Table 4 — Negative-to-positive conversion
 
-| Negative ID | Positive opportunity | Corrective solution | Preventive control | Mitigative/recovery control | Anticipatory/detective control | Evaluation measure | Acceptance test | Efficiency/effectiveness rationale | Residual risk |
-|---|---|---|---|---|---|---|---|---|---|
+| Negative ID | Target object | Positive opportunity | Corrective solution | Preventive control | Mitigative/recovery control | Anticipatory/detective control | Evaluation measure | Acceptance test | Efficiency/effectiveness rationale | Residual risk |
+|---|---|---|---|---|---|---|---|---|---|---|
 
-Every material negative must map to a testable intervention or an explicit disposition (`ACCEPTED_RISK`, `DEFERRED`, `REJECTED_WITH_REASON`, or `NEEDS_DECISION`). Include owner role, dependency, reversibility, rollout, and rollback in the table or linked change record.
+Every material negative maps to a testable intervention or explicit disposition: ACCEPTED_RISK, DEFERRED, REJECTED_WITH_REASON or NEEDS_DECISION. Include owner role, dependency, reversibility, rollout and rollback in the table or linked change record.
 
-## Severity and prioritization
+## Severity and traceability
 
-- `P0 CRITICAL`: severe security/safety/privacy/integrity failure, unauthorized side effect, or irreversible data loss.
-- `P1 HIGH`: core function or essential control cannot be trusted.
-- `P2 MEDIUM`: material reliability, quality, operational, or maintainability weakness.
-- `P3 LOW`: limited-impact clarity, consistency, or polish issue.
+- P0 CRITICAL: severe security/safety/privacy/integrity failure, unauthorized side effect or irreversible data loss.
+- P1 HIGH: core function or essential control cannot be trusted.
+- P2 MEDIUM: material reliability, quality, operations or maintainability weakness.
+- P3 LOW: limited-impact clarity, consistency or polish issue.
 
-Numerical scores require a defined scale, formula, source data, uncertainty, and sensitivity. Otherwise use qualitative assessments with explicit rationale.
+Numerical severity/risk scores require defined scale, formula, source data and uncertainty. Use IDs MTH, POS, NEG, CVT, RSK, REC, REQ, TST and VFY. Every conversion links to its Negative ID; every test links to a requirement; every verification links to exact evidence. Empty tables remain present and state NONE_FOUND_WITHIN_DECLARED_SCOPE with coverage and limitations.
 
-## Traceability
+## Comparative expansion: activate two additional tables
 
-Use `MTH-###`, `POS-###`, `NEG-###`, `CVT-###`, `RSK-###`, `REC-###`, `REQ-###`, `TST-###`, and `VFY-###`.
+When the user explicitly requests comparison, benchmarking, ranking, alternatives or feature comparison, append Table 5 and Table 6 after the four core tables. The full 4+2 criteria, rubric and fairness controls are defined in COMPARATIVE-4PLUS2-OUTPUT-CONTRACT.md.
 
-Each conversion links to its Negative ID; each acceptance test links to a requirement; each verification links to an exact evidence locator. If a table has no rows, include the table and mark `NONE_FOUND_WITHIN_DECLARED_SCOPE` with scan level and evidence limitations.
+- **Table 5 — Comparative scorecard:** compare the four analytical dimensions across every target object and include value, anchored 0–5 score or N/A, classification, evidence coverage, confidence, positive/negative evidence, conversion progress, comparative delta and caveat.
+- **Table 6 — Feature-gap/evaluative recommendation:** include current state, target/benchmark, gap, current score, target score, gap score, value/opportunity, evaluative suggestion, priority/classification, effort/cost basis, acceptance test/indicator and residual risk.
+
+Unknown evidence is N/A, not zero. Never rank incomparable scope/version/sample data. Composite scores are not aggregated by default and cannot override a hard P0/P1 gate.
 
 ## Report close
 
-After the four tables, include critical notes, trade-offs, recommendations, evaluation, prioritized development roadmap, acceptance criteria, residual risks, human decision gates, and Notion/GitHub evidence receipts or precise blockers.
+After the four tables, or six tables in comparison mode, include critical notes, counterevidence, trade-offs, recommendations, evaluation, prioritized roadmap, acceptance criteria, residual risks, human decision gates and Notion/GitHub receipts or precise blockers.
