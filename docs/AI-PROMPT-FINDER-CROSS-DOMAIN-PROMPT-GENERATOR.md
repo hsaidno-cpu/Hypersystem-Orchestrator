@@ -10,7 +10,7 @@
 
 Extend the existing AI Prompt Finder & Creator identity. Do not create another HSO plugin identity and do not split the 50 source patterns into 50 agents. Version 1.1.0 adds an explicit prompt-generator workflow and ten category prompt-grammar specialists. The product remains a prompt-artifact system: it does not run the downstream task by default.
 
-The package has 18 skill definitions: the seven existing multimodal/optimization/QC skills, one prompt-generator, and ten category subskills.
+The package has 18 skill definitions: the seven existing multimodal/optimization/QC skills, one prompt-generator, and ten category subskills. HSO main now contains 24 plugin identities including EWO; APFC raises the instruction index from 279 to 290 skill metadata entries.
 
 ## 2. Source evidence and provenance
 
@@ -40,13 +40,13 @@ The package preserves concise titles and normalized intents under its private AP
 |---|---|---|---|
 | Business & Strategy | business-strategy-prompts | diagnosis, idea tests, strategy options, pricing hypotheses, positioning | GrowthForge owns business decisions and business-task prompts |
 | Marketing & Growth | marketing-growth-prompts | funnel, offer, content, acquisition and ad prompts | GrowthForge owns commercial marketing/growth |
-| Productivity & Time | productivity-time-prompts | workload, priorities, time blocks, automation suitability, recurring systems | WSO owns reusable workflow/SOP; EWO remains pending until its HSO dependency is integrated |
+| Productivity & Time | productivity-time-prompts | workload, priorities, time blocks, automation suitability, recurring systems | EWO owns workday-level coordination; WSO owns generic workflow/SOP architecture |
 | Decision-Making | decision-making-prompts | decisions, pre-mortem, opportunity cost, steelman, uncertainty | SKILL ANALYZER owns method selection and analytical execution |
 | Writing & Communication | writing-communication-prompts | emails, documents, editing, difficult conversations, explanation | Cortex/CommandCraft may execute general knowledge work; APFC only creates the prompt |
 | Money & Finance | money-finance-prompts | budgets, debt, freelance pricing, cashflow, purchase/investment assessment | GrowthForge owns business finance; personal investment prompts remain informational/non-advisory |
 | Learning & Skills | learning-skills-prompts | skill plans, Feynman, hints, summaries, study/interview practice | People & Business Competency Academy owns human competency outcomes; Cortex owns general knowledge work |
 | Tech & Troubleshooting | tech-troubleshooting-prompts | debugging, troubleshooting, software comparison, data design, formulas/scripts | Ponytail owns engineering method; Vibe Coding Mentor's special PRD-to-builder scope remains pending |
-| Career & Work | career-work-prompts | negotiation, conflict, resume, transition, leadership | People & Business Competency Academy owns human competency development; workday owner remains subject to HSO registration |
+| Career & Work | career-work-prompts | negotiation, conflict, resume, transition, leadership | People & Business Competency Academy owns human competency development; EWO owns workday-level coordination for workday-specific use cases |
 | Thinking Frameworks | thinking-frameworks-prompts | first principles, 5 Whys/Fishbone, inversion, simulated viewpoints, problem solving | SKILL ANALYZER owns analytical-method selection and execution |
 
 The ten subskills are not ten autonomous agents. Each supplies a category-specific grammar, variables, output expectations and guardrails to the single prompt-orchestrator.
@@ -141,7 +141,7 @@ The generator does not request private chain-of-thought. It asks for concise, ob
 | Anatomi Prompt V3.0 | Formal eight-pillar prompt architecture and audit | Optional formal hardening of APFC-created prompts | Anatomi owns structural compliance |
 | SKILL ANALYZER | General analytical method selection and analysis | Owner for decision and thinking-method execution | APFC writes the analytical prompt; Analyzer performs method work |
 | AI Workflow Systems Orchestrator | Reusable workflow, SOP and system architecture | Owner for recurring workflow design and automation architecture | APFC prompt may request a workflow; WSO owns workflow blueprint |
-| Executive Workday Orchestrator | Workday task/project/meeting/focus coordination | Candidate owner for productivity-time requests | Registration remains pending in PR dependency chain; no live invocation claim |
+| Executive Workday Orchestrator | Workday-level task/project/meeting/communication/schedule coordination | Owner for workday-specific prompt use cases and downstream operational decisions | APFC remains prompt construction only; EWO host/runtime activation is NOT_RUN |
 | Cortex Workbench / CommandCraft 56 | General knowledge-work and command profile routing | Potential destination for writing, explanation, learning or general tasks | APFC owns prompt construction; execution remains with the relevant knowledge-work owner |
 | People & Business Competency Academy | Human competency diagnosis, practice and transfer | Owner for human learning/skill development outcomes | APFC creates learning prompt; Academy owns competency evidence |
 | Ponytail Engineering System | Engineering method, codebase/diff analysis, risk-based tests | Supports technical troubleshooting prompts | APFC does not write or modify canonical repositories |
@@ -164,7 +164,7 @@ The generator does not request private chain-of-thought. It asks for concise, ob
 | P1 | Create controlled test corpus from all 50 patterns | Evaluator Team | Test fixtures cover ten categories; target result and limitations recorded |
 | P1 | Validate target generators separately | Evaluator Team + owner | Named model/version, settings, source, output, rubric and date |
 | P1 | Add structured feedback and prompt version metrics | WSO/SDO after design acceptance | Retrieval/use quality data; no vanity score |
-| P1 | Integrate Keep EWO's host/runtime gates separate; integrate Vibe after its HSO dependency and route gates are satisfied | HSO/SDO | Catalog admission, route tests, host and runtime evidence |
+| P1 | Keep EWO host/runtime gates separate; integrate Vibe after PR #35 dependency and route gates are satisfied | HSO/SDO | EWO is registered in the HSO catalog; runtime paths still require route, host and runtime evidence |
 | P2 | Add multilingual variants and prompt localization | APFC domain specialists | Translation fidelity and target-specific QA |
 | P2 | Add prompt-library retrieval/version management if usage justifies it | WSO/SDO | Access control, provenance, duplicate detection and retrieval tests |
 
@@ -193,6 +193,6 @@ The generator does not request private chain-of-thought. It asks for concise, ob
 - Scope/discoverability unchanged: USER / PRIVATE.
 - HSO public branch: feat/ai-prompt-finder-cross-domain-1-1-0-20261126.
 - HSO main is protected. PR #37 includes the current EWO main commit as a second parent to retain both changes.
-- Existing PR #24 GrowthForge and PR #35 Vibe Coding Mentor remain separate pending work; no merge/retarget action is performed here.
+- PR #24 GrowthForge and PR #35 Vibe Coding Mentor remain separate workstreams. EWO registration from PR #33 is already present on main; no related PR is merged by this change.
 
 **Final disposition:** PASS for private package update and read-back; PASS for source-pattern decomposition; proposed HSO metadata/routing changes await CI and review; HOLD for public distribution, canonical source parity, host activation and runtime readiness.
