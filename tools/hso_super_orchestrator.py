@@ -362,6 +362,23 @@ def verify_approval(receipt: dict[str, Any] | None, case_id: str, action_id: str
             or unsigned.get("workflow_run_attempt") != expected_attempt
         ):
             raise PolicyDenied("approval receipt is not bound to this exact workflow run and attempt")
+        workflow_actor = os.environ.get("GITHUB_ACTOR", "")
+        try:
+            workflow_actor_id = int(os.environ.get("GITHUB_ACTOR_ID", ""))
+        except ValueError:
+            workflow_actor_id = 0
+        if (
+            unsigned.get("approval_source") != "github_actions_workflow_run_approvals_api"
+            or unsigned.get("environment") != "hso-p0-remote-mcp-live"
+            or not isinstance(unsigned.get("environment_reviewer_id"), int)
+            or not isinstance(unsigned.get("workflow_actor_id"), int)
+            or unsigned.get("environment_reviewer_id") == unsigned.get("workflow_actor_id")
+            or unsigned.get("workflow_actor_id") != workflow_actor_id
+            or not unsigned.get("workflow_actor")
+            or unsigned.get("workflow_actor") != workflow_actor
+            or str(unsigned.get("approver", "")).lower() == workflow_actor.lower()
+        ):
+            raise PolicyDenied("P0 approval is not bound to an independent authenticated Environment reviewer")
 
 class IdempotencyLedger:
     def __init__(self, path: Path):

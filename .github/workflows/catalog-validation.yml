@@ -87,7 +87,11 @@ jobs:
            github.run_attempt == 1 }}
     environment: hso-p0-remote-mcp-live
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
     steps:
       - name: Check out PR branch without persisted credentials
         uses: actions/checkout@v4
@@ -148,6 +152,14 @@ jobs:
           }, indent=2))
           PY
 
+      - name: Capture authenticated GitHub Environment reviewer identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HSO_P0_ALLOWED_REVIEWER_LOGINS: ${{ vars.HSO_P0_ALLOWED_REVIEWER_LOGINS }}
+        run: >-
+          python tools/verify_p0_environment_approval.py
+          --output /tmp/hso-p0-environment-approval.json
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -164,6 +176,51 @@ jobs:
           from tools.remote_mcp_responses_adapter import inspect_local_skill_source
           print(inspect_local_skill_source(Path.cwd()))
           PY
+
+      - name: Verify Ed25519 signing keypair before billable invocation
+        env:
+          HSO_P0_RECEIPT_ED25519_PRIVATE_KEY_B64: ${{ secrets.HSO_P0_RECEIPT_ED25519_PRIVATE_KEY_B64 }}
+          HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64: ${{ vars.HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64 }}
+          HSO_P0_RECEIPT_ED25519_KEY_ID: ${{ vars.HSO_P0_RECEIPT_ED25519_KEY_ID }}
+        run: |
+          python - <<'PY'
+          import base64
+          import hmac
+          import os
+          from cryptography.hazmat.primitives import serialization
+          from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+          private = os.environ.get("HSO_P0_RECEIPT_ED25519_PRIVATE_KEY_B64", "")
+          public = os.environ.get("HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64", "")
+          key_id = os.environ.get("HSO_P0_RECEIPT_ED25519_KEY_ID", "")
+          if not all((private, public, key_id)):
+              raise SystemExit("Ed25519 production receipt keypair is not provisioned")
+          private_raw = base64.b64decode(private, validate=True)
+          public_raw = base64.b64decode(public, validate=True)
+          if len(private_raw) != 32 or len(public_raw) != 32:
+              raise SystemExit("Ed25519 raw keys must be 32 bytes")
+          derived = Ed25519PrivateKey.from_private_bytes(private_raw).public_key().public_bytes(
+              encoding=serialization.Encoding.Raw, format=serialization.PublicFormat.Raw
+          )
+          if not hmac.compare_digest(derived, public_raw):
+              raise SystemExit("Ed25519 private/public keypair does not match")
+          print("Ed25519 keypair provisioned and matched; key contents not logged.")
+          PY
+
+      - name: Configure short-lived AWS OIDC credentials for S3 Object Lock
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.HSO_P0_WORM_AWS_ROLE_ARN }}
+          aws-region: ${{ vars.HSO_P0_WORM_AWS_REGION }}
+
+      - name: Prove S3 Object Lock COMPLIANCE write and independent read-back before billable invocation
+        env:
+          HSO_P0_WORM_BUCKET: ${{ vars.HSO_P0_WORM_BUCKET }}
+          HSO_P0_WORM_RETENTION_DAYS: ${{ vars.HSO_P0_WORM_RETENTION_DAYS }}
+        run: >-
+          python tools/anchor_p0_worm.py
+          --preflight-only
+          --output /tmp/hso-p0-worm-preflight.json
 
       - name: Zero-inference Remote MCP and OIDC preflight
         env:
@@ -197,12 +254,16 @@ jobs:
               raise SystemExit("zero-inference preflight unexpectedly reports a billable inference")
           PY
 
-      - name: Issue one five-minute signed scope-bound approval
+      - name: Issue one five-minute scope-bound approval from authenticated Environment reviewer
         env:
           HSO_APPROVAL_HMAC_KEY: ${{ secrets.HSO_APPROVAL_HMAC_KEY }}
+          HSO_P0_ALLOWED_REVIEWER_LOGINS: ${{ vars.HSO_P0_ALLOWED_REVIEWER_LOGINS }}
           MCP_SERVER_URL: ${{ vars.MCP_SERVER_URL }}
           MCP_OIDC_AUDIENCE: ${{ vars.MCP_OIDC_AUDIENCE }}
-        run: python tools/issue_p0_skill_approval.py --output /tmp/hso-p0-approval.json
+        run: >-
+          python tools/issue_p0_skill_approval.py
+          --environment-approval /tmp/hso-p0-environment-approval.json
+          --output /tmp/hso-p0-approval.json
 
       - name: Prepare the exact one-package invocation request
         env:
@@ -211,12 +272,16 @@ jobs:
         run: |
           python tools/prepare_p0_skill_workflow.py \
             --approval-receipt /tmp/hso-p0-approval.json \
+            --environment-approval /tmp/hso-p0-environment-approval.json \
             --output /tmp/hso-p0-workflow.json
 
       - name: Invoke exactly one approved Remote MCP analysis tool
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           HSO_APPROVAL_HMAC_KEY: ${{ secrets.HSO_APPROVAL_HMAC_KEY }}
+          HSO_P0_RECEIPT_ED25519_PRIVATE_KEY_B64: ${{ secrets.HSO_P0_RECEIPT_ED25519_PRIVATE_KEY_B64 }}
+          HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64: ${{ vars.HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64 }}
+          HSO_P0_RECEIPT_ED25519_KEY_ID: ${{ vars.HSO_P0_RECEIPT_ED25519_KEY_ID }}
           MCP_SERVER_URL: ${{ vars.MCP_SERVER_URL }}
           MCP_OIDC_TOKEN_URL: ${{ vars.MCP_OIDC_TOKEN_URL }}
           MCP_OIDC_CLIENT_ID: ${{ vars.MCP_OIDC_CLIENT_ID }}
@@ -229,9 +294,15 @@ jobs:
             --audit /tmp/hso-p0-audit.jsonl \
             --receipt /tmp/hso-p0-run-receipt.json
 
-      - name: Verify the actual host call, tool allowlist and independent target digest
+      - name: Verify signed execution receipt and independent target digest
+        env:
+          HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64: ${{ vars.HSO_P0_RECEIPT_ED25519_PUBLIC_KEY_B64 }}
+          HSO_P0_RECEIPT_ED25519_KEY_ID: ${{ vars.HSO_P0_RECEIPT_ED25519_KEY_ID }}
         run: |
           python tools/hso_super_orchestrator.py verify-audit /tmp/hso-p0-audit.jsonl
+          python tools/verify_p0_execution_artifact.py \
+            --artifact artifacts/p0-skill-analyzer-invocation.json \
+            --output /tmp/hso-p0-verified-artifact.json
           python - <<'PY'
           import hashlib
           import json
@@ -275,6 +346,21 @@ jobs:
           }, indent=2))
           PY
 
+      - name: Anchor execution evidence and signed receipt in S3 Object Lock COMPLIANCE
+        env:
+          HSO_P0_WORM_BUCKET: ${{ vars.HSO_P0_WORM_BUCKET }}
+          HSO_P0_WORM_RETENTION_DAYS: ${{ vars.HSO_P0_WORM_RETENTION_DAYS }}
+        run: |
+          python tools/anchor_p0_worm.py \
+            --workspace "$GITHUB_WORKSPACE" \
+            --verification /tmp/hso-p0-verified-artifact.json \
+            --artifact artifacts/p0-skill-analyzer-invocation.json \
+            --runtime-receipt /tmp/hso-p0-run-receipt.json \
+            --audit /tmp/hso-p0-audit.jsonl \
+            --approval /tmp/hso-p0-approval.json \
+            --environment-approval /tmp/hso-p0-environment-approval.json \
+            --output /tmp/hso-p0-worm-anchor.json
+
       - name: Preserve invocation and verification evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -282,6 +368,12 @@ jobs:
           name: hso-p0-remote-mcp-skill-analyzer-${{ github.run_id }}
           path: |
             /tmp/hso-p0-remote-mcp-capabilities.json
+            /tmp/hso-p0-environment-approval.json
+            /tmp/hso-p0-approval.json
+            /tmp/hso-p0-verified-artifact.json
+            /tmp/hso-p0-worm-preflight.json
+            /tmp/hso-p0-worm-anchor.json
+            /tmp/hso-p0-worm-anchor.tar.gz
             /tmp/hso-p0-ledger.sqlite
             /tmp/hso-p0-audit.jsonl
             /tmp/hso-p0-run-receipt.json

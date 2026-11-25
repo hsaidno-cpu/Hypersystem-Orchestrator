@@ -42,6 +42,20 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
         self.approval = self.root / "approval.json"
         self.output = self.root / "workflow.json"
         self.template = self.root / "template.json"
+        self.environment_approval = self.root / "environment-approval.json"
+        self.environment_approval.write_text(json.dumps({
+            "schema_version": "1.0.0",
+            "environment": "hso-p0-remote-mcp-live",
+            "workflow_run_id": RUN,
+            "workflow_run_attempt": "1",
+            "workflow_actor": ACTOR,
+            "workflow_actor_id": 100,
+            "reviewer_login": "independent-security-reviewer",
+            "reviewer_id": 424242,
+            "state": "approved",
+            "approval_source": "github_actions_workflow_run_approvals_api",
+            "observed_at": "2026-11-24T04:00:00Z",
+        }), encoding="utf-8")
         source_template = json.loads(
             (Path(__file__).resolve().parents[1] / "examples" / "hso-p0-skill-invocation-request.json").read_text()
         )
@@ -54,8 +68,10 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
         values = {
             "HSO_APPROVAL_HMAC_KEY": SECRET,
             "GITHUB_ACTOR": ACTOR,
+            "GITHUB_ACTOR_ID": "100",
             "GITHUB_RUN_ID": RUN,
             "GITHUB_RUN_ATTEMPT": "1",
+            "HSO_P0_ALLOWED_REVIEWER_LOGINS": "independent-security-reviewer",
             "MCP_SERVER_URL": SERVER_URL,
             "MCP_OIDC_AUDIENCE": SERVER_URL,
         }
@@ -66,7 +82,8 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
         with patch.dict(os.environ, self.env(**(extra_env or {})), clear=True), \
              patch.object(issue, "TEMPLATE", self.template), \
              patch.object(issue.adapter, "inspect_local_skill_source", return_value=SOURCE), \
-             patch.object(sys, "argv", ["issue", "--output", str(self.approval)]):
+             patch.object(sys, "argv", ["issue", "--environment-approval", str(self.environment_approval),
+                                        "--output", str(self.approval)]):
             issue.main()
         return json.loads(self.approval.read_text(encoding="utf-8"))
 
@@ -76,7 +93,9 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
              patch.object(prepare, "TEMPLATE", self.template), \
              patch.object(prepare.adapter, "inspect_local_skill_source", return_value=SOURCE), \
              patch.object(sys, "argv", [
-                 "prepare", "--approval-receipt", str(self.approval), "--output", str(self.output)
+                 "prepare", "--approval-receipt", str(self.approval),
+                 "--environment-approval", str(self.environment_approval),
+                 "--output", str(self.output)
              ]):
             prepare.main()
         return json.loads(self.output.read_text(encoding="utf-8"))
@@ -89,6 +108,10 @@ class P0RemoteMCPApprovalTests(unittest.TestCase):
         end = datetime.datetime.fromisoformat(receipt["expires_at"].replace("Z", "+00:00"))
         self.assertAlmostEqual((end - start).total_seconds(), 300, delta=2)
         self.assertEqual(receipt["host"], "openai-responses-api")
+        self.assertEqual(receipt["approver"], "independent-security-reviewer")
+        self.assertEqual(receipt["workflow_actor"], ACTOR)
+        self.assertEqual(receipt["workflow_actor_id"], 100)
+        self.assertEqual(receipt["environment_reviewer_id"], 424242)
         self.assertEqual(receipt["mcp_server_label"], "skill_analyzer_internal")
         self.assertEqual(receipt["mcp_tool_name"], "invoke_skill_analyzer")
         self.assertEqual(receipt["plugin_source_commit"], SOURCE["source_commit"])

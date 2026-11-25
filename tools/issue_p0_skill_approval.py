@@ -31,6 +31,7 @@ def canonical_json(value):
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--environment-approval", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
 
@@ -46,6 +47,32 @@ def main() -> int:
         raise SystemExit("P0 approval requires a unique first-attempt workflow run")
     if not TEMPLATE.is_file() or TEMPLATE.is_symlink():
         raise SystemExit("fixed P0 request template is missing or unsafe")
+    if not args.environment_approval.is_file() or args.environment_approval.is_symlink():
+        raise SystemExit("authenticated Environment approval record is missing or unsafe")
+    environment_approval = json.loads(args.environment_approval.read_text(encoding="utf-8"))
+    approver = str(environment_approval.get("reviewer_login") or "").strip()
+    reviewer_id = environment_approval.get("reviewer_id")
+    workflow_actor_id = environment_approval.get("workflow_actor_id")
+    allowed_logins = {
+        item.strip().lower()
+        for item in os.environ.get("HSO_P0_ALLOWED_REVIEWER_LOGINS", "").split(",")
+        if item.strip()
+    }
+    if not allowed_logins or approver.lower() not in allowed_logins:
+        raise SystemExit("authenticated Environment approver is not in HSO_P0_ALLOWED_REVIEWER_LOGINS")
+    if (
+        environment_approval.get("environment") != "hso-p0-remote-mcp-live"
+        or environment_approval.get("workflow_run_id") != run_id
+        or environment_approval.get("workflow_run_attempt") != attempt
+        or environment_approval.get("workflow_actor") != actor
+        or environment_approval.get("approval_source") != "github_actions_workflow_run_approvals_api"
+        or not approver
+        or not isinstance(reviewer_id, int)
+        or not isinstance(workflow_actor_id, int)
+        or reviewer_id == workflow_actor_id
+        or approver.lower() == actor.lower()
+    ):
+        raise SystemExit("authenticated Environment approver is missing, mismatched, or not independent")
 
     server_url = adapter._require_https_public_url(
         os.environ.get("MCP_SERVER_URL", ""), expected_path="/mcp"
@@ -72,7 +99,13 @@ def main() -> int:
         "action_id": ACTION_ID,
         "target_path": TARGET_PATH,
         "authority": AUTHORITY,
-        "approver": actor,
+        "approver": approver,
+        "environment_reviewer_id": reviewer_id,
+        "workflow_actor": actor,
+        "workflow_actor_id": workflow_actor_id,
+        "environment": environment_approval["environment"],
+        "approval_source": environment_approval["approval_source"],
+        "environment_approval_observed_at": environment_approval.get("observed_at"),
         "issued_at": now.isoformat(timespec="seconds").replace("+00:00", "Z"),
         "expires_at": (now + timedelta(minutes=5)).isoformat(timespec="seconds").replace("+00:00", "Z"),
         "nonce": uuid.uuid4().hex,
@@ -102,7 +135,10 @@ def main() -> int:
         "approval_created": True,
         "case_id": CASE_ID,
         "action_id": ACTION_ID,
-        "approver": actor,
+        "approver": approver,
+        "workflow_actor": actor,
+        "workflow_actor_id": workflow_actor_id,
+        "environment_reviewer_id": reviewer_id,
         "workflow_run_id": run_id,
         "mcp_server_label": adapter.SERVER_LABEL,
         "mcp_tool_name": adapter.TOOL_NAME,
