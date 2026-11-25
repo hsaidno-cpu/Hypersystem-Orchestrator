@@ -15,7 +15,10 @@
     "installed_and_runtime_state": "named_target_platform_readback",
     "effective_instructions": "canonical_source_bundle_plus_package_or_runtime_readback",
     "generated_technical_documentation": "github_canonical_inputs_and_ci_generator",
-    "human_decisions_and_roadmap": "approved_notion_decision_records"
+    "human_decisions_and_roadmap": "approved_notion_decision_records",
+    "human_decision_authority": "GOV-01",
+    "human_decision_subject": "hsaidno-cpu",
+    "additional_human_approvers": []
   },
   "hashing": {
     "algorithm": "SHA-256",
@@ -129,6 +132,7 @@
     "canonicalization": "UTF-8_JSON_SORT_KEYS_COMPACT_SEPARATORS_ENSURE_ASCII_FALSE",
     "exclude_root_field": "signature",
     "trust_store_path": "governance/ecig-trusted-public-keys.json",
-    "trust_store_update": "reviewed_pull_request_and_human_security_approval"
+    "trust_store_update": "GOV-01_signed_exact_head_disposition_and_audited_key_ceremony",
+    "evidence_proof_version": "HSO-ECIG-EVIDENCE-1"
   }
 }
