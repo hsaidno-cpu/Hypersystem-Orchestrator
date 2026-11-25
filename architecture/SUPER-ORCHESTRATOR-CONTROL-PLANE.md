@@ -24,9 +24,9 @@ The architecture remains:
 
 **Key architectural rule:** one ecosystem control plane, one primary decision owner per work package, multiple explicitly bounded specialists when necessary, and no implicit transfer of authority between them.
 
-## 2. Current verified baseline and implementation boundary
+## 2. Historical verified baseline (23 November 2026)
 
-The inspected `main` baseline contains:
+The inspected `main` baseline at the 23 November 2026 checkpoint contained:
 
 | Indicator | State at baseline |
 |---|---:|
@@ -47,6 +47,29 @@ The inspected `main` baseline contains:
 C2/C3 evidence is synthetic schema and deterministic mock-receiver assurance. No claim of real plugin invocation, host activation, package installation, production gateway, or runtime interoperability follows from those tests.
 
 The parent can coordinate and validate repository-level work now. Runtime dispatch must remain **specified but unavailable** until an actual adapter, host, permission scope, executable package, and read-back evidence exist.
+
+
+## 2.1 Current parent-registry snapshot (26 November 2026)
+
+The current read-only snapshot is pinned to HSO `main` at `6a5edd556263d0c615a9852a4308e0cf9503a19f`. It must not be conflated with the historical metrics above.
+
+| Indicator | Observed 26 Nov 2026 |
+|---|---:|
+| HSO first-party file blobs | 159 |
+| Git submodule pointers | 5 (nested child files excluded from the parent tree denominator) |
+| Plugin identities | 23 |
+| Instruction-snapshot skill records | 265 (catalog capture date 23 Nov 2026) |
+| Source repository records | 9 (inventory last refreshed 22 Nov 2026) |
+| Compatibility/integration edges | 15 |
+| Edges with status CONTRACT_TESTED | 15/15 |
+| Installable distribution packages | 0 |
+| Platform adapters | 5/5 planned; host/runtime NOT_RUN |
+| Runtime capability registry entries | 4 |
+
+The 15 `CONTRACT_TESTED` edges demonstrate schema/mock contract evidence only. They do not establish plugin call-through, named-host activation, or runtime interoperability. The five registered platform adapters remain planned. The runtime capability registry is a declaration of available handlers, not evidence that every plugin/host path is operational. The optional P0 remote-MCP skill invocation was skipped in the latest post-merge HSO catalog-validation run.
+
+Distribution registry state at this checkpoint: 2 blocked, 15 snapshot-only, 1 private-source-restricted, 2 review-required, 2 candidate-incomplete, and 1 legacy redirect. No plugin has an installable status. Repository inventory, instruction snapshot, and compatibility registry revision dates predate this current main SHA and remain due for refresh.
+
 
 ## 3. System boundary
 
