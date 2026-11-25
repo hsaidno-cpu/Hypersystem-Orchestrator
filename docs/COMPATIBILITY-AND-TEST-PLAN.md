@@ -19,7 +19,7 @@ The matrix records:
 
 A declared handoff does not mean that the platform can invoke either plugin programmatically.
 
-## 2. Fourteen defined integration edges
+## 2. Sixteen defined integration edges
 
 1. SKILL ANALYZER → A.S.F.R.E.E: method blueprint to technical anatomy case.
 2. A.S.F.R.E.E → Evaluator Team: evidence-backed anatomy dossier to independent scoring.
@@ -36,6 +36,9 @@ A declared handoff does not mean that the platform can invoke either plugin prog
 13. Agent Jailbreak DS → Plugin Agent Orchestrator: threat model and security-control handoff.
 14. Workflow Systems → Plugin Agent Orchestrator: workflow/SOP architecture for an AI-agent runtime.
 
+15. Ponytail Engineering System → SDO: bounded engineering change dossier and controlled source-write handoff.
+16. GrowthForge Business Prompt Architect → Anatomi Prompt: optional business-task prompt brief to Octa-Prompt structural specification.
+
 These are interface definitions and routing constraints. They are not hard runtime dependencies unless the matrix explicitly says so.
 
 ## 3. Progressive verification gates
@@ -44,8 +47,8 @@ These are interface definitions and routing constraints. They are not hard runti
 |---|---|---|---|
 | C0 — Identity | Producer/consumer exist, source/version identity is known | Plugin catalog and source registry | STATIC_VALIDATED by parent CI |
 | C1 — Routing | Positive/negative trigger and primary owner are correct | Routing contract and regression assertions | STATIC_VALIDATED by parent CI |
-| C2 — Schema | Real payload validates against the handoff JSON Schema | 14 synthetic valid fixtures + negative schema cases; CI run #45149817422 | PASS — 14/14 |
-| C3 — Contract behavior | Producer artifact can be accepted or rejected by consumer using mock/fixture data | 14 mock receiver acceptances + negative producer/recipient/version/output cases; CI run #45149817422 | PASS — 14/14 (mock) |
+| C2 — Schema | Real payload validates against the handoff JSON Schema | 15 synthetic valid fixtures + negative schema cases for established tested edges; GrowthForge→Anatomi remains excluded until its C2 contract fixture exists | PASS — 15/15 established edges; new interface NOT_RUN |
+| C3 — Contract behavior | Producer artifact can be accepted or rejected by consumer using mock/fixture data | 15 mock receiver acceptances + negative producer/recipient/version/output cases for established edges; GrowthForge→Anatomi C3 remains NOT_RUN | PASS — 15/15 established edges (mock); new interface NOT_RUN |
 | C4 — Host activation | Named host, model/provider and release select the expected plugin route | Host/version test evidence | NOT_RUN |
 | C5 — Runtime | Actual end-to-end handoff/execution and artifact read-back | Trace, output artifact, timestamps and failure evidence | NOT_RUN |
 
@@ -96,6 +99,13 @@ For every handoff:
 
 ## 6. Current compatibility status
 
-The parent CI validates the existence of each plugin identity, unique integration IDs, allowed producer/consumer relationships, owner fields and explicit test states. C2 schema fixtures and C3 mock receiver behavior passed for all 14 edges on the exact PR #8 head. Host activation and runtime execution remain NOT_RUN.
+The parent CI validates the existence of each plugin identity, unique integration IDs, allowed producer/consumer relationships, owner fields and explicit test states. Fifteen established edges have C2 schema and C3 mock-receiver evidence on the PR #15 head; the additional GrowthForge→Anatomi edge is interface-defined only, with C2/C3 NOT_RUN. Host activation and runtime execution remain NOT_RUN for all edges.
 
 The next test implementation step is to add representative valid/invalid handoff fixtures for the highest-risk edges, beginning with PVEE→Video Explainer and Evaluator Team→SDO. Host testing follows only when a host supports distinct plugin dispatch and read-back evidence is available.
+
+
+### GrowthForge Business Prompt Architect → Anatomi Prompt
+
+This optional handoff is registered as `INT-GROWTHFORGE-ANATOMI-001`. GrowthForge owns business-task intent and domain constraints; Anatomi owns the eight-pillar structural specification. It must not be selected for ordinary business deliverable execution or source-media reconstruction.
+
+Current state: `INTERFACE_DEFINED_NOT_EXECUTED`; static route defined; C2 schema, C3 mock receiver, C4 host activation and C5 runtime execution are all `NOT_RUN`. Add positive and negative contract fixtures, schema validation, mock receiver behavior and failure cases before upgrading its C2/C3 status. Do not treat a prompt build or a declarative route as an invoked plugin.

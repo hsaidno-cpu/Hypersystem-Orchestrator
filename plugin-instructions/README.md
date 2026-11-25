@@ -55,3 +55,8 @@ Video Explainer's current Plugin Creator release is 4.1.12; the public GitHub so
 ## Private package pointer policy
 
 For USER/PRIVATE Plugin Creator packages without a canonical Git source, the public parent may store a source pointer and concise skill metadata only. Keep full private instructions in the private package. Do not publish private instruction files, assets or support files to this repository without a separate publication decision and rights review.
+
+
+## GrowthForge Business OS v1.2.0 private-package pointer
+
+GrowthForge remains a USER/PRIVATE Plugin Creator package with no identified canonical Git source. Its current public-parent record points to `growthforge-business-os/SOURCE-POINTER.md`, which contains only release metadata and concise skill descriptions. The earlier `INSTRUCTIONS-BUNDLE.md` is a 2026-11-22 historical snapshot from package version 1.1.1, not the current 1.2.0 source authority. Do not copy the private 120-prompt catalogue, prompt templates, skill instructions or assets into this public repository. The 1.2.0 pointer does not establish source parity, redistribution rights, package installability, host activation or runtime behavior.

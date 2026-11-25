@@ -112,6 +112,19 @@ Supporting handoffs:
 
 The Academy may use a real business task as a transfer context, but the learning objective and learner evidence remain its responsibility. A commercial recommendation remains GrowthForge's responsibility. A mapped AI skill remains Atlas inventory data, not an executable learning intervention.
 
+### 2.7 GrowthForge Business Prompt Architect vs Anatomi Prompt vs AI Prompt Finder
+
+| Dimension | GrowthForge Business Prompt Architect | Anatomi Prompt V3.0 — Octa-Prompt | AI Prompt Finder & Creator |
+|---|---|---|---|
+| Primary object | Reusable prompt for a business-domain task | Prompt instruction structure and eight-pillar integrity | Supplied source content/reference to prompt approximation |
+| Owns | Business intent, variables, required inputs, downstream task boundary and reusable business prompt artifact | Role/authority, objective/task matrix, context/variables, workflow, guardrails, edge cases/recovery, stop criteria and output schema | Observable source attributes, scene/content decomposition, prompt reconstruction and named target adaptation |
+| Does not own | Actual execution of the generated business task; generic Octa structural authority; source-media reconstruction | Business-domain task ownership or media reconstruction | Eight-pillar prompt architecture as default owner |
+| Routing rule | “Create a reusable prompt for this business deliverable” → GrowthForge | “Build or audit this using the eight Octa-Prompt pillars” → Anatomi | “Analyze this image/video/document/reference and turn it into a prompt” → Finder |
+
+**Prompt-vs-execution boundary:** A generated prompt is an instruction artifact, not an instruction to run itself. A user must separately request downstream execution, and the host must have the relevant authorized capability.
+
+**Optional interface:** GrowthForge may hand its business prompt brief to Anatomi when Octa-Prompt hardening is explicitly requested. The interface is defined but not host-activated or runtime-tested.
+
 ## 3. Remaining portfolio positioning
 
 | Plugin | Sole primary responsibility | Explicit non-ownership |
@@ -136,6 +149,7 @@ The Academy may use a real business task as a transfer context, but the learning
 | Score, rank or judge plugin quality | Evaluator Team | SKILL ANALYZER for broad analytical methods; Anatomi Prompt for eight-pillar redesign |
 | Create/change/test/release a plugin or skill | SDO | A.S.F.R.E for anatomy; Evaluator Team for independent evaluation; Anatomi Prompt for instruction design |
 | Audit/build a prompt structurally under eight pillars | Anatomi Prompt | Finder only when source content first needs to be analyzed |
+| Create/refine a reusable prompt for a business task | GrowthForge Business Prompt Architect | Anatomi Prompt only for explicit Octa-Prompt hardening; AI Prompt Finder only for supplied-source reconstruction |
 | Turn an image/video/document/reference into a prompt | AI Prompt Finder & Creator | Anatomi Prompt for subsequent eight-pillar hardening |
 | General photo edit | Photo Fixer | Master Photo Restoration only if the actual task changes into archival restoration |
 | Old/damaged/archival photo restoration | Master Photo Restoration | Photo Fixer is not the primary restoration route |

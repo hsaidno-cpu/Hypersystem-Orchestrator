@@ -188,9 +188,21 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy and adoption maturity | Claiming every mapped skill is executable |
 | Ponytail Engineering System | Minimal-complete software change method, codebase mapping, repository audit, contextual change review, risk-based tests and evidence-led engineering debt | Repository write/release lifecycle (SDO), independent quality judgement (Evaluator Team), technical plugin forensics (A.S.F.R.E.E), reusable workflow architecture (WSO) or ecosystem control-plane routing (HSO) |
 | People & Business Competency Academy | Human competency diagnosis, learning pathways, deliberate practice, simulation, workplace transfer and evidence-led learner progress | AI capability inventory/adoption, commercial business decisions/deliverables, psychotherapy or claims of competence based only on reading/self-rating |
-| GrowthForge Business OS | Business strategy, commercial, marketing, finance and operating work | General non-business knowledge work or technical plugin engineering |
+| GrowthForge Business OS | Business strategy, commercial decisions and operating deliverables; reusable prompts for business tasks through its Business Prompt Architect | General non-business knowledge work, source-content-to-prompt reconstruction (AI Prompt Finder), Octa-Prompt structural authority (Anatomi Prompt), generic workflow architecture (WSO) or technical plugin engineering (SDO) |
 | A.S.F.R.E.E Legacy | Redirect/migration identity only | Any new execution, analysis or engineering |
 | HSMART | Separate ecosystem infrastructure/platform project | Not a 21st plugin in this catalog |
+
+### Business-task prompt ownership
+
+GrowthForge Business OS owns reusable prompts whose business task domain is within its specialist catalogue. Its Business Prompt Architect is cross-cutting; it is not a seventh business category and does not execute the generated prompt.
+
+- GrowthForge Business Prompt Architect owns the business-task intent, domain variables and prompt artifact.
+- Anatomi Prompt V3.0 owns explicit Octa-Prompt construction, eight-pillar structural audit and hardening.
+- AI Prompt Finder & Creator owns reconstruction from supplied images, video, documents or other source material.
+- AI Workflow Systems Orchestrator owns generic reusable workflow/SOP architecture, not the business-domain prompt artifact.
+- SDO owns source-package engineering; GrowthForge does not own its own source release lifecycle.
+
+A GrowthForge-to-Anatomi handoff is optional and declarative. It is not host activation or a runtime invocation.
 
 ## 6. Portfolio routing rule
 
