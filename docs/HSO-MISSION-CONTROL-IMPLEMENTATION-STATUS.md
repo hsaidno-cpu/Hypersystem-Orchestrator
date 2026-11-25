@@ -31,3 +31,17 @@ Updated: 2026-11-24.
 - Current data remains UNMEASURED: all five sources not_configured; no synced work, execution, evidence, sync, progress or decision records; no active HSO members.
 
 The exact formulas, semantics, eligibility gates and adversarial acceptance matrix are in [`HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md`](./HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md). PR #22 is not production-ready until live acceptance and independent technical/security review pass.
+
+
+## Operational correction — 25 November 2026
+
+This section supersedes stale 24-November statements above where they conflict with verified live state.
+
+- Applied migration: `20261125010950_hso_measurement_integrity_and_scope_governance_v1.sql`; the repository filename now matches the applied Supabase migration version.
+- Live Supabase Edge Functions: Notion webhook v4, GitHub webhook v4, reconcile v8 and decision engine v7. The latter two are deployed from the updated PR #22 source.
+- Vercel project `mission-control` exists, linked to `hsaidno-cpu/Hypersystem-Orchestrator`, with Root Directory `apps/mission-control`. Preview/Development Supabase URL and publishable key are configured. Vercel Mission Control Preview for commit `4272dfe11d8a5e91d2b54d372a5bea045513e403` is READY. No Production deployment exists; SSO protection remains enabled.
+- A second Vercel project `hypersystem-orchestrator` is a separate root-directory project and fails with `NEXT_NO_VERSION` because repository root does not contain a Next.js dependency. It is not the Mission Control Preview project and has not been altered.
+- On commit `4272dfe11d8a5e91d2b54d372a5bea045513e403`, HSO app CI passed all 15 policy tests, both Deno Edge Function checks, Next type-check and Next production build. Sync workflow success remains a NOT_CONFIGURED skip only.
+- Catalog validation's stale expectation for `INT-PONYTAIL-SDO-001` was updated to match the canonical matrix: `CONTRACT_TESTED`, schema and behavior PASS; runtime execution and host activation remain NOT_RUN. Validation on the next PR head is in progress.
+- PR #22 remains Draft until the latest exact-head CI and Catalog validation finish and independent technical/security review is obtained. It is not production-ready.
+- Actual project state remains UNMEASURED: five sources not_configured, no operational records and zero active HSO members.
