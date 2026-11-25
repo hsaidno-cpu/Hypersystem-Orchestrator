@@ -1,6 +1,7 @@
 import base64
 import copy
 import unittest
+import unicodedata
 from datetime import datetime, timedelta, timezone
 
 from cryptography.hazmat.primitives import serialization
@@ -121,7 +122,7 @@ def synced_attestation():
     item["signature"] = {
         "algorithm": "Ed25519",
         "key_id": "hso-ecig-ephemeral-test-key",
-        "value": base64.b64encode(b"\\x00" * 64).decode("ascii"),
+        "value": base64.b64encode(bytes(64)).decode("ascii"),
     }
     item["limitations"] = []
     item["conflicts"] = []
@@ -172,7 +173,7 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
                 trusted_public_keys={}, now=timestamp,
             )
         tampered = copy.deepcopy(item)
-        tampered["signature"]["value"] = base64.b64encode(b"\\x01" * 64).decode("ascii")
+        tampered["signature"]["value"] = base64.b64encode(bytes([1]) * 64).decode("ascii")
         with self.assertRaisesRegex(ContractError, "signature verification failed"):
             validate_attestation(
                 tampered, self.schema, self.policy,
@@ -261,7 +262,7 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
         item["instructions"]["file_count"] = 2
         item["instructions"]["per_file_digests"] = [
             {"path": "skills/café.md", "sha256": "a" * 64},
-            {"path": "skills/cafe\\u0301.md", "sha256": "b" * 64},
+            {"path": unicodedata.normalize("NFD", "skills/café.md"), "sha256": "b" * 64},
         ]
         with self.assertRaisesRegex(ContractError, "after NFC normalization"):
             validate_attestation(item, self.schema, self.policy)
