@@ -21,7 +21,7 @@ class TrustRootApprovalGateTests(unittest.TestCase):
         self.assertEqual(active_key_map(before), active_key_map(after))
 
     def test_active_key_addition_is_detected(self):
-        before = {}
+        before = {"schema_version": "1.0.0", "algorithm": "Ed25519", "keys": []}
         after = {"algorithm": "Ed25519", "keys": [
             {"key_id": "key-1", "status": "ACTIVE", "public_key_base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="}
         ]}
