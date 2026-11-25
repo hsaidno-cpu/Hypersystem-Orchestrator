@@ -1,8 +1,8 @@
 # HSO Mission Control Supabase deployment
 
-Project ref: `ehgmtkkppmceaffhwcpc` (HSMART).
+Canonical platform display name: `Hypersystem-Orchestrator` (rename pending Management API write access).\n\nProject ref: `ehgmtkkppmceaffhwcpc` (immutable Supabase project identity; do not rename or rotate).
 
-## Applied migrations
+## Canonical identity\n\nSee [HSO Canonical Identity & Nomenclature Contract](../docs/HSO-CANONICAL-IDENTITY-AND-NOMENCLATURE.md) and [machine-readable registry](../config/hso-identity-registry.json). Use immutable Supabase `project_ref` and API URL for integrations. Only the provider display name is intended to change.\n\n## Applied migrations
 
 - `20261124063356_hso_mission_control_foundation_v1.sql`
 - `20261124063509_hso_mission_control_member_access_v1.sql`
@@ -14,7 +14,7 @@ Project ref: `ehgmtkkppmceaffhwcpc` (HSMART).
 - `20261125010950_hso_measurement_integrity_and_scope_governance_v1.sql`
 - `20261125023645_hso_notion_webhook_vault_bootstrap_v1.sql`
 
-All Mission Control tables use the `hso_*` prefix. RLS is enabled and forced; browser access is limited to active allowlisted members. The `hso_integration_events` table is backend-only. Migrations do not modify unrelated HSMART tables or legacy functions.
+All Mission Control tables use the `hso_*` prefix. RLS is enabled and forced; browser access is limited to active allowlisted members. The `hso_integration_events` table is backend-only. The HSO Supabase project is distinct from the separate HSMART repository/project. Migrations do not modify unrelated HSMART tables or legacy functions.
 
 ## Edge Functions
 
