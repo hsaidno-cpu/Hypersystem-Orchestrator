@@ -2,11 +2,13 @@
 
 ## Initial setup gate
 
-1. Add Edge Function secrets in Supabase.
-2. Add `HSO_GITHUB_WEBHOOK_URL` repository variable and matching `HSO_SYNC_TOKEN` secret in GitHub.
-3. Create a Notion internal connection, grant least-privilege access to the HSO source pages/data sources, then register its connection webhook.
-4. Authorize the Vercel team connection and set the project's environment variables in Preview first.
-5. Sign in and add the first administrator to `public.hso_members` under controlled SQL.
+1. Add Supabase Edge Function secrets `HSO_WEBHOOK_SIGNING_SECRET` and `HSO_SYNC_TOKEN` as separate random values of at least 32 bytes. Also configure `NOTION_API_TOKEN` and any provider tokens required by enabled sources.
+2. Add `HSO_GITHUB_WEBHOOK_URL` as a GitHub Actions repository variable, pointing exactly to the deployed `/functions/v1/hso-github-webhook` endpoint. Add matching `HSO_SYNC_TOKEN` and the same `HSO_WEBHOOK_SIGNING_SECRET` as GitHub Actions repository secrets.
+3. The HSO Actions event signature covers `timestamp.delivery_id.event_type.raw_body`; the Edge Function rejects timestamps outside a five-minute window, invalid signatures, and duplicate delivery IDs. The legacy raw-body `GITHUB_WEBHOOK_SECRET` signature path is not supported. Never reuse `HSO_SYNC_TOKEN` as the signing secret.
+4. Scheduled reconciliation calls `/functions/v1/hso-reconcile` with `X-HSO-Sync-Token`; it does not use the webhook signing secret.
+5. Create a Notion internal connection, grant least-privilege access to the HSO source pages/data sources, then register its connection webhook.
+6. Authorize the Vercel team connection and set the project's environment variables in Preview first.
+7. Sign in and add the first administrator to `public.hso_members` under controlled SQL.
 
 ## Manual refresh
 
@@ -35,12 +37,16 @@
 
 ## Acceptance checklist
 
-- [ ] Webhook HMAC positive and negative tests pass.
-- [ ] Duplicate event creates one inbox row.
+- [ ] Deno type-check and Edge Function handler tests pass on the exact PR head.
+- [ ] Webhook HMAC positive/negative, expired timestamp, and legacy-signature rejection tests pass.
+- [ ] Duplicate delivery returns 409 and causes no second side effect.
+- [ ] Scheduled reconciliation is tested with the dedicated sync token.
+- [ ] Live event is read back from `hso_integration_events` and `hso_change_events`.
 - [ ] GitHub push, PR update and exact-head workflow run are reflected in Supabase.
 - [ ] Notion Roadmap, Execution Ledger and Evidence Registry are re-read.
 - [ ] Manual refresh is membership-gated.
-- [ ] Scheduled reconciliation runs every 15 minutes.
+- [ ] Scheduled reconciliation runs every 15 minutes and creates a verified `hso_sync_runs` row.
+- [ ] Each configured source has a read-back `hso_sources` status and corresponding complete `hso_source_snapshots` rows for the same `sync_run_id`.
 - [ ] Source failures are surfaced; stale data is never called fresh.
 - [ ] Supabase RLS and advisor review complete.
 - [ ] Vercel Preview build and smoke test pass.
