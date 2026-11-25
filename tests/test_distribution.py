@@ -49,7 +49,7 @@ class DistributionValidationTests(unittest.TestCase):
         self.assertEqual(item["source_state"], "private_canonical_repository")
         self.assertEqual(item["license_status"], "not_cleared")
         self.assertEqual(item["source_repository_id"], "executive-workday-orchestrator")
-        self.assertEqual(item["source_commit"], "69166133cdc65d1f4f358daec005677db5cd0")
+        self.assertEqual(item["source_commit"], "388e59d58a96096effb4999c019e92b3c38539ed")
         self.assertEqual(item["source_version"], "0.1.0")
         self.assertEqual(item["repository_license_notice"], "INTERIM_NO_GRANT_ALL_RIGHTS_RESERVED")
         self.assertIsNone(item["package_artifact"])
