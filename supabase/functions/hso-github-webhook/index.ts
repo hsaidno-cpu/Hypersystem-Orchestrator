@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 
 const cors = {
   "access-control-allow-origin": "*",
-  "access-control-allow-headers": "content-type, x-hso-signature, x-hso-delivery, x-hso-event, x-hub-signature-256, x-github-delivery, x-github-event",
+  "access-control-allow-headers": "content-type, x-hso-signature, x-hso-delivery, x-hso-event, x-hso-timestamp, x-hub-signature-256, x-github-delivery, x-github-event",
   "access-control-allow-methods": "POST, OPTIONS",
 };
 
@@ -52,26 +52,43 @@ Deno.serve(async (req) => {
   if (!url || !serviceKey) return Response.json({ error: "integration_not_configured" }, { status: 503, headers: cors });
 
   const raw = await req.text();
+  const delivery = req.headers.get("x-github-delivery") ?? req.headers.get("x-hso-delivery");
+  const eventType = req.headers.get("x-github-event") ?? req.headers.get("x-hso-event") ?? "repository_event";
+  if (!delivery) return Response.json({ error: "delivery_id_required" }, { status: 400, headers: cors });
+
   const hsoSecret = Deno.env.get("HSO_SYNC_TOKEN");
   const githubSecret = Deno.env.get("GITHUB_WEBHOOK_SECRET");
   const hsoSig = (req.headers.get("x-hso-signature") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
   const githubSig = (req.headers.get("x-hub-signature-256") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
   let valid = false;
-  if (hsoSecret && hsoSig) valid = safeEqual(hsoSig, await hmacHex(hsoSecret, raw));
-  if (!valid && githubSecret && githubSig) valid = safeEqual(githubSig, await hmacHex(githubSecret, raw));
+
+  // HSO Actions events bind timestamp + delivery ID + exact body to prevent
+  // changing the delivery header or timestamp while replaying a captured HMAC.
+  if (hsoSecret && hsoSig) {
+    const timestampHeader = req.headers.get("x-hso-timestamp") ?? "";
+    const timestamp = Number(timestampHeader);
+    const now = Math.floor(Date.now() / 1000);
+    if (!Number.isSafeInteger(timestamp) || Math.abs(now - timestamp) > 300) {
+      return Response.json({ error: "stale_or_missing_timestamp" }, { status: 401, headers: cors });
+    }
+    const signedMessage = timestampHeader + "." + delivery + "." + raw;
+    valid = safeEqual(hsoSig, await hmacHex(hsoSecret, signedMessage));
+  }
+
+  // Legacy GitHub-native signature support remains, but only the HSO Actions
+  // path has timestamp + delivery binding. Prefer the HSO emitter for sync.
+  if (!valid && githubSecret && githubSig) {
+    valid = safeEqual(githubSig, await hmacHex(githubSecret, raw));
+  }
   if (!valid) return Response.json({ error: "invalid_signature" }, { status: 401, headers: cors });
 
   let event: Record<string, any>;
   try { event = JSON.parse(raw); } catch { return Response.json({ error: "invalid_json" }, { status: 400, headers: cors }); }
 
-  const delivery = req.headers.get("x-github-delivery") ?? req.headers.get("x-hso-delivery");
-  const eventType = req.headers.get("x-github-event") ?? req.headers.get("x-hso-event") ?? "repository_event";
-  if (!delivery) return Response.json({ error: "delivery_id_required" }, { status: 400, headers: cors });
-
   const compact = compactPayload(event);
   const payloadHash = await hmacHex(hsoSecret ?? githubSecret ?? "", JSON.stringify(compact));
   const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
-  const { error } = await supabase.from("hso_integration_events").upsert({
+  const { error } = await supabase.from("hso_integration_events").insert({
     provider: "github",
     delivery_id: delivery,
     event_type: eventType,
@@ -79,7 +96,11 @@ Deno.serve(async (req) => {
     payload_hash: payloadHash,
     payload: compact,
     processing_state: "received",
-  }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
+  });
+  if (error?.code === "23505") {
+    // A delivery ID is single-use. Do not trigger reconciliation on replay.
+    return Response.json({ error: "duplicate_delivery", accepted: false }, { status: 409, headers: cors });
+  }
   if (error) return Response.json({ error: "event_store_failed", detail: error.message }, { status: 500, headers: cors });
 
   await supabase.from("hso_sources").update({
