@@ -1,12 +1,13 @@
-import { createClient } from "npm:@supabase/supabase-js@2.57.0";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.57.0";
+import type { Database } from "../../database.types.ts";
 import { createWebhookHandler, type ChangeEventRow, type IntegrationEventRow } from "./handler.ts";
 
-let client: ReturnType<typeof createClient> | undefined;
+let client: SupabaseClient<Database> | undefined;
 function db() {
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) throw new Error("supabase_service_configuration_missing");
-  client ??= createClient(url, key, { auth: { persistSession: false } });
+  client ??= createClient<Database>(url, key, { auth: { persistSession: false } });
   return client;
 }
 
