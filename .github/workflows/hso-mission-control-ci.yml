@@ -8,7 +8,7 @@ on:
       - "supabase/functions/hso-reconcile/**"
       - "supabase/migrations/**"
       - "docs/HSO-MISSION-CONTROL-INTELLIGENCE-SPEC.md"
-      - "docs/HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md"
+      - "docs/HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md"\n      - "docs/HSO-CANONICAL-IDENTITY-AND-NOMENCLATURE.md"\n      - "config/hso-identity-registry.json"\n      - "tools/validate_hso_identity.py"
       - ".github/workflows/hso-mission-control-ci.yml"
   workflow_dispatch:
 
@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Check out HSO
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: Set up Node.js
+      - name: Validate canonical cross-platform identity registry\n        working-directory: ${{ github.workspace }}\n        run: python3 tools/validate_hso_identity.py\n      - name: Set up Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "22"
