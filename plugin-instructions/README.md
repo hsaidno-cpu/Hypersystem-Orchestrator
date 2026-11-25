@@ -15,6 +15,7 @@ This directory stores every plugin instruction set in an isolated boundary. It i
 |---|---|---|
 | OFFICIAL_SOURCE_SUBMODULE | Child repository pinned to exact commit | Review child source, then update parent submodule SHA |
 | RUNTIME_INSTRUCTION_SNAPSHOT | Snapshot of the currently installed skill package; not a release/source authority | Re-capture complete skill files and compare per-skill digests |
+| PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT | USER/PRIVATE Plugin Creator release pointer and concise skill metadata | Keep full private instructions in the private package; record release ID, scope, discoverability and read-back evidence |
 | CANDIDATE_INCOMPLETE | Repository exists but is not a complete/verified package | Do not treat as official source until provenance, manifest and content pass |
 | LEGACY_REDIRECT | Migration/redirect only | Never develop as a second canonical product |
 | NOT_IDENTIFIED | No verified repository source found | Keep snapshot separated and record the gap |
@@ -54,4 +55,4 @@ Video Explainer's current Plugin Creator release is 4.1.12; the public GitHub so
 
 ## Private package pointer policy
 
-For USER/PRIVATE Plugin Creator packages without a canonical Git source, the public parent may store a source pointer and concise skill metadata only. Keep full private instructions in the private package. Do not publish private instruction files, assets or support files to this repository without a separate publication decision and rights review.
+For USER/PRIVATE Plugin Creator packages without a canonical Git source, the public parent may store a source pointer and concise skill metadata only. Keep full private instructions in the private package. Do not publish private instruction files, assets or support files to this repository without a separate publication decision and rights review. Vibe Coding Mentor follows this policy at `plugin-instructions/vibe-coding-mentor/SOURCE-POINTER.md`.
