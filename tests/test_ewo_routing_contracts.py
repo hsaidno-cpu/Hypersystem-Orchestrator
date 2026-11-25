@@ -214,6 +214,10 @@ class EwoRoutingContractTests(unittest.TestCase):
                       item["blockers"])
         self.assertIn("PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED",
                       item["blockers"])
+        self.assertIn("LICENSE_FILE_NOT_PRESENT_IN_PLUGIN_SOURCE",
+                      item["blockers"])
+        self.assertIn("ORIGINAL_SOURCE_LICENSE_AND_ATTRIBUTION_NOT_ASSESSED",
+                      item["blockers"])
         self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE",
                       item["blockers"])
 
