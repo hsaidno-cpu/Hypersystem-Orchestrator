@@ -124,5 +124,25 @@ class DistributionValidationTests(unittest.TestCase):
         self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
         self.assertIn("PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED", item["blockers"])
 
+
+    def test_vibe_coding_mentor_is_source_verified_but_not_publicly_installable(self):
+        catalog = self.load(ROOT / "catalog" / "plugins.json")
+        registry = self.load(REGISTRY)
+        repositories = self.load(ROOT / "catalog" / "repositories.json")
+        catalog_item = next(p for p in catalog["plugins"] if p["plugin_key"] == "vibe-coding-mentor")
+        item = next(p for p in registry["plugins"] if p["plugin_key"] == "vibe-coding-mentor")
+        source = next(r for r in repositories["repositories"] if r["repository_id"] == "vibe-coding-mentor")
+        self.assertEqual(item["source_state"], "private_repository_source")
+        self.assertEqual(item["source_repository_id"], "vibe-coding-mentor")
+        self.assertEqual(item["source_commit"], source["pinned_commit"])
+        self.assertEqual(item["distribution_status"], "private_source_restricted")
+        self.assertEqual(item["license_status"], "not_assessed")
+        self.assertIsNone(item["package_artifact"])
+        self.assertIn("LICENSE_RIGHTS_NOT_ASSESSED", item["blockers"])
+        self.assertIn("PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE", item["blockers"])
+        self.assertIn("VCM_HSO_HOST_ADAPTER_NOT_CONFIGURED", item["blockers"])
+        self.assertEqual(catalog_item["source_state"], "private_repository_source")
+        self.assertEqual(source["package_parity_status"], "MATCH")
+
 if __name__=="__main__":
     unittest.main()
