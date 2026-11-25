@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "registry_revision": "2026-11-23",
+  "registry_revision": "2026-11-26",
   "authority": "Hypersystem-Orchestrator parent registry",
   "plugin_count": 23,
   "installability_rule": "Eligible only when status is installable_public or installable_private, license_status is cleared, package_artifact exists, source_commit is pinned, and target adapter has host_tested or runtime_verified evidence.",
@@ -391,7 +391,7 @@
       "source_repository_id": null,
       "source_commit": null,
       "source_version": null,
-      "platform_package_version": "1.1.1",
+      "platform_package_version": "1.3.0",
       "distribution_status": "snapshot_only",
       "license_status": "not_assessed",
       "package_artifact": null,
@@ -399,9 +399,11 @@
       "dependency_metadata_status": "not_assessed",
       "blockers": [
         "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
+        "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE",
+        "PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED"
       ],
-      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+      "eligibility_note": "Private USER/PRIVATE Plugin Creator package v1.3.0, including 50 normalized BPG prompt patterns. The public parent stores only release metadata and a concise skill pointer. Canonical source and distribution rights remain unestablished; this is not a distributable source package."
     },
     {
       "plugin_key": "pvee-promkes-super-orchestrator",

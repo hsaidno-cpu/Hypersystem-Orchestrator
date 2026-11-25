@@ -10,3 +10,14 @@ Distribution and cross-platform installation architecture:
 GitHub remains authoritative for versioned engineering artifacts, source pins, schemas, tests, governance, package eligibility and release history. Notion is the readable project knowledge hub for architecture rationale, decisions, adapter plans and operating procedures.
 
 The distribution documentation describes a selective package architecture and dry-run resolver. It does not claim that a production installer, remote gateway or platform adapter has been deployed. See the repository distribution registry and CI evidence for current verified states.
+
+
+GrowthForge Business OS v1.2.0 — 120-prompt catalog and Business Prompt Architect:
+[Notion project documentation](https://app.notion.com/p/42399868397f81eba6eee6073306c4ec)
+
+The linked page is the detailed package/routing record. The public HSO repository stores only the private package's metadata pointer; it does not mirror the private prompt catalogue or instructions.
+
+GrowthForge Business OS v1.3.0 — Forensic Audit and 50-Pattern Business Growth Prompt Crosswalk:
+[Notion project documentation](https://app.notion.com/p/42399868397f811aaf81c288e7fac26e)
+
+This v1.3.0 record adds the separate `BPG-001`–`BPG-050` normalized crosswalk (22 direct matches, 17 related variants, 11 additional patterns) while retaining the 100 legacy tasks, 120 IMG entries, 19 skill records and USER/PRIVATE package boundary.

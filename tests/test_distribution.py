@@ -94,6 +94,20 @@ class DistributionValidationTests(unittest.TestCase):
         self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
 
 
+    def test_growthforge_business_prompt_architect_remains_private_snapshot_only(self):
+        registry = self.load(REGISTRY)
+        item = next(p for p in registry["plugins"] if p["plugin_key"] == "growthforge-business-os")
+        self.assertEqual(item["distribution_status"], "snapshot_only")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertEqual(item["license_status"], "not_assessed")
+        self.assertEqual(item["platform_package_version"], "1.3.0")
+        self.assertIsNone(item["source_repository_id"])
+        self.assertIsNone(item["source_commit"])
+        self.assertIsNone(item["package_artifact"])
+        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
+        self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
+        self.assertIn("PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED", item["blockers"])
+
     def test_ponytail_private_package_remains_snapshot_only(self):
         registry = self.load(REGISTRY)
         item = next(p for p in registry["plugins"] if p["plugin_key"] == "ponytail-engineering-optimizer")

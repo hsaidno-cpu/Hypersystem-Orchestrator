@@ -217,8 +217,8 @@ def validate():
             fail(f"Compatibility edge {edge['integration_id']}: CONTRACT_TESTED requires C2 and C3 PASS")
         if edge["status"] == "CONTRACT_TESTED" and (edge["host_activation_test"] != "NOT_RUN" or edge["runtime_execution_test"] != "NOT_RUN"):
             fail(f"Compatibility edge {edge['integration_id']}: C4/C5 must remain independent from C2/C3")
-    if len(integration_edges) != 15:
-        fail("Expected 15 defined compatibility edges for the current matrix")
+    if len(integration_edges) != 16:
+        fail("Expected 16 defined compatibility edges for the current matrix")
     print(f"PASS: {len(integration_edges)} cross-plugin compatibility edges with explicit ownership and test states")
     print("NOTE: static checks do not prove host activation or runtime execution")
 

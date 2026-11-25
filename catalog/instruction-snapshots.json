@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "capture_date": "2026-11-23",
-  "total_skill_records": 265,
+  "capture_date": "2026-11-26",
+  "total_skill_records": 266,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1249,9 +1249,9 @@
     },
     {
       "plugin_key": "growthforge-business-os",
-      "instruction_path": "plugin-instructions/growthforge-business-os/INSTRUCTIONS-BUNDLE.md",
-      "origin": "runtime_snapshot",
-      "skill_count": 18,
+      "instruction_path": "plugin-instructions/growthforge-business-os/SOURCE-POINTER.md",
+      "origin": "plugin_creator_metadata_pointer",
+      "skill_count": 19,
       "skills": [
         {
           "skill_name": "brand-positioning",
@@ -1306,7 +1306,7 @@
         {
           "skill_name": "growthforge-orchestrator",
           "source_uri": "skills://plugins/growthforge-business-os/growthforge-orchestrator",
-          "description": "Use as the single master router when a user needs business strategy, research, finance, branding, product, marketing, content, copywriting, sales, customer lifecycle, operations, analytics, learning products, business documents, or personal growth. Selects the smallest sufficient specialist set, coordinates dependencies, integrates outputs, and applies evidence and quality gates."
+          "description": "Use as the single master router for business strategy, research, finance, branding, product, marketing, content, copywriting, sales, customer lifecycle, operations, analytics, learning products, business documents, personal growth and reusable business-task prompts. Selects the smallest sufficient specialist set, coordinates dependencies, integrates outputs, and applies evidence and quality gates."
         },
         {
           "skill_name": "learning-knowledge-products",
@@ -1342,6 +1342,11 @@
           "skill_name": "sales-revenue-growth",
           "source_uri": "skills://plugins/growthforge-business-os/sales-revenue-growth",
           "description": "Use when the user needs a sales funnel, lead magnet, revenue or monetization strategy, lead generation, objection handling, upsell/cross-sell, or funnel optimization."
+        },
+        {
+          "skill_name": "business-prompt-architect",
+          "source_uri": "skills://plugins/growthforge-business-os/business-prompt-architect",
+          "description": "Builds, refines, audits, adapts, translates and organizes reusable prompts for business tasks. Prompt creation does not execute the described task."
         }
       ]
     },

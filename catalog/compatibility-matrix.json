@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "matrix_revision": "2026-11-23",
+  "matrix_revision": "2026-11-25",
   "contract_schema": "contracts/plugin-handoff.schema.json",
-  "integration_count": 15,
+  "integration_count": 16,
   "status_semantics": {
     "INTERFACE_DEFINED_NOT_EXECUTED": "Handoff intent and ownership are documented, but no runtime dispatch has been observed.",
     "STATIC_ROUTING_TESTED": "Central registry, positive/negative route and ownership assertions passed in repository CI.",
@@ -449,6 +449,38 @@
         "Independent quality judgement remains with Evaluator Team; HSO controls ecosystem-level planning and routing."
       ],
       "contract_behavior_test": "PASS"
+    },
+    {
+      "integration_id": "INT-GROWTHFORGE-ANATOMI-001",
+      "producer_plugin": "growthforge-business-os",
+      "consumer_plugin": "anatomi-prompt-v3-octa-prompt",
+      "handoff_type": "SOFT_HANDOFF",
+      "purpose": "GrowthForge Business Prompt Architect supplies a business-domain prompt brief when the user explicitly requests Octa-Prompt structural build or hardening; Anatomi Prompt owns the eight-pillar structural specification.",
+      "input_artifacts": [
+        "business_prompt_brief",
+        "business_domain_constraints",
+        "prompt_intent_variables",
+        "provenance_and_version_context"
+      ],
+      "output_artifact": "octa_prompt_structured_business_prompt",
+      "producer_artifact_owner": "growthforge-business-os",
+      "consumer_artifact_owner": "anatomi-prompt-v3-octa-prompt",
+      "canonical_truth_owner": "anatomi-prompt-v3-octa-prompt",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "contract_behavior_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "Use only when the user explicitly requests Octa-Prompt structural build or hardening; ordinary business-prompt generation remains owned by GrowthForge.",
+        "GrowthForge retains business-domain intent, constraints and prompt purpose; Anatomi Prompt owns the eight-pillar structural specification.",
+        "Prompt generation does not execute the generated business task; execution requires a separate user request and authorized capability.",
+        "The handoff preserves source/version/provenance, explicit constraints and unknowns without implying host activation or runtime execution.",
+        "The public HSO repository stores metadata only for the USER/PRIVATE GrowthForge package; private prompt contents and instructions are not mirrored."
+      ]
     }
   ]
 }

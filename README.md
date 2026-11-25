@@ -109,7 +109,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 
 ## Complete plugin instruction vault
 
-The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **265 skill definitions** across 23 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **266 skill definitions** across 23 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
@@ -119,6 +119,7 @@ The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architect
 - People & Business Competency Academy owns the development and evidence-based transfer of human People/Business Skills; Agent Skills Atlas owns AI capability inventory, while GrowthForge owns business-domain decisions and deliverables.
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
 - Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and turns it into a prompt.
+- GrowthForge Business OS includes a cross-cutting Business Prompt Architect for reusable business-task prompts; Anatomi retains Octa-Prompt structural authority and AI Prompt Finder retains source-content-to-prompt reconstruction.
 - Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
 - GODEX owns audio/voice-over truth and post; Motion Graphic owns general visual-first animation; PVEE owns health communication truth/governance; Video Explainer owns the technical production engine after PVEE approval.
 

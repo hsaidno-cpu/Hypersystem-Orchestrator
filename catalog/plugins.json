@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "catalog_revision": "2026-11-23",
+  "catalog_revision": "2026-11-26",
   "expected_plugin_count": 23,
   "plugins": [
     {
@@ -909,46 +909,52 @@
       "display_name": "GrowthForge Business OS",
       "plugin_creator_id": "plugins_6b01ce5f6c388191816eaee46f4598a2",
       "primary_domain": "business-growth-and-operations",
-      "purpose": "Business-domain operating system for strategy, market/customer insight, brand, product, marketing, finance, sales, customer lifecycle, operations, analytics and learning products.",
-      "responsibility_owner": "Owns business decision frameworks, commercial planning and business deliverables.",
-      "boundary": "Does not own generic command aliases, broad knowledge-work routing or engineering lifecycle of AI plugins. Live CRM, ads, payments and market data require actual integrations.",
+      "purpose": "Business-domain operating system for strategy, market/customer insight, brand, product, marketing, finance, sales, customer lifecycle, operations, analytics, learning products, and reusable prompts for business tasks.",
+      "responsibility_owner": "Owns business decision frameworks, commercial planning, business deliverables, and reusable business-task prompt artifacts through its cross-cutting Business Prompt Architect.",
+      "boundary": "Does not own generic command aliases, broad non-business knowledge-work routing, generic workflow architecture, source-content/image/video/document-to-prompt reconstruction, Octa-Prompt structural authority, or engineering lifecycle of AI plugins. Prompt generation does not execute the generated task. Live CRM, ads, payments and market data require actual integrations.",
       "source_repository_id": null,
       "source_state": "pending_repository",
       "release_version": null,
-      "version_evidence": "No dedicated source repository identified.",
+      "version_evidence": "Plugin Creator current-release metadata, both manifests and selected updated package files read back on 2026-11-26. The package adds 50 normalized BPG patterns (BPG-001–BPG-050) while preserving the 100 legacy and 120 IMG catalogues. Canonical Git source remains NOT_IDENTIFIED.",
       "related_plugins": [
         "commandcraft-56",
         "cortex-workbench",
-        "workflow-systems-orchestrator"
+        "workflow-systems-orchestrator",
+        "anatomi-prompt-v3-octa-prompt",
+        "ai-prompt-finder-creator"
       ],
       "primary_triggers": [
         "Business model, market, customer, brand, product, marketing, sales or financial decision",
-        "Business operating plan, monetization, growth, customer lifecycle or commercial roadmap"
+        "Business operating plan, monetization, growth, customer lifecycle or commercial roadmap",
+        "Create, refine, audit or adapt a reusable prompt for a task within a GrowthForge business domain"
       ],
       "negative_triggers": [
         "General non-business research or writing task",
-        "Plugin/source repository engineering as the dominant objective"
+        "Plugin/source repository engineering as the dominant objective",
+        "Reconstruct a prompt from supplied images, video, documents or other source media",
+        "Audit or harden prompt structure specifically under the eight Octa-Prompt pillars",
+        "Generic workflow architecture or AI plugin source engineering"
       ],
       "source_classification": "NOT_IDENTIFIED",
-      "instruction_snapshot_path": "plugin-instructions/growthforge-business-os/INSTRUCTIONS-BUNDLE.md",
-      "instruction_skill_count": 18,
-      "instruction_capture_date": "2026-11-22",
-      "instruction_source_authority": "RUNTIME_INSTRUCTION_SNAPSHOT",
-      "platform_package_version": "1.1.1",
-      "platform_current_release_id": "pluginrel_6b023e6d011481919323471664b9d286",
+      "instruction_snapshot_path": "plugin-instructions/growthforge-business-os/SOURCE-POINTER.md",
+      "instruction_skill_count": 19,
+      "instruction_capture_date": "2026-11-25",
+      "instruction_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT",
+      "platform_package_version": "1.3.0",
+      "platform_current_release_id": "pluginrel_6b073d4b53588191a4a8fc858381ae65",
       "platform_scope": "USER",
       "platform_discoverability": "PRIVATE",
       "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
       "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
       "repository_version": null,
-      "version_alignment_note": "Current Plugin Creator version verified on 2026-11-22; canonical GitHub source release has not yet been identified.",
+      "version_alignment_note": "Plugin Creator package v1.3.0 is verified. No canonical GrowthForge Git source is identified, so repository version and independent source/package parity remain unverified. HSO stores metadata and concise routing/source pointers only; the private catalog and full instructions are not mirrored.",
       "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
-      "deployed_plugin_version": "1.1.1",
+      "deployed_plugin_version": "1.3.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
       "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
       "source_instruction_parity_status": "NOT_APPLICABLE",
-      "source_instruction_parity_note": "No independent source/snapshot content comparison applies while no canonical source package is integrated."
+      "source_instruction_parity_note": "Canonical source repository remains NOT_IDENTIFIED. The public parent stores metadata and concise skill descriptions only because the Plugin Creator package is USER/PRIVATE; full private instructions and assets are not mirrored."
     },
     {
       "plugin_key": "pvee-promkes-super-orchestrator",

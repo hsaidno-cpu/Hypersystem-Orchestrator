@@ -20,7 +20,7 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
         self.assertIn("PASS: 23 unique plugin identities", result.stdout)
         self.assertIn("PASS: 5 declared and pinned source submodules", result.stdout)
-        self.assertIn("PASS: 265 indexed skill instruction records", result.stdout)
+        self.assertIn("PASS: 266 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):
         gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
@@ -118,11 +118,16 @@ class CatalogValidationTests(unittest.TestCase):
             self.assertTrue(edge["input_artifacts"])
             self.assertTrue(edge["output_artifact"])
             self.assertEqual(edge["contract_version"], "1.0.0")
-            # C2 schema and C3 mock-receiver evidence exists for all 15 matrix edges.
-            # These synthetic contract checks do not imply C4 host activation or C5 runtime execution.
-            self.assertEqual(edge["status"], "CONTRACT_TESTED")
-            self.assertEqual(edge["schema_contract_test"], "PASS")
-            self.assertEqual(edge["contract_behavior_test"], "PASS")
+            # Fifteen established edges have C2/C3 synthetic evidence. The new GrowthForge/Anatomi
+            # interface remains an explicit untested contract until its fixture and receiver tests exist.
+            if edge["integration_id"] == "INT-GROWTHFORGE-ANATOMI-001":
+                self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
+                self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
+                self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
+            else:
+                self.assertEqual(edge["status"], "CONTRACT_TESTED")
+                self.assertEqual(edge["schema_contract_test"], "PASS")
+                self.assertEqual(edge["contract_behavior_test"], "PASS")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
         by_id = {e["integration_id"]: e for e in edges}
@@ -131,6 +136,12 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(by_id["INT-PHOTO-RESTORE-ROUTE-001"]["handoff_type"], "ROUTING_OVERRIDE")
         self.assertEqual(by_id["INT-GODEX-MOTION-001"]["canonical_truth_owner"], "godex-motion-audio")
         self.assertEqual(by_id["INT-PONYTAIL-SDO-001"]["canonical_truth_owner"], "skill-developer-orchestrator")
+        prompt_edge = by_id["INT-GROWTHFORGE-ANATOMI-001"]
+        self.assertEqual(prompt_edge["producer_plugin"], "growthforge-business-os")
+        self.assertEqual(prompt_edge["consumer_plugin"], "anatomi-prompt-v3-octa-prompt")
+        self.assertEqual(prompt_edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
+        self.assertEqual(prompt_edge["schema_contract_test"], "NOT_RUN")
+        self.assertEqual(prompt_edge["contract_behavior_test"], "NOT_RUN")
 
 
     def test_sdo_official_source_submodule_and_version_are_reconciled(self):
@@ -207,8 +218,42 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertIsNone(pre["source_repository_id"])
         self.assertEqual(pre["instruction_skill_count"], 9)
         self.assertEqual(indexed["skill_count"], 9)
-        self.assertEqual(snapshots["total_skill_records"], 265)
+        self.assertEqual(snapshots["total_skill_records"], 266)
 
+
+    def test_growthforge_business_prompt_architect_is_private_metadata_pointer(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        item = next(p for p in catalog["plugins"] if p["plugin_key"] == "growthforge-business-os")
+        self.assertEqual(item["plugin_creator_id"], "plugins_6b01ce5f6c388191816eaee46f4598a2")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertIsNone(item["source_repository_id"])
+        self.assertEqual(item["source_classification"], "NOT_IDENTIFIED")
+        self.assertEqual(item["platform_package_version"], "1.3.0")
+        self.assertEqual(item["platform_current_release_id"], "pluginrel_6b073d4b53588191a4a8fc858381ae65")
+        self.assertEqual(item["platform_scope"], "USER")
+        self.assertEqual(item["platform_discoverability"], "PRIVATE")
+        self.assertEqual(item["instruction_skill_count"], 19)
+        self.assertEqual(item["source_instruction_parity_status"], "NOT_APPLICABLE")
+        self.assertEqual(item["source_sync_status"], "GITHUB_SOURCE_NOT_IDENTIFIED")
+        pointer = ROOT / item["instruction_snapshot_path"]
+        self.assertTrue(pointer.is_file())
+        pointer_text = pointer.read_text(encoding="utf-8")
+        self.assertIn("1.3.0", pointer_text)
+        self.assertIn("PRIVATE", pointer_text)
+        self.assertIn("business-prompt-architect", pointer_text)
+        self.assertIn("120", pointer_text)
+        self.assertIn("BPG-001", pointer_text)
+        self.assertIn("BPG-050", pointer_text)
+        self.assertIn("22 DIRECT_MATCH", pointer_text)
+        self.assertIn("17 RELATED_VARIANT", pointer_text)
+        self.assertIn("11 ADDITIONAL_PATTERN", pointer_text)
+        self.assertNotIn("Create a complete business plan for my idea.", pointer_text)
+        snapshots = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "growthforge-business-os")
+        self.assertEqual(indexed["skill_count"], 19)
+        self.assertEqual(indexed["instruction_path"], item["instruction_snapshot_path"])
+        self.assertIn("business-prompt-architect", {s["skill_name"] for s in indexed["skills"]})
+        self.assertEqual(snapshots["total_skill_records"], 266)
 
     def test_ponytail_is_private_method_specialist_not_canonical_source(self):
         catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
