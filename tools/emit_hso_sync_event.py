@@ -6,17 +6,26 @@ from pathlib import Path
 
 DELIVERY_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$")
 
-def event_signing_payload(timestamp: str, delivery_id: str, body: bytes) -> bytes:
+def event_signing_payload(timestamp: str, delivery_id: str, event_type: str, body: bytes) -> bytes:
     if not re.fullmatch(r"\d{10}", timestamp):
         raise ValueError("timestamp must contain 10-digit Unix seconds")
     if not DELIVERY_RE.fullmatch(delivery_id):
         raise ValueError("delivery_id is missing or invalid")
-    return timestamp.encode("ascii") + b"." + delivery_id.encode("ascii") + b"." + body
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", event_type):
+        raise ValueError("event_type is missing or invalid")
+    return (
+        timestamp.encode("ascii") + b"." + delivery_id.encode("ascii") +
+        b"." + event_type.encode("ascii") + b"." + body
+    )
 
-def event_signature(signing_secret: str, timestamp: str, delivery_id: str, body: bytes) -> str:
+def event_signature(signing_secret: str, timestamp: str, delivery_id: str, event_type: str, body: bytes) -> str:
     if len(signing_secret.encode("utf-8")) < 32:
         raise ValueError("HSO_WEBHOOK_SIGNING_SECRET must contain at least 32 bytes")
-    return hmac.new(signing_secret.encode("utf-8"), event_signing_payload(timestamp, delivery_id, body), hashlib.sha256).hexdigest()
+    return hmac.new(
+        signing_secret.encode("utf-8"),
+        event_signing_payload(timestamp, delivery_id, event_type, body),
+        hashlib.sha256,
+    ).hexdigest()
 
 def post(url: str, body: bytes, headers: dict[str, str], signing_secret: str | None = None) -> int:
     request_headers = {"Content-Type": "application/json", **headers}
