@@ -132,7 +132,7 @@
     "canonicalization": "UTF-8_JSON_SORT_KEYS_COMPACT_SEPARATORS_ENSURE_ASCII_FALSE",
     "exclude_root_field": "signature",
     "trust_store_path": "governance/ecig-trusted-public-keys.json",
-    "trust_store_update": "GOV-01_signed_exact_head_disposition_and_audited_key_ceremony",
+    "trust_store_update": "GOV-01_exact_head_APPROVE_TRUST_ROOT_comment_and_audited_key_ceremony",
     "evidence_proof_version": "HSO-ECIG-EVIDENCE-1"
   }
 }
