@@ -1,4 +1,4 @@
-# Executive Workday Orchestrator — private package pointer
+# Executive Workday Orchestrator — private canonical source pointer
 
 **Catalog key:** `executive-workday-orchestrator`  
 **Plugin Creator package:** `plugins_6b073a60088081918a8958ab761cb505`  
@@ -8,11 +8,18 @@
 **Capture date:** `2026-11-26`  
 **Package entry:** [Open the private plugin](https://chatgpt.com/plugins/plugins_6b073a60088081918a8958ab761cb505)
 
-## Source authority
+## Canonical source authority
 
-The current USER/PRIVATE Plugin Creator release is the package authority. Its file inventory was read back and contains 14 skill instruction files. The full instruction bodies, manifests and supporting package files remain in the private package and are **not mirrored in this public HSO repository**.
+- **Canonical private Git source:** [executive-workday-orchestrator](https://github.com/hsaidno-cpu/executive-workday-orchestrator)
+- **Pinned source commit:** `69166133cdc65d1f4f358daec005677db5cd0`
+- **Source version:** `0.1.0`
+- **Private Plugin Creator artifact:** `USER / PRIVATE`, package version `0.1.0`, release `pluginrel_6b073a6285d481918d11cdbf1bb7643f`
 
-No canonical child Git repository has been designated. The HSO parent catalog is updated with plugin identity, responsibility boundaries, release metadata and this pointer only. Do not treat this pointer as source parity, a Git submodule, or proof of ChatGPT host activation.
+The canonical Git repository contains the 17-file source snapshot under `plugin-source/`: 14 `SKILL.md` files, two manifests, and the package README. The private Plugin Creator release was read back and compared file-by-file. At the pinned source commit, GitHub reports **17/17 exact Git blob SHA matches** against the blobs created from the exact Plugin Creator source contents.
+
+The 17-file match establishes source/package snapshot parity only. It does not establish rights to the third-party source work, grant an open-source license, or authorize public redistribution.
+
+This public HSO repository stores identity, bounded skill descriptions, version/provenance metadata, and this pointer only. It does **not** mirror the private 14 skill instruction bodies. The source repository is not a Git submodule because it is private and must not be treated as a public source artifact.
 
 ## Modular skill index
 
@@ -35,10 +42,14 @@ No canonical child Git repository has been designated. The HSO parent catalog is
 
 The package provides instruction-level planning, triage, prioritization, project control, meeting and communication preparation, note organization, adaptive replanning, reviews, prompt generation and automation design. It does not provision an external task database, persistent memory, mailbox/calendar connector, event listener or background worker. Live external actions require configured integrations, least-privilege access, specific human authorization, and read-back verification.
 
-## Provenance and next source gate
+## Provenance and distribution gate
 
-- Current release metadata and the 14-file inventory were observed on 2026-11-26.
-- Canonical Git source: `NOT_IDENTIFIED`.
-- Source-to-package parity: `NOT_APPLICABLE` until a canonical source repository is designated.
-- Public mirror status: `POINTER_AND_METADATA_ONLY`.
-- Do not copy private instruction bodies into this public repository without an explicit publication and rights decision.
+- Plugin Creator release and 14-skill inventory observed on 2026-11-26.
+- Canonical Git source is pinned at `69166133cdc65d1f4f358daec005677db5cd0`.
+- Source-to-package parity: `MATCH`, 17/17 exact blob SHA matches.
+- Source rights: `NOT_CLEARED`; supplied source URL, rightsholder identity, and written permission or applicable license have not been established.
+- Private repository license notice: interim `NO LICENSE GRANTED / ALL RIGHTS RESERVED`; this is not an open-source license.
+- HSO distribution status: `snapshot_only`; package artifact absent; target host adapter not host-tested.
+- Public HSO mirror status: `POINTER_AND_METADATA_ONLY`.
+
+Do not publish the private instruction bodies into this public repository until third-party rights clearance and an explicit publication license decision are recorded.
