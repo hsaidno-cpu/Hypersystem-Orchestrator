@@ -1,51 +1,32 @@
 #!/usr/bin/env python3
-"""Send timestamp-bound signed GitHub Actions events and reconcile requests to HSO."""
+"""Send timestamp-bound HSO webhook events and authenticated reconcile requests."""
 from __future__ import annotations
-import argparse
-import hashlib
-import hmac
-import json
-import os
-import sys
-import time
-import urllib.error
-import urllib.request
+import argparse, hashlib, hmac, json, os, re, sys, time, urllib.error, urllib.request
 from pathlib import Path
 
+DELIVERY_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$")
 
 def event_signing_payload(timestamp: str, delivery_id: str, body: bytes) -> bytes:
-    """Bind the exact body, timestamp and delivery ID into the HMAC preimage."""
-    if not timestamp.isdigit():
-        raise ValueError("timestamp must contain Unix seconds")
-    if not delivery_id:
-        raise ValueError("delivery_id is required")
-    return timestamp.encode("ascii") + b"." + delivery_id.encode("utf-8") + b"." + body
+    if not re.fullmatch(r"\d{10}", timestamp):
+        raise ValueError("timestamp must contain 10-digit Unix seconds")
+    if not DELIVERY_RE.fullmatch(delivery_id):
+        raise ValueError("delivery_id is missing or invalid")
+    return timestamp.encode("ascii") + b"." + delivery_id.encode("ascii") + b"." + body
 
+def event_signature(signing_secret: str, timestamp: str, delivery_id: str, body: bytes) -> str:
+    if len(signing_secret.encode("utf-8")) < 32:
+        raise ValueError("HSO_WEBHOOK_SIGNING_SECRET must contain at least 32 bytes")
+    return hmac.new(signing_secret.encode("utf-8"), event_signing_payload(timestamp, delivery_id, body), hashlib.sha256).hexdigest()
 
-def event_signature(token: str, timestamp: str, delivery_id: str, body: bytes) -> str:
-    return hmac.new(
-        token.encode("utf-8"),
-        event_signing_payload(timestamp, delivery_id, body),
-        hashlib.sha256,
-    ).hexdigest()
-
-
-def post(url: str, token: str, body: bytes, headers: dict[str, str]) -> int:
-    timestamp = headers.get("X-HSO-Timestamp")
-    delivery_id = headers.get("X-HSO-Delivery")
-    if timestamp is not None:
-        signature = event_signature(token, timestamp, delivery_id or "", body)
-    else:
-        # Reconciliation authenticates with its dedicated bearer header.
-        signature = hmac.new(token.encode(), body, hashlib.sha256).hexdigest()
-    request_headers = {
-        "Content-Type": "application/json",
-        "X-HSO-Signature": "sha256=" + signature,
-        **headers,
-    }
+def post(url: str, body: bytes, headers: dict[str, str], signing_secret: str | None = None) -> int:
+    request_headers = {"Content-Type": "application/json", **headers}
+    if signing_secret is not None:
+        request_headers["X-HSO-Signature"] = "sha256=" + event_signature(
+            signing_secret, headers.get("X-HSO-Timestamp", ""), headers.get("X-HSO-Delivery", ""), body
+        )
     request = urllib.request.Request(url, data=body, method="POST", headers=request_headers)
     try:
-        with urllib.request.urlopen(request, timeout=25) as response:
+        with urllib.request.urlopen(request, timeout=55) as response:
             print(response.read().decode("utf-8", errors="replace"))
             return response.status
     except urllib.error.HTTPError as exc:
@@ -55,33 +36,37 @@ def post(url: str, token: str, body: bytes, headers: dict[str, str]) -> int:
         print("Network error: " + str(exc), file=sys.stderr)
         return 1
 
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=("event", "reconcile"), default="event")
     parser.add_argument("--event-file", default=os.getenv("GITHUB_EVENT_PATH", ""))
     args = parser.parse_args()
-    endpoint = os.getenv("HSO_SYNC_URL", "").strip()
-    token = os.getenv("HSO_SYNC_TOKEN", "")
-    if not endpoint or not token:
-        print("HSO_SYNC_URL and HSO_SYNC_TOKEN are required; event not sent.", file=sys.stderr)
+    endpoint = os.getenv("HSO_GITHUB_WEBHOOK_URL", "").strip() or os.getenv("HSO_SYNC_URL", "").strip()
+    if not endpoint:
+        print("HSO_GITHUB_WEBHOOK_URL is required; no request sent.", file=sys.stderr)
         return 2
 
     if args.mode == "reconcile":
+        token = os.getenv("HSO_SYNC_TOKEN", "")
+        if not token:
+            print("HSO_SYNC_TOKEN is required for reconciliation; no request sent.", file=sys.stderr)
+            return 2
         body = json.dumps({"trigger_kind": "scheduled"}, separators=(",", ":")).encode()
-        url = endpoint.replace("/hso-github-webhook", "/hso-reconcile")
-        status = post(
-            url,
-            token,
-            body,
-            {
-                "X-HSO-Delivery": "actions-" + os.getenv("GITHUB_RUN_ID", "manual"),
-                "X-HSO-Event": "scheduled_reconciliation",
-                "X-HSO-Sync-Token": token,
-            },
-        )
+        status = post(endpoint.rsplit("/", 1)[0] + "/hso-reconcile", body, {
+            "X-HSO-Delivery": "actions-" + os.getenv("GITHUB_RUN_ID", "manual"),
+            "X-HSO-Event": "scheduled_reconciliation",
+            "X-HSO-Sync-Token": token,
+        })
         return 0 if 200 <= status < 300 else 1
 
+    signing_secret = os.getenv("HSO_WEBHOOK_SIGNING_SECRET", "")
+    sync_token = os.getenv("HSO_SYNC_TOKEN", "")
+    if len(signing_secret.encode("utf-8")) < 32:
+        print("HSO_WEBHOOK_SIGNING_SECRET must contain at least 32 bytes; event not sent.", file=sys.stderr)
+        return 2
+    if sync_token and hmac.compare_digest(signing_secret, sync_token):
+        print("HSO_WEBHOOK_SIGNING_SECRET and HSO_SYNC_TOKEN must be different; event not sent.", file=sys.stderr)
+        return 2
     if not args.event_file:
         print("GITHUB_EVENT_PATH is required in event mode.", file=sys.stderr)
         return 2
@@ -90,54 +75,32 @@ def main() -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print("Could not read GitHub event JSON: " + str(exc), file=sys.stderr)
         return 2
+    if not isinstance(event, dict):
+        print("GitHub event JSON must be an object.", file=sys.stderr)
+        return 2
 
-    repo = event.get("repository") or {}
-    pr = event.get("pull_request") or {}
-    run = event.get("workflow_run") or {}
+    repo, pr, run = event.get("repository") or {}, event.get("pull_request") or {}, event.get("workflow_run") or {}
     envelope = {
         "action": event.get("action"),
         "repository": {"full_name": repo.get("full_name"), "html_url": repo.get("html_url")},
-        "ref": event.get("ref"),
-        "before": event.get("before"),
-        "after": event.get("after"),
+        "ref": event.get("ref"), "before": event.get("before"), "after": event.get("after"),
         "number": event.get("number"),
-        "pull_request": {
-            key: pr.get(key)
-            for key in ("number", "title", "html_url", "state", "head", "base")
-            if key in pr
-        },
-        "workflow_run": {
-            key: run.get(key)
-            for key in ("id", "name", "html_url", "head_sha", "conclusion", "status", "event")
-            if key in run
-        },
+        "pull_request": {k: pr.get(k) for k in ("number", "title", "html_url", "state", "head", "base") if k in pr},
+        "workflow_run": {k: run.get(k) for k in ("id", "name", "html_url", "head_sha", "conclusion", "status", "event") if k in run},
         "sender": {"login": (event.get("sender") or {}).get("login")},
     }
     body = json.dumps(envelope, separators=(",", ":"), sort_keys=True).encode()
-    delivery = "-".join(
-        filter(
-            None,
-            [
-                os.getenv("GITHUB_RUN_ID"),
-                os.getenv("GITHUB_RUN_ATTEMPT"),
-                os.getenv("GITHUB_EVENT_NAME"),
-                os.getenv("GITHUB_SHA", "")[:12],
-            ],
-        )
-    ) or "manual-event"
+    delivery = "-".join(filter(None, [
+        os.getenv("GITHUB_RUN_ID"), os.getenv("GITHUB_RUN_ATTEMPT"),
+        os.getenv("GITHUB_EVENT_NAME"), os.getenv("GITHUB_SHA", "")[:12],
+    ])) or "manual-event"
     timestamp = str(int(time.time()))
-    status = post(
-        endpoint,
-        token,
-        body,
-        {
-            "X-HSO-Delivery": delivery,
-            "X-HSO-Event": os.getenv("GITHUB_EVENT_NAME", "repository_event"),
-            "X-HSO-Timestamp": timestamp,
-        },
-    )
+    status = post(endpoint, body, {
+        "X-HSO-Delivery": delivery,
+        "X-HSO-Event": os.getenv("GITHUB_EVENT_NAME", "repository_event"),
+        "X-HSO-Timestamp": timestamp,
+    }, signing_secret=signing_secret)
     return 0 if 200 <= status < 300 else 1
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
