@@ -110,7 +110,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 
 ## Plugin instruction registry
 
-The parent maintains an isolated instruction boundary or metadata-only source pointer for registered plugins. The machine-readable index records **279 skill metadata entries** across 24 plugin identities. Private Plugin Creator packages remain private; this public repository stores only package pointers and concise skill metadata for those packages, not their full instruction bodies. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary or metadata-only source pointer for registered plugins. The machine-readable index records **290 skill metadata entries** across 24 plugin identities. Private Plugin Creator packages remain private; this public repository stores only package pointers and concise skill metadata for those packages, not their full instruction bodies. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
@@ -119,7 +119,7 @@ The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architect
 - SKILL ANALYZER owns general analytical methodology; A.S.F.R.E.E owns forensic anatomy of AI plugins and controlled reconstruction.
 - People & Business Competency Academy owns the development and evidence-based transfer of human People/Business Skills; Agent Skills Atlas owns AI capability inventory, while GrowthForge owns business-domain decisions and deliverables.
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
-- Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and turns it into a prompt.
+- Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and compiles prompts across ten categories. GrowthForge retains business-prompt ownership, EWO retains workday operations, SKILL ANALYZER retains analytical methodology, and WSO retains generic workflow architecture. The prompt plugin does not execute downstream work. See [AI Prompt Finder cross-domain prompt-generator architecture](docs/AI-PROMPT-FINDER-CROSS-DOMAIN-PROMPT-GENERATOR.md).
 - Executive Workday Orchestrator owns workday-level task, project, meeting, communication, focus and review coordination; it delegates generic workflow architecture to WSO, agent-product lifecycle to Plugin Agent Orchestrator, source engineering to SDO, independent judgement to Evaluator Team and universal prompt architecture to Anatomi Prompt.
 - Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
 - GODEX owns audio/voice-over truth and post; Motion Graphic owns general visual-first animation; PVEE owns health communication truth/governance; Video Explainer owns the technical production engine after PVEE approval.

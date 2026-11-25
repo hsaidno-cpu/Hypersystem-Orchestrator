@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "capture_date": "2026-11-26",
-  "total_skill_records": 279,
+  "total_skill_records": 290,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -332,8 +332,8 @@
     {
       "plugin_key": "ai-prompt-finder-creator",
       "instruction_path": "plugin-instructions/ai-prompt-finder-creator/INSTRUCTIONS-BUNDLE.md",
-      "origin": "runtime_snapshot",
-      "skill_count": 7,
+      "origin": "plugin_creator_current_release_snapshot",
+      "skill_count": 18,
       "skills": [
         {
           "skill_name": "image-prompt-finder",
@@ -369,6 +369,61 @@
           "skill_name": "universal-prompt-creator",
           "source_uri": "skills://plugins/ai-prompt-finder-creator/universal-prompt-creator",
           "description": "Use when a user wants an AI prompt created from an idea, brief, text, or reference for any content type beyond a simple still-image or short/long-video reconstruction, including writing, graphic design, branding, marketing, music, audio, 3D, animation, and education."
+        },
+        {
+          "skill_name": "prompt-generator",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/prompt-generator",
+          "description": "Use when creating a new AI prompt or reusable prompt package from an idea, brief, task requirements or source text."
+        },
+        {
+          "skill_name": "business-strategy-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/business-strategy-prompts",
+          "description": "Use when generating prompts for business diagnosis, idea validation, strategic options, pricing hypotheses or competitive positioning. In HSO, GrowthForge retains business-domain ownership."
+        },
+        {
+          "skill_name": "marketing-growth-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/marketing-growth-prompts",
+          "description": "Use when generating prompts for funnel diagnosis, offer design, content growth, acquisition, campaigns or ad diagnosis. In HSO, GrowthForge retains commercial marketing ownership."
+        },
+        {
+          "skill_name": "productivity-time-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/productivity-time-prompts",
+          "description": "Use when generating prompts for workload planning, prioritization, procrastination, time blocking, automation assessment or recurring-work systems. EWO owns workday-level coordination; WSO owns generic workflow/SOP architecture."
+        },
+        {
+          "skill_name": "decision-making-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/decision-making-prompts",
+          "description": "Use when generating prompts for personal or organizational choices, pre-mortems, opportunity-cost analysis, steelmanning or decisions under uncertainty. SKILL ANALYZER owns methodology execution."
+        },
+        {
+          "skill_name": "writing-communication-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/writing-communication-prompts",
+          "description": "Use when generating prompts for emails, reports, editing, difficult conversations, role-play or layered explanations. EWO owns workday-specific communications; this skill creates prompt artifacts, not externally sent messages."
+        },
+        {
+          "skill_name": "money-finance-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/money-finance-prompts",
+          "description": "Use when generating prompts for budgeting, cash-flow calculations, debt comparisons, service pricing or purchase/investment analysis with verified inputs and non-advisory framing."
+        },
+        {
+          "skill_name": "learning-skills-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/learning-skills-prompts",
+          "description": "Use when generating prompts for skill acquisition, concept explanation, tutoring, hint-based problem solving, source-to-action summaries or exam/interview practice."
+        },
+        {
+          "skill_name": "tech-troubleshooting-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/tech-troubleshooting-prompts",
+          "description": "Use when generating prompts for code debugging, device/app troubleshooting, software selection, database design, formulas or scripts. It does not modify systems or repositories."
+        },
+        {
+          "skill_name": "career-work-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/career-work-prompts",
+          "description": "Use when generating prompts for negotiation, workplace conflict, resume tailoring, career transition or team leadership without inventing achievements or motives."
+        },
+        {
+          "skill_name": "thinking-frameworks-prompts",
+          "source_uri": "skills://plugins/ai-prompt-finder-creator/thinking-frameworks-prompts",
+          "description": "Use when generating prompts using first principles, root-cause exploration, inversion, simulated viewpoints or integrated problem solving. SKILL ANALYZER retains analytical-method ownership."
         }
       ]
     },
