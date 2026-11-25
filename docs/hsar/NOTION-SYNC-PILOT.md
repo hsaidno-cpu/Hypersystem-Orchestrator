@@ -11,7 +11,8 @@
 - The integration must be shared only with the HSAR Change & Evidence Ledger. Do not share it with the Component Registry or Scan & Coverage Ledger during this pilot.
 - The synchronizer reads canonical PR details from GitHub after receiving an event. It never executes code from a PR branch and checks out only the trusted default branch.
 - Fork-originated PRs are skipped. Only PRs whose base and head repository are both `hsaidno-cpu/Hypersystem-Orchestrator` are eligible.
-- `Decision State`, approval fields, risk acceptance, merge/deploy controls and permission settings are never read as inputs to a decision and are never written by this synchronizer.
+- Human-managed fields are immutable to the synchronizer: `Change` title after creation, `Change Summary`, `Acceptance Evidence`, positive/negative findings, `Residual Risks`, `Conversion Actions`, `Decision State`, and approval/risk-acceptance fields are never overwritten.
+- Machine observations are stored in the dedicated `Automation Sync Receipt` field, with exact refs, changed-file/blob manifest, and workflow evidence. Only machine-owned fields such as SHAs, branch, changed paths, CI URL, hash and sync statuses may be updated.
 - No secrets, credentials, private source content or PR body text are copied into Notion. Common token/private-key patterns are redacted before text is serialized.
 - Duplicate stable keys fail closed. The stable identity is the canonical GitHub PR URL. The normalized source projection is SHA-256 hashed; unchanged events become no-ops. Every create/update is read back from Notion and hash-verified before both sync statuses are marked `Synced`.
 - Retry is bounded and applies only to transient HTTP/transport failures. A non-idempotent create request is not automatically retried after an ambiguous network/5xx outcome; later reconciliation checks the stable key before creating again.
@@ -47,4 +48,4 @@ The connected GitHub/Notion tools do not expose repository-secret management. Co
 | Dry-run | No Notion API request or write |
 | Scheduled/manual reconciliation | Re-read current GitHub PR state and reconcile by canonical URL |
 
-Unit-level contract tests run with `python -m unittest discover -s tests -v`. Passing local tests are not a live integration receipt. The pilot remains `NOT_CONFIGURED` / `BLOCKED` until the real Notion credential and narrowly scoped database share exist and a live create/update/no-op/read-back test passes.
+Unit-level contract tests run with `python -m unittest discover -s tests -v`. Passing local tests are not a live integration receipt. The pilot remains `NOT_CONFIGURED` / `BLOCKED` until the real Notion credential and narrowly scoped database share exist and a live create/update/no-op/read-back test passes. The script also checks `HSAR_NOTION_SYNC_ENABLED`; workflow gating is not the only control.
