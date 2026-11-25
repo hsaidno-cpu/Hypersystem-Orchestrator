@@ -7,6 +7,7 @@ This directory stores every plugin instruction set in an isolated boundary. It i
 - Each plugin has its own child directory. A bundle never mixes instructions from other plugins.
 - INSTRUCTIONS-BUNDLE.md contains the complete skill instructions retrieved from the installed plugin skill registry at the recorded snapshot date.
 - Canonical source-backed plugins are represented by source pointers to the exact submodule/commit, not by copied instructions.
+- Verified private child repositories use a canonical private source pointer with an immutable commit and package-parity evidence. Their contents remain private and are never copied into the public parent.
 - A legacy compatibility plugin is stored only as a redirect snapshot and points to its canonical plugin.
 
 ## Source authority
@@ -38,6 +39,7 @@ The ecosystem owner requested the complete instructions to be visible from the p
 DISCOVER → IDENTIFY → CLASSIFY → VERIFY MANIFEST/LICENSE/VERSION/COMMIT → CAPTURE → DIFF → UPDATE SNAPSHOT POINTER → CONTRACT TEST → HOST TEST → RUNTIME TEST
 
 - Source repository unavailable: retain RUNTIME_INSTRUCTION_SNAPSHOT, never invent a repository.
+- Verified private source: set source_state to private_repository_source, record the private repository ID and pinned commit, compare the exact package files, and keep distribution private_source_restricted while license rights remain unassessed.
 - Source license unknown: preserve the source link, label license NOT_DECLARED_OR_NOT_FOUND, and do not silently relicense the copied content.
 - Private source: keep private, or require explicit approval before public mirroring.
 - Version conflict: compare semantic version, source authority, changelog, compatibility and tests. Select the highest verified compatible version. A requested target version can be recorded separately from a released/source-verified version.
