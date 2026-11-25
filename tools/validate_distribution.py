@@ -21,6 +21,8 @@ def validate() -> None:
     catalog = load(ROOT / "catalog" / "plugins.json")
     distribution = load(ROOT / "catalog" / "distribution-registry.json")
     platforms = load(ROOT / "catalog" / "platform-registry.json")
+    repositories_doc = load(ROOT / "catalog" / "repositories.json")
+    repositories = {item["repository_id"]: item for item in repositories_doc.get("repositories", [])}
     catalog_plugins = catalog.get("plugins", [])
     records = distribution.get("plugins", [])
     keys = [p.get("plugin_key") for p in catalog_plugins]
@@ -50,6 +52,25 @@ def validate() -> None:
             raise ValueError(f"{key}: snapshot_only requires pending_repository")
         if status == "candidate_incomplete" and source_state != "candidate_repository":
             raise ValueError(f"{key}: candidate_incomplete requires candidate_repository")
+        if source_state == "private_repository_source":
+            source = repositories.get(item.get("source_repository_id"))
+            if source is None or source.get("status") != "private_source_verified" or source.get("visibility") != "private":
+                raise ValueError(f"{key}: private repository source is not verified in the repository registry")
+            if status != "private_source_restricted":
+                raise ValueError(f"{key}: private source must remain private_source_restricted until distribution rights pass")
+            if item.get("source_commit") != source.get("pinned_commit") or not item.get("source_commit"):
+                raise ValueError(f"{key}: distribution source_commit must match the pinned private repository commit")
+            if item.get("license_status") != "not_assessed":
+                raise ValueError(f"{key}: private-source license status cannot be promoted without rights evidence")
+            if item.get("package_artifact") is not None:
+                raise ValueError(f"{key}: private restricted source cannot advertise a public package artifact")
+            required_blockers = {
+                "LICENSE_RIGHTS_NOT_ASSESSED",
+                "PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE",
+                "VCM_HSO_HOST_ADAPTER_NOT_CONFIGURED",
+            }
+            if not required_blockers.issubset(set(item.get("blockers", []))):
+                raise ValueError(f"{key}: private source must disclose license, visibility and runtime blockers")
         if item.get("package_artifact") is not None and status not in ELIGIBLE:
             raise ValueError(f"{key}: non-installable record cannot advertise a package artifact")
     adapters = platforms.get("adapters", [])
