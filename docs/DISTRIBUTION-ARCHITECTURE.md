@@ -75,9 +75,9 @@ Authorization must be enforced server-side during discovery and each tool call. 
 
 No state implies another. Each requires its own source of truth and evidence.
 
-## Initial eligibility baseline
+## Historical eligibility baseline — 23 November 2026
 
-As of 23 November 2026 the 21 plugin identities map to these distribution states:
+At the 23 November 2026 checkpoint, the 21 plugin identities mapped to these distribution states:
 
 | State | Count |
 |---|---:|
@@ -93,6 +93,26 @@ As of 23 November 2026 the 21 plugin identities map to these distribution states
 People & Business Competency Academy is included in snapshot_only: the Plugin Creator package is private, no canonical child source repository or independent license clearance has been established, and no public package artifact is published. This remains non-installable and is not a host/runtime activation claim.
 
 Five source submodules are pinned, but source pinning alone is insufficient for redistribution. Examples: SKILL ANALYZER has no root license identified; A.S.F.R.E.E has PolyForm Noncommercial terms requiring distribution review; Anatomi Prompt is private and has no license cleared; Video Explainer source 4.1.9 lags deployment 4.1.12; SDO has instruction-content drift despite package version 0.1.0 matching.
+
+## Current eligibility snapshot — 26 November 2026
+
+The current HSO main snapshot is pinned at `a0521c896413eb2c3acdc48d67c4be43075bebe4`. The current catalog contains 23 plugin identities and the distribution registry contains the following 23 states:
+
+| State | Count |
+|---|---:|
+| review_required | 2 |
+| blocked | 2 |
+| private_source_restricted | 1 |
+| snapshot_only | 15 |
+| candidate_incomplete | 2 |
+| legacy_redirect | 1 |
+| **Installable** | **0** |
+
+Source ownership at the same checkpoint: 5 integrated/pinned source submodules, 15 pending repository identities, 2 candidate/incomplete source repositories and 1 canonical redirect. These are identity/source states, not the same as distribution eligibility states.
+
+The compatibility matrix contains 15 integration edges. The current catalog-validation workflow [run 45698994293](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45698994293) passed its 142-test unit/resolver suite, which includes the current 15-edge C2 schema and C3 mock-receiver contract coverage. All 15 edges remain `CONTRACT_TESTED`; C4 host activation and C5 runtime execution are `NOT_RUN`.
+
+The five platform adapters remain `PLANNED`, with named-host activation and runtime evidence `NOT_RUN`. No package is installable. This is an explicit current snapshot, not a claim that a production installer or runtime gateway exists.
 
 Eligibility states:
 - installable_public / installable_private: all gates pass.
