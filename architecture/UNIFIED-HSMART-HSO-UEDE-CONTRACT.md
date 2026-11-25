@@ -155,6 +155,8 @@ This order is the single authorized UEDE workstream. UEDE orchestrates the exist
 
 The HSO parent catalog contains 23 plugin identities and 265 indexed skill definitions. Neither metric is an execution count. Capability eligibility is the intersection of source provenance, rights, current instruction parity, version, host adapter, permissions, tests and exact execution evidence.
 
+The complete date-bound 23-identity inventory, capability classes, source/rights/parity findings and P1 closure criteria are maintained in [UEDE–HSO Capability Audit — 2026-11-25](UEDE-HSO-CAPABILITY-AUDIT-2026-11-25.md).
+
 | Capability | Source/skill evidence | Rights/parity status | UEDE eligibility |
 |---|---|---|---|
 | SDO | Canonical SPDO source v0.1.0, one master skill | Apache-2.0; source/package version aligned, but 0/4 instruction files exactly match | Candidate skill/plugin engineering worker after parity remediation; no assumed HSMART code runtime |
