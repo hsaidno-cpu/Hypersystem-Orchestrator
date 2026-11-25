@@ -6,7 +6,7 @@
 
 ## Mission
 
-Hypersystem Orchestrator is the **central ecosystem repository** for a portfolio of independently maintained AI plugin projects.
+Hypersystem-Orchestrator is the **central ecosystem repository** for a portfolio of independently maintained AI plugin projects.
 
 Its operating rule is:
 
