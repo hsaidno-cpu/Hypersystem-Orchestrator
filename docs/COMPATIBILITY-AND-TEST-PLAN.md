@@ -19,7 +19,7 @@ The matrix records:
 
 A declared handoff does not mean that the platform can invoke either plugin programmatically.
 
-## 2. Fourteen defined integration edges
+## 2. Fifteen defined integration edges — current matrix
 
 1. SKILL ANALYZER → A.S.F.R.E.E: method blueprint to technical anatomy case.
 2. A.S.F.R.E.E → Evaluator Team: evidence-backed anatomy dossier to independent scoring.
@@ -35,6 +35,7 @@ A declared handoff does not mean that the platform can invoke either plugin prog
 12. Video Explainer → PVEE: technical production QA and delivery evidence.
 13. Agent Jailbreak DS → Plugin Agent Orchestrator: threat model and security-control handoff.
 14. Workflow Systems → Plugin Agent Orchestrator: workflow/SOP architecture for an AI-agent runtime.
+15. Ponytail Engineering Optimizer → SDO: a bounded minimal-complete engineering dossier; SDO remains the sole source-write, regression, pull-request and release-preparation owner.
 
 These are interface definitions and routing constraints. They are not hard runtime dependencies unless the matrix explicitly says so.
 
@@ -52,7 +53,7 @@ These are interface definitions and routing constraints. They are not hard runti
 A static PASS must never be copied into C2–C5. NOT_RUN is a valid status.
 
 
-### Executed C2/C3 evidence — 23 November 2026
+### Historical executed C2/C3 evidence — 23 November 2026 (14-edge baseline)
 
 - PR: [#8 — C2/C3 handoff assurance fixtures](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/8)
 - Tested commit: `3bd10b5f550a3ac6994a4c4fa792e62f7513fd25`
@@ -60,6 +61,17 @@ A static PASS must never be copied into C2–C5. NOT_RUN is a valid status.
 - Test suite: `Ran 33 tests — OK`; includes 14/14 schema-valid synthetic payloads, 14/14 mock receiver acceptances, and expected rejection tests for invalid/mismatched payloads.
 - Matrix disposition: `CONTRACT_TESTED`; `schema_contract_test=PASS`; `contract_behavior_test=PASS` for all 14 edges.
 - Boundary: this evidence is limited to JSON Schema and deterministic mock receiver behavior. No real producer/consumer plugin was invoked. C4 host activation and C5 runtime execution remain `NOT_RUN`.
+
+### Current 15-edge C2/C3 evidence — 26 November 2026
+
+The current machine-readable matrix contains `integration_count=15`, including `INT-PONYTAIL-SDO-001`. The current test module `tests/test_contract_assurance.py` now verifies:
+- fixture inventory covers all 15 matrix edges;
+- C2 validates all 15 synthetic payloads against the handoff schema;
+- C3 accepts all 15 exact producer/consumer/output/acceptance contracts through a strict mock receiver;
+- negative producer, recipient, contract-version and output-artifact mismatch cases are rejected;
+- fixture metadata and matrix states do not claim host/runtime execution.
+
+The latest post-merge HSO catalog/distribution validation [run 45698994293](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45698994293) passed its `validate` job; the log records `Ran 142 tests — OK`, including the 15-edge C2/C3 tests. This is current repository CI evidence for schema and mock contract behavior, not a real plugin invocation. All 15 matrix rows remain `CONTRACT_TESTED`; C4 host activation and C5 runtime execution remain `NOT_RUN`.
 
 ## 4. Required test cases per edge
 
@@ -96,6 +108,6 @@ For every handoff:
 
 ## 6. Current compatibility status
 
-The parent CI validates the existence of each plugin identity, unique integration IDs, allowed producer/consumer relationships, owner fields and explicit test states. C2 schema fixtures and C3 mock receiver behavior passed for all 14 edges on the exact PR #8 head. Host activation and runtime execution remain NOT_RUN.
+The parent CI validates the existence of each plugin identity, unique integration IDs, allowed producer/consumer relationships, owner fields and explicit test states. The 23 November PR #8 evidence is a historical 14-edge baseline. On the current 26 November matrix, C2 schema fixtures and C3 mock receiver behavior pass for all 15 edges (including Ponytail→SDO) in the latest catalog-validation run 45698994293. Host activation and runtime execution remain NOT_RUN.
 
 The next test implementation step is to add representative valid/invalid handoff fixtures for the highest-risk edges, beginning with PVEE→Video Explainer and Evaluator Team→SDO. Host testing follows only when a host supports distinct plugin dispatch and read-back evidence is available.
