@@ -261,6 +261,8 @@ Required configuration is supplied through environment variables / GitHub reposi
 15. Evidence synchronization cannot mutate roadmap progress, PRE gates, decisions or approvals.
 16. Every external write records actor, scope, approval, exact source/target, outcome and rollback reference.
 
+GOV-01 is the sole human decision authority. No second human engineering reviewer, security reviewer or CODEOWNER approver is introduced; technical assurance and cryptographic evidence support the owner's decision but do not impersonate a human review.
+
 A green static CI run proves only the checks executed in that workflow. Live package registry, Notion API and named-host runtime acceptance must be separate, exact-target tests.
 
 ## 12. Freshness policy
@@ -296,7 +298,7 @@ These are policy thresholds, not evidence that an external connector or runtime 
 
 ### Current integration boundary
 
-The existing PR #16 is a bounded GitHub-to-Notion evidence synchronizer, not a four-plane reconciler, and its live workflow remains gated on Notion integration sharing, secret/variable provisioning, independent review and live API acceptance. PR #18 adds version/gitlink/generated-registry controls but explicitly does not resolve instruction-content drift or distribution rights. ECIG does not promote either PR from OPEN to merged or from test-pass to live acceptance.
+The existing PR #16 is a bounded GitHub-to-Notion evidence synchronizer, not a four-plane reconciler, and its live workflow remains gated on Notion integration sharing, secret/variable provisioning, GOV-01 exact-head disposition and live API acceptance. No second human reviewer or security approver is required. PR #18 adds version/gitlink/generated-registry controls but explicitly does not resolve instruction-content drift or distribution rights. ECIG does not promote either PR from OPEN to merged or from test-pass to live acceptance.
 
 ## 14. Exit criteria for claiming four-plane synchronization
 
@@ -321,7 +323,7 @@ A `SYNCED` attestation is accepted only when its Ed25519 signature verifies agai
 
 The verifier checks the trusted `key_id`, canonical base64 encoding, 32-byte public key, 64-byte signature and cryptographic verification. A syntactically valid signature length is not proof of authenticity. Signature verification is separate from human approval records; neither substitutes for the other.
 
-The checked-in trust registry intentionally begins with zero active keys. Until a public key is added through a reviewed change with an explicit human security approval and documented key custody/rotation/revocation ownership, every `SYNCED` attestation fails closed. Test fixtures may inject ephemeral keys in memory; test keys must never be added to the production trust registry.
+The checked-in trust registry intentionally begins with zero active keys. Until a public key is added through a reviewed change with a GOV-01 signed exact-head disposition and documented key custody/rotation/revocation ownership, every `SYNCED` attestation fails closed. Test fixtures may inject ephemeral keys in memory; test keys must never be added to the production trust registry.
 
 A `SYNCED` record must also carry plane-specific evidence: source commit and manifest, package read-back, installation receipt and runtime probe, instruction comparison, and documentation read-back. The latest observation for each required evidence kind must be no older than the corresponding policy freshness window, and no unresolved or rejected approval may remain. Approval records must be action-specific for canonical source selection, rights disposition, publication and installation where those actions occurred.
 
