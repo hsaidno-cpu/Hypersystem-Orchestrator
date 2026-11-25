@@ -17,3 +17,17 @@ Updated: 2026-11-24.
 - Live Notion/GitHub source sync remains blocked on Supabase secrets, Notion internal connection/webhook, GitHub Actions URL/secret, and first admin membership.
 - Vercel project/deployment remains pending team authorization and Preview setup.
 - No automatic approvals, merges, releases, production deploys or canonical source writes.
+
+
+## Measurement integrity hardening — 25 November 2026
+
+- Added explicit Roadmap scope inclusion and owner/date/rationale fields plus Scope Weight Approval, approver and timestamp properties in Notion.
+- Added Supabase completeness metadata for snapshots and source registry, source-sync binding on progress and decision runs, scope-decision and weight-approval projections, and fail-closed completeness indexes/constraints.
+- Replaced partial-weighted headline progress with a null project percentage until source snapshots are complete, all Work Item scope decisions are explicit, in-scope IDs are unique, and every in-scope weight is positively approved with rationale, approver and date. Partial subset ratios are stored separately and explicitly non-publishable.
+- Reconciliation now exhausts Notion and GitHub pagination, recursively inventories Control Center blocks, rejects cursor/page-limit failures, and batches writes without truncating source rows.
+- Decision runs require one successful same-run snapshot for each of five mandatory sources, fresh source-completeness evidence, exact Roadmap membership parity, complete project-wide scope decisions, unique in-scope IDs, fresh PR/CI evidence, exact commit matching, and verified dependencies.
+- Dashboard progress trends include only publishable methodology-v2 snapshots sharing the current scope hash; the latest unpublishable snapshot breaks the chart. Verified completion uses exact database counts rather than the 100-row display window.
+- Supabase migration has been applied. Live source credentials, administrator membership, and Vercel team project/deploy permission remain external prerequisites.
+- Current data remains UNMEASURED: all five sources not_configured; no synced work, execution, evidence, sync, progress or decision records; no active HSO members.
+
+The exact formulas, semantics, eligibility gates and adversarial acceptance matrix are in [`HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md`](./HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md). PR #22 is not production-ready until live acceptance and independent technical/security review pass.
