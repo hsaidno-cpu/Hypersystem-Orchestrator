@@ -64,6 +64,12 @@ class SyncContractTests(unittest.TestCase):
         self.notion = FakeNotion()
         self.service = HsarSyncService(self.github, self.notion, "hsaidno-cpu/Hypersystem-Orchestrator")
 
+    def test_github_commit_to_pr_endpoint_is_scoped_to_one_exact_sha(self):
+        client = GitHubClient("test-token")
+        with patch.object(client, "request", return_value=[{"number": 31}, {"number": 31}]) as mocked:
+            self.assertEqual(client.list_pulls_for_commit("hsaidno-cpu/Hypersystem-Orchestrator", "a" * 40), [31])
+        mocked.assert_called_once_with("GET", f"/repos/hsaidno-cpu/Hypersystem-Orchestrator/commits/{'a' * 40}/pulls?per_page=100")
+
     def test_push_event_commit_shas_are_validated_and_deduplicated(self):
         event = {
             "after": "b" * 40,
