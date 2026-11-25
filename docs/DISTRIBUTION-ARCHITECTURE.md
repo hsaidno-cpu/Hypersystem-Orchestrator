@@ -77,7 +77,7 @@ No state implies another. Each requires its own source of truth and evidence.
 
 ## Current eligibility baseline
 
-As of 26 November 2026 the 24 plugin identities map to these distribution states:
+As of 26 November 2026 the 24 plugin identities map to these distribution states. The current instruction snapshot registry contains 279 skill records across these 24 identities (capture date 2026-11-26). Source ownership states are 5 integrated submodules, 16 pending Git source identities, 2 candidates and 1 canonical redirect. The newly registered Executive Workday Orchestrator is a USER/PRIVATE package pointer with 14 private instruction files but no canonical child Git source; it remains pending_repository and snapshot_only.
 
 | State | Count |
 |---|---:|
@@ -117,6 +117,8 @@ Eligibility states:
 ## Platform adapter strategy
 
 Targets recorded in the platform registry: ChatGPT, Claude, Gemini CLI, VS Code/GitHub Copilot and generic MCP hosts. All are currently PLANNED; host activation and runtime execution are NOT_RUN.
+
+The compatibility matrix records 15 plugin handoff edges as of this snapshot. Current C2 schema and C3 mock receiver tests pass for all 15 edges in catalog validation run 45699714030; C4 host activation and C5 runtime remain NOT_RUN. This matrix does not include EWO as a plugin-to-plugin handoff; EWO has a separate private routing-contract catalogue.
 
 MCP is a common tool transport where supported, not a universal plugin package format. Native skills, agent manifests, hooks, UI, auth policies and lifecycle still need host-specific adapters. Adapter records must specify supported formats/transports, exact host/version, tool namespace mapping, auth/entitlement policy, secret references, lifecycle operations and test evidence.
 
