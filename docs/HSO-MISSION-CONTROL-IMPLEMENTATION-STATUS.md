@@ -46,3 +46,13 @@ Updated: 2026-11-24
 5. Add the first administrator to `public.hso_members` after Supabase Auth sign-in.
 
 Do not merge or deploy production based only on app build success. Complete data mapping, security, sync, access and preview acceptance first.
+
+
+## Operational security update — 2026-11-26
+
+- PR #29 introduces a dedicated `HSO_WEBHOOK_SIGNING_SECRET`; it is distinct from `HSO_SYNC_TOKEN` and is required by both the Supabase GitHub webhook Edge Function and the GitHub Actions event emitter.
+- The event signature binds the timestamp, delivery ID, event type, and exact raw body. Timestamps outside the five-minute acceptance window are rejected. Duplicate provider/delivery IDs return HTTP 409 without triggering reconciliation again.
+- Legacy raw-body `GITHUB_WEBHOOK_SECRET` signature fallback has been removed from the PR handler. The previous deployed v4 runtime still had this fallback at the time of this update; production runtime replacement remains a separate deployment gate.
+- Catalog validation now runs Deno type-check and the Edge Function handler test suite. The sync workflow fails closed when any of the three event configuration values is absent; scheduled reconciliation requires the endpoint and dedicated sync token.
+- Live acceptance remains BLOCKED until the PR changes are accepted and deployed, the three webhook configuration values are installed, Notion/GitHub source credentials are authorized, and live event/scheduled reconciliation read-back is complete.
+- Database baseline read-back at update time: `hso_integration_events=0`, `hso_change_events=0`, `hso_sync_runs=0`, `hso_source_snapshots=0`; all five source definitions are `not_configured`. These are observed counts, not seeded or simulated test rows.
