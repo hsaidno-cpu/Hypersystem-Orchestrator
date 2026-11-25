@@ -31,7 +31,11 @@ def post(url: str, body: bytes, headers: dict[str, str], signing_secret: str | N
     request_headers = {"Content-Type": "application/json", **headers}
     if signing_secret is not None:
         request_headers["X-HSO-Signature"] = "sha256=" + event_signature(
-            signing_secret, headers.get("X-HSO-Timestamp", ""), headers.get("X-HSO-Delivery", ""), body
+            signing_secret,
+            headers.get("X-HSO-Timestamp", ""),
+            headers.get("X-HSO-Delivery", ""),
+            headers.get("X-HSO-Event", "repository_event"),
+            body,
         )
     request = urllib.request.Request(url, data=body, method="POST", headers=request_headers)
     try:
