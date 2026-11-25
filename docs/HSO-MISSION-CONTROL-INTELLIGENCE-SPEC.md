@@ -146,3 +146,8 @@ The foundation was merged by PR #21. Intelligence v2 is in `feat/hso-mission-con
 Live sync is not configured: the source registry currently has five NOT_CONFIGURED entries, zero work items, zero execution/evidence rows and zero sync runs. Supabase secrets, GitHub Actions repository variable/secret, Notion internal connection/webhook and first HSO admin membership are pending. Vercel project/deployment is not created because team authorization is pending.
 
 No automated approval, merge, release, source overwrite or production deployment is enabled. Do not call the system production-ready before Preview, live integration, RLS adversarial tests, webhook replay and end-to-end acceptance pass.
+
+
+## Measurement integrity contract
+
+The authoritative rules for complete source snapshots, explicit scope decisions, owner-approved weights, publishable weighted progress, Verified evidence, Primary Next Action hard gates, trend comparability, and adversarial acceptance tests are defined in [`HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md`](./HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md). This contract supersedes any earlier wording that allowed a partial weighted subset to be presented as project-wide progress.
