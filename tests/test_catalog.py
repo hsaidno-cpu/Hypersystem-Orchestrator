@@ -251,5 +251,22 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertTrue(pointer.is_file())
         self.assertIn("not mirrored", pointer.read_text(encoding="utf-8").lower())
 
+    def test_ewo_is_pinned_to_private_canonical_source_without_public_source_mirror(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        repositories = json.loads((ROOT / "catalog" / "repositories.json").read_text(encoding="utf-8"))
+        ewo = next(p for p in catalog["plugins"] if p["plugin_key"] == "executive-workday-orchestrator")
+        source = next(r for r in repositories["repositories"] if r["repository_id"] == "executive-workday-orchestrator")
+        self.assertEqual(ewo["source_state"], "private_canonical_repository")
+        self.assertEqual(ewo["source_repository_id"], "executive-workday-orchestrator")
+        self.assertEqual(ewo["repository_version"], "0.1.0")
+        self.assertEqual(ewo["version_alignment_state"], "SOURCE_AND_PLATFORM_MATCH")
+        self.assertEqual(ewo["source_instruction_parity_status"], "MATCH")
+        self.assertEqual(source["status"], "private_canonical_source")
+        self.assertEqual(source["visibility"], "private")
+        self.assertEqual(source["pinned_commit"], "69166133cdc65d1f4f358daec005677db5cd0")
+        self.assertFalse(source["public_snapshot_allowed"])
+        gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
+        self.assertNotIn("executive-workday-orchestrator", gitmodules)
+
 if __name__ == "__main__":
     unittest.main()
