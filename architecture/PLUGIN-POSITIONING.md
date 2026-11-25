@@ -90,15 +90,16 @@ It accepts accessible images, video, documents, designs, concepts, examples, exi
 
 It owns source/reference breakdown, content-to-prompt reconstruction, prompt brief normalization, prompt generation across ten categories, prompt optimization/translation, target-generator adaptation when verified, prompt packaging, and prompt-level quality control.
 
-It does **not** own downstream domain decisions or execution. Its category skills provide prompt grammar and bounded handoff briefs only. In HSO, GrowthForge owns business strategy, commercial marketing, business finance and business-task prompts; SKILL ANALYZER owns general analytical method selection and execution; WSO owns reusable workflow/SOP architecture; Cortex/CommandCraft cover general knowledge-work execution; People & Business Competency Academy owns human competency development; Ponytail Engineering owns engineering method; and EWO/Vibe Coding Mentor remain subject to their own pending HSO integration gates.
+It does **not** own downstream domain decisions or execution. Its category skills provide prompt grammar and bounded handoff briefs only. In HSO, GrowthForge owns business strategy, commercial marketing, business finance and business-task prompts; Executive Workday Orchestrator (EWO) owns workday-level task, project, meeting, communication and schedule coordination; SKILL ANALYZER owns general analytical method selection and execution; WSO owns reusable workflow/SOP architecture; Cortex/CommandCraft cover general knowledge-work execution; People & Business Competency Academy owns human competency development; Ponytail Engineering owns engineering method; and Vibe Coding Mentor retains its specialized PRD-to-builder scope.
 
-Anatomi Prompt V3.0 retains formal eight-pillar structural authority. AI Prompt Finder may provide a brief and use the existing optional INT-FINDER-ANATOMI-001 handoff when formal Octa-Prompt hardening is explicitly requested. Existing compatibility evidence is contract-level only: host activation and runtime execution remain NOT_RUN.
+Anatomi Prompt V3.0 retains formal eight-pillar structural authority. AI Prompt Finder may provide a brief and use the existing optional `INT-FINDER-ANATOMI-001` handoff when formal Octa-Prompt hardening is explicitly requested. Existing compatibility evidence is contract-level only: host activation and runtime execution remain NOT_RUN.
 
 | Input | User intent | Primary owner |
 |---|---|---|
 | Existing prompt text | Optimize or audit the prompt | AI Prompt Finder; Anatomi only for explicit eight-pillar review |
-| Idea/task brief outside a reserved HSO domain | Generate a reusable prompt | AI Prompt Finder + one of its ten category specialists |
+| Idea/task brief outside a reserved HSO domain | Generate a reusable prompt | AI Prompt Finder + one category specialist |
 | Business task prompt inside HSO | Create a business-domain reusable prompt | GrowthForge Business OS |
+| Workday/task/meeting/email/follow-up prompt | Create a workday-specific prompt | EWO |
 | Image/video/document/design/reference | Analyze accessible content and construct an evidence-bounded prompt approximation | AI Prompt Finder & Creator |
 | Explicit Octa-Prompt build/audit | Formal eight-pillar architecture | Anatomi Prompt V3.0 |
 | General analytical-method selection/execution | Choose and apply analysis methods | SKILL ANALYZER |
@@ -193,6 +194,7 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 | Agent Jailbreak Skill DS | Defensive AI-agent threat modeling, prompt-injection and tool-action security | General software/plugin anatomy or offensive unauthorized testing |
 | Plugin Agent Orchestrator | AI-agent lifecycle: design, build/operate, deployment, access and ecosystem | Skill/plugin source lifecycle owned by SDO |
 | AI Workflow Systems Orchestrator | Reusable workflow, SOP, project, module and orchestration architecture | Agent product lifecycle or plugin source implementation |
+| Executive Workday Orchestrator | Workday-level task, project, calendar/meeting, communication, knowledge, focus and productivity-review coordination | Generic reusable workflow architecture, AI-agent product/runtime lifecycle, plugin source engineering or independent evaluation |
 | Cortex Workbench | General knowledge-work command workbench | Business-specific OS or specialized command alias catalog |
 | CommandCraft 56 | 56 text command aliases and compact task profiles | Native slash-command UI or general case orchestration |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy and adoption maturity | Claiming every mapped skill is executable |

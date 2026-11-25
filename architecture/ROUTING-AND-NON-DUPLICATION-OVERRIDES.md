@@ -119,6 +119,7 @@ The Academy may use a real business task as a transfer context, but the learning
 | Agent Jailbreak Skill DS | Defensive agent security, threat models, injection/context integrity, tool/action abuse, safe red-team and incident response | General plugin anatomy, normal engineering lifecycle or unauthorized offensive testing |
 | Plugin Agent Orchestrator | AI-agent product lifecycle: design, build/operate, deployment, runtime, access, tenant/ecosystem and scaling | Skill/plugin package lifecycle (SDO) or generic reusable workflow architecture |
 | AI Workflow Systems Orchestrator | Reusable workflow, SOP, project, modular skill/workspace and automation architecture | AI-agent product lifecycle or direct source implementation |
+| Executive Workday Orchestrator | Workday operations: daily planning, task intake/prioritization, projects, meetings, communication drafts, notes, adaptive scheduling and outcome reviews | Generic reusable workflow/SOP architecture (WSO), AI-agent product/runtime lifecycle (Plugin Agent Orchestrator), plugin source engineering (SDO), independent evaluation (Evaluator Team) or universal prompt architecture (Anatomi Prompt) |
 | Cortex Workbench | General knowledge-work routing for understanding, learning, research, writing, thinking, productivity and code workflows | Business OS ownership or native slash-command UI |
 | CommandCraft 56 | Registry and resolution of 56 text-command aliases/task profiles | Native platform command menu, case-level orchestration or persistent automation |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy, compatibility mapping and staged adoption | Claiming mapped/discovered assets are installed, callable or executable |
@@ -146,6 +147,7 @@ The Academy may use a real business task as a transfer context, but the learning
 | Defensive AI-agent threat model or prompt-injection review | Agent Jailbreak Skill DS | A.S.F.R.E.E for overall technical case when required |
 | Design/build/operate/scale an AI agent | Plugin Agent Orchestrator | Jailbreak DS for security; Workflow Systems for reusable process architecture |
 | Design reusable workflow/SOP/modular work system | AI Workflow Systems Orchestrator | Cortex for knowledge-work usage; Plugin Agent Orchestrator only if an AI agent is actually being engineered |
+| Organize an individual's workday, workload, meetings, messages and follow-ups | Executive Workday Orchestrator | WSO for generic reusable workflow architecture; Plugin Agent Orchestrator only for AI-agent product/runtime work |
 | General learning/research/writing/critical thinking/coding | Cortex Workbench | CommandCraft for explicit alias workflows |
 | Use a specific text command profile | CommandCraft 56 | Cortex or GrowthForge only where a distinct domain output is required |
 | Inventory and stage skill/capability adoption | Agent Skills Atlas | A.S.F.R.E.E for technical verification |

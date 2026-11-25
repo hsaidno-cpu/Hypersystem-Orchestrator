@@ -1,6 +1,6 @@
 # AI Prompt Finder & Creator — Cross-Domain Prompt Generator v1.1.0
 
-**Status:** package updated and read back; HSO catalog integration proposed on this branch; not merged.  
+**Status:** package updated and read back; HSO catalog integration proposed in draft PR #37; not merged.  
 **Date:** 26 November 2026  
 **Plugin Creator ID:** plugins_6ae57d424a2481918295d281919fbb7d  
 **Plugin Creator release:** pluginrel_6b074a37ae8c8191bae7723d715ab713  
@@ -164,7 +164,7 @@ The generator does not request private chain-of-thought. It asks for concise, ob
 | P1 | Create controlled test corpus from all 50 patterns | Evaluator Team | Test fixtures cover ten categories; target result and limitations recorded |
 | P1 | Validate target generators separately | Evaluator Team + owner | Named model/version, settings, source, output, rubric and date |
 | P1 | Add structured feedback and prompt version metrics | WSO/SDO after design acceptance | Retrieval/use quality data; no vanity score |
-| P1 | Integrate EWO/Vibe only after their HSO PR dependencies merge | HSO/SDO | Catalog admission, route tests, host and runtime evidence |
+| P1 | Integrate Keep EWO's host/runtime gates separate; integrate Vibe after its HSO dependency and route gates are satisfied | HSO/SDO | Catalog admission, route tests, host and runtime evidence |
 | P2 | Add multilingual variants and prompt localization | APFC domain specialists | Translation fidelity and target-specific QA |
 | P2 | Add prompt-library retrieval/version management if usage justifies it | WSO/SDO | Access control, provenance, duplicate detection and retrieval tests |
 
@@ -177,7 +177,7 @@ The generator does not request private chain-of-thought. It asks for concise, ob
 | Domain decomposition | Ten subskills plus one prompt-generator | PASS — package contents verified |
 | Existing skills retained | Seven previous skill files remain present | PASS — inventory read-back |
 | HSO identity | No new plugin identity; existing record updated | PROPOSED in HSO branch; not merged |
-| HSO instruction index | 18 APFC metadata entries and aggregate total 276 | PROPOSED in HSO branch; CI pending |
+| HSO instruction index | 18 APFC metadata entries and aggregate total 290 | PROPOSED in HSO branch; CI pending |
 | Rights/source | Canonical Git repository and distribution rights verified | BLOCKED / NOT_ASSESSED |
 | HSO static contract | Existing Finder-to-Anatomi C2/C3 contract remains distinct | Already CONTRACT_TESTED; no new runtime edge claimed |
 | Host activation | Named target host route invokes package | NOT_RUN |
@@ -192,7 +192,7 @@ The generator does not request private chain-of-thought. It asks for concise, ob
 - Plugin ID unchanged: plugins_6ae57d424a2481918295d281919fbb7d.
 - Scope/discoverability unchanged: USER / PRIVATE.
 - HSO public branch: feat/ai-prompt-finder-cross-domain-1-1-0-20261126.
-- HSO main remains protected and unchanged by this proposed PR.
+- HSO main is protected. PR #37 includes the current EWO main commit as a second parent to retain both changes.
 - Existing PR #24 GrowthForge and PR #35 Vibe Coding Mentor remain separate pending work; no merge/retarget action is performed here.
 
 **Final disposition:** PASS for private package update and read-back; PASS for source-pattern decomposition; proposed HSO metadata/routing changes await CI and review; HOLD for public distribution, canonical source parity, host activation and runtime readiness.

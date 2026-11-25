@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "catalog_revision": "2026-11-26",
-  "expected_plugin_count": 23,
+  "expected_plugin_count": 24,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -347,7 +347,7 @@
       "primary_domain": "cross-domain-prompt-engineering",
       "purpose": "Multimodal source-to-prompt and cross-domain prompt compilation system. Analyzes accessible images, video, documents, designs and references; creates prompt artifacts from briefs across ten task categories; optimizes/adapts existing prompts; and performs prompt-level quality control.",
       "responsibility_owner": "Owns source/reference decomposition, prompt brief normalization, prompt generation across ten category grammars, target-generator adaptation when verified, and prompt-level quality control. Domain-specific decisions and downstream execution remain with each canonical HSO domain owner.",
-      "boundary": "Does not own formal eight-pillar Octa-Prompt architecture or approval (Anatomi Prompt); business/commercial decisions and business-task prompt ownership (GrowthForge); general analytical method selection/execution (SKILL ANALYZER); generic workflow/SOP architecture (AI Workflow Systems Orchestrator); independent quality judgement (Evaluator Team); plugin/skill source engineering and release lifecycle (SDO); technical plugin/system forensics (A.S.F.R.E.E); or execution of the task described by a generated prompt. HSO routes domain work to the single primary owner; APFC may provide a bounded prompt brief/handoff only.",
+      "boundary": "Does not own formal eight-pillar Octa-Prompt architecture or approval (Anatomi Prompt); business/commercial decisions and business-task prompt ownership (GrowthForge); general analytical method selection/execution (SKILL ANALYZER); generic workflow/SOP architecture (AI Workflow Systems Orchestrator); workday-level task, project, meeting, communication and schedule coordination (Executive Workday Orchestrator); independent quality judgement (Evaluator Team); plugin/skill source engineering and release lifecycle (SDO); technical plugin/system forensics (A.S.F.R.E.E); or execution of the task described by a generated prompt. HSO routes domain work to the single primary owner; APFC may provide a bounded prompt brief/handoff only.",
       "source_repository_id": null,
       "source_state": "pending_repository",
       "release_version": null,
@@ -357,6 +357,7 @@
         "growthforge-business-os",
         "skill-analyzer",
         "workflow-systems-orchestrator",
+        "executive-workday-orchestrator",
         "evaluator-team",
         "skill-developer-orchestrator",
         "cortex-workbench",
@@ -375,6 +376,7 @@
       "negative_triggers": [
         "Formal eight-pillar Octa-Prompt audit, structural approval or hardening as the dominant task",
         "Business strategy, commercial marketing, business finance or business-task prompt creation in HSO when GrowthForge is available",
+        "Workday-level daily task, project, meeting, message, note or adaptive schedule coordination when Executive Workday Orchestrator is the primary owner",
         "General analytical methodology selection or execution when SKILL ANALYZER is the primary owner",
         "Reusable workflow/SOP/system architecture when AI Workflow Systems Orchestrator is the primary owner",
         "Execute a downstream business, financial, analytical, software, writing or workflow task when the user only requested a prompt",
@@ -394,7 +396,7 @@
       "repository_version": null,
       "version_alignment_note": "Plugin Creator private package is verified at 1.1.0. Canonical Git source remains NOT_IDENTIFIED; repository parity and redistribution rights are not verified.",
       "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
-      "deployed_plugin_version": "1.1.0",
+      "deployed_plugin_version": "1.0.0",
       "target_version": null,
       "version_reconciliation_status": "NOT_VERIFIED",
       "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
@@ -1125,6 +1127,57 @@
       "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
       "source_instruction_parity_status": "NOT_APPLICABLE",
       "source_instruction_parity_note": "No independent canonical Git source exists for parity comparison. The full USER/PRIVATE instruction files remain in the private Plugin Creator package; the public parent repository stores only a metadata pointer and concise skill index."
+    },
+    {
+      "plugin_key": "executive-workday-orchestrator",
+      "display_name": "Executive Workday Orchestrator",
+      "plugin_creator_id": "plugins_6b073a60088081918a8958ab761cb505",
+      "primary_domain": "workday-and-personal-operations-management",
+      "purpose": "A modular workday operating system that turns scattered tasks, projects, meetings, messages and notes into traceable priorities, schedules, follow-ups, learning reviews and guarded automation designs. Includes a dedicated Octa-Prompt prompt generator.",
+      "responsibility_owner": "Owns workday-level planning and coordination across daily tasks, task intake, prioritization, project portfolio, calendar/meeting operations, communication drafts, knowledge capture, adaptive scheduling and productivity review.",
+      "boundary": "Does not own general reusable workflow architecture (AI Workflow Systems Orchestrator), AI-agent product/runtime lifecycle (Plugin Agent Orchestrator), plugin/skill source lifecycle (SDO), independent quality judgement (Evaluator Team), or HSO ecosystem governance. It does not provide a task database, persistent memory, mailbox/calendar access or background workers by virtue of the prompt. External actions require a real connected tool, scoped permission, specific human approval and verification.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "Plugin Creator current release metadata and file read-back inspected on 2026-11-26: package v0.1.0, USER/PRIVATE, 14 SKILL.md files, plugin ID plugins_6b073a60088081918a8958ab761cb505, release pluginrel_6b073a6285d481918d11cdbf1bb7643f. No canonical Git source repository has been designated.",
+      "related_plugins": [
+        "workflow-systems-orchestrator",
+        "plugin-agent-orchestrator",
+        "skill-developer-orchestrator",
+        "evaluator-team",
+        "anatomi-prompt-v3-octa-prompt"
+      ],
+      "source_classification": "NOT_IDENTIFIED",
+      "primary_triggers": [
+        "Plan and adapt an individual's or operator's workday across tasks, commitments, deadlines and available capacity",
+        "Coordinate workday tasks, projects, meetings, messages, notes, follow-ups and daily/weekly outcome reviews",
+        "Generate or refine prompts specifically for workday, task, project, meeting, communication, note or productivity workflows"
+      ],
+      "negative_triggers": [
+        "Design a generic reusable workflow/SOP or cross-project orchestration architecture without a workday-operations outcome",
+        "Engineer, deploy, operate or scale an AI-agent product/runtime",
+        "Create, modify, test or release plugin/skill source code as the primary outcome",
+        "Perform independent quality evaluation or universal eight-pillar prompt architecture as the primary outcome"
+      ],
+      "instruction_snapshot_path": "plugin-instructions/executive-workday-orchestrator/SOURCE-POINTER.md",
+      "instruction_skill_count": 14,
+      "instruction_capture_date": "2026-11-26",
+      "instruction_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT",
+      "platform_package_version": "0.1.0",
+      "platform_current_release_id": "pluginrel_6b073a6285d481918d11cdbf1bb7643f",
+      "platform_scope": "USER",
+      "platform_discoverability": "PRIVATE",
+      "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
+      "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
+      "repository_version": null,
+      "version_alignment_note": "Plugin Creator package version 0.1.0 is verified. Canonical Git source and source-to-package parity are not yet established; the public HSO repository stores a metadata-only pointer because the package is USER/PRIVATE.",
+      "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
+      "deployed_plugin_version": "0.1.0",
+      "target_version": null,
+      "version_reconciliation_status": "NOT_VERIFIED",
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "The private package read-back confirms 14 skills. No child source repository exists in the HSO catalog, so file-level source parity cannot yet be assessed. The public parent stores concise skill metadata only, not private instruction bodies."
     }
   ]
 }
