@@ -55,3 +55,35 @@ This section supersedes stale 24-November statements above where they conflict w
 - Vercel Mission Control check is SUCCESS. The separate `hypersystem-orchestrator` Vercel project still has `NEXT_NO_VERSION`; it is not the Mission Control deployment and remains separately disclosed.
 - Independent technical/security review is still pending. No merge, Production deployment, live source-sync or production-ready claim is authorized.
 - Actual source/data state remains five `not_configured` connectors, zero operational work/evidence/sync/progress/decision records, and no active HSO member. Therefore project progress stays `UNMEASURED`.
+
+
+## Owner-approved denominator and Notion webhook bootstrap correction — 25 November 2026
+
+- The owner approved scope and weights on the Notion Roadmap across all 15 records, with owner identity, timestamp and rationale stored per record.
+- The operational denominator is four atomic Work Items (#10–#13), each with approved Scope Weight 25, for a total denominator of 100.
+- Conditional P2 Work Item #14 is out of scope until a named-host pilot proves production hardening is required. Program, Phase and Milestone roll-ups plus the separate Ponytail sub-roadmap pointer are excluded to avoid duplicate or un-ingested scope.
+- Equal 25-point weights are a neutral v1 baseline because the five Work Item rows have no Estimated Effort Hours and no priority-driver measurements. This defines the denominator; it does not assert measured completion or equal effort.
+- Project-wide progress remains UNMEASURED. No complete reconciler run has projected the four in-scope records into Supabase, and no fresh verified numerator evidence exists.
+
+### Notion webhook bootstrap
+
+A code review found the previous Notion webhook handler required `X-Notion-Signature` and an environment token before parsing the initial verification request. Notion's documented first request contains an unsigned `verification_token` body; the signature is used for later event requests. The old order could prevent subscription activation.
+
+- Applied migration: `20261125023645_hso_notion_webhook_vault_bootstrap_v1.sql`.
+- Deployed `hso-notion-webhook` v5 ACTIVE. It accepts the one-time challenge body, stores the token once in Supabase Vault, and validates subsequent events against `X-Notion-Signature` using the raw request body.
+- Added two `SECURITY INVOKER` RPCs, executable only by `service_role`; database privilege checks confirm `anon` and `authenticated` cannot store or retrieve this token. No token is logged or returned in the webhook response.
+- After the initial challenge is received, the owner retrieves the token in SQL Editor with:
+  `select decrypted_secret from vault.decrypted_secrets where name = 'hso_notion_webhook_verification_token';`
+  Paste it into the Notion Webhooks verification modal. The token no longer needs to be manually installed as an Edge Function secret; `NOTION_WEBHOOK_VERIFICATION_TOKEN` is only an optional legacy/local override.
+
+### Remaining live integration blockers
+
+- Supabase Edge Function secrets `HSO_SYNC_TOKEN` and `NOTION_API_TOKEN` remain unset; `GITHUB_WEBHOOK_SECRET` is needed for direct GitHub webhook signature validation; a least-privilege `GITHUB_TOKEN` is recommended.
+- Notion internal connection must be created and shared with the HSO Control Center, Roadmap, Execution Ledger and Evidence Registry; the Notion webhook subscription still needs to be created and verified.
+- GitHub repository variable `HSO_GITHUB_WEBHOOK_URL` and secret `HSO_SYNC_TOKEN` remain unconfigured.
+- No Supabase Auth user or active `hso_members` admin exists. First admin must be a real Auth user before their exact UUID is allowlisted.
+- Vercel server-only `HSO_SYNC_TOKEN` and the separate root-project adjustment remain pending Vercel team access. The Mission Control project itself already uses `apps/mission-control`.
+- HSO sync workflow remains NOT_CONFIGURED skip mode. No live source, webhook, scheduled reconciliation or end-to-end acceptance test has passed.
+- Current database still has five mandatory source connectors `not_configured`, zero operational Work Items/evidence/sync runs/source snapshots/progress snapshots/decision runs, and zero active HSO members. The approved denominator is not yet an operational measurement.
+
+The deployed Edge Function is not evidence of an active Notion subscription. Keep the dashboard's project percentage suppressed until all five required source snapshots are complete and fresh in the same successful sync run, Roadmap scope parity passes, and the verified numerator gate passes.
