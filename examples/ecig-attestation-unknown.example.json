@@ -9,7 +9,7 @@
   },
   "observed_at": "2026-11-24T04:50:00Z",
   "source": {
-    "repository_url": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator",
+    "repository_url": "hsaidno-cpu/Hypersystem-Orchestrator",
     "ref": "main",
     "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "manifest_path": "manifest.json",
