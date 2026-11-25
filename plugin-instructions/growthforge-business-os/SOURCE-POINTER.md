@@ -78,7 +78,7 @@ Prompt generation creates an instruction artifact; it does not execute the descr
 
 - Canonical Git repository: **NOT_IDENTIFIED**
 - Source commit/version: **NOT_AVAILABLE**
-- Git source parity with Plugin Creator 1.2.0: **NOT_VERIFIED**
+- Git source parity with Plugin Creator 1.3.0: **NOT_VERIFIED**
 - Package license/distribution rights: **NOT_ASSESSED**
 - HSO distribution: **snapshot_only / NOT_INSTALLABLE**
 - Host activation and runtime execution: **NOT_RUN**

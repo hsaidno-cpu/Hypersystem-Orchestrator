@@ -125,7 +125,7 @@ The compact R-C-F intake (Role, Context, Format) remains available for simple pr
 | Plugin Creator v1.3.0 package | VERIFIED | Current release, scope and selected updated files read back after update |
 | BPG catalogue | VERIFIED (static/read-back) | 50 unique BPG IDs; category totals 9/10/9/8/14; overlap totals 22/17/11 |
 | BPG acceptance cases | SPECIFICATION_PRESENT / NOT_RUN | Eight cases are packaged; no target-host run claimed |
-| HSO catalog metadata | PENDING PR #24 | Parent catalog and source pointer must match v1.3.0 release metadata |
+| HSO catalog metadata | COMMITTED TO PR #24 / CI NOT RUN | Catalog v1.3.0 metadata and private-package source pointer are committed to this draft PR; exact-head CI remains outstanding |
 | HSO distribution | SNAPSHOT_ONLY | Private USER/PRIVATE package, source repo not identified, rights not assessed, no package artifact |
 | GrowthForge canonical Git source | NOT_IDENTIFIED | HSO pointer is not the canonical package source |
 | Source/package parity | NOT_VERIFIED | No independent canonical child source exists to compare |
