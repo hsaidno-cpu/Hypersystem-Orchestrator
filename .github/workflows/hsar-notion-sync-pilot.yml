@@ -1,9 +1,6 @@
 name: HSAR GitHub to Notion Sync Pilot
 
 on:
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened, closed]
   push:
     branches: [main]
   schedule:
@@ -46,12 +43,7 @@ jobs:
           python-version: "3.12"
 
       - name: Run isolated HSAR synchronization contract tests
-        if: ${{ hashFiles('tests/test_hsar_notion_sync.py') != '' }}
         run: python -m unittest tests.test_hsar_notion_sync -v
-
-      - name: Explain pre-merge test boundary
-        if: ${{ hashFiles('tests/test_hsar_notion_sync.py') == '' }}
-        run: echo "HSAR test module is not yet present on trusted main; local 11-case suite has passed. It will run from main after this PR is merged."
 
       - name: Run manual dry-run (no Notion credential is read)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
@@ -64,8 +56,7 @@ jobs:
         if: >-
           ${{
             vars.HSAR_NOTION_SYNC_ENABLED == 'true' &&
-            (github.event_name != 'workflow_dispatch' || inputs.dry_run == false) &&
-            (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+            (github.event_name != 'workflow_dispatch' || inputs.dry_run == false)
           }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
