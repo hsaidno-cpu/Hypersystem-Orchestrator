@@ -379,7 +379,13 @@ Deno.serve(async (req) => {
   const now = new Date().toISOString();
   const snapshotIds = [...new Set(snapshots.map((snap: any) => snap.id))];
   const groups = new Map<string, any[]>();
-  const groupLabels = new Map<string, { title: string; group_type: string }>();
+  const groupLabels = new Map<string, {
+    title: string;
+    group_type: string;
+    expected_progress_pct: number | null;
+    baseline_start_date: string | null;
+    target_date: string | null;
+  }>();
   groups.set("__GLOBAL__", items);
   for (const item of items) {
     const parentId = item.parent_milestone_id ? String(item.parent_milestone_id) : null;
