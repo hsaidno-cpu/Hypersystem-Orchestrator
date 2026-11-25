@@ -18,7 +18,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 ## What is included now
 
-The registry contains **24 plugin identities** supplied for this ecosystem.
+The registry contains **25 plugin identities** supplied for this ecosystem.
 
 Five verified official plugin source repositories are pinned as Git submodules:
 
@@ -32,7 +32,7 @@ Five verified official plugin source repositories are pinned as Git submodules:
 
 The other plugin identities remain recorded with explicit source states. Instruction snapshots and candidate repositories are not treated as canonical distributable source packages.
 
-## The 24 registered plugins
+## The 25 registered plugins
 
 1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
@@ -58,6 +58,7 @@ The other plugin identities remain recorded with explicit source states. Instruc
 22. Progressive Roadmap Evaluator (PRE)
 23. Ponytail Engineering System
 24. Executive Workday Orchestrator
+25. Vibe Coding Mentor
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
@@ -110,7 +111,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 
 ## Plugin instruction registry
 
-The parent maintains an isolated instruction boundary or metadata-only source pointer for registered plugins. The machine-readable index records **279 skill metadata entries** across 24 plugin identities. Private Plugin Creator packages remain private; this public repository stores only package pointers and concise skill metadata for those packages, not their full instruction bodies. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary or metadata-only source pointer for registered plugins. The machine-readable index records **289 skill metadata entries** across 25 plugin identities. Private Plugin Creator packages remain private; this public repository stores only package pointers and concise skill metadata for those packages, not their full instruction bodies. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
@@ -121,6 +122,7 @@ The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architect
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
 - Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and turns it into a prompt.
 - Executive Workday Orchestrator owns workday-level task, project, meeting, communication, focus and review coordination; it delegates generic workflow architecture to WSO, agent-product lifecycle to Plugin Agent Orchestrator, source engineering to SDO, independent judgement to Evaluator Team and universal prompt architecture to Anatomi Prompt.
+- Vibe Coding Mentor owns non-IT software-product discovery, PRD/MVP specification and PRD-to-AI-builder prompt compilation; its canonical source is private and HSO route selection remains blocked until a dedicated plugin host adapter is verified.
 - Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
 - GODEX owns audio/voice-over truth and post; Motion Graphic owns general visual-first animation; PVEE owns health communication truth/governance; Video Explainer owns the technical production engine after PVEE approval.
 
