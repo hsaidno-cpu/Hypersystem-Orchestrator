@@ -126,7 +126,10 @@ export function createWebhookHandler(deps: WebhookDependencies) {
     if (new TextEncoder().encode(signingSecret).byteLength < 32) {
       return response({ error: "webhook_signing_secret_not_configured" }, 503);
     }
-    if (syncToken && constantTimeEqual(signingSecret, syncToken)) {
+    if (new TextEncoder().encode(syncToken).byteLength < 32) {
+      return response({ error: "reconciliation_sync_token_not_configured" }, 503);
+    }
+    if (constantTimeEqual(signingSecret, syncToken)) {
       return response({ error: "webhook_and_reconciliation_secrets_must_be_distinct" }, 503);
     }
 
@@ -236,17 +239,6 @@ export function createWebhookHandler(deps: WebhookDependencies) {
         }
       }
       return response({ error: "event_persistence_failed" }, 500);
-    }
-
-    if (!syncToken) {
-      return response({
-        accepted: true,
-        delivery_id: deliveryId,
-        change_event_persisted: true,
-        sync_triggered: false,
-        sync_successful: false,
-        processing_state: "received",
-      }, 202);
     }
 
     let result: { runId: string; status: string; githubStatus: string } | undefined;
