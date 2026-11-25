@@ -483,9 +483,11 @@
         "PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED",
         "PACKAGE_ARTIFACT_NOT_PUBLISHED",
         "PLATFORM_ADAPTER_NOT_HOST_TESTED",
-        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
+        "LICENSE_FILE_NOT_PRESENT_IN_PLUGIN_SOURCE",
+        "ORIGINAL_SOURCE_LICENSE_AND_ATTRIBUTION_NOT_ASSESSED"
       ],
-      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.0 is verified, but no canonical child Git source, independent distribution license clearance, public package artifact or host-tested platform adapter is registered. The public HSO parent stores metadata and a private package pointer only; this record is snapshot_only and is not installable."
+      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.0 is verified, but its current file inventory has no LICENSE file and neither manifest declares a license. The README identifies a supplied workday prompt as derivation input without recording a canonical source URL or redistribution permission. No canonical child Git source, independent license clearance, public package artifact or host-tested platform adapter is registered. The public HSO parent stores metadata and a private package pointer only; this record is snapshot_only and is not installable."
     }
   ]
 }
