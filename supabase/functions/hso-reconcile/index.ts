@@ -103,6 +103,8 @@ function mapPage(page: any, kind: string, sourceKey: string) {
       target_branch: prop(p, "Target Branch"), head_commit_sha: prop(p, "Head Commit SHA"),
       reviewed_commit_sha: prop(p, "Reviewed Commit SHA"), ci_commit_sha: prop(p, "CI Commit SHA"),
       change_surface: prop(p, "Change Surface"), execution_target: prop(p, "Execution Target"),
+      pr_url: prop(p, "PR URL"), ci_run_url: prop(p, "CI Run URL"),
+      repository_url: prop(p, "GitHub Repository"),
       source_verified_at: verifiedAt,
       source_url: page.url, source_updated_at: page.last_edited_time,
       observed_at: new Date().toISOString(), raw_properties: p,
