@@ -35,7 +35,11 @@ function prop(props: Record<string, any>, name: string): any {
   if (p.checkbox !== undefined) return p.checkbox;
   if (p.unique_id?.number !== undefined) return p.unique_id.number;
   if (p.relation) return p.relation.map((item: any) => item.id).filter(Boolean);
+  if (p.people) return p.people.map((person: any) => person.id).filter(Boolean);
   return p;
+}
+function singlePerson(value: any): string | null {
+  return Array.isArray(value) && value.length === 1 ? String(value[0]) : null;
 }
 function titleOf(props: Record<string, any>) {
   for (const [name, value] of Object.entries(props ?? {})) {
@@ -79,6 +83,13 @@ function mapPage(page: any, kind: string, sourceKey: string) {
       progress_percent: prop(p, "Progress %"), progress_basis: prop(p, "Progress Basis"),
       source_commit: prop(p, "Source Commit"), target_date: prop(p, "Target Date"),
       scope_weight: prop(p, "Scope Weight"), weight_rationale: prop(p, "Weight Rationale"),
+      scope_inclusion_state: prop(p, "Scope Inclusion State") ?? "PENDING",
+      scope_decision_by: singlePerson(prop(p, "Scope Decision By")),
+      scope_decision_at: prop(p, "Scope Decision At"),
+      scope_decision_rationale: prop(p, "Scope Decision Rationale"),
+      scope_weight_approval: prop(p, "Scope Weight Approval") ?? "PENDING",
+      scope_weight_approved_by: singlePerson(prop(p, "Scope Weight Approved By")),
+      scope_weight_approved_at: prop(p, "Scope Weight Approved At"),
       estimated_effort_hours: prop(p, "Estimated Effort Hours"),
       dependency_unlock_value: prop(p, "Dependency Unlock Value"),
       risk_reduction: prop(p, "Risk Reduction"),
@@ -145,10 +156,13 @@ async function getJson(url: string, headers: Record<string, string>) {
   if (!response.ok) throw new Error(`HTTP ${response.status} for ${new URL(url).pathname}`);
   return await response.json();
 }
+const MAX_SOURCE_PAGES = 1000;
 async function queryNotion(dataSource: string, token: string) {
   const results: any[] = [];
+  const seenCursors = new Set<string>();
   let cursor: string | undefined;
-  for (let i = 0; i < 6; i++) {
+  let pageCount = 0;
+  while (pageCount < MAX_SOURCE_PAGES) {
     const response = await fetch(`https://api.notion.com/v1/data_sources/${dataSource}/query`, {
       method: "POST",
       headers: { "Authorization": `Bearer ${token}`, "Notion-Version": NOTION_VERSION, "Content-Type": "application/json" },
@@ -157,11 +171,72 @@ async function queryNotion(dataSource: string, token: string) {
     });
     if (!response.ok) throw new Error(`Notion query failed: HTTP ${response.status}`);
     const data = await response.json();
+    pageCount++;
     results.push(...(data.results ?? []));
-    if (!data.has_more || !data.next_cursor) break;
+    if (!data.has_more) return { results, pageCount, exhausted: true };
+    if (!data.next_cursor) throw new Error("Notion pagination incomplete: has_more without next_cursor");
+    if (seenCursors.has(data.next_cursor)) throw new Error("Notion pagination cursor repeated; refusing partial source snapshot");
+    seenCursors.add(data.next_cursor);
     cursor = data.next_cursor;
   }
-  return results;
+  throw new Error(`Notion pagination exceeded ${MAX_SOURCE_PAGES} pages; refusing to mark source connected`);
+}
+async function queryNotionBlocks(blockId: string, token: string) {
+  const results: any[] = [];
+  const seenCursors = new Set<string>();
+  let cursor: string | undefined;
+  let pageCount = 0;
+  while (pageCount < MAX_SOURCE_PAGES) {
+    const url = new URL(`https://api.notion.com/v1/blocks/${blockId}/children`);
+    url.searchParams.set("page_size", "100");
+    if (cursor) url.searchParams.set("start_cursor", cursor);
+    const response = await fetch(url, {
+      headers: { "Authorization": `Bearer ${token}`, "Notion-Version": NOTION_VERSION },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) throw new Error(`Notion block pagination failed: HTTP ${response.status}`);
+    const data = await response.json();
+    pageCount++;
+    results.push(...(data.results ?? []));
+    if (!data.has_more) return { results, pageCount, exhausted: true };
+    if (!data.next_cursor) throw new Error("Notion block pagination incomplete: has_more without next_cursor");
+    if (seenCursors.has(data.next_cursor)) throw new Error("Notion block cursor repeated; refusing partial snapshot");
+    seenCursors.add(data.next_cursor);
+    cursor = data.next_cursor;
+  }
+  throw new Error(`Notion blocks exceeded ${MAX_SOURCE_PAGES} pages`);
+}
+async function collectNotionBlockTree(blockId: string, token: string, depth = 0, budget = { nodes: 0, pages: 0 }): Promise<any[]> {
+  if (depth > 20) throw new Error("Notion block nesting exceeded depth 20");
+  const page = await queryNotionBlocks(blockId, token);
+  budget.pages += page.pageCount;
+  const tree: any[] = [];
+  for (const block of page.results) {
+    budget.nodes++;
+    if (budget.nodes > 20000) throw new Error("Notion Control Center exceeded 20000 blocks; snapshot refused");
+    const item: any = { id: block.id, type: block.type, has_children: Boolean(block.has_children) };
+    if (block.has_children) item.children = await collectNotionBlockTree(block.id, token, depth + 1, budget);
+    tree.push(item);
+  }
+  return tree;
+}
+async function getAllGitHubPages(url: string, headers: Record<string, string>, unwrapKey?: string) {
+  const results: any[] = [];
+  let pageCount = 0;
+  while (pageCount < MAX_SOURCE_PAGES) {
+    const pageUrl = new URL(url);
+    pageUrl.searchParams.set("per_page", "100");
+    pageUrl.searchParams.set("page", String(pageCount + 1));
+    const response = await fetch(pageUrl, { headers, signal: AbortSignal.timeout(20000) });
+    if (!response.ok) throw new Error(`GitHub pagination failed: HTTP ${response.status} for ${pageUrl.pathname}`);
+    const payload = await response.json();
+    const batch = unwrapKey ? payload?.[unwrapKey] : payload;
+    if (!Array.isArray(batch)) throw new Error("GitHub pagination returned an unexpected payload");
+    pageCount++;
+    results.push(...batch);
+    if (batch.length < 100) return { results, pageCount, exhausted: true };
+  }
+  throw new Error(`GitHub pagination exceeded ${MAX_SOURCE_PAGES} pages; refusing partial source snapshot`);
 }
 
 Deno.serve(async (req) => {
@@ -204,11 +279,14 @@ Deno.serve(async (req) => {
       ...(githubToken ? { "Authorization": `Bearer ${githubToken}` } : {}),
     };
     try {
-      const [repo, prs, runs] = await Promise.all([
+      const [repo, prsPage, runsPage] = await Promise.all([
         getJson(`https://api.github.com/repos/${PROJECT}`, ghHeaders),
-        getJson(`https://api.github.com/repos/${PROJECT}/pulls?state=all&per_page=50`, ghHeaders),
-        getJson(`https://api.github.com/repos/${PROJECT}/actions/runs?per_page=50`, ghHeaders),
+        getAllGitHubPages(`https://api.github.com/repos/${PROJECT}/pulls?state=all`, ghHeaders),
+        getAllGitHubPages(`https://api.github.com/repos/${PROJECT}/actions/runs`, ghHeaders, "workflow_runs"),
       ]);
+      const prs = prsPage.results;
+      const runs = { workflow_runs: runsPage.results };
+      if (!prsPage.exhausted || !runsPage.exhausted) throw new Error("GitHub source pagination is not complete");
       const evidence = [
         ...prs.map((pr: any) => ({
           source_key: "github-hso-parent", external_id: `pr:${pr.number}`,
@@ -237,14 +315,30 @@ Deno.serve(async (req) => {
         if (error) throw error;
         upserted += evidence.length;
       }
-      const ghSnapshot = { repository: { full_name: repo.full_name, html_url: repo.html_url, default_branch: repo.default_branch }, pulls: prs.map((p: any) => ({ number: p.number, state: p.state, title: p.title, html_url: p.html_url, head_sha: p.head?.sha })), workflow_runs: (runs.workflow_runs ?? []).map((w: any) => ({ id: w.id, name: w.name, status: w.status, conclusion: w.conclusion, head_sha: w.head_sha, html_url: w.html_url })) };
+      const ghScopeHash = await digest({
+        pull_ids: prs.map((p: any) => String(p.id)).sort(),
+        workflow_ids: (runs.workflow_runs ?? []).map((w: any) => String(w.id)).sort(),
+      });
+      const ghSnapshot = {
+        repository: { full_name: repo.full_name, html_url: repo.html_url, default_branch: repo.default_branch },
+        pulls: prs.map((p: any) => ({ id: p.id, number: p.number, state: p.state, title: p.title, html_url: p.html_url, head_sha: p.head?.sha })),
+        workflow_runs: (runs.workflow_runs ?? []).map((w: any) => ({ id: w.id, name: w.name, status: w.status, conclusion: w.conclusion, head_sha: w.head_sha, html_url: w.html_url })),
+        pagination: { pulls_pages: prsPage.pageCount, runs_pages: runsPage.pageCount, exhausted: true },
+        is_complete: true, completeness_state: "COMPLETE", scope_hash: ghScopeHash,
+      };
       const { error: snapError } = await db.from("hso_source_snapshots").insert({
         source_key: "github-hso-parent", sync_run_id: run.id, content_hash: await digest(ghSnapshot),
-        freshness: "FRESH", record_count: evidence.length, snapshot: ghSnapshot,
+        freshness: "FRESH", record_count: prs.length + runs.workflow_runs.length + 1,
+        page_count: prsPage.pageCount + runsPage.pageCount, source_total_count: prs.length + runs.workflow_runs.length + 1,
+        pagination_pages: prsPage.pageCount + runsPage.pageCount, pagination_complete: true,
+        is_complete: true, completeness_state: "COMPLETE", scope_hash: ghScopeHash, snapshot: ghSnapshot,
       });
       if (snapError) throw snapError;
-      await db.from("hso_sources").update({ status: "connected", last_sync_at: new Date().toISOString(), last_success_at: new Date().toISOString(), last_error: null }).eq("source_key", "github-hso-parent");
-      results.github = { status: "connected", pull_requests: prs.length, workflow_runs: (runs.workflow_runs ?? []).length, evidence_upserted: evidence.length };
+      await db.from("hso_sources").update({ status: "connected", last_sync_at: new Date().toISOString(),
+        last_success_at: new Date().toISOString(), last_complete_at: new Date().toISOString(),
+        last_record_count: prs.length + runs.workflow_runs.length + 1, last_scope_hash: ghScopeHash,
+        last_error: null }).eq("source_key", "github-hso-parent");
+      results.github = { status: "connected", complete: true, pull_requests: prs.length, workflow_runs: runs.workflow_runs.length, evidence_upserted: evidence.length, pagination_pages: prsPage.pageCount + runsPage.pageCount };
     } catch (error) {
       const message = error instanceof Error ? error.message : "GitHub sync failed";
       errors.push(`github: ${message}`); results.github = { status: "degraded", error: message };
@@ -260,22 +354,30 @@ Deno.serve(async (req) => {
         const notionHeaders = { "Authorization": "Bearer " + notionToken, "Notion-Version": NOTION_VERSION };
         const controlId = "42299868-397f-81b3-b8a2-d4f936f355cb";
         const controlPage = await getJson("https://api.notion.com/v1/pages/" + controlId, notionHeaders);
-        const controlBlocks = await getJson("https://api.notion.com/v1/blocks/" + controlId + "/children?page_size=100", notionHeaders);
+        const blockBudget = { nodes: 0, pages: 0 };
+        const controlBlocks = await collectNotionBlockTree(controlId, notionToken, 0, blockBudget);
+        const blockIds = controlBlocks.map((b: any) => b.id).sort();
+        const controlScopeHash = await digest({ page_id: controlPage.id, block_ids: blockIds });
         const controlSnapshot = {
           page_id: controlPage.id, title: titleOf(controlPage.properties ?? {}),
           last_edited_time: controlPage.last_edited_time, url: controlPage.url,
-          blocks: (controlBlocks.results ?? []).map((b: any) => ({ id: b.id, type: b.type, has_children: b.has_children })),
-          blocks_has_more: controlBlocks.has_more ?? false,
+          blocks: controlBlocks, block_count: blockBudget.nodes,
+          pagination_pages: blockBudget.pages, pagination_complete: true,
+          is_complete: true, completeness_state: "COMPLETE", scope_hash: controlScopeHash,
         };
         const { error: controlSnapError } = await db.from("hso_source_snapshots").insert({
           source_key: "notion-control-center", sync_run_id: run.id,
           content_hash: await digest(controlSnapshot), freshness: "FRESH",
-          record_count: (controlBlocks.results ?? []).length + 1, snapshot: controlSnapshot,
+          record_count: blockBudget.nodes + 1, page_count: blockBudget.pages,
+          source_total_count: blockBudget.nodes + 1, pagination_pages: blockBudget.pages,
+          pagination_complete: true, is_complete: true, completeness_state: "COMPLETE",
+          scope_hash: controlScopeHash, snapshot: controlSnapshot,
         });
         if (controlSnapError) throw controlSnapError;
         await db.from("hso_sources").update({ status: "connected", last_sync_at: new Date().toISOString(),
-          last_success_at: new Date().toISOString(), last_error: null }).eq("source_key", "notion-control-center");
-        results["notion-control-center"] = { status: "connected", blocks_observed: (controlBlocks.results ?? []).length };
+          last_success_at: new Date().toISOString(), last_complete_at: new Date().toISOString(),
+          last_record_count: blockBudget.nodes + 1, last_scope_hash: controlScopeHash, last_error: null }).eq("source_key", "notion-control-center");
+        results["notion-control-center"] = { status: "connected", complete: true, blocks_observed: blockBudget.nodes, pagination_pages: blockBudget.pages };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Notion Control Center fetch failed";
         errors.push("notion-control-center: " + message);
@@ -284,7 +386,9 @@ Deno.serve(async (req) => {
       }
       for (const source of notionSources) {
         try {
-          const pages = await queryNotion(source.dataSource, notionToken);
+          const pageResult = await queryNotion(source.dataSource, notionToken);
+          const pages = pageResult.results;
+          if (!pageResult.exhausted) throw new Error("Notion source pagination did not exhaust");
           const rows = pages.map((p) => mapPage(p, source.kind, source.key));
           if (rows.length) {
             const table = source.kind === "work_items" ? "hso_work_items" : source.kind === "executions" ? "hso_executions" : "hso_evidence_records";
@@ -343,15 +447,27 @@ Deno.serve(async (req) => {
             const { error } = await db.from(table).upsert(rows, { onConflict: conflict });
             if (error) throw error;
           }
-          const snapshot = { data_source_id: source.dataSource, kind: source.kind, page_count: pages.length, page_ids: pages.map((p) => p.id) };
+          const pageIds = pages.map((p: any) => String(p.id)).sort();
+          const scopeHash = await digest(pageIds);
+          const snapshot = {
+            data_source_id: source.dataSource, kind: source.kind, record_count: pages.length,
+            page_count: pageResult.pageCount, source_total_count: pages.length, page_ids: pageIds,
+            pagination_complete: pageResult.exhausted, is_complete: true,
+            completeness_state: "COMPLETE", scope_hash: scopeHash,
+          };
           const { error: snapError } = await db.from("hso_source_snapshots").insert({
-            source_key: source.key, sync_run_id: run.id, content_hash: await digest(snapshot),
-            freshness: "FRESH", record_count: pages.length, snapshot,
+            source_key: source.key, sync_run_id: run.id, content_hash: await digest({ snapshot, rows }),
+            freshness: "FRESH", record_count: pages.length, page_count: pageResult.pageCount,
+            source_total_count: pages.length, pagination_pages: pageResult.pageCount,
+            pagination_complete: true, is_complete: true, completeness_state: "COMPLETE",
+            scope_hash: scopeHash, snapshot,
           });
           if (snapError) throw snapError;
-          await db.from("hso_sources").update({ status: "connected", last_sync_at: new Date().toISOString(), last_success_at: new Date().toISOString(), last_error: null }).eq("source_key", source.key);
+          await db.from("hso_sources").update({ status: "connected", last_sync_at: new Date().toISOString(),
+            last_success_at: new Date().toISOString(), last_complete_at: new Date().toISOString(),
+            last_record_count: pages.length, last_scope_hash: scopeHash, last_error: null }).eq("source_key", source.key);
           seen += pages.length; upserted += rows.length;
-          results[source.key] = { status: "connected", records_seen: pages.length, records_upserted: rows.length };
+          results[source.key] = { status: "connected", complete: true, records_seen: pages.length, records_upserted: rows.length, pagination_pages: pageResult.pageCount };
         } catch (error) {
           const message = error instanceof Error ? error.message : "Notion source sync failed";
           errors.push(`${source.key}: ${message}`);
