@@ -113,3 +113,18 @@ The runtime routing policy declares `plugin.engineering_method` with:
 This separates **route selection** from **capability availability**. The HSO route resolver can identify the correct specialist and ownership boundaries, but `plugin.skill.invoke` remains `NOT_CONFIGURED` in the runtime capability registry. The runtime therefore returns a capability blocker and does not pretend to invoke Ponytail. SDO remains the source-write owner; Evaluator Team remains the independent acceptance specialist.
 
 The private Plugin Creator release is not a runtime adapter. Before dispatch can be enabled, a named host adapter must be implemented, authenticated, authorized, probed, tested against the exact package version and independently read back. Until then, C2/C3 can provide synthetic/mock contract evidence only; C4 host activation and C5 actual plugin runtime invocation remain `NOT_RUN`.
+
+
+## Vibe Coding Mentor PRD route — selected, capability-blocked
+
+The HSO routing policy now declares `plugin.vibe_coding_mentor_prd` with:
+- primary owner: `vibe-coding-mentor`;
+- supporting specialists: none by default;
+- action: `plugin.skill.invoke`;
+- required capability: `plugin.skill.invoke`.
+
+The route resolver can select Vibe Coding Mentor as the sole primary owner for non-IT product discovery, PRD/MVP definition and PRD-to-builder prompt compilation. The generic plugin invocation capability remains `NOT_CONFIGURED`. The runtime therefore returns `BLOCKED_CAPABILITY` before dispatch. This is deliberate fail-closed behavior, not a successful plugin invocation.
+
+The canonical package source is the private repository `hsaidno-cpu/vibe-coding-mentor`, pinned at `84214752bb298002b96f9ff1c60e16b7a09e99d7`. 18/18 package files match the Plugin Creator release v0.1.0, and its package-contract CI passed. The source being private and verified does not itself provide an invokable HTTP/MCP endpoint.
+
+Do not enable a VCM capability row or reuse the SKILL ANALYZER-specific Remote MCP adapter. A VCM runtime adapter requires its own named endpoint, TLS identity, OIDC/client credentials, scoped authorization, tool allowlist, secret management, timeout/rate policy, invocation receipt and independent result verification. Until those controls and a real live invocation test exist, HSO must keep returning `BLOCKED_CAPABILITY`.
