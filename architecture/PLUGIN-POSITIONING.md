@@ -183,6 +183,7 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 | Agent Jailbreak Skill DS | Defensive AI-agent threat modeling, prompt-injection and tool-action security | General software/plugin anatomy or offensive unauthorized testing |
 | Plugin Agent Orchestrator | AI-agent lifecycle: design, build/operate, deployment, access and ecosystem | Skill/plugin source lifecycle owned by SDO |
 | AI Workflow Systems Orchestrator | Reusable workflow, SOP, project, module and orchestration architecture | Agent product lifecycle or plugin source implementation |
+| Executive Workday Orchestrator | Workday-level task, project, calendar/meeting, communication, knowledge, focus and productivity-review coordination | Generic reusable workflow architecture, AI-agent product/runtime lifecycle, plugin source engineering or independent evaluation |
 | Cortex Workbench | General knowledge-work command workbench | Business-specific OS or specialized command alias catalog |
 | CommandCraft 56 | 56 text command aliases and compact task profiles | Native slash-command UI or general case orchestration |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy and adoption maturity | Claiming every mapped skill is executable |
