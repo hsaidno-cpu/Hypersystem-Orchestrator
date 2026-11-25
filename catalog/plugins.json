@@ -1121,10 +1121,10 @@
       "purpose": "A modular workday operating system that turns scattered tasks, projects, meetings, messages and notes into traceable priorities, schedules, follow-ups, learning reviews and guarded automation designs. Includes a dedicated Octa-Prompt prompt generator.",
       "responsibility_owner": "Owns workday-level planning and coordination across daily tasks, task intake, prioritization, project portfolio, calendar/meeting operations, communication drafts, knowledge capture, adaptive scheduling and productivity review.",
       "boundary": "Does not own general reusable workflow architecture (AI Workflow Systems Orchestrator), AI-agent product/runtime lifecycle (Plugin Agent Orchestrator), plugin/skill source lifecycle (SDO), independent quality judgement (Evaluator Team), or HSO ecosystem governance. It does not provide a task database, persistent memory, mailbox/calendar access or background workers by virtue of the prompt. External actions require a real connected tool, scoped permission, specific human approval and verification.",
-      "source_repository_id": null,
-      "source_state": "pending_repository",
-      "release_version": null,
-      "version_evidence": "Plugin Creator current release metadata and file read-back inspected on 2026-11-26: package v0.1.0, USER/PRIVATE, 14 SKILL.md files, plugin ID plugins_6b073a60088081918a8958ab761cb505, release pluginrel_6b073a6285d481918d11cdbf1bb7643f. No canonical Git source repository has been designated.",
+      "source_repository_id": "executive-workday-orchestrator",
+      "source_state": "private_canonical_repository",
+      "release_version": "0.1.0",
+      "version_evidence": "Private canonical Git source https://github.com/hsaidno-cpu/executive-workday-orchestrator is pinned at 69166133cdc65d1f4f358daec005677db5cd0. Exact source snapshot matches the current private Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f / package 0.1.0: 17/17 Git blob SHA matches (14 SKILL.md files plus two manifests and package README). Rights to the cited upstream work remain uncleared; repository remains private.",
       "related_plugins": [
         "workflow-systems-orchestrator",
         "plugin-agent-orchestrator",
@@ -1132,7 +1132,7 @@
         "evaluator-team",
         "anatomi-prompt-v3-octa-prompt"
       ],
-      "source_classification": "NOT_IDENTIFIED",
+      "source_classification": "PRIVATE_CANONICAL_SOURCE",
       "primary_triggers": [
         "Plan and adapt an individual's or operator's workday across tasks, commitments, deadlines and available capacity",
         "Coordinate workday tasks, projects, meetings, messages, notes, follow-ups and daily/weekly outcome reviews",
@@ -1147,22 +1147,22 @@
       "instruction_snapshot_path": "plugin-instructions/executive-workday-orchestrator/SOURCE-POINTER.md",
       "instruction_skill_count": 14,
       "instruction_capture_date": "2026-11-26",
-      "instruction_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT",
+      "instruction_source_authority": "PRIVATE_CANONICAL_GIT_SOURCE",
       "platform_package_version": "0.1.0",
       "platform_current_release_id": "pluginrel_6b073a6285d481918d11cdbf1bb7643f",
       "platform_scope": "USER",
       "platform_discoverability": "PRIVATE",
       "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
-      "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
-      "repository_version": null,
-      "version_alignment_note": "Plugin Creator package version 0.1.0 is verified. Canonical Git source and source-to-package parity are not yet established; the public HSO repository stores a metadata-only pointer because the package is USER/PRIVATE.",
-      "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
+      "version_alignment_state": "SOURCE_AND_PLATFORM_MATCH",
+      "repository_version": "0.1.0",
+      "version_alignment_note": "Private canonical Git source version 0.1.0 and Plugin Creator package version 0.1.0 align on 17/17 exact source-file blob hashes at commit 69166133cdc65d1f4f358daec005677db5cd0. This is source/package parity only, not copyright clearance or permission to distribute publicly.",
+      "version_authority": "PRIVATE_CANONICAL_GIT_SOURCE_AND_PLUGIN_CREATOR_RELEASE",
       "deployed_plugin_version": "0.1.0",
       "target_version": null,
-      "version_reconciliation_status": "NOT_VERIFIED",
-      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
-      "source_instruction_parity_status": "NOT_APPLICABLE",
-      "source_instruction_parity_note": "The private package read-back confirms 14 skills. No child source repository exists in the HSO catalog, so file-level source parity cannot yet be assessed. The public parent stores concise skill metadata only, not private instruction bodies."
+      "version_reconciliation_status": "SOURCE_AND_PLATFORM_MATCH",
+      "source_sync_status": "SOURCE_SNAPSHOT_PARITY_MATCH",
+      "source_instruction_parity_status": "MATCH",
+      "source_instruction_parity_note": "17/17 source files were copied from Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f and verified by exact Git blob SHA in the private Git source at 69166133cdc65d1f4f358daec005677db5cd0. The public HSO repository retains only this metadata pointer; private instruction bodies remain excluded pending third-party rights clearance."
     }
   ]
 }
