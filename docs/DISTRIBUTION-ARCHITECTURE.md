@@ -77,14 +77,14 @@ No state implies another. Each requires its own source of truth and evidence.
 
 ## Initial eligibility baseline
 
-As of 23 November 2026 the 21 plugin identities map to these distribution states:
+As of 25 November 2026 the 23 plugin identities map to these distribution states:
 
 | State | Count |
 |---|---:|
 | review_required | 2 |
 | blocked | 2 |
 | private_source_restricted | 1 |
-| snapshot_only | 13 |
+| snapshot_only | 15 |
 | candidate_incomplete | 2 |
 | legacy_redirect | 1 |
 | **Installable** | **0** |
@@ -155,3 +155,8 @@ A blocked result is expected until installable package artifacts and host-tested
 Reject installing a legacy alias as an independent plugin; treating snapshots as canonical releases; distributing rights-uncleared or incomplete source; merging plugin instructions/authority; claiming host activation from registry presence; or claiming runtime verification from static CI.
 
 Release acceptance requires provenance, rights evidence, immutable artifact digest, exact host/version evidence, tests, rollback procedure and accountable support ownership.
+
+
+### Ponytail Engineering System (2026-11-25)
+
+Ponytail Engineering System is recorded as a private Plugin Creator derivative package at version 0.1.0. Its package identity and USER/PRIVATE release metadata are known, but no independent canonical Git repository or package-level redistribution licence has been approved. The public upstream Ponytail repository is methodology provenance only and is not treated as the source or licence authority for this derivative. It remains `snapshot_only`, `NOT_ASSESSED`, and non-installable.
