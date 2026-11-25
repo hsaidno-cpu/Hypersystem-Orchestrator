@@ -12,7 +12,7 @@ Project ref: `ehgmtkkppmceaffhwcpc` (HSMART).
 - `20261124114137_hso_mission_control_milestone_target_and_execution_link_v1.sql`
 - `20261124114745_hso_completion_criteria_baseline_v1.sql`
 - `20261125010950_hso_measurement_integrity_and_scope_governance_v1.sql`
-- `20261125030000_hso_notion_webhook_vault_bootstrap_v1.sql`
+- `20261125023645_hso_notion_webhook_vault_bootstrap_v1.sql`
 
 All Mission Control tables use the `hso_*` prefix. RLS is enabled and forced; browser access is limited to active allowlisted members. The `hso_integration_events` table is backend-only. Migrations do not modify unrelated HSMART tables or legacy functions.
 
