@@ -466,7 +466,28 @@
             ],
             "pattern": "^[a-f0-9]{64}$"
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "HUMAN_DECISION"
+                }
+              },
+              "required": ["kind"]
+            },
+            "then": {
+              "required": ["sha256"],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          }
+        ]
       },
       "minItems": 1
     },
@@ -493,7 +514,8 @@
             ]
           },
           "decision_reference": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "decided_at": {
             "type": "string",
