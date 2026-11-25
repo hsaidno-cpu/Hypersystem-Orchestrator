@@ -65,23 +65,28 @@ Default action posture is read/classify/draft/plan. Sending, publishing, purchas
 |---|---|
 | Plugin Creator package | Created; version 0.1.0; USER/PRIVATE |
 | Package file inventory | Read back: 14 `SKILL.md` files; no missing paths in returned inventory |
-| Canonical Git child source | `NOT_IDENTIFIED` |
-| Public HSO registration | Proposed by this branch; requires PR review/merge |
-| Host activation / actual skill invocation | `NOT_RUN` |
+| Canonical Git child source | `NOT_IDENTIFIED`; repository-creation action is not exposed by the current GitHub connector |
+| Package LICENSE file / manifest license field | No LICENSE file in current package inventory; neither manifest declares a license |
+| Original source URL and redistribution permission | `NOT_ASSESSED`; README only identifies a supplied prompt as derivation input |
+| EWO routing contract corpus | 14 positive, 14 negative, 6 ambiguous cases; metadata-only, no private SKILL.md body copied |
+| Static contract CI | Run #237 PASSED on `9963011dfb4028ca16d52a79c57134b272f94692`; 155 unit/resolver tests passed |
+| Public HSO registration | PR #33 remains draft/open/unmerged; requires review and acceptance |
+| Host activation / actual EWO invocation | `NOT_RUN`; P0 remote-MCP invocation job skipped |
 | External calendar/mail/task integrations | `NOT_CONFIGURED` in this package |
 | Background/event-driven operation | `NOT_IMPLEMENTED` |
 | Production readiness | `NOT_ESTABLISHED` |
 
 ## 6. Acceptance criteria for future maturity
 
-1. Establish a canonical child Git repository and license/provenance.
-2. Reconcile all 14 package skills with source files; capture immutable commit and file-level parity.
-3. Add routing and handoff contract tests for positive/negative/ambiguous workday intents.
-4. Test timezone, capacity overflow, fixed commitments, dependency cycles, duplicate intake and stale updates.
-5. Exercise approval-denied, unauthorized write, partial write, timeout, replay/duplicate and outcome-unknown recovery.
-6. Integrate one real task/calendar/email provider only after OAuth scopes, secrets, retention and least privilege are approved.
-7. Verify host activation and real connector actions on a named host/version; test read-back and audit trail.
-8. Run independent evaluation and regression tests before any production-ready claim.
+1. Establish an authorized private canonical child Git repository; record source URL, immutable commit, original-source attribution and redistribution rights. The current connector has no repository-creation action, so this gate is blocked pending an authorized creation path.
+2. Add a LICENSE file and explicit license metadata only after the original source terms and derivative rights are assessed; do not assume a license.
+3. Reconcile all 14 package skills with canonical source files; capture immutable commit and file-level parity.
+4. Execute the 14 positive, 14 negative and 6 ambiguous routing cases on a named host/version. The current 155-test CI validates the static corpus only.
+5. Test timezone, capacity overflow, fixed commitments, dependency cycles, duplicate intake and stale updates.
+6. Exercise approval-denied, unauthorized write, partial write, timeout, replay/duplicate and outcome-unknown recovery.
+7. Integrate one real task/calendar/email provider only after OAuth scopes, secrets, retention and least privilege are approved.
+8. Verify host activation and real connector actions on a named host/version; test read-back and audit trail.
+9. Run independent evaluation and regression tests before any production-ready claim.
 
 ## 7. Current disposition
 
