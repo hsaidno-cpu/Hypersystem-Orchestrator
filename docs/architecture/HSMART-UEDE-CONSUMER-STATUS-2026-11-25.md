@@ -88,6 +88,12 @@ Read-only inspection of Supabase project ref `ehgmtkkppmceaffhwcpc` on 25 Novemb
 
 This proves a database and function foundation exists. It does not prove the Notion/GitHub source integrations are connected, reconciliation is running, executions have occurred, or evidence is being written end-to-end.
 
+
+
+### GitHub-to-HSO event-delivery evidence
+
+The HSO PR #26 synchronization workflow run [45609015815](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45609015815) completed its `event-ingestion` job, but the delivery step emitted `HSO integration NOT_CONFIGURED` and skipped the signed event because `HSO_SYNC_URL` and `HSO_SYNC_TOKEN` were empty. The `scheduled-reconciliation` job was skipped. Treat this as a successful fail-safe skip, not a successful source synchronization or event reconciliation. Configure the authorized endpoint and token before claiming integration readiness.
+
 ### Security advisor warning
 
 The current Supabase Security Advisor reports that `public.rls_auto_enable()` is `SECURITY DEFINER` and executable by both `anon` and `authenticated` through the Data API. The remediation options are documented by Supabase: [anon execution warning](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable) and [authenticated execution warning](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable).
