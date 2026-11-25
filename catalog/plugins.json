@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "catalog_revision": "2026-11-26",
-  "expected_plugin_count": 24,
+  "expected_plugin_count": 25,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1163,6 +1163,59 @@
       "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
       "source_instruction_parity_status": "NOT_APPLICABLE",
       "source_instruction_parity_note": "The private package read-back confirms 14 skills. No child source repository exists in the HSO catalog, so file-level source parity cannot yet be assessed. The public parent stores concise skill metadata only, not private instruction bodies."
+    },
+    {
+      "plugin_key": "vibe-coding-mentor",
+      "display_name": "Vibe Coding Mentor",
+      "plugin_creator_id": "plugins_6b0744bffe9c8191a5eb9c932fcc3f24",
+      "primary_domain": "non-it-product-discovery-prd-and-ai-builder-prompts",
+      "purpose": "Turns a non-IT project owner's digital product idea into a traceable Product Requirements Document (PRD), MVP scope, user flows, product logic and acceptance criteria, then compiles an accepted PRD into staged prompts for AI coding builders. It does not execute or deploy applications.",
+      "responsibility_owner": "Owns product-intent intake, problem and audience definition, MVP and requirement decomposition, user-flow and product-logic specification, proportional stack/cost review, PRD quality gating, and PRD-to-builder prompt compilation for non-IT project owners.",
+      "boundary": "Does not own generic reusable workflow/SOP architecture (AI Workflow Systems Orchestrator), universal eight-pillar prompt architecture (Anatomi Prompt), source-content/reference-to-prompt reconstruction (AI Prompt Finder & Creator), workday-domain prompt generation (Executive Workday Orchestrator), business strategy or market validation (GrowthForge), plugin/skill source engineering (SDO), or independent quality judgement (Evaluator Team). It creates PRD and prompts only; it does not operate Cursor/Bolt/Lovable, write application code, provision services, migrate data, deploy, or publish an application.",
+      "source_repository_id": "vibe-coding-mentor",
+      "source_state": "private_repository_source",
+      "release_version": "0.1.0",
+      "version_evidence": "Canonical private repository hsaidno-cpu/vibe-coding-mentor, main at 84214752bb298002b96f9ff1c60e16b7a09e99d7; package 0.1.0 matched Plugin Creator release pluginrel_6b0744c2806481919620bdf8b8719f57; GitHub Actions run 45701037593 passed static validator and 4 package tests. License/distribution rights remain NOT_ASSESSED.",
+      "related_plugins": [
+        "workflow-systems-orchestrator",
+        "anatomi-prompt-v3-octa-prompt",
+        "ai-prompt-finder-creator",
+        "executive-workday-orchestrator",
+        "growthforge-business-os",
+        "skill-developer-orchestrator",
+        "evaluator-team"
+      ],
+      "source_classification": "OFFICIAL_PRIVATE_REPOSITORY_LICENSE_UNASSESSED",
+      "primary_triggers": [
+        "Turn a non-IT project owner's rough digital product or application idea into a structured PRD.",
+        "Prepare a clear product specification for Cursor, Bolt.new, Lovable, or another AI coding builder.",
+        "Define MVP versus future scope, user flows, business logic, conceptual data, and testable acceptance criteria.",
+        "Audit a PRD or compile an accepted PRD into staged, requirement-traceable AI builder prompts."
+      ],
+      "negative_triggers": [
+        "Create or structurally audit a general-purpose prompt without a product PRD as the primary artifact.",
+        "Analyze images, videos, documents, designs, or external references and reconstruct prompts from their content.",
+        "Design reusable workflow/SOP or cross-project orchestration architecture.",
+        "Own business strategy, market sizing, customer research, pricing strategy, or commercial validation as the primary output.",
+        "Modify plugin/skill source repositories, write application code, execute a coding builder, or deploy/publish an application."
+      ],
+      "instruction_snapshot_path": "plugin-instructions/vibe-coding-mentor/SOURCE-POINTER.md",
+      "instruction_skill_count": 10,
+      "instruction_capture_date": "2026-11-26",
+      "instruction_source_authority": "CANONICAL_REPOSITORY_SOURCE",
+      "platform_package_version": "0.1.0",
+      "platform_current_release_id": "pluginrel_6b0744c2806481919620bdf8b8719f57",
+      "platform_scope": "USER",
+      "platform_discoverability": "PRIVATE",
+      "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
+      "version_alignment_state": "SOURCE_AND_PLATFORM_MATCH",
+      "repository_version": "0.1.0",
+      "version_alignment_note": "Canonical private Git source and Plugin Creator package are both version 0.1.0; 18/18 package files matched byte-for-byte at the pinned source commit. Host/runtime behavior has not been tested.",
+      "version_authority": "SOURCE_MANIFEST_AND_PLUGIN_CREATOR_RELEASE_COMPARISON",
+      "version_reconciliation_status": "SOURCE_VERIFIED_IN_SYNC",
+      "source_sync_status": "SOURCE_PACKAGE_PARITY_VERIFIED",
+      "source_instruction_parity_status": "MATCH",
+      "source_instruction_parity_note": "18/18 package files (2 manifests, 6 references, 10 SKILL.md files) are byte-for-byte identical between Plugin Creator release pluginrel_6b0744c2806481919620bdf8b8719f57 and canonical private Git commit 84214752bb298002b96f9ff1c60e16b7a09e99d7. CI run 45701037593 passes validator and four package-contract unit tests."
     }
   ]
 }
