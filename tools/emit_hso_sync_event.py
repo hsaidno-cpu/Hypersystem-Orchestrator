@@ -27,6 +27,23 @@ def event_signature(signing_secret: str, timestamp: str, delivery_id: str, event
         hashlib.sha256,
     ).hexdigest()
 
+def build_reconciliation_request(endpoint: str, token: str, run_id: str) -> tuple[str, bytes, dict[str, str]]:
+    """Build the authenticated scheduled reconciliation request."""
+    if not token:
+        raise ValueError("HSO_SYNC_TOKEN is required for reconciliation")
+    suffix = "/hso-github-webhook"
+    if not endpoint.endswith(suffix):
+        raise ValueError("HSO_GITHUB_WEBHOOK_URL must end with /hso-github-webhook")
+    reconcile_url = endpoint[:-len(suffix)] + "/hso-reconcile"
+    body = json.dumps({"trigger_kind": "scheduled"}, separators=(",", ":")).encode()
+    headers = {
+        "X-HSO-Delivery": "actions-" + (run_id or "manual"),
+        "X-HSO-Event": "scheduled_reconciliation",
+        "X-HSO-Sync-Token": token,
+    }
+    return reconcile_url, body, headers
+
+
 def post(url: str, body: bytes, headers: dict[str, str], signing_secret: str | None = None) -> int:
     request_headers = {"Content-Type": "application/json", **headers}
     if signing_secret is not None:
@@ -54,22 +71,22 @@ def main() -> int:
     parser.add_argument("--mode", choices=("event", "reconcile"), default="event")
     parser.add_argument("--event-file", default=os.getenv("GITHUB_EVENT_PATH", ""))
     args = parser.parse_args()
-    endpoint = os.getenv("HSO_GITHUB_WEBHOOK_URL", "").strip() or os.getenv("HSO_SYNC_URL", "").strip()
+    endpoint = os.getenv("HSO_GITHUB_WEBHOOK_URL", "").strip()
     if not endpoint:
         print("HSO_GITHUB_WEBHOOK_URL is required; no request sent.", file=sys.stderr)
         return 2
 
     if args.mode == "reconcile":
-        token = os.getenv("HSO_SYNC_TOKEN", "")
-        if not token:
-            print("HSO_SYNC_TOKEN is required for reconciliation; no request sent.", file=sys.stderr)
+        try:
+            reconcile_url, body, headers = build_reconciliation_request(
+                endpoint,
+                os.getenv("HSO_SYNC_TOKEN", ""),
+                os.getenv("GITHUB_RUN_ID", "manual"),
+            )
+        except ValueError as exc:
+            print(str(exc) + "; no request sent.", file=sys.stderr)
             return 2
-        body = json.dumps({"trigger_kind": "scheduled"}, separators=(",", ":")).encode()
-        status = post(endpoint.rsplit("/", 1)[0] + "/hso-reconcile", body, {
-            "X-HSO-Delivery": "actions-" + os.getenv("GITHUB_RUN_ID", "manual"),
-            "X-HSO-Event": "scheduled_reconciliation",
-            "X-HSO-Sync-Token": token,
-        })
+        status = post(reconcile_url, body, headers)
         return 0 if 200 <= status < 300 else 1
 
     signing_secret = os.getenv("HSO_WEBHOOK_SIGNING_SECRET", "")
