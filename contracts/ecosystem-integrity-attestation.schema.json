@@ -465,6 +465,34 @@
               "null"
             ],
             "pattern": "^[a-f0-9]{64}$"
+          },
+          "binding_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "SHA-256 of the canonical claim/action/target supported by this evidence."
+          },
+          "proof": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "algorithm",
+              "key_id",
+              "value"
+            ],
+            "properties": {
+              "algorithm": {
+                "const": "Ed25519"
+              },
+              "key_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9+/]{86}==$"
+              }
+            },
+            "description": "Signature by a trusted verifier over HSO-ECIG-EVIDENCE-1 bytes."
           }
         },
         "allOf": [
@@ -475,10 +503,14 @@
                   "const": "HUMAN_DECISION"
                 }
               },
-              "required": ["kind"]
+              "required": [
+                "kind"
+              ]
             },
             "then": {
-              "required": ["sha256"],
+              "required": [
+                "sha256"
+              ],
               "properties": {
                 "sha256": {
                   "type": "string",
@@ -695,6 +727,15 @@
           },
           "limitations": {
             "maxItems": 0
+          },
+          "evidence": {
+            "items": {
+              "required": [
+                "sha256",
+                "binding_sha256",
+                "proof"
+              ]
+            }
           }
         }
       }
