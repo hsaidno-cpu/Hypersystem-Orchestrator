@@ -263,7 +263,7 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(ewo["source_instruction_parity_status"], "MATCH")
         self.assertEqual(source["status"], "private_canonical_source")
         self.assertEqual(source["visibility"], "private")
-        self.assertEqual(source["pinned_commit"], "69166133cdc65d1f4f358daec005677db5cd0")
+        self.assertEqual(source["pinned_commit"], "388e59d58a96096effb4999c019e92b3c38539ed")
         self.assertFalse(source["public_snapshot_allowed"])
         gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
         self.assertNotIn("executive-workday-orchestrator", gitmodules)
