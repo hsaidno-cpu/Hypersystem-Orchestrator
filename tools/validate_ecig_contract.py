@@ -250,6 +250,7 @@ def _evidence_claim(instance: dict[str, Any], evidence: dict[str, Any]) -> dict[
         "attestation_id": instance["attestation_id"],
         "plugin_key": instance["plugin_key"],
         "target": instance["target"],
+        "performed_actions": instance.get("performed_actions", []),
         "kind": kind,
     }
     source = instance["source"]
@@ -319,6 +320,7 @@ def evidence_signing_bytes(instance: dict[str, Any], evidence: dict[str, Any]) -
         "policy_version": instance["policy_version"],
         "plugin_key": instance["plugin_key"],
         "target": instance["target"],
+        "performed_actions": instance.get("performed_actions", []),
         "kind": evidence["kind"],
         "locator": evidence["locator"],
         "observed_at": evidence["observed_at"],
@@ -452,6 +454,8 @@ def _validate_synced_approvals(
         required_actions.add("package_publication_republication_or_release_channel_promotion")
     if instance["installation"]["install_state"] == "INSTALLED":
         required_actions.add("target_install_upgrade_enable_disable_or_uninstall")
+
+    required_actions.update(instance.get("performed_actions", []))
 
     policy_actions = set(policy.get("human_approval_required") or [])
     if not required_actions.issubset(policy_actions):
