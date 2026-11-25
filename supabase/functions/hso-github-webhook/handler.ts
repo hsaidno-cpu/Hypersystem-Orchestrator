@@ -153,6 +153,10 @@ export function createWebhookHandler(deps: WebhookDependencies) {
     if (!DELIVERY_RE.test(deliveryId)) {
       return response({ error: "delivery_id_required_or_invalid" }, 400);
     }
+    const eventType = req.headers.get("x-hso-event") ?? "repository_event";
+    if (!/^[A-Za-z0-9_.-]{1,100}$/.test(eventType)) {
+      return response({ error: "event_type_invalid" }, 400);
+    }
 
     const rawBody = await req.text();
     if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
@@ -165,7 +169,7 @@ export function createWebhookHandler(deps: WebhookDependencies) {
       .toLowerCase();
     if (!SIGNATURE_RE.test(supplied)) return response({ error: "invalid_signature" }, 401);
 
-    const expected = await hmacHex(signingSecret, timestampText + "." + deliveryId + "." + rawBody);
+    const expected = await hmacHex(signingSecret, timestampText + "." + deliveryId + "." + eventType + "." + rawBody);
     if (!constantTimeEqual(supplied, expected)) return response({ error: "invalid_signature" }, 401);
 
     let event: Record<string, any>;
@@ -177,11 +181,6 @@ export function createWebhookHandler(deps: WebhookDependencies) {
       event = parsed as Record<string, any>;
     } catch {
       return response({ error: "invalid_json" }, 400);
-    }
-
-    const eventType = req.headers.get("x-hso-event") ?? "repository_event";
-    if (!/^[A-Za-z0-9_.-]{1,100}$/.test(eventType)) {
-      return response({ error: "event_type_invalid" }, 400);
     }
 
     const compact = compactPayload(event);
