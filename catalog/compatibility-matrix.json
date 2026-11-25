@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "matrix_revision": "2026-11-23",
+  "matrix_revision": "2026-11-26",
   "contract_schema": "contracts/plugin-handoff.schema.json",
-  "integration_count": 15,
+  "integration_count": 16,
   "status_semantics": {
     "INTERFACE_DEFINED_NOT_EXECUTED": "Handoff intent and ownership are documented, but no runtime dispatch has been observed.",
     "STATIC_ROUTING_TESTED": "Central registry, positive/negative route and ownership assertions passed in repository CI.",
@@ -449,6 +449,42 @@
         "Independent quality judgement remains with Evaluator Team; HSO controls ecosystem-level planning and routing."
       ],
       "contract_behavior_test": "PASS"
+    },
+    {
+      "integration_id": "INT-AEIO-PAO-001",
+      "producer_plugin": "agent-ecosystem-intelligence-orchestrator",
+      "consumer_plugin": "plugin-agent-orchestrator",
+      "handoff_type": "EXTERNAL_AGENT_ECOSYSTEM_INTAKE",
+      "purpose": "AEIO produces an evidence-backed external-agent intake dossier; Plugin Agent Orchestrator retains the sole authority for agent product/runtime lifecycle, design/build planning, deployment and operations.",
+      "input_artifacts": [
+        "pinned_repository_baseline",
+        "coverage_ledger",
+        "agent_capability_taxonomy",
+        "static_implementation_findings",
+        "security_privacy_license_assessment",
+        "hso_hsmart_fit_gap",
+        "adoption_recommendation",
+        "agent_prompt_blueprint"
+      ],
+      "output_artifact": "agent_lifecycle_intake_dossier",
+      "producer_artifact_owner": "agent-ecosystem-intelligence-orchestrator",
+      "consumer_artifact_owner": "plugin-agent-orchestrator",
+      "canonical_truth_owner": "plugin-agent-orchestrator",
+      "contract_version": "1.0.0",
+      "dependency": "OPTIONAL",
+      "status": "INTERFACE_DEFINED_NOT_EXECUTED",
+      "static_routing_test": "DEFINED",
+      "schema_contract_test": "NOT_RUN",
+      "host_activation_test": "NOT_RUN",
+      "runtime_execution_test": "NOT_RUN",
+      "acceptance_criteria": [
+        "AEIO owns external source provenance, inventory and candidate assessment; PAO owns agent product/runtime lifecycle decisions.",
+        "The dossier preserves source commit, coverage denominator, rights status, static/runtime evidence levels and unresolved risks.",
+        "No source import, deployment, access grant or runtime action is authorized by the handoff alone.",
+        "The handoff must not claim host activation or execution; those require a separately configured and verified adapter.",
+        "A schema contract and behavior suite must pass before the edge can be promoted to CONTRACT_TESTED."
+      ],
+      "contract_behavior_test": "NOT_RUN"
     }
   ]
 }
