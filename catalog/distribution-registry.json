@@ -469,7 +469,7 @@
       "display_name": "Executive Workday Orchestrator",
       "source_state": "private_canonical_repository",
       "source_repository_id": "executive-workday-orchestrator",
-      "source_commit": "69166133cdc65d1f4f358daec005677db5cd0",
+      "source_commit": "388e59d58a96096effb4999c019e92b3c38539ed",
       "source_version": "0.1.0",
       "platform_package_version": "0.1.0",
       "distribution_status": "snapshot_only",
@@ -485,7 +485,7 @@
         "PLATFORM_ADAPTER_NOT_HOST_TESTED",
         "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
       ],
-      "eligibility_note": "A private canonical Git source exists and is pinned at commit 69166133cdc65d1f4f358daec005677db5cd0; all 17 source files match Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f exactly by Git blob SHA. The repository carries only an interim no-grant notice, not an open-source license. Rights to the supplied Alexaiupdates/Alex AI Updates source work remain unverified. EWO remains snapshot_only, is not publicly installable, and its private instruction bodies are not mirrored into public HSO.",
+      "eligibility_note": "A private canonical Git source exists and is pinned at commit 388e59d58a96096effb4999c019e92b3c38539ed; all 17 source files match Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f exactly by Git blob SHA. The repository carries only an interim no-grant notice, not an open-source license. Rights to the supplied Alexaiupdates/Alex AI Updates source work remain unverified. EWO remains snapshot_only, is not publicly installable, and its private instruction bodies are not mirrored into public HSO.",
       "repository_license_notice": "INTERIM_NO_GRANT_ALL_RIGHTS_RESERVED"
     }
   ]
