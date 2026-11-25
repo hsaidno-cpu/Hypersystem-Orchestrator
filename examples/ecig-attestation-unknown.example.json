@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "attestation_id": "hso-ecig-example-unknown-001",
+  "policy_version": "1.0.0",
+  "plugin_key": "hypersystem-orchestrator",
+  "target": {
+    "platform": "ChatGPT",
+    "target_scope": "non-production-example"
+  },
+  "observed_at": "2026-11-24T04:50:00Z",
+  "source": {
+    "repository_url": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator",
+    "ref": "main",
+    "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "manifest_path": "manifest.json",
+    "manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "tree_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "state": "UNKNOWN"
+  },
+  "package": {
+    "publication_state": "UNKNOWN",
+    "state": "UNKNOWN"
+  },
+  "installation": {
+    "install_state": "UNKNOWN",
+    "runtime_state": "NOT_PROBED",
+    "state": "UNKNOWN"
+  },
+  "instructions": {
+    "manifest_version": "1.0.0",
+    "bundle_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "file_count": 0,
+    "per_file_digests": [],
+    "parity_state": "NOT_COMPARED",
+    "state": "UNKNOWN"
+  },
+  "documentation": {
+    "notion_page_url": null,
+    "projection_digest": null,
+    "state": "UNKNOWN"
+  },
+  "rights": {
+    "state": "UNKNOWN"
+  },
+  "overall_state": "UNKNOWN",
+  "evidence": [
+    {
+      "kind": "COMMIT",
+      "locator": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/commit/0000000000000000000000000000000000000000",
+      "observed_at": "2026-11-24T04:50:00Z",
+      "verifier": "example-fixture",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  ],
+  "signature": null,
+  "conflicts": [],
+  "limitations": [
+    "Example intentionally has no package/runtime read-back; therefore overall state is UNKNOWN."
+  ]
+}

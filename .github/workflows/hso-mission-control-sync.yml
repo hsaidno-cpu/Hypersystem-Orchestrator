@@ -1,12 +1,6 @@
-name: HSO Mission Control synchronization
+name: HSO Mission Control scheduled reconciliation
 
 on:
-  push:
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-  workflow_run:
-    workflows: ["Catalog and distribution validation"]
-    types: [completed]
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
@@ -16,50 +10,48 @@ permissions:
   actions: read
   pull-requests: read
 
-concurrency:
-  group: hso-mission-control-sync-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: false
-
+# GitHub-native webhooks are the sole event-ingestion path. This workflow only
+# reconciles from the trusted default branch and never executes PR-head code.
 jobs:
-  event-ingestion:
-    if: ${{ github.event_name != 'schedule' && github.event_name != 'workflow_dispatch' }}
+  scheduled-reconciliation:
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 3
     steps:
-      - name: Check out HSO
+      - name: Check out trusted default branch
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: Emit signed event to HSO
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Verify integration configuration
         env:
           HSO_SYNC_URL: ${{ vars.HSO_GITHUB_WEBHOOK_URL }}
           HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
-          GITHUB_SHA: ${{ github.sha }}
         run: |
           if [ -z "$HSO_SYNC_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
-            echo "::warning::HSO integration NOT_CONFIGURED. Set HSO_GITHUB_WEBHOOK_URL and HSO_SYNC_TOKEN to enable signed event delivery."
-            echo "Event delivery skipped: required repository variable/secret is not configured." >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::HSO reconciliation NOT_CONFIGURED. Add repository variable HSO_GITHUB_WEBHOOK_URL and secret HSO_SYNC_TOKEN."
+            echo "Scheduled reconciliation skipped: delivery configuration is absent." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          python tools/emit_hso_sync_event.py --mode event
+          python - <<'PY'
+          import os
+          from urllib.parse import urlsplit
+          value = os.environ["HSO_SYNC_URL"]
+          parsed = urlsplit(value)
+          if parsed.scheme != "https" or not parsed.hostname or not parsed.hostname.endswith(".supabase.co"):
+              raise SystemExit("HSO_GITHUB_WEBHOOK_URL must be an HTTPS Supabase project endpoint")
+          if parsed.username or parsed.password or parsed.query or parsed.fragment:
+              raise SystemExit("HSO_GITHUB_WEBHOOK_URL must not contain userinfo, query parameters, or fragments")
+          if parsed.path.rstrip("/") != "/functions/v1/hso-github-webhook":
+              raise SystemExit("HSO_GITHUB_WEBHOOK_URL must point to /functions/v1/hso-github-webhook")
+          print("Webhook endpoint shape accepted; secret value was not printed.")
+          PY
 
-  scheduled-reconciliation:
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out HSO
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Reconcile authoritative sources
         env:
           HSO_SYNC_URL: ${{ vars.HSO_GITHUB_WEBHOOK_URL }}
           HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
           GITHUB_RUN_ID: ${{ github.run_id }}
-        run: |
-          if [ -z "$HSO_SYNC_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
-            echo "::warning::HSO reconciliation NOT_CONFIGURED. Set HSO_GITHUB_WEBHOOK_URL and HSO_SYNC_TOKEN to enable scheduled sync."
-            echo "Scheduled reconciliation skipped: required repository variable/secret is not configured." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          python tools/emit_hso_sync_event.py --mode reconcile
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: python tools/emit_hso_sync_event.py --mode reconcile

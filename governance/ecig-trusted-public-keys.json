@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0.0",
+  "algorithm": "Ed25519",
+  "status": "NO_ACTIVE_KEYS_PROVISIONED",
+  "keys": []
+}
