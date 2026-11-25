@@ -1,12 +1,19 @@
 # Source Repository Classification and Reconciliation
 
-**Inventory date:** 2026-11-23
+**Historical inventory date:** 2026-11-23; current registry reconciliation: 2026-11-26
 **Platform package-source attestation:** 14/14 formerly NOT_IDENTIFIED Git sources have a verified current Plugin Creator USER/PRIVATE package manifest and full file inventory. Git child repository status remains NOT_IDENTIFIED until an immutable repository source is accepted.  
-**Plugin identities:** 23  
+**Plugin identities:** 24  
 **Verified official plugin source repositories pinned:** 5  
 **Candidate/incomplete source repositories:** 2  
-**Plugin identities with no accepted GitHub source:** 15  
+**Plugin identities with no accepted GitHub source:** 16  
 **Legacy redirect identities:** 1 (A.S.F.R.E.E Legacy; not a second product)
+
+
+## 0. Current registry reconciliation — 26 November 2026
+
+At HSO main `0d718fe52e9d16dc95f4a07c0f28aa8285ea952f`, the catalog contains 24 plugin identities: 5 integrated source submodules, 16 pending Git source identities, 2 candidate/incomplete repositories and 1 canonical redirect. The EWO registration is a private Plugin Creator package pointer, not a canonical Git child source.
+
+The current instruction-snapshot registry contains 279 skill records across 24 plugin identities (capture date 26 November 2026). The source-repository inventory remains a 9-record inventory last refreshed 22 November 2026; it does not include a canonical EWO child repository. Do not treat a private package file inventory as Git source provenance.
 
 ## 1.2 Ponytail Engineering System registration — 23 November 2026
 
@@ -15,6 +22,13 @@ The new `ponytail-engineering-optimizer` identity is a private Plugin Creator pa
 The upstream [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) project was inspected at v5.3.3 and is an external methodology-provenance reference only. It is **not** the canonical Git source for the derivative package, is not added as a submodule, and does not supply a blanket package-license or redistribution grant. The derivative package has no accepted canonical Git repository, so its source state remains `pending_repository / NOT_IDENTIFIED`.
 
 The source count therefore moves from 14 to 15 plugin identities without an accepted canonical Git source. No new official source pin is added. Distribution remains `snapshot_only` because the Plugin Creator package is USER/PRIVATE, no independent package-license clearance or public artifact exists, and no host adapter is tested.
+
+
+## 1.3 Executive Workday Orchestrator registration — 26 November 2026
+
+The `executive-workday-orchestrator` identity is a private Plugin Creator package, version 0.1.0, release `pluginrel_6b073a6285d481918d11cdbf1bb7643f`, scope USER / PRIVATE. Its 14 skills are present in the private package and indexed in the 26 November instruction snapshot. The HSO parent stores only a source pointer and concise metadata at `plugin-instructions/executive-workday-orchestrator/SOURCE-POINTER.md`, which records package ID `plugins_6b073a60088081918a8958ab761cb505`.
+
+No canonical child Git repository has been designated. EWO remains `pending_repository / NOT_IDENTIFIED`, distribution `snapshot_only`, and has no source-to-package parity or named-host activation evidence. Full instruction bodies and supporting package files remain private and are not mirrored into this public repository. Do not copy them here without a separate publication and rights decision.
 
 ## 1. Search scope and evidence
 
@@ -100,7 +114,7 @@ People & Business Competency Academy has a verified private Plugin Creator packa
 
 Agent Skills Atlas separately references alirezarezvani/claude-skills as an upstream dataset at commit f8593c4941210a621a6629ce1da9e07897976d5f, package 2.14.14. That repository is upstream inventory data, not the canonical source repository for the Agent Skills Atlas plugin itself.
 
-## 5. Fourteen plugin sources remain NOT_IDENTIFIED
+## 5. Sixteen plugin sources remain NOT_IDENTIFIED
 
 1. Evaluator Team
 2. Master Photo Restoration
@@ -116,17 +130,19 @@ Agent Skills Atlas separately references alirezarezvani/claude-skills as an upst
 12. GrowthForge Business OS
 13. People & Business Competency Academy
 14. Progressive Roadmap Evaluator (PRE)
+15. Ponytail Engineering Optimizer
+16. Executive Workday Orchestrator
 
-Together with the two incomplete candidates, there are **16 plugin source identities still not integrated** (14 NOT_IDENTIFIED plus 2 CANDIDATE_INCOMPLETE). The earlier backlog count was 15; SDO has now been identified and integrated as the fifth official source submodule.
+Together with the two incomplete candidates, there are **18 plugin source identities still not integrated** (16 NOT_IDENTIFIED plus 2 CANDIDATE_INCOMPLETE). The canonical redirect is tracked separately and is not a second source implementation. SDO remains the fifth official source submodule.
 
 ## 6. Instruction snapshot inventory
 
-- 14 NOT_IDENTIFIED packages retain separate, read-only runtime instruction snapshots, including People & Business Competency Academy.
+- 16 NOT_IDENTIFIED packages retain separate, read-only runtime instruction snapshots, including People & Business Competency Academy, Ponytail Engineering Optimizer and Executive Workday Orchestrator.
 - Photo Fixer and PVEE retain separate candidate-source snapshots; neither candidate source is treated as canonical package source.
 - Video Explainer and SDO retain current Plugin Creator instruction snapshots while each has its own independently pinned source repository.
 - SKILL ANALYZER, A.S.F.R.E.E and Anatomi Prompt are represented by their own source submodules/source pointers.
 - A.S.F.R.E.E Legacy remains one redirect-only snapshot.
-- 256 skill records are indexed across 22 plugin identities.
+- 279 skill records are indexed across 24 plugin identities (current snapshot capture 26 November 2026).
 - No snapshot merges two plugin packages or transfers implementation ownership to the parent repository.
 
 ## 7. Required proof before submodule integration
