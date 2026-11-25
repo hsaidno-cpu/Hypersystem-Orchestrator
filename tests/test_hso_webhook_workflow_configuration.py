@@ -21,7 +21,7 @@ class HsoWebhookWorkflowConfigurationTests(unittest.TestCase):
         ):
             self.assertIn(value, event_job)
 
-        guard = re.search(r"if \[([^\]]+)\]; then", event_job)
+        guard = re.search(r"if \[(.*?)\]; then", event_job, re.DOTALL)
         self.assertIsNotNone(guard, "event job must have an explicit fail-closed shell guard")
         expression = guard.group(1)
         for value in (
