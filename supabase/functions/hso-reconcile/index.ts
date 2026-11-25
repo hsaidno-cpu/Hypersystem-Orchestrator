@@ -216,7 +216,10 @@ async function collectNotionBlockTree(blockId: string, token: string, depth = 0,
   for (const block of page.results) {
     budget.nodes++;
     if (budget.nodes > 20000) throw new Error("Notion Control Center exceeded 20000 blocks; snapshot refused");
-    const item: any = { id: block.id, type: block.type, has_children: Boolean(block.has_children) };
+    const item: any = {
+      id: block.id, type: block.type, has_children: Boolean(block.has_children),
+      content: block[block.type] ?? null,
+    };
     if (block.has_children) item.children = await collectNotionBlockTree(block.id, token, depth + 1, budget);
     tree.push(item);
   }
