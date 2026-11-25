@@ -78,7 +78,7 @@ The GitHub connector currently used for HSO changes does not expose a repository
 ## 6. Completion states
 
 - Static contract corpus: **implemented** (14 positive, 14 negative, 6 ambiguous cases).
-- Static contract validator: **PASS** in GitHub Actions run #237 on exact head `9963011dfb4028ca16d52a79c57134b272f94692`; all 155 unit/resolver tests passed, along with catalog/distribution validators, sandbox workflow and recovery checks.
+- Static contract validator: **PASS** in GitHub Actions run #239 on exact head `6d27192d77057093ff3f80dc5b504433738cb999`; all 155 unit/resolver tests passed, including 11 EWO-specific static contract tests, along with catalog/distribution validators, sandbox workflow and recovery checks.
 - Mission Control event-ingestion: **PASS** in run #480.
 - P0 remote-MCP EWO invocation: **SKIPPED**; this is not host activation evidence.
 - Live EWO model/host invocation: **NOT RUN**.
