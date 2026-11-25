@@ -1,3 +1,5 @@
+import type { Json } from "../../database.types.ts";
+
 const MAX_BODY_BYTES = 1_048_576;
 const MAX_SKEW_SECONDS = 300;
 const SIGNATURE_RE = /^[a-f0-9]{64}$/i;
@@ -9,7 +11,7 @@ export type IntegrationEventRow = {
   event_type: string;
   external_subject: string | null;
   payload_hash: string;
-  payload: Record<string, unknown>;
+  payload: Json;
   processing_state: "received";
 };
 
@@ -21,8 +23,8 @@ export type ChangeEventRow = {
   title: string;
   impact: "HIGH" | "MEDIUM" | "UNKNOWN";
   follow_up: "INVESTIGATE_AND_RECOMPUTE" | "REVALIDATE_EXACT_HEAD" | "RECONCILE";
-  before_state: Record<string, never>;
-  after_state: Record<string, unknown>;
+  before_state: Json;
+  after_state: Json;
   source_url: string | null;
   event_at: string;
 };
