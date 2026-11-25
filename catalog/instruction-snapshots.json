@@ -1537,7 +1537,7 @@
     {
       "plugin_key": "executive-workday-orchestrator",
       "instruction_path": "plugin-instructions/executive-workday-orchestrator/SOURCE-POINTER.md",
-      "origin": "private_plugin_creator_release_pointer",
+      "origin": "private_canonical_git_source_with_plugin_creator_release_parity",
       "skill_count": 14,
       "skills": [
         {
@@ -1600,7 +1600,13 @@
       "plugin_creator_id": "plugins_6b073a60088081918a8958ab761cb505",
       "plugin_creator_release_id": "pluginrel_6b073a6285d481918d11cdbf1bb7643f",
       "package_version": "0.1.0",
-      "public_mirror_status": "POINTER_AND_METADATA_ONLY"
+      "public_mirror_status": "POINTER_AND_METADATA_ONLY",
+      "git_source_repository": "https://github.com/hsaidno-cpu/executive-workday-orchestrator",
+      "git_source_commit": "69166133cdc65d1f4f358daec005677db5cd0",
+      "git_source_version": "0.1.0",
+      "parity_status": "MATCH_17_OF_17",
+      "parity_file_count": 17,
+      "source_rights_status": "NOT_CLEARED"
     }
   ]
 }
