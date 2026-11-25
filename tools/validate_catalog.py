@@ -72,6 +72,7 @@ def validate():
         "integrated_submodule",
         "candidate_repository",
         "pending_repository",
+        "private_canonical_repository",
         "canonical_redirect",
     }
 
@@ -105,6 +106,15 @@ def validate():
                 fail(f"{key}: integrated plugin repository is not marked integrated")
             if not repo.get("submodule_path") or not repo.get("pinned_commit"):
                 fail(f"{key}: integrated source requires submodule_path and pinned_commit")
+        if state == "private_canonical_repository":
+            repo = next(r for r in repositories if r["repository_id"] == repo_id)
+            if repo.get("status") != "private_canonical_source":
+                fail(f"{key}: private canonical source must be marked private_canonical_source")
+            if repo.get("visibility") != "private" or repo.get("public_snapshot_allowed") is not False:
+                fail(f"{key}: private canonical source must remain private and disallow public source snapshots")
+            if not re.fullmatch(r"[0-9a-f]{40}", repo.get("pinned_commit", "")):
+                fail(f"{key}: private canonical source requires a pinned 40-character commit SHA")
+
         if state == "canonical_redirect":
             alias = plugin.get("alias_of")
             if alias not in plugin_key_set:
