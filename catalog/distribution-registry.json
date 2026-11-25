@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "registry_revision": "2026-11-26",
   "authority": "Hypersystem-Orchestrator parent registry",
-  "plugin_count": 24,
+  "plugin_count": 25,
   "installability_rule": "Eligible only when status is installable_public or installable_private, license_status is cleared, package_artifact exists, source_commit is pinned, and target adapter has host_tested or runtime_verified evidence.",
   "selection_modes": {
     "single": "Exactly one eligible plugin.",
@@ -488,6 +488,29 @@
         "ORIGINAL_SOURCE_LICENSE_AND_ATTRIBUTION_NOT_ASSESSED"
       ],
       "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.0 is verified, but its current file inventory has no LICENSE file and neither manifest declares a license. The README identifies a supplied workday prompt as derivation input without recording a canonical source URL or redistribution permission. No canonical child Git source, independent license clearance, public package artifact or host-tested platform adapter is registered. The public HSO parent stores metadata and a private package pointer only; this record is snapshot_only and is not installable."
+    },
+    {
+      "plugin_key": "vibe-coding-mentor",
+      "display_name": "Vibe Coding Mentor",
+      "source_state": "private_repository_source",
+      "source_repository_id": "vibe-coding-mentor",
+      "source_commit": "84214752bb298002b96f9ff1c60e16b7a09e99d7",
+      "source_version": "0.1.0",
+      "platform_package_version": "0.1.0",
+      "distribution_status": "private_source_restricted",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "LICENSE_RIGHTS_NOT_ASSESSED",
+        "PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "VCM_HSO_HOST_ADAPTER_NOT_CONFIGURED",
+        "CURSOR_BOLT_LOVABLE_RUNTIME_TESTS_NOT_RUN",
+        "INDEPENDENT_EVALUATION_NOT_COMPLETED"
+      ],
+      "eligibility_note": "Canonical private source and package parity are verified at commit 84214752bb298002b96f9ff1c60e16b7a09e99d7; package CI passed. Distribution remains restricted because no license/redistribution grant has been selected, source is private, no install artifact is published, the VCM host adapter is not configured, builder tests are NOT_RUN and independent evaluation is outstanding."
     }
   ]
 }
