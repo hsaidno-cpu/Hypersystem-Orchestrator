@@ -1,4 +1,4 @@
-# Hypersystem Orchestrator
+# Hypersystem-Orchestrator
 
 **A governed hybrid multi-repository ecosystem for independently developed AI plugins, skills, agents and specialized workflow systems.**
 
@@ -15,6 +15,12 @@ Its operating rule is:
 The parent repository owns the ecosystem catalog, architecture boundaries, cross-project contracts, dependency and compatibility policy, governance, distribution eligibility, platform adapter contracts and progressive roadmap. Each plugin's own repository remains the canonical source of its implementation, skills, manifests, references, tests and release history.
 
 This is a hybrid multi-repository architecture. It is not a monorepo, does not silently absorb child source code, and does not make plugin capabilities executable merely by listing them.
+
+## Canonical platform identity
+
+The canonical system and parent repository name is **Hypersystem-Orchestrator** (acronym **HSO**). The operational dashboard is **HSO Mission Control**. Provider slugs and IDs are not aliases for the whole system.
+
+The cross-platform identity registry is [`config/hso-identity-registry.json`](config/hso-identity-registry.json); the governance, naming and immutable-ID rules are in [`docs/HSO-CANONICAL-IDENTITY-AND-NOMENCLATURE.md`](docs/HSO-CANONICAL-IDENTITY-AND-NOMENCLATURE.md). `HSMART` is a separate project and must never be treated as an HSO alias.
 
 ## What is included now
 
