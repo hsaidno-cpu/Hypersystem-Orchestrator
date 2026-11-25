@@ -1,5 +1,6 @@
 import base64
 import copy
+import json
 import unittest
 import unicodedata
 from datetime import datetime, timedelta, timezone
@@ -8,6 +9,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from tools.validate_ecig_contract import (
+    EXAMPLE_PATH,
     ContractError,
     attestation_signing_bytes,
     load_contract,
@@ -112,13 +114,23 @@ def synced_attestation():
         "package_publication_republication_or_release_channel_promotion",
         "target_install_upgrade_enable_disable_or_uninstall",
     )
-    item["approvals"] = [{
-        "action": action,
-        "decision": "APPROVED",
-        "decision_reference": f"test-decision-{index + 1}",
-        "decided_at": observed_at,
-        "approver": "test-fixture-authority",
-    } for index, action in enumerate(actions)]
+    item["approvals"] = []
+    for index, action in enumerate(actions):
+        decision_reference = f"https://evidence.example.test/decisions/{index + 1}"
+        item["approvals"].append({
+            "action": action,
+            "decision": "APPROVED",
+            "decision_reference": decision_reference,
+            "decided_at": observed_at,
+            "approver": "test-fixture-authority",
+        })
+        item["evidence"].append({
+            "kind": "HUMAN_DECISION",
+            "locator": decision_reference,
+            "observed_at": observed_at,
+            "verifier": "test-fixture-decision-reader",
+            "sha256": f"{index + 9:x}" * 64,
+        })
     item["signature"] = {
         "algorithm": "Ed25519",
         "key_id": "hso-ecig-ephemeral-test-key",
@@ -154,6 +166,10 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
 
     def test_explicit_unknown_state_is_valid(self):
         validate_attestation(sample_attestation(), self.schema, self.policy)
+
+    def test_checked_in_unknown_example_is_valid(self):
+        example = json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
+        validate_attestation(example, self.schema, self.policy)
 
     def test_trust_store_is_empty_until_a_key_is_approved(self):
         self.assertEqual(load_trusted_public_keys(), {})
@@ -194,6 +210,27 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
         item, trusted, timestamp = signed_synced_attestation()
         item["evidence"] = [e for e in item["evidence"] if e["kind"] != "RUNTIME_PROBE"]
         with self.assertRaisesRegex(ContractError, "requires plane-specific RUNTIME_PROBE"):
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+
+    def test_synced_rejects_missing_human_decision_evidence(self):
+        item, trusted, timestamp = signed_synced_attestation()
+        item["evidence"] = [
+            evidence for evidence in item["evidence"]
+            if evidence["kind"] != "HUMAN_DECISION"
+        ]
+        with self.assertRaisesRegex(ContractError, "no matching HUMAN_DECISION evidence"):
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+
+    def test_synced_rejects_mismatched_human_decision_reference(self):
+        item, trusted, timestamp = signed_synced_attestation()
+        item["approvals"][0]["decision_reference"] = "https://evidence.example.test/decisions/not-the-same"
+        with self.assertRaisesRegex(ContractError, "no matching HUMAN_DECISION evidence"):
             validate_attestation(
                 item, self.schema, self.policy,
                 trusted_public_keys=trusted, now=timestamp,
@@ -295,6 +332,31 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
         policy = copy.deepcopy(self.policy)
         policy["github"]["privileged_pull_request_rule"] = "checkout_pr_head"
         with self.assertRaisesRegex(ContractError, "privileged pull-request rule"):
+            validate_policy(self.schema, policy)
+
+    def test_policy_rejects_freshness_window_expansion(self):
+        policy = copy.deepcopy(self.policy)
+        policy["freshness_hours_or_days"]["source_commit_hours"] = 24.01
+        with self.assertRaisesRegex(ContractError, "no greater than 24"):
+            validate_policy(self.schema, policy)
+
+    def test_policy_rejects_invalid_freshness_values(self):
+        for invalid in (True, float("inf"), float("nan"), 0, -1, "24"):
+            policy = copy.deepcopy(self.policy)
+            policy["freshness_hours_or_days"]["source_commit_hours"] = invalid
+            with self.subTest(value=repr(invalid)), self.assertRaises(ContractError):
+                validate_policy(self.schema, policy)
+
+    def test_policy_requires_all_mandatory_human_approvals(self):
+        policy = copy.deepcopy(self.policy)
+        policy["human_approval_required"].remove("production_permission_secret_scope_or_trust_policy_change")
+        with self.assertRaisesRegex(ContractError, "mandatory human-approval action"):
+            validate_policy(self.schema, policy)
+
+    def test_policy_requires_all_never_automatic_controls(self):
+        policy = copy.deepcopy(self.policy)
+        policy["never_automatic"].remove("promote_unknown_stale_or_not_compared_to_pass")
+        with self.assertRaisesRegex(ContractError, "mandatory never-automatic safeguard"):
             validate_policy(self.schema, policy)
 
 
