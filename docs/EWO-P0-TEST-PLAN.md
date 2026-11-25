@@ -4,7 +4,7 @@
 **Static validator:** `tests/test_ewo_routing_contracts.py`  
 **Package:** `0.1.0` · Plugin Creator release `pluginrel_6b073a6285d481918d11cdbf1bb7643f` · USER/PRIVATE  
 **HSO parent PR:** [#33](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/33)  
-**Latest static CI evidence:** run #237, exact tested head `9963011dfb4028ca16d52a79c57134b272f94692`
+**Latest static CI evidence:** run #239, exact tested head `6d27192d77057093ff3f80dc5b504433738cb999`
 
 ## 1. Scope
 
