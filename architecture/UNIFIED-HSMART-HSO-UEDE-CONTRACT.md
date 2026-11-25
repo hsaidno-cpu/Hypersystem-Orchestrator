@@ -217,3 +217,14 @@ The existing HSO plan-only planner can validate owners, capability states, autho
 Execution stops whenever the approved PRE revision cannot be proven; source pagination is incomplete; dependency, scope or approval is unresolved; a capability lacks canonical source/rights/host evidence; a KM/PR gate is unmet; credentials exceed the declared scope; exact-head CI is absent/stale; or evidence reconciliation disagrees with the source.
 
 **P0 is complete only when** PR #32 and PR #25 describe the same authority model and staged sequence, their exact-head checks pass, the current PR/KM graph remains unchanged, and GOV-01 records the decision against the final exact heads. Architecture acceptance does not itself merge either PR or activate runtime.
+
+
+## 14. Human approval, manual-action and notification protocol
+
+The canonical operating procedure is [HAP-01 — Human Approval, Manual Action & Notification Procedure](../governance/HUMAN-APPROVAL-AND-ACTION-NOTIFICATION-PROCEDURE.md). HAP-01 is the required lifecycle contract for HSMART, HSO, UEDE and PRE. It defines GOV-01 as the sole human decision authority and separates owner approval from manual UI operations.
+
+Every approval/manual-action gate must pause the downstream workflow, snapshot the current repository/PR/base/head SHA and required evidence, create or update one idempotent record in the [UEDE Human Action & Approval Inbox](https://app.notion.com/p/42399868397f8152b2b7d1bf8cc15712), and notify the owner with a direct URL, exact UI location, numbered steps, expected result, risk, stop condition and stale conditions. A green check, silence or AI self-report is never approval. Changed SHA/base/dependencies invalidate the old request.
+
+The required end-of-response contract is: actual result/status; exact evidence and links; HUMAN ACTION REQUIRED / AWAITING EVIDENCE / NO HUMAN ACTION REQUIRED; risks/stop conditions; one next-work recommendation; and one ready-to-copy Indonesian next prompt.
+
+The Notion Inbox exists. GitHub event ingestion, webhook verification, automatic GitHub notification dispatch, approval receipt verification and push notification delivery remain NOT_CONFIGURED until implemented and passed through live end-to-end acceptance. No runtime activation is implied by this documentation.
