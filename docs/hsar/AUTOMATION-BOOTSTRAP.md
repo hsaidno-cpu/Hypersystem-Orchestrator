@@ -58,3 +58,15 @@ No token or secret belongs in this repository, a commit, an issue, a PR comment,
 7. Require human approval for production activation and record the accepted workflow revision.
 
 Until all acceptance cases pass, set Notion/GitHub sync state to NOT_CONFIGURED, PARTIAL or BLOCKED as appropriate.
+
+## GOV-01 disposition and controlled pilot (26 Nov 2026)
+
+G0 was completed: HSO PR #30 merged as `42aa2da826ad17f2b9d6a648c118f14c7a0390a0`; HSMART PR #38 merged as `2071bbaa23c3a258189abde074d6436457f84295`. GOV-01 acceptance is recorded in both PR conversations. HSO's Vercel provider rate-limit failures, skipped remote-MCP invocation and skipped scheduled reconciliation remain explicit caveats. HSMART's assurance remains correlation-limited, not independent certification.
+
+The next implementation is deliberately a narrow HSO-only pilot: **HSO → HSAR Change & Evidence Ledger**. Component Registry and Scan & Coverage Ledger are not writable by this pilot; HSMART is excluded until the HSO pilot passes its acceptance suite.
+
+A dedicated machine-owned `Automation Sync Receipt` property stores GitHub observations. Human-managed properties (title after creation, Change Summary, Acceptance Evidence, positive/negative findings, Residual Risks, Conversion Actions, Decision State and any approval/risk-acceptance record) must never be overwritten.
+
+The workflow is disabled by default and also checks `HSAR_NOTION_SYNC_ENABLED` inside the synchronizer. The pilot uses read-only GitHub Actions permissions and only reads canonical repository state. It does not auto-approve, merge, release, deploy or modify permissions.
+
+**Live activation remains NOT_CONFIGURED** until a Notion internal integration is shared only with the Change & Evidence Ledger, its token is stored as GitHub Actions secret `NOTION_API_TOKEN`, the Actions variable `NOTION_HSAR_CHANGE_DATA_SOURCE_ID` is set to `42399868-397f-81a9-a077-000bb6feab76`, and dry-run plus live create/update/no-op/read-back tests pass. Never paste the Notion token into chat or source control.
