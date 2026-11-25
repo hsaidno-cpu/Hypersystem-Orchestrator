@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import math
 import sys
@@ -129,6 +130,14 @@ def validate_policy(schema: dict[str, Any], policy: dict[str, Any]) -> None:
     if declared_overall != schema_overall:
         raise ContractError("Policy overall states and attestation schema enum have drifted")
 
+    authority = policy.get("authority") or {}
+    if authority.get("human_decision_authority") != "GOV-01":
+        raise ContractError("ECIG human decision authority must remain GOV-01")
+    if authority.get("human_decision_subject") != "hsaidno-cpu":
+        raise ContractError("ECIG GOV-01 subject does not match the canonical owner")
+    if authority.get("additional_human_approvers") != []:
+        raise ContractError("ECIG must not introduce a second human approver")
+
     required_sections = {
         "authority", "hashing", "freshness_hours_or_days", "states",
         "auto_actions", "human_approval_required", "never_automatic",
@@ -198,6 +207,10 @@ def validate_policy(schema: dict[str, Any], policy: dict[str, Any]) -> None:
         raise ContractError("ECIG signature must exclude only the root signature field")
     if signature.get("trust_store_path") != str(TRUSTED_KEYS_PATH.relative_to(ROOT)):
         raise ContractError("ECIG trusted-key registry path has drifted")
+    if signature.get("trust_store_update") != "GOV-01_signed_exact_head_disposition_and_audited_key_ceremony":
+        raise ContractError("ECIG trust-root updates must use the sole GOV-01 signed exact-head decision")
+    if signature.get("evidence_proof_version") != "HSO-ECIG-EVIDENCE-1":
+        raise ContractError("Unsupported ECIG evidence proof version")
 
     never_automatic = set(policy.get("never_automatic") or [])
     forbidden = {
@@ -209,9 +222,7 @@ def validate_policy(schema: dict[str, Any], policy: dict[str, Any]) -> None:
         raise ContractError("ECIG policy lost a mandatory never-automatic safeguard")
 
 
-def attestation_signing_bytes(instance: dict[str, Any]) -> bytes:
-    """Return HSO-ECIG-JSON-1 bytes; the root signature field is excluded."""
-    payload = {key: value for key, value in instance.items() if key != "signature"}
+def _canonical_json_bytes(payload: Any, label: str) -> bytes:
     try:
         return json.dumps(
             payload,
@@ -221,7 +232,101 @@ def attestation_signing_bytes(instance: dict[str, Any]) -> bytes:
             allow_nan=False,
         ).encode("utf-8")
     except (TypeError, ValueError):
-        raise ContractError("Attestation cannot be represented as canonical HSO-ECIG-JSON-1 JSON") from None
+        raise ContractError(f"{label} cannot be represented as canonical JSON") from None
+
+
+def attestation_signing_bytes(instance: dict[str, Any]) -> bytes:
+    """Return HSO-ECIG-JSON-1 bytes; the root signature field is excluded."""
+    payload = {key: value for key, value in instance.items() if key != "signature"}
+    return _canonical_json_bytes(payload, "Attestation")
+
+
+def _evidence_claim(instance: dict[str, Any], evidence: dict[str, Any]) -> dict[str, Any]:
+    """Return the exact claim/target that this evidence record is permitted to support."""
+    kind = evidence["kind"]
+    context = {
+        "schema_version": instance["schema_version"],
+        "policy_version": instance["policy_version"],
+        "attestation_id": instance["attestation_id"],
+        "plugin_key": instance["plugin_key"],
+        "target": instance["target"],
+        "kind": kind,
+    }
+    source = instance["source"]
+    if kind == "COMMIT":
+        subject = {
+            "repository_url": source["repository_url"],
+            "ref": source["ref"],
+            "commit_sha": source["commit_sha"],
+        }
+    elif kind == "MANIFEST":
+        subject = {
+            "manifest_path": source["manifest_path"],
+            "manifest_sha256": source["manifest_sha256"],
+            "tree_digest": source["tree_digest"],
+            "commit_sha": source["commit_sha"],
+        }
+    elif kind == "PACKAGE_READBACK":
+        subject = {"package": instance["package"]}
+    elif kind == "INSTALL_RECEIPT":
+        subject = {
+            "package_id": instance["package"].get("package_id"),
+            "release_id": instance["package"].get("release_id"),
+            "target": instance["target"],
+            "installation": {
+                key: value for key, value in instance["installation"].items()
+                if key not in {"runtime_state", "runtime_identity", "probe_id"}
+            },
+        }
+    elif kind == "RUNTIME_PROBE":
+        subject = {
+            "target": instance["target"],
+            "package_id": instance["package"].get("package_id"),
+            "release_id": instance["package"].get("release_id"),
+            "runtime": {
+                key: instance["installation"].get(key)
+                for key in ("runtime_state", "runtime_identity", "probe_id")
+            },
+        }
+    elif kind == "INSTRUCTION_COMPARISON":
+        subject = {"instructions": instance["instructions"]}
+    elif kind == "DOCUMENTATION_READBACK":
+        subject = {"documentation": instance["documentation"]}
+    elif kind == "HUMAN_DECISION":
+        matches = [
+            approval for approval in instance.get("approvals", [])
+            if approval.get("decision_reference") == evidence.get("locator")
+        ]
+        if len(matches) != 1:
+            raise ContractError("HUMAN_DECISION evidence must identify exactly one approval record")
+        subject = {"approval": matches[0]}
+    else:
+        subject = {"source_evidence_sha256": evidence.get("sha256")}
+    return {"context": context, "subject": subject}
+
+
+def evidence_binding_sha256(instance: dict[str, Any], evidence: dict[str, Any]) -> str:
+    return hashlib.sha256(_canonical_json_bytes(
+        _evidence_claim(instance, evidence), "Evidence claim"
+    )).hexdigest()
+
+
+def evidence_signing_bytes(instance: dict[str, Any], evidence: dict[str, Any]) -> bytes:
+    """Return HSO-ECIG-EVIDENCE-1 bytes signed by the trusted evidence verifier."""
+    payload = {
+        "proof_version": "HSO-ECIG-EVIDENCE-1",
+        "attestation_id": instance["attestation_id"],
+        "policy_version": instance["policy_version"],
+        "plugin_key": instance["plugin_key"],
+        "target": instance["target"],
+        "kind": evidence["kind"],
+        "locator": evidence["locator"],
+        "observed_at": evidence["observed_at"],
+        "verifier": evidence["verifier"],
+        "sha256": evidence["sha256"],
+        "binding_sha256": evidence["binding_sha256"],
+    }
+    return _canonical_json_bytes(payload, "Evidence proof")
 
 
 def _parse_timestamp(value: Any, label: str) -> datetime:
@@ -313,8 +418,10 @@ def _validate_synced_approvals(
             raise ContractError(
                 f"SYNCED cannot contain unresolved or rejected approval at approvals[{index}]"
             )
-        if not str(approval.get("approver") or "").strip():
-            raise ContractError(f"approvals[{index}] is APPROVED without an approver subject")
+        if approval.get("approver") != policy["authority"]["human_decision_subject"]:
+            raise ContractError(
+                f"approvals[{index}] must be approved by the sole GOV-01 decision authority"
+            )
         decided_at = _parse_timestamp(approval["decided_at"], f"approvals[{index}].decided_at")
         if decided_at > observed_at + CLOCK_SKEW:
             raise ContractError(f"approvals[{index}] is newer than the parent attestation observation")
@@ -325,6 +432,8 @@ def _validate_synced_approvals(
             raise ContractError(
                 f"approvals[{index}] decision_reference has no matching HUMAN_DECISION evidence"
             )
+        if decision_evidence.get("verifier") != policy["authority"]["human_decision_subject"]:
+            raise ContractError("HUMAN_DECISION evidence must be verified by GOV-01")
         decision_evidence_at = _parse_timestamp(
             decision_evidence["observed_at"],
             f"HUMAN_DECISION[{index}].observed_at",
@@ -393,6 +502,64 @@ def _verify_ed25519_signature(
         raise ContractError("Trusted Ed25519 public key is malformed") from None
 
 
+def _verify_synced_evidence_proofs(
+    instance: dict[str, Any],
+    trusted_public_keys: Mapping[str, str],
+) -> None:
+    """Authenticate verifiers and bind signed digests to exact claim/action/target tuples.
+
+    The trusted verifier computes sha256 from the exact bytes it reads at locator.
+    The validator deliberately does not dereference arbitrary locators: it verifies
+    the verifier's signature over that digest, locator, timestamp and canonical
+    target-bound claim, avoiding SSRF and non-deterministic network reads.
+    """
+    owner_key_id = instance["signature"]["key_id"]
+    for index, evidence in enumerate(instance.get("evidence", [])):
+        digest = evidence.get("sha256")
+        if not isinstance(digest, str) or len(digest) != 64:
+            raise ContractError(f"evidence[{index}] must contain a SHA-256 digest")
+        try:
+            int(digest, 16)
+        except ValueError:
+            raise ContractError(f"evidence[{index}].sha256 must be lowercase hexadecimal") from None
+
+        expected_binding = evidence_binding_sha256(instance, evidence)
+        if evidence.get("binding_sha256") != expected_binding:
+            raise ContractError(
+                f"evidence[{index}] binding digest does not match its claim, action, and target"
+            )
+
+        proof = evidence.get("proof")
+        if not isinstance(proof, dict) or proof.get("algorithm") != "Ed25519":
+            raise ContractError(f"evidence[{index}] requires a verifiable Ed25519 verifier proof")
+        key_id = str(proof.get("key_id") or "").strip()
+        public_key_value = trusted_public_keys.get(key_id)
+        if not key_id or public_key_value is None:
+            raise ContractError(f"evidence[{index}] verifier key is not trusted: {key_id or '<blank>'}")
+
+        signature_bytes = _decode_canonical_base64(
+            proof.get("value"), f"evidence[{index}] verifier signature"
+        )
+        if len(signature_bytes) != 64:
+            raise ContractError(f"evidence[{index}] verifier signature must be 64 bytes")
+        public_key_bytes = _decode_canonical_base64(
+            public_key_value, f"Trusted evidence verifier {key_id}"
+        )
+        if len(public_key_bytes) != 32:
+            raise ContractError(f"Trusted evidence verifier {key_id} must be a 32-byte Ed25519 key")
+        try:
+            Ed25519PublicKey.from_public_bytes(public_key_bytes).verify(
+                signature_bytes, evidence_signing_bytes(instance, evidence)
+            )
+        except InvalidSignature:
+            raise ContractError(f"evidence[{index}] verifier proof signature verification failed") from None
+        except ValueError:
+            raise ContractError(f"Trusted evidence verifier {key_id} is malformed") from None
+
+        if evidence["kind"] == "HUMAN_DECISION" and key_id != owner_key_id:
+            raise ContractError("HUMAN_DECISION proof must use the GOV-01 attestation signing key")
+
+
 def _error_path(error: Any) -> str:
     return ".".join(str(part) for part in error.absolute_path) or "<root>"
 
@@ -407,6 +574,8 @@ def validate_attestation(
 ) -> None:
     if schema is None or policy is None:
         schema, policy = load_contract()
+    # Library/API callers must not bypass anti-weakening bounds by avoiding the CLI.
+    validate_policy(schema, policy)
     validator = Draft202012Validator(schema, format_checker=FormatChecker())
     errors = sorted(
         validator.iter_errors(instance),
@@ -484,6 +653,7 @@ def validate_attestation(
         if keys is None:
             keys = load_trusted_public_keys()
         _verify_ed25519_signature(instance, keys)
+        _verify_synced_evidence_proofs(instance, keys)
 
     if instance["overall_state"] == "DRIFT":
         if not any(
