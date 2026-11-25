@@ -57,3 +57,15 @@ Video Explainer's current Plugin Creator release is 4.1.12; the public GitHub so
 ## Private package pointer policy
 
 For USER/PRIVATE Plugin Creator packages without a canonical Git source, the public parent may store a source pointer and concise skill metadata only. Keep full private instructions in the private package. Do not publish private instruction files, assets or support files to this repository without a separate publication decision and rights review.
+
+## Agent Ecosystem Intelligence Orchestrator
+
+- Display name: Agent Ecosystem Intelligence Orchestrator
+- Plugin Creator ID: plugins_6b0755ff9620819190e7c69641d3107e
+- Version/release: 0.1.0 / pluginrel_6b075601c1988191afe8a25a561e4547
+- Scope: USER/PRIVATE
+- Source pointer: plugin-instructions/agent-ecosystem-intelligence-orchestrator/SOURCE-POINTER.md
+- Instruction source: private Plugin Creator release; full skill bodies are intentionally not mirrored.
+- Snapshot count: 11 skills (one master orchestrator plus ten subskills).
+- Distribution: snapshot_only; no canonical Git source, rights assessment, install artifact or host-tested adapter.
+- Runtime/dispatch: NOT_CONFIGURED / NOT_RUN.
