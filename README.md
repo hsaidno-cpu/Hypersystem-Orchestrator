@@ -110,7 +110,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 
 ## Plugin instruction registry
 
-The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **265 skill definitions** across 24 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary or metadata-only source pointer for registered plugins. The machine-readable index records **279 skill metadata entries** across 24 plugin identities. Private Plugin Creator packages remain private; this public repository stores only package pointers and concise skill metadata for those packages, not their full instruction bodies. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
