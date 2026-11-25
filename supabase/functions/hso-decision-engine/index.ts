@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
-const POLICY = "strategic-priority-v1";
-const ENGINE = "hso-decision-engine-v1";
+const POLICY = "weighted-evidence-v2";
+const ENGINE = "hso-decision-engine-v2";
 import { PRIORITY_WEIGHTS as WEIGHTS, normalizeWorkKey, taskId, calculatePriorityScore, calculateWeightedProgress, hasScopeDecision } from "./policy.mjs";
 const REQUIRED = ["notion-control-center","notion-roadmap","notion-execution-ledger","notion-evidence-registry","github-hso-parent"];
 
@@ -63,7 +63,7 @@ function verified(item: any, evidence: any[]) {
 }
 function severity(reason: string, risk: string | null) {
   if (risk === "CRITICAL" || /CI_FAILED|SOURCE_CONFLICT|SECURITY_DISPOSITION_FAILED/.test(reason)) return "CRITICAL";
-  if (risk === "HIGH" || /APPROVAL|DEPENDENCY|BRANCH|HEAD_SHA|CI_NOT|SOURCE_FRESHNESS/.test(reason)) return "HIGH";
+  if (risk === "HIGH" || /APPROVAL|DEPENDENCY|BRANCH|HEAD_SHA|CI_NOT|SOURCE_FRESHNESS|SOURCE_COMPLETENESS|SCOPE/.test(reason)) return "HIGH";
   if (/WEIGHT|PRIORITY|GATE|EVIDENCE/.test(reason)) return "MEDIUM";
   return "LOW";
 }
@@ -78,7 +78,7 @@ function compilePrompt(item: any, ctx: any) {
     "Update the execution ledger factually. Completed does not mean Verified until acceptance evidence exists."
   ];
   const payload = {
-    prompt_version: "hso-ready-prompt-v1",
+    prompt_version: "hso-ready-prompt-v2",
     task_id: taskId(item),
     context: {
       project: "Hypersystem Orchestrator",
@@ -286,7 +286,11 @@ Deno.serve(async (req) => {
       }
     }
 
-    const prEvidence = evidence.find((ev: any) => ev.evidence_type === "Pull Request" && item.pr_url && ev.pr_url === item.pr_url);
+    const githubFreshnessSeconds = Number((sourceMap.get("github-hso-parent") as any)?.freshness_seconds || 900);
+    const prEvidence = item.pr_url ? evidence.find((ev: any) =>
+      ev.evidence_type === "Pull Request" && ev.pr_url === item.pr_url &&
+      ev.freshness === "FRESH" && fresh(ev.observed_at, githubFreshnessSeconds)
+    ) : null;
     const headSha = item.head_commit_sha || prEvidence?.commit_sha || null;
     const branch = item.target_branch || prEvidence?.branch_ref || null;
     if (!item.change_surface) reasons.push("CHANGE_SURFACE_UNSET");
@@ -294,7 +298,15 @@ Deno.serve(async (req) => {
     let ci: any = null;
     if (code) {
       if (!branch || !headSha) reasons.push("BRANCH_OR_HEAD_SHA_UNIDENTIFIED");
-      ci = evidence.find((ev: any) => ev.evidence_type === "CI Run" && ev.commit_sha === headSha && ev.evidence_state === "PASS" && ev.freshness === "FRESH" && (!item.ci_run_url || ev.ci_run_url === item.ci_run_url));
+      if (item.pr_url && !prEvidence) reasons.push("PR_NOT_FOUND_OR_STALE");
+      if (item.head_commit_sha && prEvidence?.commit_sha && item.head_commit_sha !== prEvidence.commit_sha) reasons.push("PR_HEAD_SHA_MISMATCH");
+      if (item.target_branch && prEvidence?.branch_ref && item.target_branch !== prEvidence.branch_ref) reasons.push("PR_BRANCH_MISMATCH");
+      ci = evidence.find((ev: any) =>
+        ev.evidence_type === "CI Run" && ev.commit_sha === headSha &&
+        ev.evidence_state === "PASS" && ev.freshness === "FRESH" &&
+        fresh(ev.observed_at, githubFreshnessSeconds) &&
+        (!item.ci_run_url || ev.ci_run_url === item.ci_run_url)
+      );
       if (!ci) reasons.push("CI_NOT_PASS_ON_EXACT_HEAD");
       if (item.ci_commit_sha && item.ci_commit_sha !== headSha) reasons.push("CI_COMMIT_SHA_MISMATCH");
     }
@@ -442,21 +454,27 @@ Deno.serve(async (req) => {
 
   const issueGroups = new Map<string, any>();
   for (const stale of staleSources) {
-    const key = "SOURCE_FRESHNESS:" + stale.source_key;
+    const type = String(stale.reason || "SOURCE_FRESHNESS");
+    const key = type + ":" + stale.source_key;
     issueGroups.set(key, {
       source_key: stale.source_key, external_id: "root:" + key, root_cause_key: key,
-      issue_type: "SOURCE_FRESHNESS", severity: "HIGH", location: stale.source_key,
-      root_cause: "Source is disconnected or beyond freshness SLA.",
+      issue_type: type, severity: "HIGH", location: stale.source_key,
+      root_cause: type === "ROADMAP_MEMBERSHIP_MISMATCH"
+        ? "The complete Notion Roadmap page set does not equal the canonical Supabase projection."
+        : type === "SYNC_RUN_NOT_SUCCEEDED"
+          ? "The source reconciliation run did not finish successfully."
+          : "The source snapshot is missing, duplicated, incomplete, stale or outside its freshness SLA.",
       root_cause_state: "UNCONFIRMED",
-      impact: "Strategic recommendations are suppressed until this source is reconciled.",
+      impact: "Strategic recommendations and project-wide progress are suppressed until the source discrepancy is resolved.",
       affected_work_items: items.map((x) => taskId(x)), affected_milestones: [],
+      resolution: "Run a complete reconciliation, inspect the source/snapshot mismatch, and verify the corrected exact snapshot.",
       verification_state: "OPEN", occurrence_count: items.length, last_seen_at: now
     });
   }
   for (const entry of blocked) {
     const item = items.find((x) => taskId(x) === entry.task_id);
     for (const reason of entry.reasons) {
-      if (reason === "SOURCE_FRESHNESS_GATE") continue;
+      if (["SOURCE_FRESHNESS_GATE","SOURCE_COMPLETENESS_GATE"].includes(reason)) continue;
       const key = reason;
       const issue = issueGroups.get(key) ?? {
         source_key: "notion-roadmap", external_id: "root:" + key, root_cause_key: key,
@@ -494,7 +512,7 @@ Deno.serve(async (req) => {
     const hash = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2,"0")).join("");
     const artifact = await db.from("hso_prompt_artifacts").insert({
       work_item_id: primary.item.id, snapshot_id: roadmapSnapshot?.id || null,
-      prompt_version: "hso-ready-prompt-v1", prompt_text: p.text,
+      prompt_version: "hso-ready-prompt-v2", prompt_text: p.text,
       prompt_payload: p.payload, context_hash: hash, task_key: taskId(primary.item),
       prompt_state: "generated", created_from_decision_run: run.data.id
     }).select("id").single();
