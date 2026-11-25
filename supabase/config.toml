@@ -1,0 +1,10 @@
+project_id = "ehgmtkkppmceaffhwcpc"
+
+[functions.hso-notion-webhook]
+verify_jwt = false
+
+[functions.hso-github-webhook]
+verify_jwt = false
+
+[functions.hso-reconcile]
+verify_jwt = false
