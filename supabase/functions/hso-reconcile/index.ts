@@ -136,7 +136,7 @@ function mapPage(page: any, kind: string, sourceKey: string) {
     source_url: page.url, observed_at: new Date().toISOString(), raw_properties: p,
   };
   return {
-    source_key: sourceKey, external_id: page.id, title,
+    source_key: sourceKey, external_id: page.id,
     evidence_id: prop(p, "Evidence ID") === null ? null : String(prop(p, "Evidence ID")),
     title: prop(p, "Evidence Title") ?? title,
     evidence_type: prop(p, "Evidence Type") ?? "External Source",
@@ -404,7 +404,7 @@ Deno.serve(async (req) => {
           const pageResult = await queryNotion(source.dataSource, notionToken);
           const pages = pageResult.results;
           if (!pageResult.exhausted) throw new Error("Notion source pagination did not exhaust");
-          const rows = pages.map((p) => mapPage(p, source.kind, source.key));
+          const rows: any[] = pages.map((p: any) => mapPage(p, source.kind, source.key));
           if (rows.length) {
             const table = source.kind === "work_items" ? "hso_work_items" : source.kind === "executions" ? "hso_executions" : "hso_evidence_records";
             const conflict = "source_key,external_id";
