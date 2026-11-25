@@ -267,7 +267,7 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(item["source_sync_status"], "GITHUB_SOURCE_NOT_IDENTIFIED")
         self.assertEqual(item["instruction_skill_count"], 10)
         self.assertIn("PRD", item["purpose"])
-        self.assertIn("prd-to-builder", " ".join(item["primary_triggers"]).lower())
+        self.assertIn("builder", " ".join(item["primary_triggers"]).lower())
         self.assertIn("prompt-generator", " ".join(
             s["skill_name"] for s in next(p for p in snapshots["plugins"] if p["plugin_key"] == "executive-workday-orchestrator")["skills"]
         ))
