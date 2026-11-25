@@ -46,8 +46,8 @@ def validate() -> None:
             raise ValueError(f"{key}: non-installable state must disclose blockers")
         if status == "legacy_redirect" and source_state != "canonical_redirect":
             raise ValueError(f"{key}: legacy_redirect conflicts with catalog source state")
-        if status == "snapshot_only" and source_state != "pending_repository":
-            raise ValueError(f"{key}: snapshot_only requires pending_repository")
+        if status == "snapshot_only" and source_state not in {"pending_repository", "private_canonical_repository"}:
+            raise ValueError(f"{key}: snapshot_only requires a pending or private canonical source state")
         if status == "candidate_incomplete" and source_state != "candidate_repository":
             raise ValueError(f"{key}: candidate_incomplete requires candidate_repository")
         if item.get("package_artifact") is not None and status not in ELIGIBLE:
