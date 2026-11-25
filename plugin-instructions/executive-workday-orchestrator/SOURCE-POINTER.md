@@ -11,7 +11,7 @@
 ## Canonical source authority
 
 - **Canonical private Git source:** [executive-workday-orchestrator](https://github.com/hsaidno-cpu/executive-workday-orchestrator)
-- **Pinned source commit:** `69166133cdc65d1f4f358daec005677db5cd0`
+- **Pinned source commit:** `388e59d58a96096effb4999c019e92b3c38539ed`
 - **Source version:** `0.1.0`
 - **Private Plugin Creator artifact:** `USER / PRIVATE`, package version `0.1.0`, release `pluginrel_6b073a6285d481918d11cdbf1bb7643f`
 
@@ -45,7 +45,7 @@ The package provides instruction-level planning, triage, prioritization, project
 ## Provenance and distribution gate
 
 - Plugin Creator release and 14-skill inventory observed on 2026-11-26.
-- Canonical Git source is pinned at `69166133cdc65d1f4f358daec005677db5cd0`.
+- Canonical Git source is pinned at `388e59d58a96096effb4999c019e92b3c38539ed`.
 - Source-to-package parity: `MATCH`, 17/17 exact blob SHA matches.
 - Source rights: `NOT_CLEARED`; supplied source URL, rightsholder identity, and written permission or applicable license have not been established.
 - Private repository license notice: interim `NO LICENSE GRANTED / ALL RIGHTS RESERVED`; this is not an open-source license.
