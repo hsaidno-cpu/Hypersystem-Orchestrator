@@ -240,6 +240,17 @@ async function getAllGitHubPages(url: string, headers: Record<string, string>, u
   }
   throw new Error(`GitHub pagination exceeded ${MAX_SOURCE_PAGES} pages; refusing partial source snapshot`);
 }
+function chunked<T>(items: T[], size = 500): T[][] {
+  const batches: T[][] = [];
+  for (let i = 0; i < items.length; i += size) batches.push(items.slice(i, i + size));
+  return batches;
+}
+async function upsertChunked(db: any, table: string, rows: any[], onConflict: string, ignoreDuplicates = false) {
+  for (const batch of chunked(rows, 500)) {
+    const { error } = await db.from(table).upsert(batch, { onConflict, ...(ignoreDuplicates ? { ignoreDuplicates: true } : {}) });
+    if (error) throw error;
+  }
+}
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") return jsonResponse({ error: "method_not_allowed" }, 405);
@@ -313,8 +324,7 @@ Deno.serve(async (req) => {
       ];
       seen += prs.length + (runs.workflow_runs ?? []).length + 1;
       if (evidence.length) {
-        const { error } = await db.from("hso_evidence_records").upsert(evidence, { onConflict: "source_key,external_id" });
-        if (error) throw error;
+        await upsertChunked(db, "hso_evidence_records", evidence, "source_key,external_id");
         upserted += evidence.length;
       }
       const ghScopeHash = await digest({
@@ -395,59 +405,44 @@ Deno.serve(async (req) => {
           if (rows.length) {
             const table = source.kind === "work_items" ? "hso_work_items" : source.kind === "executions" ? "hso_executions" : "hso_evidence_records";
             const conflict = "source_key,external_id";
-            if (source.kind === "work_items") {
-              const ids = rows.map((row: any) => row.external_id);
-              const { data: previous, error: previousError } = await db.from("hso_work_items")
-                .select("*").eq("source_key", source.key).in("external_id", ids);
-              if (previousError) throw previousError;
-              const previousById = new Map((previous ?? []).map((row: any) => [row.external_id, row]));
-              const history: any[] = [];
-              for (const row of rows) {
-                const prior: any = previousById.get(row.external_id);
-                if (!prior) continue;
-                const changedFields = Object.keys(row).filter((key) =>
-                  !["raw_properties", "observed_at"].includes(key) &&
-                  JSON.stringify(prior[key] ?? null) !== JSON.stringify(row[key] ?? null)
-                );
-                if (!changedFields.length) continue;
-                const transition = {
-                  source_key: source.key,
-                  external_id: row.external_id,
-                  from_execution_state: prior.execution_state,
-                  to_execution_state: row.execution_state,
-                  from_gate_state: prior.gate_state,
-                  to_gate_state: row.gate_state,
-                  from_verification_state: prior.verification_state,
-                  to_verification_state: row.verification_state,
-                  source_updated_at: row.source_updated_at,
-                  changed_fields: changedFields
-                };
-                history.push({
-                  work_item_id: prior.id,
-                  source_key: source.key,
-                  external_id: row.external_id,
-                  transition_key: await digest(transition),
-                  from_execution_state: prior.execution_state,
-                  to_execution_state: row.execution_state,
-                  from_gate_state: prior.gate_state,
-                  to_gate_state: row.gate_state,
-                  from_verification_state: prior.verification_state,
-                  to_verification_state: row.verification_state,
-                  changed_at: new Date().toISOString(),
-                  source_updated_at: row.source_updated_at,
-                  source_url: row.source_url,
-                  changed_fields: changedFields,
-                  observed_payload: Object.fromEntries(changedFields.map((key) => [key, row[key] ?? null]))
-                });
+            for (const batch of chunked(rows, 500)) {
+              if (source.kind === "work_items") {
+                const ids = batch.map((row: any) => row.external_id);
+                const { data: previous, error: previousError } = await db.from("hso_work_items")
+                  .select("*").eq("source_key", source.key).in("external_id", ids);
+                if (previousError) throw previousError;
+                const previousById = new Map((previous ?? []).map((row: any) => [row.external_id, row]));
+                const history: any[] = [];
+                for (const row of batch) {
+                  const prior: any = previousById.get(row.external_id);
+                  if (!prior) continue;
+                  const changedFields = Object.keys(row).filter((key) =>
+                    !["raw_properties", "observed_at"].includes(key) &&
+                    JSON.stringify(prior[key] ?? null) !== JSON.stringify(row[key] ?? null)
+                  );
+                  if (!changedFields.length) continue;
+                  const transition = {
+                    source_key: source.key, external_id: row.external_id,
+                    from_execution_state: prior.execution_state, to_execution_state: row.execution_state,
+                    from_gate_state: prior.gate_state, to_gate_state: row.gate_state,
+                    from_verification_state: prior.verification_state, to_verification_state: row.verification_state,
+                    source_updated_at: row.source_updated_at, changed_fields: changedFields
+                  };
+                  history.push({
+                    work_item_id: prior.id, source_key: source.key, external_id: row.external_id,
+                    transition_key: await digest(transition),
+                    from_execution_state: prior.execution_state, to_execution_state: row.execution_state,
+                    from_gate_state: prior.gate_state, to_gate_state: row.gate_state,
+                    from_verification_state: prior.verification_state, to_verification_state: row.verification_state,
+                    changed_at: new Date().toISOString(), source_updated_at: row.source_updated_at,
+                    source_url: row.source_url, changed_fields: changedFields,
+                    observed_payload: Object.fromEntries(changedFields.map((key) => [key, row[key] ?? null]))
+                  });
+                }
+                if (history.length) await upsertChunked(db, "hso_work_item_history", history, "transition_key", true);
               }
-              if (history.length) {
-                const { error: historyError } = await db.from("hso_work_item_history")
-                  .upsert(history, { onConflict: "transition_key", ignoreDuplicates: true });
-                if (historyError) throw historyError;
-              }
+              await upsertChunked(db, table, batch, conflict);
             }
-            const { error } = await db.from(table).upsert(rows, { onConflict: conflict });
-            if (error) throw error;
           }
           const pageIds = pages.map((p: any) => String(p.id)).sort();
           const scopeHash = await digest(pageIds);
