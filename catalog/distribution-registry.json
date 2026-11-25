@@ -467,27 +467,26 @@
     {
       "plugin_key": "executive-workday-orchestrator",
       "display_name": "Executive Workday Orchestrator",
-      "source_state": "pending_repository",
-      "source_repository_id": null,
-      "source_commit": null,
-      "source_version": null,
+      "source_state": "private_canonical_repository",
+      "source_repository_id": "executive-workday-orchestrator",
+      "source_commit": "69166133cdc65d1f4f358daec005677db5cd0",
+      "source_version": "0.1.0",
       "platform_package_version": "0.1.0",
       "distribution_status": "snapshot_only",
-      "license_status": "not_assessed",
+      "license_status": "not_cleared",
       "package_artifact": null,
       "hard_dependencies": [],
       "dependency_metadata_status": "not_assessed",
       "blockers": [
-        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
         "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE",
-        "PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED",
+        "INTERIM_NO_LICENSE_GRANT",
+        "ORIGINAL_SOURCE_RIGHTS_NOT_CLEARED",
         "PACKAGE_ARTIFACT_NOT_PUBLISHED",
         "PLATFORM_ADAPTER_NOT_HOST_TESTED",
-        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
-        "LICENSE_FILE_NOT_PRESENT_IN_PLUGIN_SOURCE",
-        "ORIGINAL_SOURCE_LICENSE_AND_ATTRIBUTION_NOT_ASSESSED"
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
       ],
-      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.0 is verified, but its current file inventory has no LICENSE file and neither manifest declares a license. The README identifies a supplied workday prompt as derivation input without recording a canonical source URL or redistribution permission. No canonical child Git source, independent license clearance, public package artifact or host-tested platform adapter is registered. The public HSO parent stores metadata and a private package pointer only; this record is snapshot_only and is not installable."
+      "eligibility_note": "A private canonical Git source exists and is pinned at commit 69166133cdc65d1f4f358daec005677db5cd0; all 17 source files match Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f exactly by Git blob SHA. The repository carries only an interim no-grant notice, not an open-source license. Rights to the supplied Alexaiupdates/Alex AI Updates source work remain unverified. EWO remains snapshot_only, is not publicly installable, and its private instruction bodies are not mirrored into public HSO.",
+      "repository_license_notice": "INTERIM_NO_GRANT_ALL_RIGHTS_RESERVED"
     }
   ]
 }
