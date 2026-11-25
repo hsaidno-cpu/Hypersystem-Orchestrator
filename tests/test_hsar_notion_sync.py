@@ -3,15 +3,19 @@ from unittest.mock import patch
 import urllib.error
 
 from scripts.hsar_notion_sync import (
-    JsonHttpClient, HsarSyncService, SyncError, redact,
+    JsonHttpClient, GitHubClient, HsarSyncService, SyncError, redact,
     read_rich_text, read_select, stable_json_hash, event_pr_numbers,
     is_same_repository_pull_request, assert_write_enabled,
+    event_commit_shas, push_pr_numbers,
 )
 
 
 class FakeGitHub:
     def list_pr_files(self, repo, number):
         return ([{"filename": "docs/hsar/example.md", "sha": "b" * 40, "status": "modified", "changes": 4}], False)
+
+    def list_pulls_for_commit(self, repo, commit_sha):
+        return {"a" * 40: [4], "b" * 40: [7, 4]}.get(commit_sha, [])
 
     def list_workflow_runs(self, repo, head_sha):
         return [{"name": "Docs validation", "run_number": 12, "status": "completed", "conclusion": "success", "url": "https://github.com/example/run/12", "head_sha": head_sha, "created_at": "2026-11-26T00:00:00Z", "updated_at": "2026-11-26T00:10:00Z"}]
@@ -60,6 +64,24 @@ class SyncContractTests(unittest.TestCase):
         self.github = FakeGitHub()
         self.notion = FakeNotion()
         self.service = HsarSyncService(self.github, self.notion, "hsaidno-cpu/Hypersystem-Orchestrator")
+
+    def test_github_commit_to_pr_endpoint_is_scoped_to_one_exact_sha(self):
+        client = GitHubClient("test-token")
+        with patch.object(client, "request", return_value=[{"number": 31}, {"number": 31}]) as mocked:
+            self.assertEqual(client.list_pulls_for_commit("hsaidno-cpu/Hypersystem-Orchestrator", "a" * 40), [31])
+        mocked.assert_called_once_with("GET", f"/repos/hsaidno-cpu/Hypersystem-Orchestrator/commits/{'a' * 40}/pulls?per_page=100")
+
+    def test_push_event_commit_shas_are_validated_and_deduplicated(self):
+        event = {
+            "after": "b" * 40,
+            "head_commit": {"id": "b" * 40},
+            "commits": [{"id": "a" * 40}, {"id": "b" * 40}, {"id": "invalid"}],
+        }
+        self.assertEqual(event_commit_shas(event), ["b" * 40, "a" * 40])
+
+    def test_push_processes_only_prs_linked_to_pushed_commits(self):
+        event = {"after": "a" * 40, "commits": [{"id": "b" * 40}]}
+        self.assertEqual(push_pr_numbers(self.github, "hsaidno-cpu/Hypersystem-Orchestrator", event), [4, 7])
 
     def test_write_gate_defaults_closed(self):
         with patch.dict("os.environ", {}, clear=True):

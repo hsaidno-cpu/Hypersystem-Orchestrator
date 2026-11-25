@@ -183,6 +183,14 @@ class GitHubClient(JsonHttpClient):
                 return rows, False
         return rows[:MAX_FILES], True
 
+    def list_pulls_for_commit(self, repo: str, commit_sha: str) -> list[int]:
+        if not re.fullmatch(r"[0-9a-fA-F]{40}", commit_sha):
+            raise SyncError("Push event contains an invalid commit SHA")
+        payload = self.request("GET", f"/repos/{repo}/commits/{commit_sha}/pulls?per_page=100")
+        if not isinstance(payload, list):
+            raise SyncError("GitHub returned an invalid commit-to-pull-request mapping")
+        return sorted({int(item["number"]) for item in payload if item.get("number")})
+
     def list_workflow_runs(self, repo: str, head_sha: str) -> list[dict[str, Any]]:
         if head_sha == "UNKNOWN":
             return []
@@ -337,6 +345,36 @@ def event_pr_numbers(name: str, event: dict[str, Any]) -> list[int]:
     return []
 
 
+def event_commit_shas(event: dict[str, Any]) -> list[str]:
+    """Return unique commit SHAs from a GitHub push payload, newest first."""
+    candidates: list[str] = []
+    after = event.get("after")
+    if after:
+        candidates.append(str(after))
+    head_commit = event.get("head_commit") or {}
+    if head_commit.get("id"):
+        candidates.append(str(head_commit["id"]))
+    for item in event.get("commits") or []:
+        sha = item.get("id") or item.get("sha")
+        if sha:
+            candidates.append(str(sha))
+    unique: list[str] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        if re.fullmatch(r"[0-9a-fA-F]{40}", candidate) and candidate not in seen:
+            unique.append(candidate)
+            seen.add(candidate)
+    return unique
+
+
+def push_pr_numbers(github: GitHubClient, repo: str, event: dict[str, Any]) -> list[int]:
+    """Map only commits in this push to their associated pull requests."""
+    numbers: set[int] = set()
+    for sha in event_commit_shas(event):
+        numbers.update(github.list_pulls_for_commit(repo, sha))
+    return sorted(numbers)
+
+
 def is_same_repository_pull_request(pr: dict[str, Any], repo: str) -> bool:
     return (pr.get("base", {}).get("repo", {}) or {}).get("full_name") == repo and (pr.get("head", {}).get("repo", {}) or {}).get("full_name") == repo
 
@@ -386,10 +424,14 @@ def main() -> int:
                 raise SyncError("Notion secret or Change & Evidence Ledger data-source variable is not configured")
             notion = NotionClient(notion_token, data_source)
         service = HsarSyncService(github, notion, repo) if notion else None
-        numbers = event_pr_numbers(event_name, event)
-        if event_name in ("schedule", "workflow_dispatch", "push") or (not numbers and event_name != "workflow_run"):
+        if event_name == "push":
+            numbers = push_pr_numbers(github, repo, event)
+        elif event_name in ("schedule", "workflow_dispatch"):
+            # Full reconciliation is deliberately reserved for scheduled/manual runs.
             numbers = [int(p["number"]) for p in github.list_prs(repo)]
-        if event_name == "workflow_run" and not numbers:
+        else:
+            numbers = event_pr_numbers(event_name, event)
+        if event_name in ("push", "workflow_run") and not numbers:
             emit("HSAR sync: workflow run is not linked to a PR; no row written.")
             return 0
         results = []
