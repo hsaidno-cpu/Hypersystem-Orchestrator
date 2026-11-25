@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_inventory_date": "2026-11-22",
+  "last_inventory_date": "2026-11-26",
   "repositories": [
     {
       "repository_id": "hypersystem-orchestrator",
@@ -157,21 +157,44 @@
       "source_classification": "CANDIDATE_INCOMPLETE",
       "license_status": "APACHE-2.0",
       "candidate_reason": "Source provenance pointer exists, but repository content is incomplete and does not contain the current PVEE 2.0.2 package. No Git source version can be asserted and no submodule is created."
+    },
+    {
+      "repository_id": "executive-workday-orchestrator",
+      "full_name": "hsaidno-cpu/executive-workday-orchestrator",
+      "url": "https://github.com/hsaidno-cpu/executive-workday-orchestrator",
+      "visibility": "private",
+      "default_branch": "main",
+      "role": "plugin_source",
+      "status": "private_canonical_source",
+      "pinned_commit": "69166133cdc65d1f4f358daec005677db5cd0",
+      "package_version": "0.1.0",
+      "plugin_creator_id": "plugins_6b073a60088081918a8958ab761cb505",
+      "plugin_creator_current_release_id": "pluginrel_6b073a6285d481918d11cdbf1bb7643f",
+      "verified_artifact": "Private canonical Git source created 2026-11-26. Contains 17 files copied from Plugin Creator release 0.1.0; Git tree at pinned commit verified 17/17 exact Git blob SHA matches against blobs created from the exact Plugin Creator source content.",
+      "source_classification": "PRIVATE_CANONICAL_SOURCE",
+      "license_status": "INTERIM_NO_GRANT_NOT_CLEARED",
+      "license_note": "Root LICENSE is an interim no-grant/all-rights-reserved notice, not an open-source license. Rights to the supplied Alexaiupdates/Alex AI Updates source work remain unverified. Public redistribution is held.",
+      "mirrored_file_count": 17,
+      "instruction_skill_count": 14,
+      "source_parity_status": "MATCH_17_OF_17",
+      "public_snapshot_allowed": false,
+      "notes": "Canonical authority for future EWO source edits. Plugin Creator USER/PRIVATE release is a platform artifact. No private skill body is mirrored into public HSO. The EWO distribution record remains snapshot_only until source-work rights clearance, license grant, distributable artifact and host adapter gates pass."
     }
   ],
   "search_scope": {
-    "inventory_date": "2026-11-22",
+    "inventory_date": "2026-11-26",
     "owner": "hsaidno-cpu",
-    "visible_owned_repositories": 6,
+    "visible_owned_repositories": 7,
     "visible_repository_names": [
       "Hypersystem-Orchestrator",
       "HSMART",
       "skill-analyzer",
       "A.S.F.R.E.E",
       "Photo-Fixer",
-      "anatomi-prompt-strategis"
+      "anatomi-prompt-strategis",
+      "executive-workday-orchestrator"
     ],
-    "result": "Five official plugin source repositories are now verified and pinned. Twelve plugin identities remain NOT_IDENTIFIED at GitHub-source level. Two explicitly referenced repositories remain CANDIDATE_INCOMPLETE: Photo-Fixer (minimal README/LICENSE only) and PVEE's CL-VAEPPC pointer (legacy README/LICENSE/empty marker only). A.S.F.R.E.E Legacy is redirect-only. Similar-name repositories and upstream datasets are not promoted to canonical source without matching provenance and a complete source tree.",
+    "result": "Five previously verified source submodules remain pinned. EWO now has a separate verified private canonical Git source repository with 17/17 Plugin Creator snapshot file matches; it is not a submodule and is not publicly mirrored. Eleven other plugin identities remain NOT_IDENTIFIED at GitHub-source level. Two explicitly referenced repositories remain CANDIDATE_INCOMPLETE: Photo-Fixer and PVEE CL-VAEPPC. A.S.F.R.E.E Legacy remains redirect-only. Similar-name repositories and upstream datasets are not promoted to canonical source without identity and provenance evidence.",
     "classification_rule": "A name-similar repository, search result owned by another account, prototype or mirror is not accepted as canonical without identity, provenance, manifest, license and source-history evidence.",
     "external_official_source_repositories": [
       {
@@ -194,7 +217,7 @@
       }
     ],
     "verified_plugin_source_repositories": 5,
-    "not_identified_plugin_sources": 12,
+    "not_identified_plugin_sources": 11,
     "candidate_incomplete_plugin_sources": 2,
     "external_source_candidates": [
       {
@@ -226,6 +249,7 @@
         "classification": "UNVERIFIED_PLACEHOLDER",
         "evidence": "Repository tree contains only README.md with title CL2-VAEPPC and LICENSE; no plugin identity, manifest, skill source or explicit current-package provenance. Not accepted as canonical or prototype."
       }
-    ]
+    ],
+    "private_canonical_plugin_source_repositories": 1
   }
 }
