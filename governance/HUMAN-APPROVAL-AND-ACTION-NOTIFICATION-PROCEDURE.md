@@ -1,7 +1,7 @@
 # Human Approval, Manual Action & Notification Procedure (HAP-01)
 
 **Document ID:** HSO-GOV-HAP-01  
-**Version:** 1.0.0-draft  
+**Version:** 1.0.1-draft  
 **Date:** 2026-11-25  
 **Canonical owner:** HSO Governance / UEDE Governance Guard  
 **Human decision authority:** GOV-01 (the project owner only)  
@@ -260,3 +260,138 @@ HAP-01 is not considered operationally implemented until all of the following ar
 - [ ] Every ecosystem response includes next-work advice and a ready-to-copy next prompt.
 
 **Core rule:** AI performs bounded engineering work. GitHub records and validates repository changes. Notion preserves the owner-action ledger. UEDE coordinates and verifies. GOV-01 alone makes owner-level decisions.
+
+
+## 17. GOV-01 Authorization Protocol
+
+This section clarifies the existing governance decision: **GOV-01 is the sole human approval authority** for HSMART, HSO, UEDE, and governed cross-ecosystem actions. It does not create a second approver or replace PRE's roadmap authority or HSMART/HSO source ownership.
+
+### 17.1 Identity and authority
+
+- GOV-01 is one explicitly designated human authority. For HSO GitHub approval verification, the currently mapped login is `hsaidno-cpu`; every automated consumer must verify the actual GitHub actor identity and must not trust a username copied into a payload or comment body.
+- No second human engineering reviewer, CODEOWNER approver, or human security approver is required. CI, tests, security scans, AI review, GitHub Apps, bots, and service accounts provide technical evidence or execute separately authorized operations; they are not approvers.
+- GOV-01 cannot turn missing or failed technical evidence into PASS, override platform/legal limits, or change domain facts.
+- PRE retains authority for roadmap baseline, milestone and acceptance semantics. GOV-01 is the human approval authority, not a license for UEDE to rewrite PRE or another system's source of truth.
+- No delegation, impersonation, self-approval, or agent-generated approval is permitted.
+
+### 17.2 Default authorization by autonomy tier
+
+| Tier | Permitted without a new critical approval | Not permitted without an exact GOV-01 decision |
+| --- | --- | --- |
+| A0 Observe | Read-only inspection | Writes, execution, state mutation |
+| A1 Prepare | Analysis, plans, test plans, proposals | Dispatch, protected writes, merge, deployment |
+| A2 Execute | Scoped isolated branch/worktree edits, tests, sandbox, commits, draft PR | Merge, ruleset/bypass, production credentials, deployment, destructive migration, PRE acceptance, autonomy upgrade |
+| A3 Controlled delivery | Only low-risk actions explicitly pre-delegated by a bounded policy with scope, expiry and rollback | Critical release, production, identity/access, secrets, protected branch, governance changes |
+| A4 Critical governance | No automatic authority | All actions require explicit GOV-01 authorization |
+
+An instruction to create a PR is not permission to merge it. Merge is not permission to deploy. Permission to use a secret is not permission to reveal or export its value.
+
+### 17.3 One decision, one operation, one target
+
+Every critical approval must bind:
+- Action ID;
+- operation (for example `APPROVE_MERGE`, `APPROVE_BYPASS`, `APPROVE_DEPLOYMENT`, `APPROVE_CREDENTIAL_CHANGE`, `APPROVE_RULESET_CHANGE`, `APPROVE_DESTRUCTIVE_ACTION`, or `APPROVE_AUTONOMY_CHANGE`);
+- repository/project and exact resource;
+- exact head/base SHA for PRs, artifact digest for deployments, ruleset ID plus before/after diff for ruleset changes, or exact resource/config revision for other actions;
+- permitted scope, method/parameters and preconditions;
+- evidence URLs;
+- issued_at, mandatory expires_at, max_uses, and source provenance.
+
+Approvals do not inherit scope. `APPROVE_MERGE` does not authorize bypass; `APPROVE_BYPASS` does not authorize changing the ruleset; merge does not authorize deployment. If a workflow needs multiple critical actions, create separate Action IDs/receipts.
+
+### 17.4 Valid decision commands
+
+For a critical action, use an explicit structured decision:
+
+```text
+GOV-01 APPROVE
+action_id: HAC-<id>
+operation: <APPROVE_MERGE | APPROVE_BYPASS | APPROVE_DEPLOYMENT | ...>
+repository_or_project: <exact target>
+resource: <PR / service / ruleset / environment / object>
+head_sha: <exact SHA, when applicable>
+base_sha: <exact SHA, when applicable>
+scope: <exact permitted operation>
+method_or_parameters: <merge method / deployment target / rule / ...>
+bypass: <NONE | ONE_TIME with exact ruleset and rule scope>
+conditions: <required preconditions>
+expires_at: <ISO-8601 timestamp with timezone>
+max_uses: 1
+evidence: <PR, diff, CI, security and rollback URLs>
+```
+
+Other decisions:
+
+```text
+GOV-01 REJECT
+action_id: HAC-<id>
+reason: <reason>
+```
+
+```text
+GOV-01 CHANGE
+action_id: HAC-<id>
+requested_changes: <changes>
+```
+
+```text
+GOV-01 HOLD
+action_id: HAC-<id>
+missing_evidence: <evidence or condition>
+```
+
+```text
+GOV-01 REVOKE
+receipt_id: <receipt>
+reason: <reason>
+```
+
+`CHANGE` invalidates the prior decision and returns the action to revision/evidence; it is not partial approval. `HOLD` blocks execution. `REVOKE` applies to an unconsumed receipt. Once an irreversible action is executed, revocation cannot undo it; use a separately authorized stop/rollback procedure.
+
+“OK”, “continue”, “go ahead”, emoji, reactions, silence, green CI, or AI-generated text are not sufficient approval for critical operations. If more than one interpretation is possible, the status remains PENDING.
+
+### 17.5 Decision source and provenance
+
+- Human Action Inbox is the canonical action/status register. Every decision is attached to an Action ID and a Decision Receipt.
+- For machine-verifiable GitHub PR decisions, use an exact-scope/exact-head comment authored directly by the verified GOV-01 GitHub account on the target PR. Verify actor identity, PR number, head/base SHA, comment ID/URL and timestamp through the GitHub API.
+- An explicit GOV-01 instruction in the active ChatGPT session may authorize one interactive operation when its scope and target are complete and unambiguous. Record provenance as an instruction from that session; do not claim GitHub or Notion authenticated an external actor.
+- Automated workers must not trust Decision Receipt text created or copied by an agent alone. They must validate the authenticated source event and match all target/scope fields.
+- A Notion text property is not a cryptographic signature. A cryptographically verifiable receipt requires a separately designed, approved and tested identity/signature mechanism.
+- An agent may transcribe an explicit owner decision for audit, preserving the actual source and timestamp. It may not infer, fabricate, backdate or upgrade a decision.
+
+### 17.6 Fail-closed pre-execution validation
+
+Immediately before a critical action, the executor must re-read current state and verify: GOV-01 actor; active/unexpired/unrevoked/unconsumed receipt; exact operation/target/scope/SHA/base/version/method; required CI/checks; dependency and review state; ruleset/permissions/policy/environment; and that the action has not already been executed.
+
+Any material head/base/version, PR state, dependency, CI, review thread, ruleset, permission, policy, environment, expiry or target change makes the receipt STALE. If any field cannot be verified, do not execute; record HOLD or BLOCKED.
+
+### 17.7 Bypass and GitHub rules
+
+- GOV-01 remains the only human approver. Do not add a second human approver to work around a ruleset.
+- Do not fabricate a native GitHub APPROVED review when GOV-01 is the PR author/pusher. Record GOV-01's decision separately from GitHub's native review state.
+- A bypass is a distinct permission. When approved, it must be one-time, one PR, one repository, one exact head/base and one ruleset ID, naming the exact rule(s) bypassed and the reason.
+- Bypass does not modify the ruleset. A ruleset change requires a separate `APPROVE_RULESET_CHANGE`.
+- If GitHub does not expose the authorized bypass path or the executor cannot prove the exact target, stop and report the blocker. Do not edit rulesets, silently change merge method, or try another API to evade the restriction.
+- A GitHub App may be a technical PR author/pusher only if separately authorized and least-privileged; it is never GOV-01 and must not hold bypass authority.
+
+### 17.8 Receipt lifecycle and audit
+
+`DRAFT → PENDING → APPROVED → CONSUMED → EXECUTED → VERIFIED`
+
+Terminal/holding states: `REJECTED`, `CHANGED`, `HOLD`, `REVOKED`, `EXPIRED`, `STALE`, `BLOCKED`, and `FAILED`.
+
+Critical receipts are single-use and consumed atomically/idempotently. If execution fails with ambiguous or partial side effects, reconcile external state before retrying. Record decision source, actor, action, target, exact SHA/version, receipt consumption, execution outcome, retry and rollback in append-only audit.
+
+### 17.9 Enforcement acceptance criteria
+
+Do not claim authorization enforcement is implemented until tests prove:
+- valid and invalid GOV-01 provenance;
+- exact action/head/base/scope mismatch rejection;
+- expiry, revoke, replay, receipt reuse and concurrent-consumption rejection;
+- merge approval does not implicitly authorize bypass;
+- bypass cannot escape its PR/ruleset/SHA scope;
+- CI/dependency/ruleset drift invalidates the receipt;
+- bots, services and AI cannot write approvals as GOV-01;
+- auditable decision, consumption and post-action verification.
+
+**Implementation boundary:** this document defines the operating contract. Automated authorization enforcement, cryptographic receipts, atomic receipt consumption, webhook verification and append-only audit remain NOT_IMPLEMENTED until code, tests, authorized deployment and live evidence establish them.
