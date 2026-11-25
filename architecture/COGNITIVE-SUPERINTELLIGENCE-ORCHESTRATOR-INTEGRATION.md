@@ -1,171 +1,180 @@
 # Cognitive Superintelligence Orchestrator — HSO Integration Contract
 
 **Document status:** Architecture proposal / draft integration contract  
-**Revision:** 0.1.0  
+**Revision:** 0.2.0  
 **Date:** 2026-11-25  
 **Parent ecosystem:** Hypersystem-Orchestrator (HSO)  
 **Plugin identity:** `plugins_6b06658b887c8191901493ecd184ab9a`  
-**Plugin release:** `pluginrel_6b06658f0acc81918106d8df18a9971c`  
+**Plugin package version:** `0.2.0`  
+**Plugin release:** `pluginrel_6b0674a582e881918729571e5f28cbc2`  
 **Plugin Creator URL:** https://chatgpt.com/plugins/plugins_6b06658b887c8191901493ecd184ab9a
 
-## 1. Purpose
+## 1. Purpose and current package identity
 
-Cognitive Superintelligence Orchestrator (CSO) is a specialist cognitive-intelligence plugin for structured thinking, learning design, communication-pattern reflection, adversarial reasoning, behavioral experiments, knowledge synthesis, competitive strategy and multi-perspective review.
+Cognitive Superintelligence Orchestrator (CSO) is a **cognitive-domain specialist** for observable cognitive reflection, adversarial reasoning, knowledge synthesis, strategic reframing, macro-systemic analysis and bounded execution planning. It is not the ecosystem-wide dispatcher and does not replace HSO.
 
-CSO is a **domain specialist inside the HSO portfolio**, not a replacement for HSO, SKILL ANALYZER, A.S.F.R.E.E, Evaluator Team, Skill Developer Orchestrator (SDO), AI Workflow Systems Orchestrator or Progressive Roadmap Evaluator (PRE).
+The Plugin Creator package was updated from 0.1.0 to 0.2.0 while preserving the same plugin identity, USER scope and PRIVATE discoverability. Its current read-back inventory contains one master orchestrator, ten specialist skills, two reference documents and 21 acceptance cases. The package update and file read-back do not prove HSO activation, target-host invocation or outcome quality.
 
-The package is currently stored in Plugin Creator as USER / PRIVATE, version 0.1.0. Its file inventory was read back and contains one master orchestrator, eight specialist skills, two reference documents and ten acceptance cases. Package creation and file read-back do not prove host activation, tool invocation or runtime behavior.
+The package remains USER / PRIVATE. No canonical Git source repository, package-wide license grant, public redistribution right or generic HSO runtime adapter is asserted.
 
-## 2. Capability decomposition
+## 2. Capability decomposition — six modules, ten specialists
 
-The ten source protocols are retained as eight specialist skills. Overlapping responsibilities are combined without deleting the original user-facing intent.
+The comparison prompt contains six modules and 16 protocols. CSO maps those protocols into six modules and ten specialist skills by grouping tightly related protocols under bounded owners rather than creating one file per phrase.
 
-| Source protocol | CSO specialist | Responsibility |
-|---|---|---|
-| Mind Reader Protocol | `cognitive-pattern-profiler` | Analyze observable communication patterns, decision language and recurring reasoning tendencies. |
-| 80/20 Hack | `accelerated-learning-architect` | Design a focused learning path using Pareto analysis as a testable heuristic, deliberate practice, feedback and retention. |
-| Extreme Devil's Advocate | `adversarial-thinking-engine` | Attack assumptions, test evidence and construct the strongest fair counterargument. |
-| Contrarian Position Builder | `adversarial-thinking-engine` | Build an evidence-aware opposing position; distinguish disagreement from contrarian performance. |
-| Deep Psychology Decoder | `behavioral-mechanism-explorer` | Map observable behavior loops and propose explicitly tentative mechanisms. |
-| Pattern Interruption | `behavioral-mechanism-explorer` | Design safe, reversible behavior experiments with observable outcomes. |
-| Wisdom Extraction Tool | `wisdom-extraction-engine` | Extract high-value principles while separating source-supported claims from interpretation. |
-| Competitive Framework | `competitive-strategy-intelligence` | Map the competitive arena, alternatives, constraints and strategic options. |
-| Reality Distortion Generator | `perspective-reframing-lab` | Reframe a situation through declared strategic archetypes and alternative assumptions. |
-| Expert Panel Simulator | `multidisciplinary-expert-panel` | Simulate distinct disciplinary lenses, disagreements and evidence requests without claiming real expert participation. |
+| Module | Source protocol(s) / capability | CSO specialist | Responsibility |
+|---|---|---|---|
+| M1 Cognitive & Behavioral Diagnostics | Mind Reader Protocol | `cognitive-pattern-profiler` | Analyze only observable communication and reasoning signals; no private-mind or hidden-trait claims. |
+| M1 Cognitive & Behavioral Diagnostics | Deep Psychology Decoder + Pattern Interruption | `behavioral-mechanism-explorer` | Map behavior loops as hypotheses and design safe, reversible experiments; no diagnosis. |
+| M2 Adversarial & Critical Thinking | Extreme Devil's Advocate + Contrarian Position Builder | `adversarial-thinking-engine` | Steelman the original position, construct the strongest fair counterposition and identify discriminating evidence. |
+| M3 Knowledge Synthesis & Strategy | 80/20 Hack | `accelerated-learning-architect` | Design cognitive/metacognitive learning and reasoning practice; the Pareto principle remains a heuristic. |
+| M3 Knowledge Synthesis & Strategy | Wisdom Extraction Tool | `wisdom-extraction-engine` | Distill source material while separating source claims, interpretation and unknowns. |
+| M3 Knowledge Synthesis & Strategy | Competitive Framework | `competitive-strategy-intelligence` | Map the competitive arena, alternatives, constraints and strategic options. |
+| M3 Knowledge Synthesis & Strategy | Reality Distortion Generator | `perspective-reframing-lab` | Reframe through declared principles/archetypes and expose the new blind spot as well as the opportunity. |
+| M4 Multidisciplinary Simulation | Expert Panel Simulator | `multidisciplinary-expert-panel` | Simulate distinct disciplinary lenses and disagreement without claiming real expert participation. |
+| M5 Macro-Systemic Thinking | Second-Order Effect Predictor; Global Trend & Economic Aligner; Societal Paradigm Analyzer | `macro-systemic-intelligence` | Analyze sourced macro drivers, second-order pathways, distributional effects, conditional scenarios and early-warning signposts. |
+| M6 Execution & Metrics | KPI Architect; Timeline & Milestone Generator; Resource & Constraint Optimizer | `execution-metrics-architect` | Design measurable indicators, bounded milestones, dependency logic and resource/constraint choices without inventing baselines, dates or capacity. |
 
-The package contains these nine skills:
-
-1. `cso-master-orchestrator`
-2. `cognitive-pattern-profiler`
-3. `accelerated-learning-architect`
-4. `adversarial-thinking-engine`
-5. `behavioral-mechanism-explorer`
-6. `wisdom-extraction-engine`
-7. `competitive-strategy-intelligence`
-8. `perspective-reframing-lab`
-9. `multidisciplinary-expert-panel`
+The original ten source protocols mapped to the eight v0.1.0 specialists. Version 0.2.0 adds M5 and M6 as two dedicated specialists, giving the current package ten specialist skills plus one master orchestrator.
 
 ## 3. HSO responsibility boundaries
 
 ### 3.1 CSO owns
 
-- Structured cognitive reflection when the user explicitly wants to understand observable communication or reasoning patterns.
-- Learning-path design, practice sequencing and progress measures for a named skill.
+- Structured reflection on observable communication and reasoning patterns.
+- Non-clinical behavior-loop hypotheses and safe, reversible pattern-interruption experiments.
 - Adversarial examination of beliefs, arguments and decisions.
-- Non-clinical exploration of behavior loops and safe behavioral experiments.
-- Evidence-aware knowledge synthesis and strategic perspective reframing.
-- Simulated multi-disciplinary review with named lenses, dissent and unresolved questions.
+- Cognitive/metacognitive learning design and reasoning-practice plans.
+- Evidence-aware knowledge extraction and perspective reframing.
+- Competitive/strategic analysis when cognitive strategy is the primary requested artifact.
+- Macro-systemic synthesis: second-order effects, sourced drivers, societal context, scenarios and signposts.
+- Bounded execution blueprints: KPI definitions, milestone logic, dependency and resource/constraint analysis.
 
 ### 3.2 CSO does not own
 
-- General analytical methodology selection across arbitrary domains. **SKILL ANALYZER** owns that responsibility.
-- Technical anatomy, reverse engineering or reconstruction of AI plugins and software systems. **A.S.F.R.E.E Canonical** owns that technical case.
-- Independent quality scoring or acceptance judgement of CSO or another plugin. **Evaluator Team** owns independent evaluation.
-- Prompt engineering under the complete eight-pillar Octa-Prompt structure. **Anatomi Prompt** owns prompt architecture.
-- Reusable workflow/SOP/system architecture. **AI Workflow Systems Orchestrator** owns reusable workflow architecture.
-- Project-roadmap governance, milestone acceptance and adaptive roadmap evaluation. **PRE** owns those lifecycle decisions.
-- Source repository writes, release preparation or implementation of an accepted plugin change. **SDO** owns that engineering lifecycle.
-- Business-domain operating decisions or authoritative market facts. **GrowthForge** remains the business-domain owner when business execution is the dominant objective.
+- General analytical-method selection across arbitrary domains. **SKILL ANALYZER** owns that responsibility.
+- Technical anatomy, reverse engineering, security diagnosis or reconstruction of AI plugins/software. **A.S.F.R.E.E Canonical** owns that technical case.
+- Independent quality scoring or acceptance judgment of CSO or another plugin. **Evaluator Team** owns independent evaluation.
+- Eight-pillar prompt architecture. **Anatomi Prompt** owns prompt architecture.
+- Reusable workflow, SOP, automation and system architecture. **AI Workflow Systems Orchestrator** owns those artifacts.
+- Project-roadmap lifecycle, cross-iteration progress governance and milestone acceptance. **PRE** owns those lifecycle decisions.
+- General human competency development, professional skill training and workplace transfer. **People & Business Competency Academy** owns that responsibility under the HSO responsibility matrix; CSO may support only the cognitive/metacognitive component.
+- Broad knowledge-work learning, writing, productivity or coding where **Cortex Workbench** is the primary HSO owner.
+- Business-domain operating decisions and business execution. **GrowthForge Business OS** remains primary when business is the dominant intent; CSO may provide a bounded cognitive or systemic support artifact.
+- Source repository changes, accepted skill implementation, package engineering and release preparation. **SDO** owns that engineering lifecycle.
+- Ecosystem-wide plugin dispatch, access policy, shared contracts, catalog/source authority or runtime activation. **HSO** owns those control-plane responsibilities.
+- Actual task scheduling, calendar creation, task database writes, external actions or autonomous execution merely because M6 produced a plan.
 
-### 3.3 Routing precedence
+### 3.3 Routing precedence and handoff
 
-Select one primary owner based on the requested final artifact or decision, not merely on keywords.
+Route by the primary deliverable and final decision owner, not by the appearance of words such as “learn”, “strategy”, “economy” or “execution”.
 
-| Dominant intent | Primary owner | Optional handoff |
+| Dominant intent | Primary owner | Optional CSO handoff |
 |---|---|---|
-| Improve thinking habits, learn a skill, inspect communication patterns, challenge a belief or design a behavior experiment | CSO | SKILL ANALYZER for a general method blueprint; Evaluator Team for independent quality evaluation |
-| Analyze an external problem using the best analytical methodology | SKILL ANALYZER | CSO only for a separate cognitive/learning deliverable |
-| Inspect a plugin's manifest, skill tree, tools, permissions, dependencies or failure paths | A.S.F.R.E.E | SDO for accepted implementation |
-| Engineer or audit a prompt against eight Octa-Prompt pillars | Anatomi Prompt | CSO only if the prompt is itself a cognitive-learning artifact |
-| Design reusable workflows, SOPs or modular work systems | AI Workflow Systems Orchestrator | CSO may supply a bounded cognitive practice module |
-| Build/evaluate a project roadmap or accept milestones | PRE | CSO may supply learning or behavior-change work packages |
-| Independently score a skill/plugin or verify redesign quality | Evaluator Team | SDO implements only accepted findings |
-| Modify the CSO package or source repository | SDO | A.S.F.R.E.E, Octa-Prompt and Evaluator Team contribute bounded findings |
+| Improve cognitive reasoning, inspect communication patterns, challenge an argument or test a behavior loop | CSO | SKILL ANALYZER for general method selection; Evaluator Team for independent skill evaluation |
+| Develop a general human/professional competency or workplace transfer | People & Business Competency Academy | CSO for a bounded cognitive/metacognitive practice component only |
+| Broad research, learning, writing, productivity or coding | Cortex Workbench | CSO only for a distinct reasoning/strategy artifact |
+| Business model, market/customer, product, brand, finance, sales or operations | GrowthForge Business OS | CSO M5/M2 when systemic or adversarial analysis adds a separate decision artifact |
+| Macro-systemic analysis where no more specific HSO domain owner applies | CSO M5 | SKILL ANALYZER for general method blueprint; domain owner for authoritative domain decisions |
+| Define KPIs and milestones for a project/program over multiple iterations | PRE / host project owner | CSO M6 may propose bounded indicators; PRE retains roadmap and milestone authority |
+| Design a reusable workflow/SOP or automate a repeatable process | AI Workflow Systems Orchestrator | CSO may contribute a bounded cognitive step |
+| Inspect or reconstruct a plugin/skill/agent/source repository | A.S.F.R.E.E | CSO only when a separate cognitive/decision-support question exists; SDO implements accepted change |
+| Implement a plugin/skill change or release | SDO | CSO can be the edited artifact, not the engineering authority |
+| Route an ecosystem-level request to tools/plugins | HSO | CSO only after HSO assigns it as the domain specialist |
 
-Do not activate all adjacent specialists as a default panel. Add a supporting system only when it has a separate required artifact or control. The originator of a handoff remains responsible for the truth of its own output.
+CSO selects one primary module, adds supporting skills only for distinct outputs or necessary controls, and keeps the route graph acyclic. It does not activate all six modules by default.
 
-## 4. Evidence and epistemic guardrails
+## 4. Evidence, macro-analysis and completion guardrails
 
-Every material claim must be distinguished as one of:
+For HSO handoffs, use the canonical epistemic labels defined in `contracts/plugin-handoff.schema.json`:
 
-- **OBSERVED** — directly visible in the supplied conversation, artifact or data.
-- **SOURCE_SUPPORTED** — supported by an identified source.
-- **INFERENCE** — reasoned interpretation from available observations.
-- **HYPOTHESIS** — plausible explanation that still requires testing.
-- **UNKNOWN** — evidence is insufficient or unavailable.
+- `OBSERVED` — directly visible in the supplied material or tool output.
+- `VERIFIED_SOURCE` — checked against an accessible source within a stated date and scope.
+- `USER_CLAIM` — asserted by the user but not independently verified.
+- `SOURCE_CLAIM` — asserted by a source; reliability remains to be assessed.
+- `ASSUMPTION` — temporary premise used to proceed.
+- `INFERENCE` — reasoned conclusion from identified observations/assumptions.
+- `HYPOTHESIS` — plausible explanation that still requires testing.
+- `UNKNOWN` — not available or not assessed.
 
-Non-negotiable constraints:
+The CSO local evidence contract may retain additional internal granularity, but the adapter must map it without increasing certainty. For example, internal `OBSERVATION` maps to `OBSERVED`, and `VERIFIED_SOURCE_CLAIM` maps to `VERIFIED_SOURCE`. The adapter must never emit an unsupported enum such as `SOURCE_SUPPORTED`.
 
-1. “Mind Reader” is a metaphor, not a capability claim. CSO cannot read private thoughts or infer hidden motives as fact.
-2. Psychological language must remain non-diagnostic. CSO must not diagnose mental illness, claim certainty about subconscious causes or replace professional care.
-3. Behavioral interventions must be proportionate, reversible and safe. High-risk, coercive or medically significant interventions are outside scope.
-4. A Pareto 80/20 split is a heuristic, not a universal law or a guaranteed path to mastery.
-5. A simulated expert panel is not a real panel. Do not fabricate expert credentials, interviews, citations or consensus.
-6. Named-person reframing is a hypothetical interpretation of publicly documented principles, not a claim about what that person would certainly do.
-7. Competitive claims, market share, prices and current market conditions require current evidence. Never invent competitor data.
-8. Five insights should not be forced when the source supports fewer distinct insights. Preserve source limitations and counterevidence.
+Macro-analysis rules:
 
-## 5. Standard CSO handoff contract
+1. A trend is not automatically causal; a scenario is not a forecast; a forecast is not a fact.
+2. Current economic, policy, demographic, technological or social claims require current sources where available. Otherwise mark the current state UNKNOWN.
+3. Second-order pathways must expose assumptions, delays, feedback and countervailing effects.
+4. Societal analysis must show distribution of benefits and burdens and avoid treating groups as homogeneous.
+5. Do not fabricate probabilities or deterministic outcomes.
 
-Each specialist handoff should preserve:
+Execution/metrics rules:
 
-- `request_id`, `plugin_key`, `skill_name`, package version and release ID;
-- user intent, desired decision/artifact and declared scope;
-- source locators, timestamps and evidence labels;
-- assumptions, uncertainties, counterevidence and method limitations;
-- specialist output and confidence rationale;
-- risks, stop conditions and any required human decision;
-- receiving owner, expected artifact and acceptance criteria.
+1. A KPI definition is not a KPI result.
+2. Baselines, targets, dates, duration, cost, staffing and capacity must be sourced or explicitly marked UNKNOWN / DECISION_REQUIRED.
+3. Milestones are observable acceptance gates, not decorative calendar entries.
+4. A plan is not a task execution, project schedule, deployment or realized impact.
+5. Hard approval/security gates cannot be averaged away by a weighted score.
 
-A successful handoff is not proof of execution by the receiving host. Record separately: selected, available, invoked, completed, verified and accepted.
+## 5. HSO shared handoff contract — strict adapter mapping
 
-## 6. HSO integration status at this revision
+The HSO shared schema at `contracts/plugin-handoff.schema.json` uses `additionalProperties: false`. A CSO-local handoff payload must **not** be sent directly as though it were the HSO envelope.
+
+The HSO adapter must produce the exact shared top-level structure and required fields:
+
+- `handoff_id`, `case_id`;
+- `source_plugin: { plugin_key, version_or_commit }`;
+- `recipient_plugin: { plugin_key, contract_version }`;
+- `intent`, `scope`, and optional `non_goals`;
+- `inputs` with `locator` and `provenance`;
+- `findings` with `id`, an allowed `status`, and `summary`;
+- `epistemic_status` using only the shared enum;
+- `capability_status` using only `READY`, `READY_WITH_LIMITATIONS`, `NOT_CHECKED`, `UNAVAILABLE`, `ACCESS_DENIED`, `EXPIRED`, `BLOCKED` or `OUT_OF_SCOPE`;
+- optional `authority` and `dependencies`;
+- `expected_output` and a non-empty `acceptance_criteria`;
+- optional `risk_and_unknowns` and `completion_status` using the shared enum.
+
+Do not add local-only top-level fields such as `request_id`, `plugin_key`, `skill_name` or non-canonical status values. Carry specialist-specific detail in schema-permitted fields. The adapter must validate the serialized envelope against the exact HSO schema before dispatch. If validation or capability readiness fails, mark the handoff BLOCKED; do not bypass the contract.
+
+## 6. Current integration status at revision 0.2.0
 
 | Integration plane | Current disposition | Evidence / limitation |
 |---|---|---|
-| Plugin Creator package | **CREATED — USER / PRIVATE — 0.1.0** | Exact plugin ID and release ID recorded above; package file inventory was read back. |
-| Independent canonical Git source | **NOT IDENTIFIED** | No dedicated child repository or immutable source commit has been registered. The current GitHub connector exposes repository read/write and PR operations, but no repository-creation operation. |
-| HSO catalog registration | **DEFERRED** | Main currently records 23 plugin identities. Active PRs #12, #15, #18 and #22 touch adjacent source-onboarding, catalog/version or regression surfaces. This proposal intentionally avoids overwriting those baselines. |
-| Distribution | **NOT ELIGIBLE / PRIVATE SNAPSHOT ONLY** | Canonical source, package-wide licence review, distributable artifact and host-tested adapter are not established. |
-| Generic HSO plugin dispatch | **BLOCKED / NOT CONFIGURED FOR CSO** | The current runtime capability registry contains a specifically scoped SKILL ANALYZER Remote MCP adapter; it is not a generic CSO adapter and must not be reused as one. |
-| Named-host activation / live runtime | **NOT RUN** | No CSO host activation or live invocation evidence is asserted. |
-| Notion / Mission Control automatic sync | **NOT VERIFIED** | This document can be created directly in Notion; that does not establish the separate HSO webhook/reconciliation pipeline, whose connector secrets and source configuration remain outstanding in the HSO runbook. |
-
-This document is an architecture proposal and integration contract. It does not silently add CSO to `catalog/plugins.json`, `catalog/distribution-registry.json`, `catalog/instruction-snapshots.json` or `catalog/compatibility-matrix.json`. Those source-of-truth updates require the pending PR baselines to be reconciled and an independent canonical source decision.
+| Plugin Creator package | **UPDATED — USER / PRIVATE — 0.2.0** | Plugin ID `plugins_6b06658b887c8191901493ecd184ab9a`; release `pluginrel_6b0674a582e881918729571e5f28cbc2`; full inventory read back. |
+| Package acceptance suite | **21 CASES SPECIFIED — NOT RUN** | `tests/acceptance-cases.json` declares `SPECIFICATION_ONLY_NOT_RUN`; static archive checks passed locally before upload, not a host runtime test. |
+| Canonical Git source | **NOT IDENTIFIED** | No dedicated child repository or immutable source commit has been registered. |
+| Licensing / redistribution | **NOT ASSESSED / PRIVATE ONLY** | No LICENSE file or explicit package-wide redistribution grant was established. No license was added or inferred by this update. |
+| HSO catalog registration | **DEFERRED** | PRs #12, #15 and #18 remain open; source/rights and version baselines are not stabilized. No catalog or distribution registry file was changed. |
+| HSO integration contract | **DOCUMENTATION PR OPEN** | PR #23 updates this architecture document only. It does not create a catalog entry or canonical source. |
+| Generic HSO plugin dispatch | **BLOCKED / NOT CONFIGURED FOR CSO** | Existing SKILL ANALYZER Remote MCP capability is specifically scoped and is not a generic CSO adapter. |
+| HSO handoff serialization | **SPECIFIED — IMPLEMENTATION NOT VERIFIED** | Adapter mapping is documented against the shared schema; no live adapter or schema-bound invocation is claimed. |
+| Named-host activation / runtime | **NOT RUN** | No CSO host activation or live invocation evidence is asserted. |
+| Automatic GitHub ↔ Notion synchronization | **NOT VERIFIED** | Editing this document/page does not prove that a separate synchronization pipeline ran. |
 
 ## 7. Progressive integration roadmap
 
 | Stage | Outcome | Exit evidence |
 |---|---|---|
-| R0 — Intake | Confirm CSO scope, identity and non-ownership boundaries | Owner-reviewed scope and canonical plugin identity |
-| R1 — Source baseline | Create/identify a dedicated canonical Git repository; decide visibility, licence and maintainers | Repository metadata, source tree, manifest, licence/NOTICE and immutable commit |
-| R2 — Contract design | Register CSO in HSO catalog, source/distribution registries, instruction pointer and routing documentation | Schema validation; no duplicate owner; source/version/provenance fields reconciled |
-| R3 — Approval and baseline freeze | Independent technical, rights and security review | Human approval, rights disposition, threat review and frozen baseline SHA |
-| R4 — Integration execution | Implement a named, least-privilege host adapter for CSO | Adapter tests, authentication/authorization checks, failure and recovery tests |
-| R5 — Formative check | Exercise the eight specialists and all ten original use cases | Acceptance-case results, evidence ledger and regression report |
-| R6 — Milestone acceptance | Verify package/source parity and host behavior | Exact-head CI, read-back, named-host activation evidence and independent acceptance |
-| R7 — Outcome and impact | Evaluate learning, decision quality and behavior-experiment utility | Baseline-backed outcome measures; no fabricated progress or causal claims |
-| R8 — Adaptation | Re-sequence or change modules based on observed evidence | Approved change record, regression and preserved prior baseline |
-| R9 — Closure and learning | Approve release disposition or record residual blockers | Signed-off acceptance, release record, rollback plan and lessons learned |
-
-### Immediate blockers
-
-1. A dedicated canonical source repository has not been created or accepted.
-2. Source licensing and redistribution rights have not been assessed.
-3. HSO catalog and version-reconciliation changes are under active review; no duplicate edits should be made until those PRs are reconciled.
-4. HSO does not currently expose a generic, verified CSO skill-invocation adapter.
-5. Automatic HSO GitHub-to-Notion reconciliation still requires the external configuration described in the HSO Mission Control runbook.
+| R0 — Intake | Confirm CSO scope, identity and non-ownership boundaries | Owner-reviewed scope and plugin identity |
+| R1 — Source baseline | Create/identify a dedicated canonical Git repository; decide visibility, maintainers and license/NOTICE | Repository metadata, source tree, manifest, rights disposition and immutable commit |
+| R2 — Contract design | Register CSO once in HSO catalog, source/distribution registries, instruction pointer and routing documentation | Schema validation; one-to-one records; no owner collision; source/version/provenance reconciled |
+| R3 — Approval and baseline freeze | Complete independent technical, security and rights review | Human approval, security disposition, rights disposition and frozen SHA |
+| R4 — Integration execution | Implement a named least-privilege CSO host adapter with shared-envelope serialization | Contract, auth, authorization, negative, recovery and dispatch tests |
+| R5 — Formative check | Execute all 21 acceptance cases on a declared target host | Per-case results, environment/version, evidence and regression report |
+| R6 — Milestone acceptance | Verify package/source parity and host behavior | Exact-head CI, read-back, target-host activation evidence and independent acceptance |
+| R7 — Outcome and impact | Evaluate cognitive decision utility, learning transfer and planning usefulness | Baseline-backed outcome measures; no fabricated progress or causal claims |
+| R8 — Adaptation | Change modules/contracts based on observed evidence | Approved change record, regression and preserved prior baseline |
+| R9 — Closure and learning | Approve release disposition or record residual blockers | Acceptance record, release/rollback decision and lessons learned |
 
 ## 8. Acceptance and release gates
 
-CSO may be described as **package-created** now. It must not be described as HSO-integrated-runtime-ready or distributable until all applicable gates pass.
+CSO may be described as **package-updated** at v0.2.0. It must not be described as HSO-integrated-runtime-ready or distributable until applicable gates pass.
 
-- **Source gate:** canonical repository, ownership, licence, manifest, release and immutable source commit verified.
-- **Catalog gate:** one-to-one catalog, distribution and instruction-index records validated against schemas and regression tests.
-- **Parity gate:** all nine package skill files and references compared against the canonical repository; drift is recorded, not hidden.
-- **Security gate:** authorization, data privacy, prompt injection, secret handling, untrusted source content and unsafe behavioral advice reviewed.
+- **Source gate:** canonical repository, ownership, visibility, license/NOTICE, manifest, release and immutable commit verified.
+- **Catalog gate:** one-to-one catalog/distribution/instruction-index records validated after the active HSO source/version PRs are reconciled.
+- **Parity gate:** all eleven skill files (one master plus ten specialists), references, manifests and tests compared against the canonical source; drift is recorded, not hidden.
+- **Handoff gate:** adapter serialization validates against the strict HSO shared envelope and preserves capability/epistemic status.
+- **Security gate:** authorization, privacy, prompt injection, secret handling, untrusted source content and unsafe behavioral advice reviewed.
 - **Host gate:** named adapter activation and actual CSO invocation tested on the declared target platform.
-- **Acceptance gate:** ten source-use-case tests executed, failures and limitations recorded, and independent evaluation completed.
-- **Release gate:** human approval, rollback disposition and exact release artifact verified.
+- **Acceptance gate:** 21 acceptance cases executed; failures and limitations recorded; independent evaluation completed.
+- **Release gate:** human approval, rights disposition, rollback plan and exact release artifact verified.
 
 No merge, public publication, installation, host activation, production deployment or automatic approval is implied by this document.
