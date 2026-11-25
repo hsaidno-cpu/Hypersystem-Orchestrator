@@ -1,15 +1,15 @@
-# GrowthForge Business OS — private package source pointer
+# GrowthForge Business OS v1.3.0 — private package source pointer
 
 **Catalog key:** `growthforge-business-os`  
 **Plugin Creator package ID:** `plugins_6b01ce5f6c388191816eaee46f4598a2`  
-**Current Plugin Creator release:** `pluginrel_6b067b63b4e88191aeeb74fb6b87f2dd`  
-**Package version:** `1.2.0`  
+**Current Plugin Creator release:** `pluginrel_6b073d4b53588191a4a8fc858381ae65`  
+**Package version:** `1.3.0`  
 **Scope / discoverability:** `USER / PRIVATE`  
-**Pointer capture date:** `2026-11-25`
+**Pointer capture date:** `2026-11-26`
 
 ## Source authority and privacy boundary
 
-The current package remains inside Plugin Creator as a private USER-scoped release. No canonical Git source repository has been identified. This public HSO repository therefore stores only package identity, release metadata, concise skill names/descriptions and this source pointer. The complete 1.2.0 prompt catalogue, prompt templates, skill instructions and support assets are not mirrored here.
+The current package v1.3.0 remains inside Plugin Creator as a private USER-scoped release. No canonical Git source repository has been identified. This public HSO repository therefore stores only package identity, release metadata, concise skill names/descriptions and this source pointer. The full legacy/IMG/BPG prompt catalogues, prompt templates, complete skill instructions and support assets are not mirrored here.
 
 The existing `INSTRUCTIONS-BUNDLE.md` in this directory is a historical runtime snapshot captured on 2026-11-22 from package version 1.1.1. It is not the current 1.2.0 source authority and must not be used to assert instruction parity.
 
@@ -42,7 +42,7 @@ The existing `INSTRUCTIONS-BUNDLE.md` in this directory is a historical runtime 
 - `product-offer-innovation`
 - `sales-revenue-growth`
 
-## Image-sourced prompt catalogue — metadata only
+## Prompt-use-case catalogues — metadata only
 
 The 120 use cases route to existing business-domain specialists, not 120 independent engines.
 
@@ -56,7 +56,13 @@ The 120 use cases route to existing business-domain specialists, not 120 indepen
 | C06 — Personal Development | 0 |
 | **Total** | **120** |
 
-Exact duplicate pairs are preserved as source entries but share canonical workflows: `IMG-002 / IMG-112` and `IMG-029 / IMG-106`. Related variants remain distinct when horizon, channel or requested output differs.
+Exact duplicate pairs in the IMG source remain preserved as source entries but share canonical workflows: `IMG-002 / IMG-112` and `IMG-029 / IMG-106`. Related variants remain distinct when horizon, channel or requested output differs.
+
+## Business Growth Guide — 50 normalized patterns (metadata only)
+
+The v1.3.0 private package also contains a separate `BPG-001`–`BPG-050` crosswalk derived from the user-supplied *50 AI Prompts for Business Growth* guide. The source's five category counts are Marketing & Positioning (9), Content & Social Media (10), Sales & Copywriting (9), Email & Customer Relationships (8), and Strategy, Operations & Growth (14).
+
+Overlap with the 120 IMG use cases: **22 DIRECT_MATCH**, **17 RELATED_VARIANT**, **11 ADDITIONAL_PATTERN**. The 50 patterns route to **13 existing primary domain skills**. No new plugin identity or domain skill was created. The full private crosswalk and normalized pattern data are not mirrored in this public repository.
 
 ## Responsibility boundaries
 
@@ -77,4 +83,4 @@ Prompt generation creates an instruction artifact; it does not execute the descr
 - HSO distribution: **snapshot_only / NOT_INSTALLABLE**
 - Host activation and runtime execution: **NOT_RUN**
 
-The parent Apache-2.0 license does not relicense the private child package or grant redistribution rights.
+The parent Apache-2.0 license does not relicense the private child package or grant redistribution rights. The BPG crosswalk contains normalized task descriptions and routing metadata, not the full commercial guide's prompt wording.

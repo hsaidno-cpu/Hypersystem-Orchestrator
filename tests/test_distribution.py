@@ -100,7 +100,7 @@ class DistributionValidationTests(unittest.TestCase):
         self.assertEqual(item["distribution_status"], "snapshot_only")
         self.assertEqual(item["source_state"], "pending_repository")
         self.assertEqual(item["license_status"], "not_assessed")
-        self.assertEqual(item["platform_package_version"], "1.2.0")
+        self.assertEqual(item["platform_package_version"], "1.3.0")
         self.assertIsNone(item["source_repository_id"])
         self.assertIsNone(item["source_commit"])
         self.assertIsNone(item["package_artifact"])

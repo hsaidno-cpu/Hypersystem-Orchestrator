@@ -90,3 +90,45 @@ A successful parent CI run can establish repository and test consistency. It can
 6. The new compatibility edge remains `INTERFACE_DEFINED_NOT_EXECUTED` until dedicated C2/C3 fixtures and mock receiver tests exist.
 7. GrowthForge distribution remains `snapshot_only` with private-scope, source-identification and license blockers.
 8. No host/runtime test, installation, release or business impact is reported without corresponding evidence.
+
+
+## 8. v1.3.0 amendment — 26 November 2026
+
+The existing GrowthForge plugin identity was updated in Plugin Creator; this is not a second plugin.
+
+| Field | Verified value |
+|---|---|
+| Plugin Creator ID | `plugins_6b01ce5f6c388191816eaee46f4598a2` |
+| Package version | `1.3.0` |
+| Current release | `pluginrel_6b073d4b53588191a4a8fc858381ae65` |
+| Scope / discoverability | `USER / PRIVATE` |
+| Domain specialists | 18 |
+| Master orchestrator | 1 |
+| Skill records | 19, unchanged |
+| Legacy task namespace | `#1–#100`, unchanged |
+| Image-sourced namespace | `IMG-001–IMG-120`, unchanged |
+| New guide namespace | `BPG-001–BPG-050`, 50 normalized patterns |
+
+The BPG guide preserves its five source categories: Marketing & Positioning (9), Content & Social Media (10), Sales & Copywriting (9), Email & Customer Relationships (8), and Strategy, Operations & Growth (14). Its overlap classification against the IMG catalogue is 22 DIRECT_MATCH, 17 RELATED_VARIANT and 11 ADDITIONAL_PATTERN. The crosswalk routes the 50 patterns to 13 existing primary domain skills. The cross-cutting Business Prompt Architect remains the prompt-artifact owner; each mapped domain specialist retains ownership of the underlying business task.
+
+The updated package adds:
+- A machine-readable BPG pattern catalogue and a private crosswalk with normalized task descriptions, primary owners, supporting skills and overlap classes.
+- Prompt-architect instructions for BPG source IDs and separate namespace handling.
+- Eight BPG-specific acceptance specifications (GF-BPG-01 through GF-BPG-08). These are specifications, not evidence that target-runtime tests were executed.
+
+The compact R-C-F intake (Role, Context, Format) remains available for simple prompts. Advanced prompts add requirement traceability, evidence and source labels, workflow/dependencies, negative guardrails, edge cases/recovery, stop conditions and acceptance criteria. Full eight-pillar Octa-Prompt structural hardening remains owned by Anatomi Prompt V3.0 when explicitly requested. Reference-media-to-prompt reconstruction remains owned by AI Prompt Finder & Creator.
+
+### Updated verification boundary
+
+| Plane | State | Evidence / limitation |
+|---|---|---|
+| Plugin Creator v1.3.0 package | VERIFIED | Current release, scope and selected updated files read back after update |
+| BPG catalogue | VERIFIED (static/read-back) | 50 unique BPG IDs; category totals 9/10/9/8/14; overlap totals 22/17/11 |
+| BPG acceptance cases | SPECIFICATION_PRESENT / NOT_RUN | Eight cases are packaged; no target-host run claimed |
+| HSO catalog metadata | PENDING PR #24 | Parent catalog and source pointer must match v1.3.0 release metadata |
+| HSO distribution | SNAPSHOT_ONLY | Private USER/PRIVATE package, source repo not identified, rights not assessed, no package artifact |
+| GrowthForge canonical Git source | NOT_IDENTIFIED | HSO pointer is not the canonical package source |
+| Source/package parity | NOT_VERIFIED | No independent canonical child source exists to compare |
+| Host activation and runtime | NOT_RUN | No plugin-to-plugin runtime evidence |
+
+The detailed forensic audit, positive/negative/conversion tables, HSO comparison and complete BPG crosswalk are documented in [Notion — GrowthForge Business OS v1.3.0 forensic audit](https://app.notion.com/p/42399868397f811aaf81c288e7fac26e).
