@@ -5,8 +5,10 @@ on:
     paths:
       - "apps/mission-control/**"
       - "supabase/functions/hso-decision-engine/**"
+      - "supabase/functions/hso-reconcile/**"
       - "supabase/migrations/**"
       - "docs/HSO-MISSION-CONTROL-INTELLIGENCE-SPEC.md"
+      - "docs/HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md"
       - ".github/workflows/hso-mission-control-ci.yml"
   workflow_dispatch:
 
@@ -29,6 +31,15 @@ jobs:
       - name: Test deterministic decision policy
         working-directory: ${{ github.workspace }}
         run: node --test supabase/functions/hso-decision-engine/policy.test.mjs
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type check Supabase Edge Functions
+        working-directory: ${{ github.workspace }}
+        run: |
+          deno check --config supabase/functions/hso-decision-engine/deno.json supabase/functions/hso-decision-engine/index.ts
+          deno check supabase/functions/hso-reconcile/index.ts
       - name: Install dependencies
         run: npm install --no-audit --no-fund --no-package-lock
       - name: Type check
