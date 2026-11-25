@@ -174,9 +174,9 @@ The example intentionally reports blockers for capability states marked `NOT_CHE
 
 Read [docs/NOTION-DOCUMENTATION.md](docs/NOTION-DOCUMENTATION.md) for the Notion knowledge hub. GitHub remains authoritative for versioned engineering artifacts, schemas, tests, governance files and release history; Notion explains the architecture, decisions and operating procedures.
 
-## Related but separate platform
+## Unified HSMART–HSO ecosystem
 
-[HSMART](https://github.com/hsaidno-cpu/HSMART) is tracked as a related platform repository, not merged into this plugin portfolio. Any future integration requires an explicit interface contract and approved architecture decision record.
+[HSMART](https://github.com/hsaidno-cpu/HSMART) and Hypersystem Orchestrator are one unified, mutually developing ecosystem with separate canonical repositories and explicit implementation boundaries. HSMART provides the shared platform foundation and accepted services; HSO provides the capability ecosystem, orchestration and engineering tools that can develop both systems. The repositories are intentionally not merged: source ownership, plugin licensing, release lifecycles and independent verification remain modular. The shared Universal Ecosystem Development Engine (UEDE) architecture and integration contract are documented in [UNIFIED-HSMART-HSO-UEDE-CONTRACT.md](architecture/UNIFIED-HSMART-HSO-UEDE-CONTRACT.md). This target architecture does not claim that UEDE or all HSMART services are deployed; integration proceeds through versioned contracts and staged acceptance.
 
 ## License and source rights
 
