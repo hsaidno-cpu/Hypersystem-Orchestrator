@@ -100,3 +100,14 @@ The deployed Edge Function is not evidence of an active Notion subscription. Kee
 - The single canonical Vercel dashboard deployment is project ID `prj_CCBtxCpsVsY6st4TcmmtjoZiCbml`, slug `mission-control`, app `HSO Mission Control`, root `apps/mission-control`. Secondary project `prj_2lmpZ9CPJI0vjfNl7Ho3CMDVYWbB` remains non-canonical hold after `NEXT_NO_VERSION`.
 - The canonical contract distinguishes project/system names from stable provider IDs. Display-name changes must not rotate refs, IDs, hosts, keys or source keys. Vercel slug changes require a separate migration and acceptance.
 - Notion runbook, HSO Master Control Center and Ecosystem Control Plane have been updated with the same cross-platform identity map and contract links.
+
+
+## Exact-head identity validation — 25 November 2026
+
+- Exact HEAD: `ffb7e738401f7b274517f14b12d0aaebe27c302f`.
+- HSO Mission Control app CI #40: **PASS**. The run executed the canonical identity validator, 15 decision policy tests, Deno checks, Next.js type-check and production build.
+- Catalog and distribution validation #145: **PASS**. The run executed the canonical identity validator and all catalog/distribution validation steps.
+- HSO synchronization #140: workflow conclusion **success**, but the event-ingestion path remains NOT_CONFIGURED skip behavior; source DB read-back is still five `not_configured` sources and zero successful sync runs/snapshots/Work Items/evidence/progress/decision records. Do not call this live sync.
+- Vercel canonical `mission-control` project: latest deployment `dpl_EWbtpG5kokRih7S1uFubuEmfZ88D` READY.
+- Vercel secondary `hypersystem-orchestrator` project: latest deployment `dpl_DwBqtHpKTuUmCaGXes7c8L3rsZNy` ERROR; it remains non-canonical and must not be promoted as the dashboard.
+- Supabase project read-back: status ACTIVE_HEALTHY, ref `ehgmtkkppmceaffhwcpc`, display name still `hsaidno-cpu's Project`. The display rename remains pending Management API write authorization; immutable ref, URL and host remain unchanged.
