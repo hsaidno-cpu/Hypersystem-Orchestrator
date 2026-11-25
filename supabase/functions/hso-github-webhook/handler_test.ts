@@ -4,11 +4,12 @@ const secret="test-webhook-secret-value-32-bytes-minimum";
 const token="a-separate-reconciliation-token-value";
 const now=1_795_632_000_000;
 const id="run-9-attempt-1-pull_request-abcd1234";
+const eventType="pull_request";
 const body='{"action":"synchronize","number":9,"repository":{"full_name":"owner/repo","html_url":"https://github.com/owner/repo"},"pull_request":{"number":9,"title":"test","html_url":"https://github.com/owner/repo/pull/9","head":{"sha":"abc"},"base":{"ref":"main"}}}';
 function eq(a:unknown,b:unknown){if(JSON.stringify(a)!==JSON.stringify(b))throw new Error("expected "+JSON.stringify(b)+" got "+JSON.stringify(a));}
-async function sign(ts:string,delivery:string,raw:string,keyText=secret){
+async function sign(ts:string,delivery:string,type:string,raw:string,keyText=secret){
  const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(keyText),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
- const result=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(ts+"."+delivery+"."+raw));
+ const result=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(ts+"."+delivery+"."+type+"."+raw));
  return Array.from(new Uint8Array(result),b=>b.toString(16).padStart(2,"0")).join("");
 }
 function fake(overrides:Partial<WebhookDependencies>={}){
@@ -25,10 +26,10 @@ function fake(overrides:Partial<WebhookDependencies>={}){
  };
  return {deps,state};
 }
-async function req(ts=String(Math.floor(now/1000)),delivery=id,extra:Record<string,string>={}){
+async function req(ts=String(Math.floor(now/1000)),delivery=id,type=eventType,extra:Record<string,string>={}){
  return new Request("https://example.test/hook",{method:"POST",headers:{
-  "content-type":"application/json","x-hso-timestamp":ts,"x-hso-delivery":delivery,"x-hso-event":"pull_request",
-  "x-hso-signature":"sha256="+await sign(ts,delivery,body),...extra,
+  "content-type":"application/json","x-hso-timestamp":ts,"x-hso-delivery":delivery,"x-hso-event":type,
+  "x-hso-signature":"sha256="+await sign(ts,delivery,type,body),...extra,
  },body});
 }
 
@@ -49,9 +50,13 @@ Deno.test("missing and expired timestamps rejected",async()=>{
  eq(state.inbox.length,0);
 });
 Deno.test("delivery ID and exact payload are signature-bound",async()=>{
- const {deps,state}=fake();const ts=String(Math.floor(now/1000));const sig=await sign(ts,id,body);
- const altered=new Request("https://example.test/hook",{method:"POST",headers:{"content-type":"application/json","x-hso-timestamp":ts,"x-hso-delivery":id+"-other","x-hso-event":"pull_request","x-hso-signature":"sha256="+sig},body});
+ const {deps,state}=fake();const ts=String(Math.floor(now/1000));const sig=await sign(ts,id,eventType,body);
+ const altered=new Request("https://example.test/hook",{method:"POST",headers:{"content-type":"application/json","x-hso-timestamp":ts,"x-hso-delivery":id+"-other","x-hso-event":eventType,"x-hso-signature":"sha256="+sig},body});
  eq((await createWebhookHandler(deps)(altered)).status,401);eq(state.inbox.length,0);
+});
+Deno.test("event type header is covered by the signature",async()=>{
+ const {deps,state}=fake();const original=await req();original.headers.set("x-hso-event","workflow_run");
+ eq((await createWebhookHandler(deps)(original)).status,401);eq(state.inbox.length,0);eq(state.sync.length,0);
 });
 Deno.test("duplicate delivery returns 409 and never repeats side effects",async()=>{
  const {deps,state}=fake();const h=createWebhookHandler(deps);eq((await h(await req())).status,202);eq((await h(await req())).status,409);
@@ -62,11 +67,10 @@ Deno.test("missing reconciliation token fails closed before persistence",async()
  eq((await createWebhookHandler(deps)(await req())).status,503);
  eq(state.inbox.length,0);eq(state.changes.length,0);eq(state.sync.length,0);
 });
-
 Deno.test("legacy raw-body GitHub signature is rejected",async()=>{
  const {deps,state}=fake();const key=await crypto.subtle.importKey("raw",new TextEncoder().encode("legacy-secret"),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
  const raw=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(body));
  const oldSig=Array.from(new Uint8Array(raw),b=>b.toString(16).padStart(2,"0")).join("");
- const r=new Request("https://example.test/hook",{method:"POST",headers:{"content-type":"application/json","x-hso-timestamp":String(Math.floor(now/1000)),"x-hso-delivery":id,"x-hso-event":"pull_request","x-hub-signature-256":"sha256="+oldSig,"x-github-delivery":id},body});
+ const r=new Request("https://example.test/hook",{method:"POST",headers:{"content-type":"application/json","x-hso-timestamp":String(Math.floor(now/1000)),"x-hso-delivery":id,"x-hso-event":eventType,"x-hub-signature-256":"sha256="+oldSig,"x-github-delivery":id},body});
  eq((await createWebhookHandler(deps)(r)).status,401);eq(state.inbox.length,0);eq(state.sync.length,0);
 });
