@@ -4,7 +4,11 @@ import hashlib
 import hmac
 import unittest
 
-from tools.emit_hso_sync_event import event_signature, event_signing_payload
+from tools.emit_hso_sync_event import (
+    build_reconciliation_request,
+    event_signature,
+    event_signing_payload,
+)
 
 
 class HsoSyncEventSignatureTests(unittest.TestCase):
@@ -52,6 +56,36 @@ class HsoSyncEventSignatureTests(unittest.TestCase):
             event_signing_payload("1795632000", "delivery-1", "bad event", b"{}")
         with self.assertRaises(ValueError):
             event_signature("short", "1795632000", "delivery-1", "pull_request", b"{}")
+
+
+    def test_scheduled_reconciliation_uses_dedicated_sync_token_and_endpoint(self) -> None:
+        endpoint, body, headers = build_reconciliation_request(
+            "https://project.supabase.co/functions/v1/hso-github-webhook",
+            "a-dedicated-sync-token",
+            "987654321",
+        )
+        self.assertEqual(
+            endpoint,
+            "https://project.supabase.co/functions/v1/hso-reconcile",
+        )
+        self.assertEqual(body, b'{"trigger_kind":"scheduled"}')
+        self.assertEqual(headers["X-HSO-Sync-Token"], "a-dedicated-sync-token")
+        self.assertEqual(headers["X-HSO-Delivery"], "actions-987654321")
+        self.assertEqual(headers["X-HSO-Event"], "scheduled_reconciliation")
+
+    def test_scheduled_reconciliation_rejects_missing_token_or_ambiguous_endpoint(self) -> None:
+        with self.assertRaises(ValueError):
+            build_reconciliation_request(
+                "https://project.supabase.co/functions/v1/hso-github-webhook",
+                "",
+                "987654321",
+            )
+        with self.assertRaises(ValueError):
+            build_reconciliation_request(
+                "https://project.supabase.co/functions/v1/legacy-webhook",
+                "a-dedicated-sync-token",
+                "987654321",
+            )
 
 
 if __name__ == "__main__":
