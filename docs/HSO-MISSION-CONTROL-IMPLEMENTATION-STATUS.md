@@ -45,3 +45,13 @@ This section supersedes stale 24-November statements above where they conflict w
 - Catalog validation's stale expectation for `INT-PONYTAIL-SDO-001` was updated to match the canonical matrix: `CONTRACT_TESTED`, schema and behavior PASS; runtime execution and host activation remain NOT_RUN. Validation on the next PR head is in progress.
 - PR #22 remains Draft until the latest exact-head CI and Catalog validation finish and independent technical/security review is obtained. It is not production-ready.
 - Actual project state remains UNMEASURED: five sources not_configured, no operational records and zero active HSO members.
+
+
+## PR review readiness — 25 November 2026
+
+- PR #22 was moved from Draft to **Ready for review** after exact-head validation. It remains open and unmerged.
+- Ready-for-review HEAD at the time of transition: `f644bae0e848b61465921eddece270980a85aaad`.
+- HSO Mission Control app CI #27 passed; Catalog and distribution validation #132 passed; HSO sync #96 passed only in `NOT_CONFIGURED` skip mode.
+- Vercel Mission Control check is SUCCESS. The separate `hypersystem-orchestrator` Vercel project still has `NEXT_NO_VERSION`; it is not the Mission Control deployment and remains separately disclosed.
+- Independent technical/security review is still pending. No merge, Production deployment, live source-sync or production-ready claim is authorized.
+- Actual source/data state remains five `not_configured` connectors, zero operational work/evidence/sync/progress/decision records, and no active HSO member. Therefore project progress stays `UNMEASURED`.
