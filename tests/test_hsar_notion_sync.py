@@ -3,9 +3,10 @@ from unittest.mock import patch
 import urllib.error
 
 from scripts.hsar_notion_sync import (
-    JsonHttpClient, HsarSyncService, SyncError, redact,
+    JsonHttpClient, GitHubClient, HsarSyncService, SyncError, redact,
     read_rich_text, read_select, stable_json_hash, event_pr_numbers,
     is_same_repository_pull_request, assert_write_enabled,
+    event_commit_shas, push_pr_numbers,
 )
 
 
