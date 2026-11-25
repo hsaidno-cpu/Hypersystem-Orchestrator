@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "registry_revision": "2026-11-23",
+  "registry_revision": "2026-11-26",
   "authority": "Hypersystem-Orchestrator parent registry",
-  "plugin_count": 23,
+  "plugin_count": 24,
   "installability_rule": "Eligible only when status is installable_public or installable_private, license_status is cleared, package_artifact exists, source_commit is pinned, and target adapter has host_tested or runtime_verified evidence.",
   "selection_modes": {
     "single": "Exactly one eligible plugin.",
@@ -463,6 +463,31 @@
         "PLATFORM_ADAPTER_NOT_HOST_TESTED"
       ],
       "eligibility_note": "USER/PRIVATE Plugin Creator package 0.1.0 is verified. The upstream public MIT project is methodology provenance only, not a canonical source or package-wide license grant for this derivative. No public distribution artifact, independent license clearance or host-tested adapter exists."
+    },
+    {
+      "plugin_key": "executive-workday-orchestrator",
+      "display_name": "Executive Workday Orchestrator",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.1.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE",
+        "PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
+        "LICENSE_FILE_NOT_PRESENT_IN_PLUGIN_SOURCE",
+        "ORIGINAL_SOURCE_LICENSE_AND_ATTRIBUTION_NOT_ASSESSED"
+      ],
+      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.0 is verified, but its current file inventory has no LICENSE file and neither manifest declares a license. The README identifies a supplied workday prompt as derivation input without recording a canonical source URL or redistribution permission. No canonical child Git source, independent license clearance, public package artifact or host-tested platform adapter is registered. The public HSO parent stores metadata and a private package pointer only; this record is snapshot_only and is not installable."
     }
   ]
 }

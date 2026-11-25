@@ -75,22 +75,22 @@ Authorization must be enforced server-side during discovery and each tool call. 
 
 No state implies another. Each requires its own source of truth and evidence.
 
-## Initial eligibility baseline
+## Current eligibility baseline
 
-As of 23 November 2026 the 21 plugin identities map to these distribution states:
+As of 26 November 2026 the 24 plugin identities map to these distribution states:
 
 | State | Count |
 |---|---:|
 | review_required | 2 |
 | blocked | 2 |
 | private_source_restricted | 1 |
-| snapshot_only | 13 |
+| snapshot_only | 16 |
 | candidate_incomplete | 2 |
 | legacy_redirect | 1 |
 | **Installable** | **0** |
 
 
-People & Business Competency Academy is included in snapshot_only: the Plugin Creator package is private, no canonical child source repository or independent license clearance has been established, and no public package artifact is published. This remains non-installable and is not a host/runtime activation claim.
+People & Business Competency Academy, Ponytail Engineering System, Progressive Roadmap Evaluator and Executive Workday Orchestrator are among the snapshot_only records: each has a private or incomplete package/source boundary, no fully eligible public release artifact and unresolved release or rights evidence. EWO specifically has a verified USER/PRIVATE Plugin Creator package 0.1.0, but no canonical child source repository, independent license clearance, public artifact or host-tested adapter. It remains non-installable and is not a host/runtime activation claim.
 
 Five source submodules are pinned, but source pinning alone is insufficient for redistribution. Examples: SKILL ANALYZER has no root license identified; A.S.F.R.E.E has PolyForm Noncommercial terms requiring distribution review; Anatomi Prompt is private and has no license cleared; Video Explainer source 4.1.9 lags deployment 4.1.12; SDO has instruction-content drift despite package version 0.1.0 matching.
 
