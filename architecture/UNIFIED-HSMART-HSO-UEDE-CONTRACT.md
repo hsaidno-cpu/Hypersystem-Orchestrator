@@ -132,3 +132,86 @@ This document does not claim:
 - that the repositories have been merged.
 
 **Recommended architecture:** hybrid/federated repositories, shared ecosystem identity, UEDE modular control plane, HSMART platform services, HSO capability supply, PRE roadmap authority, replaceable FLOSS workflow/engineering runtimes.
+
+
+## 13. UEDE P0–P9 delivery contract and existing-gate alignment
+
+This order is the single authorized UEDE workstream. UEDE orchestrates the existing HSMART, HSO, PRE, GitHub and Notion authorities; it must not create a parallel roadmap, merge lane, catalog, approval ledger or shadow runtime.
+
+| Priority | Deliverable | Contract boundary | Exit evidence |
+|---|---|---|---|
+| P0 | Review/establish architecture in HSMART PR #32 and HSO PR #25 | Documentation and contract reconciliation only; draft until owner disposition | Cross-repo consistency, exact-head checks, preserved PR graph and exact-head GOV-01 decision |
+| P1 | Audit all HSO capabilities that can develop HSMART/HSO | Read-only audit of owner, source, version, skill, rights, parity, host, permissions, invocation status and tests | Capability readiness ledger distinguishes design/snapshot/source/rights/host/invocation states |
+| P2 | Audit PRE schema/API/runtime | Read-only inspection of PRE specification, actual roadmap source, transition queue, Mission Control mappings, endpoint and deployment evidence | PRE source-of-authority map, schema/revision inventory and explicit NOT_DEPLOYED/NOT_CONFIGURED states |
+| P3 | Define UEDE Core Contracts and adapter interfaces | Versioned contract files/schemas in owning repositories; no schema migration yet | Contract tests, compatibility rules, event/versioning model and authority mapping |
+| P4 | PRE Read-only Adapter | Read-only, source-pinned, complete and digest-bound snapshot reader | Reproducible read of an approved roadmap revision, pagination completeness, freshness and no-mutation tests |
+| P5 | HSO Capability Discovery Adapter | Read-only adapter over catalog, instruction, rights, distribution, compatibility and runtime readiness | Deterministic capability descriptors with source/version/rights/host/permission/evidence fields |
+| P6 | Deterministic task planner | Extend the existing plan-only HSO planner; it remains the only canonical planner | Stable ordering and explicit blocker reasons; no execution side effects |
+| P7 | Kestra + OpenHands adapters | Replaceable orchestration/worker integrations; disabled by default and isolated | Retry, idempotency, cancellation and recovery tests; one bounded worker task without approval or production authority |
+| P8 | One end-to-end autonomous engineering workflow | Synthetic target only, no production/HSMART foundation write | PRE read → HSO discovery → plan → worker → exact-head CI → artifact read-back → evidence receipt → GOV-01 decision |
+| P9 | Progressive autonomy | Risk-based enablement only after P8 evidence | Per-tier policy, rollback, cost/resource caps, observability and explicit owner authorization |
+
+### 13.1 Audited readiness baseline (2026-11-25)
+
+The HSO parent catalog contains 23 plugin identities and 265 indexed skill definitions. Neither metric is an execution count. Capability eligibility is the intersection of source provenance, rights, current instruction parity, version, host adapter, permissions, tests and exact execution evidence.
+
+| Capability | Source/skill evidence | Rights/parity status | UEDE eligibility |
+|---|---|---|---|
+| SDO | Canonical SPDO source v0.1.0, one master skill | Apache-2.0; source/package version aligned, but 0/4 instruction files exactly match | Candidate skill/plugin engineering worker after parity remediation; no assumed HSMART code runtime |
+| A.S.F.R.E.E | Canonical private source v0.5.0-rc.1, 13 skills | PolyForm Noncommercial; package 0.3.2 is behind and instruction drift is recorded | Technical forensics/repair/QA only within non-commercial rights and after parity review |
+| SKILL ANALYZER | Source v1.3.0, 12 skills | No source license declaration; package v1.0.0 behind and instruction drift | Analytical/evidence support only; no generic invoke authority |
+| Plugin Agent Orchestrator | 44 indexed skills, including code/test/runtime/security | Canonical source repo not identified; platform-only snapshot | Not executable or eligible for autonomous dispatch |
+| Ponytail Engineering System | 9 indexed skills for software engineering/review method | Canonical source repo not identified; no write/commit/PR ownership | Method reference only |
+| PRE | v0.1.1 spec, 1 master + 8 specialists, 32 behavioral specs | Canonical source repo not identified; license undeclared; shared runtime not deployed | Roadmap contract, not an available runtime or capability invoker |
+
+The existing HSO plan-only planner can validate owners, capability states, authority, approvals and dependency DAGs. The controlled runtime proves only the allowlisted sandbox actions `sandbox.write_text` and `sandbox.verify_sha256`. Generic `plugin.skill.invoke` and `mcp.remote.invoke` remain NOT_CONFIGURED. A plugin identity, instruction snapshot or mocked Remote MCP test does not establish a live host invocation.
+
+### 13.2 PRE and Mission Control observed state
+
+- PRE is recorded as package/specification v0.1.1 with 1 master skill, 8 specialists and 32 behavioral acceptance specifications. Package structure/schema/local tests are not equivalent to executing the 32 behavioral cases.
+- PRE's independent canonical Git repository is NOT_IDENTIFIED; its license is NOT_DECLARED; shared runtime and capability-learning federation are SPECIFIED_NOT_DEPLOYED.
+- HSO Master Roadmap & Milestones is the currently observed Notion roadmap source with 20 records and R0–R9 lifecycle, approval, dependency, gate and evidence fields. Its record revision and source completeness must be captured by the adapter before planning.
+- HSO Supabase contains Mission Control tables, not an independently deployed PRE database. Five source registrations are marked `not_configured`; `hso_work_items` contains zero imported records; no successful synchronization timestamp or complete snapshot is present.
+- Existing PRE transition policy work on PR #17 is a gated queue-evaluation slice. It does not provide the read-only roadmap adapter, does not run engineering tests, and does not mutate canonical Work Item PRE Stage. It remains subject to PR #15 dependency and live activation blockers.
+
+### 13.3 Existing PR/KM gate interlock
+
+1. UEDE is not a new PR train. Its changes must be placed in HSMART or HSO according to source ownership and must respect the current PR base/dependency graph.
+2. HSO PR #15 and its upstream corrective/security findings remain a prerequisite in the existing HSO merge sequence. PR #24, PR #16 and PR #17 remain stacked on the #15 branch and cannot be silently retargeted or merged early. Existing PR descriptions and PRE records must be reconciled to the owner's latest explicit sequence before any base change.
+3. HSMART KM 0 remains OPEN and KM 1 remains IN_PROGRESS in the latest project record. KM 2+ remain BLOCKED pending formal KM 1 acceptance. HSMART PR #30/#31 remain independent changes and are not absorbed into UEDE.
+4. PR #32 and PR #25 remain architecture proposals until their exact-head checks and GOV-01 decision pass. Their documentation cannot authorize code execution, merge, migration, production deployment or KM advancement.
+5. GOV-01 is the sole human approval authority. No second human engineering reviewer or separate human security approver is required. Automated review, security analysis, AI assurance, regression tests and exact-head evidence are technical inputs, never a substitute for GOV-01 and never a fabricated GitHub-native APPROVED review.
+6. The PR #25 baseline currently has a compatibility-matrix unit assertion conflict: the test expects `INTERFACE_DEFINED_NOT_EXECUTED` while the matrix records `CONTRACT_TESTED`. Do not edit the matrix or assertion to force a green check without reconciling the approved baseline and source evidence.
+7. HSMART services remain unavailable to UEDE until each service has passed its own KM/acceptance and live contract test. No planned gateway, identity, policy, secrets, runtime or audit service may be treated as provisioned.
+
+### 13.4 Adapter and execution rules
+
+**PRE Read-only Adapter**
+- Reads only an owner-authorized source and returns a typed roadmap snapshot with source ID, exact revision/observation time, schema version, pagination completion, canonical payload digest and freshness.
+- Fails closed on partial pages, duplicate identifiers, missing approval/baseline state, ambiguous source authority, stale revision or changed content during a read.
+- Cannot write PRE Stage, approval, scope, priority, baseline, acceptance criteria or progress.
+- Until a shared PRE API exists, any Notion bridge must explicitly identify itself as a read-only Notion source adapter, not a live PRE API implementation.
+
+**HSO Capability Discovery Adapter**
+- Reads the canonical catalog, skill index, source-rights, compatibility/distribution and runtime readiness records.
+- Returns capability ID, owner, source repository, immutable commit, source/package versions, instruction parity, license/rights, host, permission scope, risk, tests, freshness and evidence.
+- Treats NOT_IDENTIFIED, rights-uncleared, instruction-drifted, NOT_CONFIGURED, NOT_RUN and NOT_VERIFIED as blockers.
+- Does not execute a skill or claim invocation readiness.
+
+**Deterministic Task Planner**
+- Extends the existing plan-only planner, rather than creating a second engine.
+- Computes a stable topological plan from one immutable roadmap snapshot and one capability inventory digest.
+- Blocks dependency cycles, unknown work items, stale/partial sources, unresolved scope/approval, unsupported host, missing rights and missing acceptance evidence.
+- Emits a canonical plan digest and blocker list; does not dispatch jobs.
+
+**Kestra/OpenHands**
+- Kestra owns workflow state, schedule, retry, timeout and cancellation only.
+- OpenHands receives a disposable workspace, one task-specific branch, minimal repository-scoped short-lived credentials and explicit resource/network limits.
+- The worker cannot read production secrets, modify approval policies, change protected branches, edit the PRE baseline, approve itself or merge.
+- GitHub Actions remains the authoritative repository CI evidence. Every test must bind to the exact candidate commit SHA.
+
+### 13.5 Stop conditions and P0 exit
+
+Execution stops whenever the approved PRE revision cannot be proven; source pagination is incomplete; dependency, scope or approval is unresolved; a capability lacks canonical source/rights/host evidence; a KM/PR gate is unmet; credentials exceed the declared scope; exact-head CI is absent/stale; or evidence reconciliation disagrees with the source.
+
+**P0 is complete only when** PR #32 and PR #25 describe the same authority model and staged sequence, their exact-head checks pass, the current PR/KM graph remains unchanged, and GOV-01 records the decision against the final exact heads. Architecture acceptance does not itself merge either PR or activate runtime.
