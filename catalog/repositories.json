@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_inventory_date": "2026-11-22",
+  "last_inventory_date": "2026-11-26",
   "repositories": [
     {
       "repository_id": "hypersystem-orchestrator",
@@ -157,6 +157,33 @@
       "source_classification": "CANDIDATE_INCOMPLETE",
       "license_status": "APACHE-2.0",
       "candidate_reason": "Source provenance pointer exists, but repository content is incomplete and does not contain the current PVEE 2.0.2 package. No Git source version can be asserted and no submodule is created."
+    },
+    {
+      "repository_id": "vibe-coding-mentor",
+      "full_name": "hsaidno-cpu/vibe-coding-mentor",
+      "url": "https://github.com/hsaidno-cpu/vibe-coding-mentor",
+      "visibility": "private",
+      "default_branch": "main",
+      "role": "plugin_source",
+      "status": "private_source_verified",
+      "pinned_commit": "84214752bb298002b96f9ff1c60e16b7a09e99d7",
+      "package_version": "0.1.0",
+      "package_version_evidence": [
+        "plugin.json",
+        "Plugin Creator release metadata",
+        "GitHub Actions package-contract run 45701037593"
+      ],
+      "source_classification": "OFFICIAL_PRIVATE_REPOSITORY_LICENSE_UNASSESSED",
+      "license_status": "NOT_ASSESSED",
+      "license_note": "No LICENSE file/public license or redistribution grant declared. Private use only until a separate rights decision is recorded.",
+      "plugin_creator_id": "plugins_6b0744bffe9c8191a5eb9c932fcc3f24",
+      "plugin_creator_current_release_id": "pluginrel_6b0744c2806481919620bdf8b8719f57",
+      "package_file_count": 18,
+      "package_parity_status": "MATCH",
+      "package_parity_evidence": "18/18 manifest/reference/skill files compared byte-for-byte between Plugin Creator release and this exact GitHub source commit.",
+      "validation_workflow_run_id": 45701037593,
+      "validation_commit_sha": "84214752bb298002b96f9ff1c60e16b7a09e99d7",
+      "notes": "Canonical private source for Vibe Coding Mentor. Source package CI passed static package validator and 4 unit tests on this exact commit. This is source verification, not host invocation, Cursor/Bolt/Lovable execution, public distribution clearance or production readiness."
     }
   ],
   "search_scope": {

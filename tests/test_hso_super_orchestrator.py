@@ -97,6 +97,27 @@ class HsoRuntimeTests(unittest.TestCase):
         states = {item["capability_id"]: item["status"] for item in hso.discover_capabilities()["capabilities"]}
         self.assertNotEqual(states["plugin.skill.invoke"], "READY")
 
+    def test_vibe_coding_mentor_prd_route_is_selected_but_blocked_without_adapter(self):
+        _, routes, _, catalog = hso._load_registries()
+        route = hso.resolve_route("plugin.vibe_coding_mentor_prd", routes, catalog)
+        self.assertEqual(route["primary_owner"], "vibe-coding-mentor")
+        self.assertEqual(route["supporting_specialists"], [])
+        self.assertEqual(route["action_id"], "plugin.skill.invoke")
+        self.assertEqual(route["required_capabilities"], ["plugin.skill.invoke"])
+
+        states = {item["capability_id"]: item["status"] for item in hso.discover_capabilities()["capabilities"]}
+        self.assertEqual(states["plugin.skill.invoke"], "NOT_CONFIGURED")
+
+        data = self.workflow()
+        item = data["work_packages"][0]
+        item["task_type"] = "plugin.vibe_coding_mentor_prd"
+        item["action_id"] = "plugin.skill.invoke"
+        result = self.run_workflow(data)
+        outcome = result["package_outcomes"][item["package_id"]]
+        self.assertEqual(outcome["status"], "BLOCKED_CAPABILITY")
+        self.assertIn("plugin.skill.invoke", outcome["missing_capabilities"])
+        self.assertNotEqual(result["status"], "SUCCEEDED")
+
     def test_stable_topological_order_and_cycle_rejection(self):
         packages = [
             {"package_id":"C","depends_on":["A"]},

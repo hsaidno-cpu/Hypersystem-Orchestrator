@@ -72,6 +72,7 @@ def validate():
         "integrated_submodule",
         "candidate_repository",
         "pending_repository",
+        "private_repository_source",
         "canonical_redirect",
     }
 
@@ -111,6 +112,20 @@ def validate():
                 fail(f"{key}: canonical redirect must point to a registered alias_of target")
             if alias == key:
                 fail(f"{key}: alias cannot point to itself")
+        if state == "private_repository_source":
+            repo = next((r for r in repositories if r["repository_id"] == repo_id), None)
+            if repo is None:
+                fail(f"{key}: private source repository is not registered")
+            if repo.get("status") != "private_source_verified" or repo.get("visibility") != "private":
+                fail(f"{key}: private repository source must be registered and verified as private")
+            if not re.fullmatch(r"[0-9a-f]{40}", repo.get("pinned_commit", "")):
+                fail(f"{key}: private source requires a pinned 40-character commit")
+            if repo.get("package_version") != plugin.get("repository_version"):
+                fail(f"{key}: private repository version does not match catalog repository_version")
+            if repo.get("package_parity_status") != "MATCH" or repo.get("package_file_count") != 18:
+                fail(f"{key}: private source requires exact package parity evidence")
+            if repo.get("license_status") != "NOT_ASSESSED":
+                fail(f"{key}: private source license status must remain explicit")
         if not plugin.get("primary_triggers") or not plugin.get("negative_triggers"):
             fail(f"{key}: positive and negative routing triggers are required")
         if not isinstance(plugin.get("instruction_skill_count"), int) or plugin["instruction_skill_count"] < 1:
@@ -124,6 +139,8 @@ def validate():
             fail(f"{key}: candidate source must use CANDIDATE_INCOMPLETE classification")
         if state == "canonical_redirect" and plugin.get("source_classification") != "LEGACY_REDIRECT":
             fail(f"{key}: canonical redirect must use LEGACY_REDIRECT classification")
+        if state == "private_repository_source" and plugin.get("source_classification") != "OFFICIAL_PRIVATE_REPOSITORY_LICENSE_UNASSESSED":
+            fail(f"{key}: private repository source must disclose unassessed license/provenance status")
         if state == "integrated_submodule" and not plugin.get("source_classification", "").startswith("OFFICIAL_"):
             fail(f"{key}: integrated submodule must use an OFFICIAL source classification")
         for platform_field in ["platform_package_version", "platform_current_release_id", "platform_scope", "platform_discoverability", "platform_source_authority", "version_alignment_state", "repository_version", "version_alignment_note", "version_authority", "version_reconciliation_status", "source_sync_status"]:
@@ -151,6 +168,11 @@ def validate():
             fail(f"{key}: instruction drift must remain explicitly open")
         if parity == "MATCH" and plugin.get("source_sync_status") == "SOURCE_INSTRUCTION_DRIFT_DETECTED":
             fail(f"{key}: matching instruction state conflicts with drift status")
+        if state == "private_repository_source":
+            if parity != "MATCH" or plugin.get("source_sync_status") != "SOURCE_PACKAGE_PARITY_VERIFIED":
+                fail(f"{key}: private source requires verified Plugin Creator/Git package parity")
+            if plugin.get("instruction_source_authority") != "CANONICAL_REPOSITORY_SOURCE":
+                fail(f"{key}: private source must designate the canonical repository as instruction authority")
         for related in plugin.get("related_plugins", []):
             if related not in plugin_key_set:
                 fail(f"{key}: unknown related plugin '{related}'")

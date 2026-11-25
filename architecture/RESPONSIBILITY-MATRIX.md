@@ -16,7 +16,7 @@ HSO owns the cross-ecosystem control concerns:
 - aggregation of results, test evidence, unresolved risks and roadmap handoffs;
 - parent-repository governance, source pins, compatibility and distribution eligibility records.
 
-HSO does **not** own the specialist decisions below: general analytical method selection (SKILL ANALYZER), plugin technical forensics (A.S.F.R.E.E), independent quality judgement (Evaluator Team), skill/plugin source engineering (SDO), reusable workflow design (AI Workflow Systems Orchestrator), roadmap progression/adaptation (PRE), or agent runtime implementation/operation (Plugin Agent Orchestrator). It does not override domain truth owners such as PVEE.
+HSO does **not** own the specialist decisions below: general analytical method selection (SKILL ANALYZER), plugin technical forensics (A.S.F.R.E.E), independent quality judgement (Evaluator Team), skill/plugin source engineering (SDO), reusable workflow design (AI Workflow Systems Orchestrator), non-IT product discovery and PRD authoring (Vibe Coding Mentor), roadmap progression/adaptation (PRE), or agent runtime implementation/operation (Plugin Agent Orchestrator). It does not override domain truth owners such as PVEE.
 
 Routing invariant: HSO may coordinate several work packages, but every package has one primary decision owner. Supporting specialists are added only when they produce a distinct required artifact or control. A registry record, instruction snapshot, or declared handoff is not proof that a host can invoke the named plugin.
 
@@ -34,6 +34,7 @@ For the intended operating sequence and maturity gates, see [SUPER-ORCHESTRATOR-
 | Design the minimum complete software change, audit a codebase, review a diff, or produce a risk-based engineering dossier | Ponytail Engineering System | SDO for source engineering; Evaluator Team for independent acceptance; A.S.F.R.E.E only when the target is plugin/system anatomy | Generic analysis, source writes/releases without SDO, or treating a skill as an execution runtime |
 | Audit or construct a prompt using eight Octa-Prompt pillars | Anatomi Prompt V3 — Octa-Prompt | AI Prompt Finder before it when a prompt must first be reconstructed from content | Prompt Finder as a substitute for eight-pillar structural audit |
 | Analyze image/video/document/design/content and turn it into a prompt | AI Prompt Finder & Creator | Anatomi Prompt for optional eight-pillar hardening | Anatomi Prompt alone when the source content itself must be analyzed |
+| Turn a non-IT digital-product idea into a structured PRD, define MVP/requirements, or compile an accepted PRD into a builder prompt | Vibe Coding Mentor | GrowthForge for a distinct business opportunity brief; Anatomi Prompt for universal prompt architecture; AI Prompt Finder only for source-content/reference reconstruction | Generic prompt generation, reusable workflow architecture, or actual application execution/deployment |
 | General photo edit, retouch, object/background, product photo or visual enhancement | Photo Fixer | Master Photo Restoration only when restoration is the actual task | Master Photo Restoration for ordinary editing |
 | Restore an old/damaged/faded/blurred/archival photo | Master Photo Restoration | Photo Fixer only for separate general-editing work requested in addition | Photo Fixer as the primary restoration specialist |
 | Audio/VO analysis, transcript provenance, timing, caption timing, sound and mix | GODEX Motion Audio | Motion Graphic or Video Explainer for visual/renderer work | Motion Graphic as owner of audio provenance |
@@ -61,6 +62,7 @@ For the intended operating sequence and maturity gates, see [SUPER-ORCHESTRATOR-
 | Integrated skill/plugin engineering lifecycle | SDO | Requirement trace, change manifest, tests, read-back, PR and release evidence |
 | Eight-pillar prompt architecture | Anatomi Prompt | Octa-Prompt master prompt and structural validation |
 | Source-content analysis and reconstructed prompt | AI Prompt Finder & Creator | Observation/inference/unknown map and target-generator prompt package |
+| Product discovery, requirements, MVP, PRD and PRD-to-builder prompt compilation for non-IT owners | Vibe Coding Mentor | Requirement-traceable PRD, product flows, acceptance criteria and staged builder prompts; no application execution |
 | General photo-edit operation | Photo Fixer | Scoped edit plan and QA result |
 | Archival/photo restoration operation | Master Photo Restoration | Restoration plan, identity-preservation constraints and reconstruction uncertainty |
 | Audio/transcript/VO provenance and audio-post specification | GODEX | Audio dossier, timing classes, caption/audio plan and mix handoff |
