@@ -1,12 +1,19 @@
 # Source Repository Classification and Reconciliation
 
-**Inventory date:** 2026-11-23
+**Historical inventory date:** 2026-11-23; current registry reconciliation: 2026-11-26
 **Platform package-source attestation:** 14/14 formerly NOT_IDENTIFIED Git sources have a verified current Plugin Creator USER/PRIVATE package manifest and full file inventory. Git child repository status remains NOT_IDENTIFIED until an immutable repository source is accepted.  
 **Plugin identities:** 23  
 **Verified official plugin source repositories pinned:** 5  
 **Candidate/incomplete source repositories:** 2  
 **Plugin identities with no accepted GitHub source:** 15  
 **Legacy redirect identities:** 1 (A.S.F.R.E.E Legacy; not a second product)
+
+
+## 0. Current registry reconciliation — 26 November 2026
+
+At current HSO main snapshot `a0521c896413eb2c3acdc48d67c4be43075bebe4`, the registry contains 23 plugin identities: 5 integrated source submodules, 15 pending repository identities, 2 candidate/incomplete repositories and 1 canonical redirect. The 15 pending identities have no accepted canonical Git source; this is separate from the 2 candidate/incomplete sources and the redirect-only legacy identity.
+
+The current instruction-snapshot registry contains 265 skill records across 23 identities (capture date 23 November 2026). The prior 256/22 count in Section 6 is a superseded snapshot and is not the current denominator.
 
 ## 1.2 Ponytail Engineering System registration — 23 November 2026
 
@@ -100,7 +107,7 @@ People & Business Competency Academy has a verified private Plugin Creator packa
 
 Agent Skills Atlas separately references alirezarezvani/claude-skills as an upstream dataset at commit f8593c4941210a621a6629ce1da9e07897976d5f, package 2.14.14. That repository is upstream inventory data, not the canonical source repository for the Agent Skills Atlas plugin itself.
 
-## 5. Fourteen plugin sources remain NOT_IDENTIFIED
+## 5. Fifteen plugin sources remain NOT_IDENTIFIED
 
 1. Evaluator Team
 2. Master Photo Restoration
@@ -116,17 +123,18 @@ Agent Skills Atlas separately references alirezarezvani/claude-skills as an upst
 12. GrowthForge Business OS
 13. People & Business Competency Academy
 14. Progressive Roadmap Evaluator (PRE)
+15. Ponytail Engineering Optimizer
 
-Together with the two incomplete candidates, there are **16 plugin source identities still not integrated** (14 NOT_IDENTIFIED plus 2 CANDIDATE_INCOMPLETE). The earlier backlog count was 15; SDO has now been identified and integrated as the fifth official source submodule.
+Together with the two incomplete candidates, there are **17 plugin source identities still not integrated** (15 NOT_IDENTIFIED plus 2 CANDIDATE_INCOMPLETE). The canonical redirect is tracked separately and is not a second source implementation. SDO is the fifth official source submodule.
 
 ## 6. Instruction snapshot inventory
 
-- 14 NOT_IDENTIFIED packages retain separate, read-only runtime instruction snapshots, including People & Business Competency Academy.
+- 15 NOT_IDENTIFIED packages retain separate, read-only runtime instruction snapshots, including People & Business Competency Academy and Ponytail Engineering Optimizer.
 - Photo Fixer and PVEE retain separate candidate-source snapshots; neither candidate source is treated as canonical package source.
 - Video Explainer and SDO retain current Plugin Creator instruction snapshots while each has its own independently pinned source repository.
 - SKILL ANALYZER, A.S.F.R.E.E and Anatomi Prompt are represented by their own source submodules/source pointers.
 - A.S.F.R.E.E Legacy remains one redirect-only snapshot.
-- 256 skill records are indexed across 22 plugin identities.
+- 265 skill records are indexed across 23 plugin identities (current snapshot capture 23 November 2026).
 - No snapshot merges two plugin packages or transfers implementation ownership to the parent repository.
 
 ## 7. Required proof before submodule integration
