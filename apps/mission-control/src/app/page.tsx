@@ -8,7 +8,8 @@ function tone(value?: string | null) {
   const v = String(value ?? "").toLowerCase();
   if (["connected","succeeded","success","pass","verified","accepted","primary_selected","on_track"].includes(v)) return "good";
   if (["degraded","partial","stale","hold","blocked","not_configured","not_assessed","unknown","unmeasured","at_risk","pending"].includes(v)) return "warn";
-  if (["failed","failure","fail","critical","source_stale","no_eligible_action"].includes(v)) return "bad";
+  if (["failed","failure","fail","critical","source_stale","no_eligible_action","scope_conflict"].includes(v)) return "bad";
+  if (["source_incomplete","scope_drift","scope_unconfirmed","partial_coverage"].includes(v)) return "warn";
   return "";
 }
 function Pill({value}:{value?:string|null}) {
@@ -29,7 +30,7 @@ function percent(value:number|null|undefined) {
 function milestoneHealth(row:Row) {
   if (row.failed_count > 0 || row.blocked_count > 0) return "BLOCKED / AT RISK";
   if (row.pending_approval_count > 0) return "PENDING DECISION";
-  if (row.measurement_state === "UNMEASURED") return "UNMEASURED";
+  if (["UNMEASURED","SOURCE_INCOMPLETE","SCOPE_DRIFT","SCOPE_UNCONFIRMED","SCOPE_CONFLICT"].includes(String(row.measurement_state))) return "NOT MEASURABLE / BASELINE INCOMPLETE";
   if (row.expected_progress_pct !== null && row.expected_progress_pct !== undefined &&
       row.weighted_progress_pct !== null && Number(row.weighted_progress_pct) < Number(row.expected_progress_pct)) return "BEHIND PLAN";
   if (row.weight_coverage_pct < 100) return "PARTIAL COVERAGE";
@@ -37,7 +38,7 @@ function milestoneHealth(row:Row) {
 }
 const severityOrder:Record<string,number> = { CRITICAL:0, HIGH:1, MEDIUM:2, LOW:3, INFO:4 };
 function SparkBars({rows}:{rows:Row[]}) {
-  const values=rows.filter(x=>x.weighted_progress_pct!==null && x.weighted_progress_pct!==undefined);
+  const values=rows.filter(x=>x.is_publishable===true && x.methodology_version==="weighted-evidence-v2" && x.weighted_progress_pct!==null && x.weighted_progress_pct!==undefined);
   if (!values.length) return <div className="empty">Belum ada tren progres berbobot yang dapat dihitung. Isi Scope Weight dan verifikasi penerimaan terlebih dahulu.</div>;
   return <div className="sparkbars">{values.map((row,i)=>{
     const v=Math.max(2,Math.min(100,Number(row.weighted_progress_pct)));
@@ -64,15 +65,15 @@ export default async function Home() {
   if (!member?.active) return <main className="auth-wrap"><section className="panel auth-card"><div className="eyebrow">Access control</div><h1>Akses belum diberikan.</h1><p className="subtitle">Akun telah terautentikasi, tetapi belum menjadi anggota aktif HSO. Admin perlu mengizinkan user ID di public.hso_members.</p><form action="/api/logout" method="post"><button className="button secondary">Keluar</button></form></section></main>;
 
   const [sourcesQ,runsQ,itemsQ,execQ,evidenceQ,decisionQ,globalProgressQ,milestoneQ,trendQ,issuesQ,changesQ,historyQ,verifiedQ,criteriaQ,workItemCountQ,activeCountQ,verifiedCountQ,blockerCountQ,criticalCountQ,pendingApprovalCountQ]=await Promise.all([
-    supabase.from("hso_sources").select("source_key,display_name,authority_role,status,last_event_at,last_sync_at,last_success_at,freshness_seconds,last_error").order("display_name"),
+    supabase.from("hso_sources").select("source_key,display_name,authority_role,status,last_event_at,last_sync_at,last_success_at,last_complete_at,last_record_count,freshness_seconds,last_error").order("display_name"),
     supabase.from("hso_sync_runs").select("id,status,trigger_kind,started_at,finished_at,records_seen,records_upserted,error_summary,source_results").order("started_at",{ascending:false}).limit(8),
-    supabase.from("hso_work_items").select("id,item_key,title,record_type,project_area,accountable_role,ecosystem_stage,milestone_key,parent_milestone_id,execution_state,verification_state,gate_state,priority,pre_stage,next_action,blocker,dependencies,dependency_work_item_ids,source_url,source_updated_at,scope_weight,weight_rationale,estimated_effort_hours,approval_state,requires_human_approval,security_disposition,execution_risk,change_surface,execution_target,target_branch,head_commit_sha,reviewed_commit_sha,ci_commit_sha,pr_url,ci_run_url,acceptance_criteria,source_verified_at,observed_at").eq("record_type","Work Item").order("observed_at",{ascending:false}).limit(100),
+    supabase.from("hso_work_items").select("id,item_key,title,record_type,project_area,accountable_role,ecosystem_stage,milestone_key,parent_milestone_id,execution_state,verification_state,gate_state,priority,pre_stage,next_action,blocker,dependencies,dependency_work_item_ids,source_url,source_updated_at,scope_weight,weight_rationale,scope_inclusion_state,scope_decision_by,scope_decision_at,scope_decision_rationale,scope_weight_approval,scope_weight_approved_by,scope_weight_approved_at,estimated_effort_hours,approval_state,requires_human_approval,security_disposition,execution_risk,change_surface,execution_target,target_branch,head_commit_sha,reviewed_commit_sha,ci_commit_sha,pr_url,ci_run_url,acceptance_criteria,source_verified_at,observed_at").eq("record_type","Work Item").order("observed_at",{ascending:false}).limit(100),
     supabase.from("hso_executions").select("id,run_name,status,owner_role,executing_agent,run_type,source_commit,source_repository,target_branch,head_commit_sha,github_workflow_url,execution_receipt_url,audit_url,changed_files,validation_summary,acceptance_result,stop_reason,retry_count,completed_at,related_work_item,source_url").order("observed_at",{ascending:false}).limit(12),
     supabase.from("hso_evidence_records").select("id,title,evidence_type,evidence_state,freshness,commit_sha,branch_ref,ci_run_url,pr_url,source_url,source_locator,verified_at,verifier_role,known_limitation,related_work_item,payload,observed_at").order("observed_at",{ascending:false}).limit(30),
     supabase.from("hso_decision_runs").select("id,engine_version,policy_version,decision_state,source_health,primary_action,supporting_actions,blocked_actions,pending_decisions,ranking_snapshot,completion_gap,prompt_artifact_id,computed_at").order("computed_at",{ascending:false}).limit(1).maybeSingle(),
     supabase.from("hso_progress_snapshots").select("*").is("milestone_key",null).order("computed_at",{ascending:false}).limit(1).maybeSingle(),
     supabase.from("hso_progress_snapshots").select("*").not("milestone_key","is",null).order("computed_at",{ascending:false}).limit(30),
-    supabase.from("hso_progress_snapshots").select("id,milestone_key,weighted_progress_pct,weight_coverage_pct,measurement_state,computed_at").is("milestone_key",null).order("computed_at",{ascending:false}).limit(30),
+    supabase.from("hso_progress_snapshots").select("id,milestone_key,weighted_progress_pct,partial_weighted_progress_pct,weight_coverage_pct,scope_decision_coverage_pct,weight_approval_coverage_pct,measurement_state,is_publishable,methodology_version,scope_hash,computed_at").is("milestone_key",null).order("computed_at",{ascending:false}).limit(30),
     supabase.from("hso_issue_records").select("*").eq("verification_state","OPEN").order("detected_at",{ascending:false}).limit(40),
     supabase.from("hso_change_events").select("*").order("event_at",{ascending:false}).limit(12),
     supabase.from("hso_work_item_history").select("id,work_item_id,from_execution_state,to_execution_state,from_gate_state,to_gate_state,changed_at,changed_fields,source_url").order("changed_at",{ascending:false}).limit(20),
@@ -88,11 +89,14 @@ export default async function Home() {
   const sources=(sourcesQ.data??[]) as Row[],runs=(runsQ.data??[]) as Row[],items=(itemsQ.data??[]) as Row[];
   const executions=(execQ.data??[]) as Row[],evidence=(evidenceQ.data??[]) as Row[];
   const decision=decisionQ.data as Row|null,globalProgress=globalProgressQ.data as Row|null;
-  const milestoneRaw=(milestoneQ.data??[]) as Row[];
+  const latestGlobalSyncId=globalProgress?.source_sync_run_id??null;
+  const milestoneRaw=(((milestoneQ.data??[]) as Row[]).filter(row=>!latestGlobalSyncId || row.source_sync_run_id===latestGlobalSyncId));
   const milestoneMap=new Map<string,Row>();
   for(const row of milestoneRaw) if(row.milestone_key && !milestoneMap.has(String(row.milestone_key))) milestoneMap.set(String(row.milestone_key),row);
   const milestones=[...milestoneMap.values()];
-  const trend=((trendQ.data??[]) as Row[]).reverse();
+  const rawTrend=(trendQ.data??[]) as Row[];
+  const currentTrendHash=rawTrend.find(x=>x.is_publishable===true && x.methodology_version==="weighted-evidence-v2")?.scope_hash;
+  const trend=rawTrend.filter(x=>x.is_publishable===true && x.methodology_version==="weighted-evidence-v2" && x.scope_hash===currentTrendHash).reverse();
   const issues=(issuesQ.data??[]) as Row[],changes=(changesQ.data??[]) as Row[],history=(historyQ.data??[]) as Row[];
   const verifiedRows=(verifiedQ.data??[]) as Row[],criteria=(criteriaQ.data??[]) as Row[];
   const verifiedIds=new Set(verifiedRows.filter(x=>x.verified_completion===true).map(x=>x.id));
@@ -102,9 +106,12 @@ export default async function Home() {
   const openBlockers=blockerCountQ.count??issues.length;
   const criticalCount=criticalCountQ.count??issues.filter(x=>x.severity==="CRITICAL").length;
   const pendingApprovals=pendingApprovalCountQ.count??items.filter(x=>x.approval_state==="PENDING" || (x.requires_human_approval===true && x.approval_state!=="APPROVED")).length;
-  const connected=sources.filter(x=>x.status==="connected").length;
   const latest=decision;
   const primary=latest?.primary_action as Row|null;
+  const requiredSourceKeys=["notion-control-center","notion-roadmap","notion-execution-ledger","notion-evidence-registry","github-hso-parent"];
+  const latestSourceHealth=(latest?.source_health??{}) as Row;
+  const completeFreshSources=requiredSourceKeys.filter(key=>(latestSourceHealth[key] as Row|undefined)?.fresh===true).length;
+  const publishableProgress=globalProgress?.is_publishable===true ? globalProgress.weighted_progress_pct : null;
   const blockedActionRows=(latest?.blocked_actions??[]) as Row[];
   const pendingDecisionRows=(latest?.pending_decisions??[]) as Row[];
   const promptQ=latest?.id
@@ -117,6 +124,11 @@ export default async function Home() {
   const completion=latest?.completion_gap as Row|null;
   const incompleteCriteria=(completion?.incomplete_criteria??[]) as Row[];
   const globalMeasurement=globalProgress?.measurement_state??"UNMEASURED";
+  const progressDisclosure=globalProgress?.is_publishable===true
+    ? `Progres proyek tervalidasi: ${percent(publishableProgress)}`
+    : globalMeasurement==="PARTIAL_COVERAGE"
+      ? `Persentase proyek belum boleh diklaim. Rasio parsial pada subset bobot yang disetujui: ${percent(globalProgress?.partial_weighted_progress_pct)}.`
+      : `Persentase proyek belum boleh diklaim: ${String(globalMeasurement).replaceAll("_"," ")}.`;
   const sortedIssues=[...issues].sort((a,b)=>(severityOrder[String(a.severity)]??9)-(severityOrder[String(b.severity)]??9));
   return <main className="shell">
     <header className="topbar">
@@ -127,15 +139,15 @@ export default async function Home() {
 
     <div className="section-title"><h2>Operational health</h2><span>Last recompute: {dateLabel(latest?.computed_at)}</span></div>
     <section className="grid grid-seven">
-      <Metric label="Verified completion" value={verifiedCount+"/"+items.length} note="Status + PASS gate + fresh acceptance evidence" kind="metric-good"/>
+      <Metric label="Verified completion" value={verifiedCount+"/"+totalWorkItems} note="Exact database count; fresh acceptance evidence required" kind="metric-good"/>
       <Metric label="Active work items" value={activeCount} note="Status In progress pada Roadmap"/>
       <Metric label="Open blockers" value={openBlockers} note="Root-cause issues + blocked/hold/fail gates"/>
       <Metric label="Critical issues" value={criticalCount} note="Severity CRITICAL, status OPEN"/>
       <Metric label="Pending approvals" value={pendingApprovals} note="Keputusan manusia yang belum selesai"/>
       <Metric label="Milestone health" value={milestones.filter(x=>x.blocked_count>0||x.failed_count>0).length+" at risk"} note={milestones.length+" group milestone/stage terukur"}/>
-      <Metric label="Source freshness" value={connected+"/"+sources.length} note="Sumber berhasil direkonsiliasi sesuai SLA"/>
+      <Metric label="Complete fresh sources" value={completeFreshSources+"/5"} note="Snapshot lengkap dalam sync run terakhir"/>
     </section>
-    <div className="metric-disclaimer">Progress berbobot: {percent(globalProgress?.weighted_progress_pct)} · coverage bobot {percent(globalProgress?.weight_coverage_pct)} · measurement {String(globalMeasurement).replaceAll("_"," ")}. Task tanpa Scope Weight tidak masuk denominator; Completed tidak dihitung Verified tanpa bukti penerimaan.</div>
+    <div className="metric-disclaimer">{progressDisclosure} · keputusan scope {percent(globalProgress?.scope_decision_coverage_pct)} · approved-weight coverage {percent(globalProgress?.weight_approval_coverage_pct)}. {globalProgress?.is_publishable===true?"Bobot seluruh item IN_SCOPE telah disetujui.":"Cakupan tidak lengkap berarti tidak ada angka progres proyek yang diterbitkan."} Completed tidak dihitung Verified tanpa bukti penerimaan.</div>
 
     <div className="section-title"><h2>NEXT STRATEGIC ACTION</h2><span><Pill value={latest?.decision_state??"NOT_COMPUTED"}/></span></div>
     {primary && latest?.decision_state==="PRIMARY_SELECTED" ? <section className="panel next-action">
@@ -165,23 +177,23 @@ export default async function Home() {
 
     <div className="section-title"><h2>Project Progress Analytics</h2><span>Weighted scope + verified acceptance</span></div>
     <div className="two-col analytics-grid">
-      <section className="panel"><div className="panel-heading"><h3>Progress trend</h3><span>{trend.filter(x=>x.weighted_progress_pct!==null).length} measured points</span></div><SparkBars rows={trend}/><div className="microcopy">Hanya snapshot dengan bobot terisi dan verified evidence yang tampil sebagai persentase. Jumlah checklist tidak menjadi pembagi.</div></section>
+      <section className="panel"><div className="panel-heading"><h3>Progress trend</h3><span>{trend.length} comparable, publishable points</span></div><SparkBars rows={trend}/><div className="microcopy">Hanya snapshot MEASURED, lengkap, is_publishable, methodology v2, dan scope hash yang sama yang masuk tren. Perubahan scope memutus kontinuitas tren.</div></section>
       <section className="panel"><div className="panel-heading"><h3>Execution health</h3><span>12 execution terakhir</span></div><div className="execution-health"><div><strong>{executionSuccess}</strong><span>Success</span></div><div><strong>{executionFailure}</strong><span>Failure</span></div><div><strong>{executions.filter(x=>String(x.status).toUpperCase()==="BLOCKED").length}</strong><span>Blocked</span></div><div><strong>{executions.filter(x=>String(x.verification_state).toUpperCase()==="PASS").length}</strong><span>Verified</span></div></div><div className="microcopy">Run yang sukses tidak otomatis membuktikan acceptance atau deployment.</div></section>
     </div>
     <section className="panel"><div className="panel-heading"><h3>Milestone & ecosystem-stage progress</h3><span>Actual weighted progress vs planned baseline</span></div>
       {milestones.length?<div className="milestone-list">{milestones.map(row=><div className="milestone-row" key={row.id}>
-        <div className="milestone-title"><strong>{row.milestone_title??row.milestone_key}</strong><small>{row.group_type} · {row.verified_count}/{row.total_work_items} verified · coverage {percent(row.weight_coverage_pct)}</small><small>Baseline {row.baseline_start_date??"—"} · target {row.target_date??"—"}</small></div>
-        <div className="progress-track"><div className="progress-fill" style={{width:(row.weighted_progress_pct??0)+"%"}}/></div>
-        <div className="milestone-value">{percent(row.weighted_progress_pct)}<small>{row.expected_progress_pct===null||row.expected_progress_pct===undefined?"Target belum ditetapkan":"vs "+percent(row.expected_progress_pct)}</small></div><Pill value={milestoneHealth(row)}/>
+        <div className="milestone-title"><strong>{row.milestone_title??row.milestone_key}</strong><small>{row.group_type} · {row.verified_count??"—"}/{row.total_work_items??"—"} verified · scope decision {percent(row.scope_decision_coverage_pct)} · weight coverage {percent(row.weight_coverage_pct)}</small><small>Baseline {row.baseline_start_date??"—"} · target {row.target_date??"—"}</small></div>
+        <div className="progress-track"><div className="progress-fill" style={{width:row.is_publishable===true && row.weighted_progress_pct!==null ? Number(row.weighted_progress_pct)+"%" : "0%"}}/></div>
+        <div className="milestone-value">{row.is_publishable===true?percent(row.weighted_progress_pct):"Belum dapat diklaim"}<small>{row.expected_progress_pct===null||row.expected_progress_pct===undefined?"Target belum ditetapkan":"vs "+percent(row.expected_progress_pct)}</small></div><Pill value={milestoneHealth(row)}/>
       </div>)}</div>:<div className="empty">Belum ada snapshot milestone. Data akan muncul setelah rekonsiliasi berhasil.</div>}
     </section>
 
     <div className="section-title"><h2>Workflow Execution Tracker</h2><span>{items.length} displayed · {totalWorkItems} total work items</span></div>
-    <section className="panel table-wrap"><table><thead><tr><th>Task ID / Work item</th><th>Status</th><th>Verification</th><th>Gate</th><th>Priority</th><th>Scope weight</th><th>Approval</th><th>Milestone / Stage</th><th>Dependencies</th><th>Source</th></tr></thead>
+    <section className="panel table-wrap"><table><thead><tr><th>Task ID / Work item</th><th>Status</th><th>Verification</th><th>Gate</th><th>Priority</th><th>Scope weight</th><th>Scope decision</th><th>Weight approval</th><th>Approval</th><th>Milestone / Stage</th><th>Dependencies</th><th>Source</th></tr></thead>
       <tbody>{items.map(item=><tr key={item.id}>
         <td><Link href={"/tasks/"+item.id}>{item.item_key?"HSO-"+String(item.item_key).padStart(3,"0"):item.id.slice(0,8)} · {item.title}</Link><div className="microcopy">{item.accountable_role??item.project_area??"Owner/source role in Notion"}</div></td>
         <td><Pill value={item.execution_state}/></td><td><Pill value={verifiedIds.has(item.id)?"VERIFIED":item.verification_state??"NOT_VERIFIED"}/></td>
-        <td><Pill value={item.gate_state}/></td><td><Pill value={item.priority}/></td><td>{item.scope_weight??"Unweighted"}</td><td><Pill value={item.approval_state??"UNSET"}/></td><td>{item.parent_milestone_id?"Milestone "+item.parent_milestone_id:item.ecosystem_stage??"Unassigned"}</td>
+        <td><Pill value={item.gate_state}/></td><td><Pill value={item.priority}/></td><td>{item.scope_weight??"Unweighted"}</td><td><Pill value={item.scope_inclusion_state??"PENDING"}/></td><td><Pill value={item.scope_weight_approval??"PENDING"}/></td><td><Pill value={item.approval_state??"UNSET"}/></td><td>{item.parent_milestone_id?"Milestone "+item.parent_milestone_id:item.ecosystem_stage??"Unassigned"}</td>
         <td>{(item.dependency_work_item_ids??[]).length?item.dependency_work_item_ids.join(", "):item.dependencies?"Narrative dependency; ID mapping required":"—"}</td>
         <td>{item.source_url?<a href={item.source_url} target="_blank" rel="noreferrer">Notion ↗</a>:"Not available"}</td>
       </tr>)}</tbody></table>
@@ -212,8 +224,9 @@ export default async function Home() {
     <section className="panel">
       {sources.map(source=>{
         const age=source.last_success_at?Math.max(0,Math.round((Date.now()-new Date(source.last_success_at).getTime())/1000)):null;
-        const isFresh=source.status==="connected"&&age!==null&&age<=Number(source.freshness_seconds??1800);
-        return <div className="source-row" key={source.source_key}><div><div className="source-name">{source.display_name}</div><div className="source-role">{source.authority_role} · last success {dateLabel(source.last_success_at)} · SLA {source.freshness_seconds??"—"}s</div>{source.last_error?<div className="small">{source.last_error}</div>:null}</div><div className="source-status"><Pill value={isFresh?"FRESH":source.status}/><small>{age===null?"no success":age+"s ago"}</small></div></div>;
+        const completeAge=source.last_complete_at?Math.max(0,Math.round((Date.now()-new Date(source.last_complete_at).getTime())/1000)):null;
+        const isFresh=source.status==="connected"&&age!==null&&age<=Number(source.freshness_seconds??1800)&&completeAge!==null&&completeAge<=Number(source.freshness_seconds??1800);
+        return <div className="source-row" key={source.source_key}><div><div className="source-name">{source.display_name}</div><div className="source-role">{source.authority_role} · last complete {dateLabel(source.last_complete_at)} · {source.last_record_count??"—"} records · SLA {source.freshness_seconds??"—"}s</div>{source.last_error?<div className="small">{source.last_error}</div>:null}</div><div className="source-status"><Pill value={isFresh?"FRESH":source.status}/><small>{age===null?"no success":age+"s ago"}</small></div></div>;
       })}
     </section>
     <div className="two-col">
