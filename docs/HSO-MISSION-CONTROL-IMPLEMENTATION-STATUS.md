@@ -87,3 +87,16 @@ A code review found the previous Notion webhook handler required `X-Notion-Signa
 - Current database still has five mandatory source connectors `not_configured`, zero operational Work Items/evidence/sync runs/source snapshots/progress snapshots/decision runs, and zero active HSO members. The approved denominator is not yet an operational measurement.
 
 The deployed Edge Function is not evidence of an active Notion subscription. Keep the dashboard's project percentage suppressed until all five required source snapshots are complete and fresh in the same successful sync run, Roadmap scope parity passes, and the verified numerator gate passes.
+
+
+## Canonical identity and nomenclature baseline — 25 November 2026
+
+- Added machine-readable registry: `config/hso-identity-registry.json`.
+- Added governing contract: `docs/HSO-CANONICAL-IDENTITY-AND-NOMENCLATURE.md`.
+- Added validator: `tools/validate_hso_identity.py`; HSO Mission Control CI executes it when identity registry/docs/validator paths change.
+- Canonical system/repository label: `Hypersystem-Orchestrator`; acronym: `HSO`; dashboard app: `HSO Mission Control`.
+- Corrected the Supabase deployment README: the HSO database project is not HSMART. HSMART remains a separate repository/project and must not be treated as an alias.
+- Supabase project ref remains `ehgmtkkppmceaffhwcpc`, API URL remains `https://ehgmtkkppmceaffhwcpc.supabase.co`, and database host remains `db.ehgmtkkppmceaffhwcpc.supabase.co`. Target display name is `Hypersystem-Orchestrator`; live provider still reports `hsaidno-cpu's Project`. Rename is pending Management API write permission and is not claimed complete.
+- The single canonical Vercel dashboard deployment is project ID `prj_CCBtxCpsVsY6st4TcmmtjoZiCbml`, slug `mission-control`, app `HSO Mission Control`, root `apps/mission-control`. Secondary project `prj_2lmpZ9CPJI0vjfNl7Ho3CMDVYWbB` remains non-canonical hold after `NEXT_NO_VERSION`.
+- The canonical contract distinguishes project/system names from stable provider IDs. Display-name changes must not rotate refs, IDs, hosts, keys or source keys. Vercel slug changes require a separate migration and acceptance.
+- Notion runbook, HSO Master Control Center and Ecosystem Control Plane have been updated with the same cross-platform identity map and contract links.
