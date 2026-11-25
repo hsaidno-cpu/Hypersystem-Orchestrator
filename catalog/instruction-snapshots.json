@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "capture_date": "2026-11-23",
-  "total_skill_records": 265,
+  "capture_date": "2026-11-26",
+  "total_skill_records": 279,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1531,6 +1531,74 @@
       ],
       "plugin_creator_id": "plugins_6b044f34a5a481919ffc95eadee4383b",
       "plugin_creator_release_id": "pluginrel_6b044f37640081918df7f449298d72cf",
+      "package_version": "0.1.0",
+      "public_mirror_status": "POINTER_AND_METADATA_ONLY"
+    },
+    {
+      "plugin_key": "executive-workday-orchestrator",
+      "instruction_path": "plugin-instructions/executive-workday-orchestrator/SOURCE-POINTER.md",
+      "origin": "private_plugin_creator_release_pointer",
+      "skill_count": 14,
+      "skills": [
+        {
+          "skill_name": "approval-risk-gate",
+          "description": "Use before an external or consequential action, including sending messages, changing calendar events, publishing, deleting, purchasing, or making commitments on the user's behalf."
+        },
+        {
+          "skill_name": "automation-integration-architect",
+          "description": "Use when designing recurring workday automation, connecting task/calendar/email/knowledge systems, or assessing whether a manual process is ready for automation."
+        },
+        {
+          "skill_name": "calendar-meeting-operations",
+          "description": "Use when preparing meetings, evaluating calendar conflicts, organizing appointments, extracting decisions, or turning meeting notes into accountable follow-up actions."
+        },
+        {
+          "skill_name": "daily-planning",
+          "description": "Use when the user wants to plan a workday, allocate tasks to time blocks, balance capacity, or prepare a realistic daily schedule."
+        },
+        {
+          "skill_name": "email-communication-operations",
+          "description": "Use when triaging email or messages, identifying requests and deadlines, drafting replies, or tracking follow-up obligations."
+        },
+        {
+          "skill_name": "focus-adaptive-scheduling",
+          "description": "Use when interruptions, unexpected work, overruns, energy changes, or new deadlines require a safe and realistic replan of the remaining workday."
+        },
+        {
+          "skill_name": "notes-knowledge-management",
+          "description": "Use when converting unstructured notes, ideas, decisions, or meeting summaries into structured, retrievable knowledge with provenance and action extraction."
+        },
+        {
+          "skill_name": "performance-review-learning",
+          "description": "Use at the end of a workday or week to review accomplishments, delays, bottlenecks, outcomes, and improve future planning."
+        },
+        {
+          "skill_name": "priority-decision-engine",
+          "description": "Use when the user needs to decide what to do first, compare competing tasks, expose trade-offs, or organize work with the Eisenhower Matrix and additional decision criteria."
+        },
+        {
+          "skill_name": "project-portfolio-management",
+          "description": "Use when organizing projects, milestones, workstreams, dependencies, owners, delivery risk, portfolio capacity, or cross-project commitments."
+        },
+        {
+          "skill_name": "prompt-generator",
+          "description": "Use when the user asks to create, refine, audit, compare, or explain an AI prompt, especially for workday, task, project, meeting, email, note, or automation workflows."
+        },
+        {
+          "skill_name": "task-intake-triage",
+          "description": "Use when the user supplies scattered requests, messages, notes, ideas, or task lists that need to be captured, normalized, classified, deduplicated, or routed."
+        },
+        {
+          "skill_name": "workday-data-governance",
+          "description": "Use when the workday assistant depends on durable task state, project memory, shared knowledge, data synchronization, privacy, data retention, or source-of-truth decisions."
+        },
+        {
+          "skill_name": "workday-orchestrator",
+          "description": "Use as the master controller when the user wants an AI system to organize daily work, tasks, projects, meetings, communications, notes, focus, reviews, or related automation."
+        }
+      ],
+      "plugin_creator_id": "plugins_6b073a60088081918a8958ab761cb505",
+      "plugin_creator_release_id": "pluginrel_6b073a6285d481918d11cdbf1bb7643f",
       "package_version": "0.1.0",
       "public_mirror_status": "POINTER_AND_METADATA_ONLY"
     }
