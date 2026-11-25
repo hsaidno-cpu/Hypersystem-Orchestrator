@@ -251,5 +251,34 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertTrue(pointer.is_file())
         self.assertIn("not mirrored", pointer.read_text(encoding="utf-8").lower())
 
+
+    def test_vibe_coding_mentor_is_private_prd_owner_with_metadata_pointer(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        snapshots = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        item = next(p for p in catalog["plugins"] if p["plugin_key"] == "vibe-coding-mentor")
+        ewo = next(p for p in catalog["plugins"] if p["plugin_key"] == "executive-workday-orchestrator")
+        self.assertEqual(item["plugin_creator_id"], "plugins_6b0744bffe9c8191a5eb9c932fcc3f24")
+        self.assertEqual(item["platform_current_release_id"], "pluginrel_6b0744c2806481919620bdf8b8719f57")
+        self.assertEqual(item["platform_package_version"], "0.1.0")
+        self.assertEqual(item["platform_scope"], "USER")
+        self.assertEqual(item["platform_discoverability"], "PRIVATE")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertEqual(item["source_classification"], "NOT_IDENTIFIED")
+        self.assertEqual(item["source_sync_status"], "GITHUB_SOURCE_NOT_IDENTIFIED")
+        self.assertEqual(item["instruction_skill_count"], 10)
+        self.assertIn("PRD", item["purpose"])
+        self.assertIn("builder", " ".join(item["primary_triggers"]).lower())
+        self.assertIn("prompt-generator", " ".join(
+            s["skill_name"] for s in next(p for p in snapshots["plugins"] if p["plugin_key"] == "executive-workday-orchestrator")["skills"]
+        ))
+        self.assertIn("workday", ewo["primary_domain"])
+        indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "vibe-coding-mentor")
+        self.assertEqual(indexed["skill_count"], 10)
+        self.assertEqual(indexed["plugin_creator_release_id"], "pluginrel_6b0744c2806481919620bdf8b8719f57")
+        self.assertEqual(indexed["public_mirror_status"], "POINTER_AND_METADATA_ONLY")
+        pointer = ROOT / item["instruction_snapshot_path"]
+        self.assertTrue(pointer.is_file())
+        self.assertIn("not mirrored", pointer.read_text(encoding="utf-8").lower())
+
 if __name__ == "__main__":
     unittest.main()
