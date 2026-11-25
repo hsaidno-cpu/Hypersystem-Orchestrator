@@ -82,22 +82,32 @@ It owns structural prompt diagnosis, eight-pillar compliance, master prompt cons
 
 It does not primarily inspect an image, video, document or other source artifact to infer what prompt could produce it.
 
-### 2.2 AI Prompt Finder & Creator — content/reference to prompt
+### 2.2 AI Prompt Finder & Creator — multimodal reference-to-prompt and cross-domain prompt compiler
 
-**Philosophy:** understand the supplied content, extract its meaningful attributes and turn those attributes into a usable prompt.
+**Philosophy:** understand the supplied content or task brief, isolate observable facts and user intent, select a domain-fit prompt grammar, and deliver a testable prompt artifact without executing it.
 
-It accepts accessible images, video, documents, designs, concepts, examples or existing content. It identifies observable content, separates observation from inference and unknowns, then creates or reconstructs a prompt approximation for the intended target generator.
+It accepts accessible images, video, documents, designs, concepts, examples, existing prompts and task briefs. Version 1.1.0 adds an explicit prompt-generator skill plus ten category prompt-grammar specialists: Business & Strategy; Marketing & Growth; Productivity & Time; Decision-Making; Writing & Communication; Money & Finance; Learning & Skills; Tech & Troubleshooting; Career & Work; and Thinking Frameworks. The package has 18 skill definitions in total, including the seven previously existing skills.
 
-It owns content/reference breakdown, content-to-prompt reconstruction, scene/subject/style/composition/action extraction where evidence permits, prompt creation/optimization/translation and generator adaptation, plus prompt quality checks relevant to fidelity and target-platform use.
+It owns source/reference breakdown, content-to-prompt reconstruction, prompt brief normalization, prompt generation across ten categories, prompt optimization/translation, target-generator adaptation when verified, prompt packaging, and prompt-level quality control.
 
-It does not own eight-pillar structural auditing as its core responsibility. Anatomi Prompt can receive a Finder-produced prompt for structural refinement when the user needs that additional assurance.
+It does **not** own downstream domain decisions or execution. Its category skills provide prompt grammar and bounded handoff briefs only. In HSO, GrowthForge owns business strategy, commercial marketing, business finance and business-task prompts; SKILL ANALYZER owns general analytical method selection and execution; WSO owns reusable workflow/SOP architecture; Cortex/CommandCraft cover general knowledge-work execution; People & Business Competency Academy owns human competency development; Ponytail Engineering owns engineering method; and EWO/Vibe Coding Mentor remain subject to their own pending HSO integration gates.
 
-| Input | User intent | Primary plugin |
+Anatomi Prompt V3.0 retains formal eight-pillar structural authority. AI Prompt Finder may provide a brief and use the existing optional INT-FINDER-ANATOMI-001 handoff when formal Octa-Prompt hardening is explicitly requested. Existing compatibility evidence is contract-level only: host activation and runtime execution remain NOT_RUN.
+
+| Input | User intent | Primary owner |
 |---|---|---|
-| Existing prompt text | Audit its structure against eight pillars | Anatomi Prompt |
-| Idea/task brief | Engineer a structured master prompt | Anatomi Prompt |
-| Image/video/document/design/reference | Analyze content and construct an approximate/new prompt | AI Prompt Finder & Creator |
-| Prompt generated from a reference, then needs structural hardening | Content analysis first, prompt anatomy second | Finder → Anatomi |
+| Existing prompt text | Optimize or audit the prompt | AI Prompt Finder; Anatomi only for explicit eight-pillar review |
+| Idea/task brief outside a reserved HSO domain | Generate a reusable prompt | AI Prompt Finder + one of its ten category specialists |
+| Business task prompt inside HSO | Create a business-domain reusable prompt | GrowthForge Business OS |
+| Image/video/document/design/reference | Analyze accessible content and construct an evidence-bounded prompt approximation | AI Prompt Finder & Creator |
+| Explicit Octa-Prompt build/audit | Formal eight-pillar architecture | Anatomi Prompt V3.0 |
+| General analytical-method selection/execution | Choose and apply analysis methods | SKILL ANALYZER |
+| Reusable workflow/SOP architecture | Design the system/process | AI Workflow Systems Orchestrator |
+| Request to run the generated prompt | Execute downstream task | Separate request and authorized domain owner/tool; not APFC by default |
+
+**Hard boundary:** prompt generation produces an instruction artifact, not task execution, external automation, sending, publishing, spending, repository modification or a domain-owner decision. A user must separately request downstream execution and the host must have the relevant permission and capability.
+
+**Source and distribution status:** Plugin Creator private package v1.1.0 was read back on 26 November 2026. The canonical Git source repository remains NOT_IDENTIFIED; source/package parity and redistribution rights remain NOT_ASSESSED. HSO stores metadata only and retains snapshot_only/not-installable status.
 
 ## 3. Photo Fixer vs Master Photo Restoration
 

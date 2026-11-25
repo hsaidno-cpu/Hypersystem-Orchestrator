@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "registry_revision": "2026-11-23",
+  "registry_revision": "2026-11-26",
   "authority": "Hypersystem-Orchestrator parent registry",
   "plugin_count": 23,
   "installability_rule": "Eligible only when status is installable_public or installable_private, license_status is cleared, package_artifact exists, source_commit is pinned, and target adapter has host_tested or runtime_verified evidence.",
@@ -162,7 +162,7 @@
       "source_repository_id": null,
       "source_commit": null,
       "source_version": null,
-      "platform_package_version": "1.0.0",
+      "platform_package_version": "1.1.0",
       "distribution_status": "snapshot_only",
       "license_status": "not_assessed",
       "package_artifact": null,
@@ -172,7 +172,7 @@
         "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
         "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
       ],
-      "eligibility_note": "Instruction snapshot only; not a distributable source package."
+      "eligibility_note": "Plugin Creator USER/PRIVATE package v1.1.0 is verified by package read-back. HSO records metadata only; canonical source repository, source parity and redistribution rights remain unverified. Not installable or publicly distributable."
     },
     {
       "plugin_key": "agent-jailbreak-skill-ds",

@@ -20,7 +20,7 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
         self.assertIn("PASS: 23 unique plugin identities", result.stdout)
         self.assertIn("PASS: 5 declared and pinned source submodules", result.stdout)
-        self.assertIn("PASS: 265 indexed skill instruction records", result.stdout)
+        self.assertIn("PASS: 276 indexed skill instruction records", result.stdout)
 
     def test_private_submodule_is_declared(self):
         gitmodules = (ROOT / ".gitmodules").read_text(encoding="utf-8")
@@ -209,7 +209,7 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertIsNone(pre["source_repository_id"])
         self.assertEqual(pre["instruction_skill_count"], 9)
         self.assertEqual(indexed["skill_count"], 9)
-        self.assertEqual(snapshots["total_skill_records"], 265)
+        self.assertEqual(snapshots["total_skill_records"], 276)
 
 
     def test_ponytail_is_private_method_specialist_not_canonical_source(self):
@@ -227,6 +227,56 @@ class CatalogValidationTests(unittest.TestCase):
         pointer = ROOT / item["instruction_snapshot_path"]
         self.assertTrue(pointer.is_file())
         self.assertIn("not mirrored", pointer.read_text(encoding="utf-8").lower())
+
+
+    def test_ai_prompt_finder_cross_domain_package_is_scoped_and_non_duplicate(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        snapshots = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        distribution = json.loads((ROOT / "catalog" / "distribution-registry.json").read_text(encoding="utf-8"))
+        matrix = json.loads((ROOT / "catalog" / "compatibility-matrix.json").read_text(encoding="utf-8"))
+        item = next(p for p in catalog["plugins"] if p["plugin_key"] == "ai-prompt-finder-creator")
+        indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "ai-prompt-finder-creator")
+        packaged = next(p for p in distribution["plugins"] if p["plugin_key"] == "ai-prompt-finder-creator")
+
+        self.assertEqual(catalog["expected_plugin_count"], 23)
+        self.assertEqual(len(catalog["plugins"]), 23)
+        self.assertEqual(item["plugin_creator_id"], "plugins_6ae57d424a2481918295d281919fbb7d")
+        self.assertEqual(item["primary_domain"], "cross-domain-prompt-engineering")
+        self.assertEqual(item["instruction_skill_count"], 18)
+        self.assertEqual(item["platform_package_version"], "1.1.0")
+        self.assertEqual(item["platform_current_release_id"], "pluginrel_6b074a37ae8c8191bae7723d715ab713")
+        self.assertEqual(item["platform_scope"], "USER")
+        self.assertEqual(item["platform_discoverability"], "PRIVATE")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertIsNone(item["source_repository_id"])
+        self.assertEqual(item["source_classification"], "NOT_IDENTIFIED")
+        self.assertEqual(item["version_alignment_state"], "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED")
+        self.assertEqual(item["source_instruction_parity_status"], "NOT_APPLICABLE")
+
+        names = {s["skill_name"] for s in indexed["skills"]}
+        expected = {
+            "image-prompt-finder", "long-video-engine", "prompt-optimizer",
+            "prompt-orchestrator", "prompt-quality-control", "short-video-finder",
+            "universal-prompt-creator", "prompt-generator", "business-strategy-prompts",
+            "marketing-growth-prompts", "productivity-time-prompts", "decision-making-prompts",
+            "writing-communication-prompts", "money-finance-prompts", "learning-skills-prompts",
+            "tech-troubleshooting-prompts", "career-work-prompts", "thinking-frameworks-prompts"
+        }
+        self.assertEqual(names, expected)
+        self.assertEqual(indexed["skill_count"], 18)
+        self.assertEqual(snapshots["total_skill_records"], 276)
+
+        self.assertEqual(packaged["platform_package_version"], "1.1.0")
+        self.assertEqual(packaged["distribution_status"], "snapshot_only")
+        self.assertEqual(packaged["license_status"], "not_assessed")
+        self.assertIsNone(packaged["package_artifact"])
+        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", packaged["blockers"])
+        self.assertIn("INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE", packaged["blockers"])
+
+        finder_edge = next(e for e in matrix["integrations"] if e["integration_id"] == "INT-FINDER-ANATOMI-001")
+        self.assertEqual(finder_edge["status"], "CONTRACT_TESTED")
+        self.assertEqual(finder_edge["host_activation_test"], "NOT_RUN")
+        self.assertEqual(finder_edge["runtime_execution_test"], "NOT_RUN")
 
 if __name__ == "__main__":
     unittest.main()

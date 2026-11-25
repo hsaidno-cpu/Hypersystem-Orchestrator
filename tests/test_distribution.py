@@ -105,5 +105,17 @@ class DistributionValidationTests(unittest.TestCase):
         self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
         self.assertIn("PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED", item["blockers"])
 
+
+    def test_ai_prompt_finder_private_package_stays_snapshot_only(self):
+        registry = self.load(REGISTRY)
+        item = next(p for p in registry["plugins"] if p["plugin_key"] == "ai-prompt-finder-creator")
+        self.assertEqual(item["platform_package_version"], "1.1.0")
+        self.assertEqual(item["distribution_status"], "snapshot_only")
+        self.assertEqual(item["license_status"], "not_assessed")
+        self.assertIsNone(item["source_commit"])
+        self.assertIsNone(item["package_artifact"])
+        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
+        self.assertIn("INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE", item["blockers"])
+
 if __name__=="__main__":
     unittest.main()
