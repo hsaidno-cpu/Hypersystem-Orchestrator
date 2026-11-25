@@ -42,18 +42,20 @@ class DistributionValidationTests(unittest.TestCase):
         self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
         self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
 
-    def test_executive_workday_orchestrator_remains_snapshot_only_until_release_gates_pass(self):
+    def test_executive_workday_orchestrator_has_private_canonical_source_but_remains_snapshot_only(self):
         registry = self.load(REGISTRY)
         item = next(p for p in registry["plugins"] if p["plugin_key"] == "executive-workday-orchestrator")
         self.assertEqual(item["distribution_status"], "snapshot_only")
-        self.assertEqual(item["source_state"], "pending_repository")
-        self.assertEqual(item["license_status"], "not_assessed")
-        self.assertIsNone(item["source_repository_id"])
-        self.assertIsNone(item["source_commit"])
+        self.assertEqual(item["source_state"], "private_canonical_repository")
+        self.assertEqual(item["license_status"], "not_cleared")
+        self.assertEqual(item["source_repository_id"], "executive-workday-orchestrator")
+        self.assertEqual(item["source_commit"], "69166133cdc65d1f4f358daec005677db5cd0")
+        self.assertEqual(item["source_version"], "0.1.0")
+        self.assertEqual(item["repository_license_notice"], "INTERIM_NO_GRANT_ALL_RIGHTS_RESERVED")
         self.assertIsNone(item["package_artifact"])
-        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
+        self.assertIn("INTERIM_NO_LICENSE_GRANT", item["blockers"])
+        self.assertIn("ORIGINAL_SOURCE_RIGHTS_NOT_CLEARED", item["blockers"])
         self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
-        self.assertIn("PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED", item["blockers"])
         self.assertIn("PLATFORM_ADAPTER_NOT_HOST_TESTED", item["blockers"])
 
     def test_no_package_is_falsely_marked_installable(self):
