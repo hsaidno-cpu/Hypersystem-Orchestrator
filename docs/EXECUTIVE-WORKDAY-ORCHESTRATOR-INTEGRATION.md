@@ -69,7 +69,7 @@ Default action posture is read/classify/draft/plan. Sending, publishing, purchas
 | Package LICENSE file / manifest license field | No LICENSE file in current package inventory; neither manifest declares a license |
 | Original source URL and redistribution permission | `NOT_ASSESSED`; README only identifies a supplied prompt as derivation input |
 | EWO routing contract corpus | 14 positive, 14 negative, 6 ambiguous cases; metadata-only, no private SKILL.md body copied |
-| Static contract CI | Run #237 PASSED on `9963011dfb4028ca16d52a79c57134b272f94692`; 155 unit/resolver tests passed |
+| Static contract CI | Run #239 PASSED on `6d27192d77057093ff3f80dc5b504433738cb999`; 155 unit/resolver tests passed, including 11 EWO-specific contract tests |
 | Public HSO registration | PR #33 remains draft/open/unmerged; requires review and acceptance |
 | Host activation / actual EWO invocation | `NOT_RUN`; P0 remote-MCP invocation job skipped |
 | External calendar/mail/task integrations | `NOT_CONFIGURED` in this package |
