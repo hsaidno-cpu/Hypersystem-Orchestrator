@@ -166,7 +166,7 @@
       "default_branch": "main",
       "role": "plugin_source",
       "status": "private_canonical_source",
-      "pinned_commit": "69166133cdc65d1f4f358daec005677db5cd0",
+      "pinned_commit": "388e59d58a96096effb4999c019e92b3c38539ed",
       "package_version": "0.1.0",
       "plugin_creator_id": "plugins_6b073a60088081918a8958ab761cb505",
       "plugin_creator_current_release_id": "pluginrel_6b073a6285d481918d11cdbf1bb7643f",
