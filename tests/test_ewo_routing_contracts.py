@@ -71,8 +71,11 @@ class EwoRoutingContractTests(unittest.TestCase):
             "STATIC_CONTRACT_CORPUS_NOT_HOST_INVOKED",
         )
         self.assertTrue(self.contract["test_limitations"])
-        self.assertTrue(any("do NOT invoke" in item.lower() or "do not invoke" in item.lower()
-                            for item in self.contract["test_limitations"]))
+        self.assertTrue(any(
+            "not the actual EWO model response" in item
+            or "not been executed against a live EWO model/host invocation" in item
+            for item in self.contract["test_limitations"]
+        ))
 
     def test_private_plugin_identity_and_release_are_pinned(self):
         self.assertEqual(self.plugin["plugin_creator_id"],
