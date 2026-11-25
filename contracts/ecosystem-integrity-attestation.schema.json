@@ -630,6 +630,22 @@
           "pattern": "^[A-Za-z0-9+/]{86}==$"
         }
       }
+    },
+    "performed_actions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "canonical_source_selection_or_replacement",
+          "ownership_license_or_redistribution_disposition",
+          "package_publication_republication_or_release_channel_promotion",
+          "target_install_upgrade_enable_disable_or_uninstall",
+          "instruction_overwrite_or_cross_plane_content_replacement",
+          "production_permission_secret_scope_or_trust_policy_change",
+          "milestone_acceptance_security_disposition_or_production_readiness"
+        ]
+      },
+      "description": "Explicitly records owner-sensitive operations performed as part of this attestation. A performed operation always requires its matching GOV-01 approval."
     }
   },
   "allOf": [
@@ -646,7 +662,8 @@
       },
       "then": {
         "required": [
-          "signature"
+          "signature",
+          "performed_actions"
         ],
         "properties": {
           "source": {
