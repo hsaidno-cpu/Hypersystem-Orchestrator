@@ -95,8 +95,11 @@ export default async function Home() {
   for(const row of milestoneRaw) if(row.milestone_key && !milestoneMap.has(String(row.milestone_key))) milestoneMap.set(String(row.milestone_key),row);
   const milestones=[...milestoneMap.values()];
   const rawTrend=(trendQ.data??[]) as Row[];
-  const currentTrendHash=rawTrend.find(x=>x.is_publishable===true && x.methodology_version==="weighted-evidence-v2")?.scope_hash;
-  const trend=rawTrend.filter(x=>x.is_publishable===true && x.methodology_version==="weighted-evidence-v2" && x.scope_hash===currentTrendHash).reverse();
+  const latestTrendRow=rawTrend[0];
+  const currentTrendHash=latestTrendRow?.is_publishable===true && latestTrendRow?.methodology_version==="weighted-evidence-v2" ? latestTrendRow.scope_hash : null;
+  const trend=currentTrendHash
+    ? rawTrend.filter(x=>x.is_publishable===true && x.methodology_version==="weighted-evidence-v2" && x.scope_hash===currentTrendHash).reverse()
+    : [];
   const issues=(issuesQ.data??[]) as Row[],changes=(changesQ.data??[]) as Row[],history=(historyQ.data??[]) as Row[];
   const verifiedRows=(verifiedQ.data??[]) as Row[],criteria=(criteriaQ.data??[]) as Row[];
   const verifiedIds=new Set(verifiedRows.filter(x=>x.verified_completion===true).map(x=>x.id));
