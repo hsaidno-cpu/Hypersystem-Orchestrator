@@ -125,10 +125,52 @@ The compact R-C-F intake (Role, Context, Format) remains available for simple pr
 | Plugin Creator v1.3.0 package | VERIFIED | Current release, scope and selected updated files read back after update |
 | BPG catalogue | VERIFIED (static/read-back) | 50 unique BPG IDs; category totals 9/10/9/8/14; overlap totals 22/17/11 |
 | BPG acceptance cases | SPECIFICATION_PRESENT / NOT_RUN | Eight cases are packaged; no target-host run claimed |
-| HSO catalog metadata | COMMITTED TO PR #24 / CI NOT RUN | Catalog v1.3.0 metadata and private-package source pointer are committed to this draft PR; exact-head CI remains outstanding |
+| HSO catalog metadata | COMMITTED TO PR #24 / EXACT-HEAD CATALOG CI PASS | Catalog v1.3.0 metadata and private-package source pointer are committed to PR #24; workflow run #234 passed on exact head `a75dd01e3e7b6f9b277cf10d874c4efdc6b86277` |
 | HSO distribution | SNAPSHOT_ONLY | Private USER/PRIVATE package, source repo not identified, rights not assessed, no package artifact |
 | GrowthForge canonical Git source | NOT_IDENTIFIED | HSO pointer is not the canonical package source |
 | Source/package parity | NOT_VERIFIED | No independent canonical child source exists to compare |
 | Host activation and runtime | NOT_RUN | No plugin-to-plugin runtime evidence |
 
 The detailed forensic audit, positive/negative/conversion tables, HSO comparison and complete BPG crosswalk are documented in [Notion — GrowthForge Business OS v1.3.0 forensic audit](https://app.notion.com/p/42399868397f811aaf81c288e7fac26e).
+
+
+## 9. Exact-head CI and Vercel diagnostic follow-up — 26 November 2026
+
+### GitHub Actions — exact PR #24 head
+
+- Branch: `feat/growthforge-prompt-generator-120-catalog-pr15-head-20261125`
+- Exact commit: `a75dd01e3e7b6f9b277cf10d874c4efdc6b86277`
+- Catalog/distribution workflow: [run #234 — SUCCESS](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45695695572)
+- Job `validate`: SUCCESS. The integrity/attestation contract, catalog validator, distribution validator, plan-only workflow example, unit/resolver tests, real sandbox capability probe, dependency-ordered sandbox workflow, audit verification, retry/recovery fault injection and recovery audit all passed.
+- Unit/regression suite: **148 tests executed; test step SUCCESS**.
+- Runtime/recovery receipt artifact: `hso-super-orchestrator-runtime-a75dd01e3e7b6f9b277cf10d874c4efdc6b86277` (10,307 bytes; retained by GitHub Actions through 25 December 2026).
+- The `p0-remote-mcp-skill-invocation` job remained **SKIPPED** because `approve_single_billable_invocation=false`. No billable live Remote MCP inference was run.
+- Previous run #233 failed on one overly strict test assertion that expected a contiguous BPG range across Markdown code spans. The test was corrected to assert both endpoints independently; no catalogue data change was required.
+
+The successful GitHub workflow is repository/sandbox evidence. It does not prove GrowthForge host activation or a live GrowthForge-to-Anatomi plugin invocation.
+
+### Why Vercel reports failed checks
+
+**Hypersystem Orchestrator project**
+
+The deployment created for this exact head is [`dpl_36StnZqAy6gGa6LUkdQGfAzd7dta`](https://vercel.com/hsaidno-4781s-projects/hypersystem-orchestrator/36StnZqAy6gGa6LUkdQGfAzd7dta). Vercel reports `NEXT_NO_VERSION`: no Next.js dependency was detected at the configured build entrypoint `.`. The repository root has no `package.json`; the Next.js manifest is `apps/mission-control/package.json` and declares Next.js `16.4.6`. The deployment also reports a warning that one or more Git submodules could not be fetched.
+
+The Vercel GitHub status payload recorded the Hypersystem Orchestrator project's root directory as `null`, while the Mission Control project was recorded with root directory `apps/mission-control`. This is strong evidence of a project Root Directory mismatch. The likely corrective direction is to verify whether the Hypersystem Orchestrator project is intended to build the Mission Control app; if so, its root directory should be aligned to `apps/mission-control`. **No Vercel project setting was changed** in this work.
+
+**Mission Control project**
+
+For exact head `a75dd01e3e7b6f9b277cf10d874c4efdc6b86277`, the GitHub Mission Control status points to Vercel's build-rate-limit page, but Vercel returned no deployment record for that project at this SHA. A separate Mission Control deployment on another branch/commit (`63b6c61c34d11e90ae54ab6af53b96eb056f351b`) reached READY; that is not evidence for this PR head. Vercel bot comments on PR #15 also recorded the account-level limit `api-deployments-free-per-day` (more than 100 deployments in a day) for both projects. The exact-head Mission Control status is therefore consistent with the deployment quota limit, but there is no per-deployment build log for this SHA to diagnose further.
+
+### Separate Mission Control application workflow
+
+`.github/workflows/hso-mission-control-ci.yml` only auto-triggers for PR changes under `apps/mission-control/**` or changes to that workflow. PR #24 does not change those paths, so this app workflow was not automatically required by its path filter. A manual dispatch was attempted but the browser's GitHub access was blocked by the network/proxy layer; no app-CI run was created. This does not invalidate the successful catalog/sandbox CI, but it leaves the standalone app workflow unverified on this head.
+
+### Governance and remaining gates
+
+- PR #24 remains OPEN / DRAFT and based on PR #15's branch, not `main`.
+- PR #15 remains OPEN / NOT MERGED at head `75a4e7d2b19a27be1402afca1db8321aec22f47d`.
+- GOV-01 has authorized the remediation/approval process, but the latest recorded GOV-01 clarification says a final decision must be tied to the exact current head. The available GOV-01 comments target earlier PR #15 heads; no disposition for `75a4e7d...` was found in the inspected PR discussion.
+- Do not retarget or merge PR #24 until PR #15 has a current exact-head GOV-01 disposition and has merged.
+- GrowthForge canonical Git source remains NOT_IDENTIFIED; source/package parity remains NOT_VERIFIED; redistribution rights remain NOT_ASSESSED; HSO distribution remains `snapshot_only`.
+- GrowthForge → Anatomi host activation and runtime invocation remain NOT_RUN.
+
