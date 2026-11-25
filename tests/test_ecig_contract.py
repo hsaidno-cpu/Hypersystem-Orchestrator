@@ -1,22 +1,39 @@
+import base64
 import copy
 import unittest
+from datetime import datetime, timedelta, timezone
+
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from tools.validate_ecig_contract import (
     ContractError,
+    attestation_signing_bytes,
     load_contract,
+    load_trusted_public_keys,
     validate_attestation,
     validate_policy,
 )
 
 
+def iso_utc(value=None):
+    value = value or datetime.now(timezone.utc)
+    return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def parsed_utc(value):
+    return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
+
+
 def sample_attestation():
+    observed_at = iso_utc()
     return {
         "schema_version": "1.0.0",
         "attestation_id": "hso-ecig-test-001",
         "policy_version": "1.0.0",
         "plugin_key": "hypersystem-orchestrator",
         "target": {"platform": "ChatGPT", "target_scope": "test-target"},
-        "observed_at": "2026-11-24T04:50:00Z",
+        "observed_at": observed_at,
         "source": {
             "repository_url": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator",
             "ref": "main",
@@ -46,7 +63,7 @@ def sample_attestation():
         "evidence": [{
             "kind": "COMMIT",
             "locator": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/commit/" + "a" * 40,
-            "observed_at": "2026-11-24T04:50:00Z",
+            "observed_at": observed_at,
             "verifier": "test-fixture",
             "sha256": "e" * 64,
         }],
@@ -58,6 +75,8 @@ def sample_attestation():
 
 def synced_attestation():
     item = sample_attestation()
+    observed_at = item["observed_at"]
+    timestamp = parsed_utc(observed_at)
     for plane in ("source", "package", "installation", "instructions", "documentation"):
         item[plane]["state"] = "MATCH"
     item["package"]["publication_state"] = "PUBLISHED"
@@ -72,14 +91,56 @@ def synced_attestation():
     item["documentation"]["projection_digest"] = "1" * 64
     item["rights"]["state"] = "CLEARED"
     item["overall_state"] = "SYNCED"
+    item["evidence"] = []
+    evidence_kinds = (
+        "COMMIT", "MANIFEST", "PACKAGE_READBACK",
+        "INSTALL_RECEIPT", "RUNTIME_PROBE",
+        "INSTRUCTION_COMPARISON", "DOCUMENTATION_READBACK",
+    )
+    for index, kind in enumerate(evidence_kinds):
+        item["evidence"].append({
+            "kind": kind,
+            "locator": f"https://evidence.example.test/{kind.lower()}-{index}",
+            "observed_at": observed_at,
+            "verifier": "test-fixture",
+            "sha256": f"{index + 2:x}" * 64,
+        })
+    actions = (
+        "canonical_source_selection_or_replacement",
+        "ownership_license_or_redistribution_disposition",
+        "package_publication_republication_or_release_channel_promotion",
+        "target_install_upgrade_enable_disable_or_uninstall",
+    )
+    item["approvals"] = [{
+        "action": action,
+        "decision": "APPROVED",
+        "decision_reference": f"test-decision-{index + 1}",
+        "decided_at": observed_at,
+        "approver": "test-fixture-authority",
+    } for index, action in enumerate(actions)]
     item["signature"] = {
         "algorithm": "Ed25519",
-        "key_id": "hso-ecig-test-key-01",
-        "value": "A" * 86 + "==",
+        "key_id": "hso-ecig-ephemeral-test-key",
+        "value": base64.b64encode(b"\\x00" * 64).decode("ascii"),
     }
     item["limitations"] = []
     item["conflicts"] = []
-    return item
+    return item, timestamp
+
+
+def signed_synced_attestation():
+    item, timestamp = synced_attestation()
+    private_key = Ed25519PrivateKey.generate()
+    signature_value = private_key.sign(attestation_signing_bytes(item))
+    item["signature"]["value"] = base64.b64encode(signature_value).decode("ascii")
+    public_key = private_key.public_key().public_bytes(
+        encoding=serialization.Encoding.Raw,
+        format=serialization.PublicFormat.Raw,
+    )
+    trusted = {
+        "hso-ecig-ephemeral-test-key": base64.b64encode(public_key).decode("ascii")
+    }
+    return item, trusted, timestamp
 
 
 class EcosystemIntegrityContractTests(unittest.TestCase):
@@ -93,28 +154,96 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
     def test_explicit_unknown_state_is_valid(self):
         validate_attestation(sample_attestation(), self.schema, self.policy)
 
-    def test_synced_requires_every_plane_match_rights_clear_and_ed25519_signature(self):
-        validate_attestation(synced_attestation(), self.schema, self.policy)
+    def test_trust_store_is_empty_until_a_key_is_approved(self):
+        self.assertEqual(load_trusted_public_keys(), {})
+
+    def test_synced_requires_trusted_ed25519_signature_plane_evidence_and_approvals(self):
+        item, trusted, timestamp = signed_synced_attestation()
+        validate_attestation(
+            item, self.schema, self.policy,
+            trusted_public_keys=trusted, now=timestamp,
+        )
+
+    def test_synced_rejects_unknown_trust_key_and_tampered_signature(self):
+        item, trusted, timestamp = signed_synced_attestation()
+        with self.assertRaisesRegex(ContractError, "not trusted"):
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys={}, now=timestamp,
+            )
+        tampered = copy.deepcopy(item)
+        tampered["signature"]["value"] = base64.b64encode(b"\\x01" * 64).decode("ascii")
+        with self.assertRaisesRegex(ContractError, "signature verification failed"):
+            validate_attestation(
+                tampered, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+
+    def test_synced_rejects_stale_plane_specific_evidence(self):
+        item, trusted, timestamp = signed_synced_attestation()
+        old = iso_utc(timestamp - timedelta(days=31))
+        next(entry for entry in item["evidence"] if entry["kind"] == "PACKAGE_READBACK")["observed_at"] = old
+        with self.assertRaisesRegex(ContractError, "PACKAGE_READBACK evidence exceeds"):
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+
+    def test_synced_rejects_missing_plane_specific_evidence(self):
+        item, trusted, timestamp = signed_synced_attestation()
+        item["evidence"] = [e for e in item["evidence"] if e["kind"] != "RUNTIME_PROBE"]
+        with self.assertRaisesRegex(ContractError, "requires plane-specific RUNTIME_PROBE"):
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+
+    def test_synced_rejects_pending_or_rejected_approvals(self):
+        for decision in ("PENDING", "REJECTED"):
+            item, trusted, timestamp = signed_synced_attestation()
+            item["approvals"][0]["decision"] = decision
+            with self.subTest(decision=decision), self.assertRaisesRegex(ContractError, "unresolved or rejected"):
+                validate_attestation(
+                    item, self.schema, self.policy,
+                    trusted_public_keys=trusted, now=timestamp,
+                )
+
+    def test_synced_requires_each_action_specific_approval(self):
+        item, trusted, timestamp = signed_synced_attestation()
+        item["approvals"] = [
+            approval for approval in item["approvals"]
+            if approval["action"] != "target_install_upgrade_enable_disable_or_uninstall"
+        ]
+        with self.assertRaisesRegex(ContractError, "missing required human approval"):
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
 
     def test_synced_rejects_unknown_rights_or_drifted_plane(self):
-        item = synced_attestation()
+        item, trusted, timestamp = signed_synced_attestation()
         item["rights"]["state"] = "UNKNOWN"
         with self.assertRaises(ContractError):
-            validate_attestation(item, self.schema, self.policy)
-        item = synced_attestation()
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+        item, trusted, timestamp = signed_synced_attestation()
         item["instructions"]["state"] = "DRIFT"
         with self.assertRaises(ContractError):
-            validate_attestation(item, self.schema, self.policy)
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
 
-    def test_synced_rejects_missing_signature_and_unresolved_limitation(self):
-        item = synced_attestation()
-        item["signature"] = None
-        with self.assertRaises(ContractError):
-            validate_attestation(item, self.schema, self.policy)
-        item = synced_attestation()
+    def test_synced_rejects_unresolved_limitation(self):
+        item, trusted, timestamp = signed_synced_attestation()
         item["limitations"] = ["Not independently observed"]
         with self.assertRaises(ContractError):
-            validate_attestation(item, self.schema, self.policy)
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
 
     def test_manifest_file_count_and_paths_are_consistent(self):
         item = sample_attestation()
@@ -127,14 +256,14 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
         with self.assertRaises(ContractError):
             validate_attestation(item, self.schema, self.policy)
 
-    def test_duplicate_manifest_paths_are_rejected(self):
+    def test_manifest_paths_colliding_after_nfc_normalization_are_rejected(self):
         item = sample_attestation()
         item["instructions"]["file_count"] = 2
         item["instructions"]["per_file_digests"] = [
-            {"path": "skills/main.md", "sha256": "a" * 64},
-            {"path": "skills/main.md", "sha256": "b" * 64},
+            {"path": "skills/café.md", "sha256": "a" * 64},
+            {"path": "skills/cafe\\u0301.md", "sha256": "b" * 64},
         ]
-        with self.assertRaises(ContractError):
+        with self.assertRaisesRegex(ContractError, "after NFC normalization"):
             validate_attestation(item, self.schema, self.policy)
 
     def test_approved_evidence_requires_approver_subject(self):
@@ -143,7 +272,7 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
             "action": "release",
             "decision": "APPROVED",
             "decision_reference": "decision-123",
-            "decided_at": "2026-11-24T04:50:00Z",
+            "decided_at": item["observed_at"],
             "approver": None,
         }]
         with self.assertRaises(ContractError):
@@ -154,6 +283,18 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
         item["policy_version"] = "0.9.0"
         with self.assertRaises(ContractError):
             validate_attestation(item, self.schema, self.policy)
+
+    def test_github_evidence_permissions_cannot_be_widened(self):
+        policy = copy.deepcopy(self.policy)
+        policy["github"]["evidence_permissions"].append("contents:write")
+        with self.assertRaisesRegex(ContractError, "exact read-only allowlist"):
+            validate_policy(self.schema, policy)
+
+    def test_privileged_pull_request_rule_cannot_be_relaxed(self):
+        policy = copy.deepcopy(self.policy)
+        policy["github"]["privileged_pull_request_rule"] = "checkout_pr_head"
+        with self.assertRaisesRegex(ContractError, "privileged pull-request rule"):
+            validate_policy(self.schema, policy)
 
 
 if __name__ == "__main__":

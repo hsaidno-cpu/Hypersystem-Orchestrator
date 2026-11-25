@@ -314,3 +314,15 @@ An ecosystem release may be called four-plane synchronized only when:
 - no unresolved blocker, drift, stale observation or unknown required plane remains.
 
 Otherwise publish the exact per-plane state and blocker. Never flatten an incomplete ecosystem into a green badge.
+
+## 15. ECIG signature verification and trust-root provisioning
+
+A `SYNCED` attestation is accepted only when its Ed25519 signature verifies against an active public key in `governance/ecig-trusted-public-keys.json`. The signature covers the complete attestation payload except the root-level `signature` field. The canonical byte representation is UTF-8 JSON with lexicographically sorted object keys, compact separators, Unicode characters emitted without ASCII escaping, and non-finite numbers rejected (`HSO-ECIG-JSON-1`).
+
+The verifier checks the trusted `key_id`, canonical base64 encoding, 32-byte public key, 64-byte signature and cryptographic verification. A syntactically valid signature length is not proof of authenticity. Signature verification is separate from human approval records; neither substitutes for the other.
+
+The checked-in trust registry intentionally begins with zero active keys. Until a public key is added through a reviewed change with an explicit human security approval and documented key custody/rotation/revocation ownership, every `SYNCED` attestation fails closed. Test fixtures may inject ephemeral keys in memory; test keys must never be added to the production trust registry.
+
+A `SYNCED` record must also carry plane-specific evidence: source commit and manifest, package read-back, installation receipt and runtime probe, instruction comparison, and documentation read-back. The latest observation for each required evidence kind must be no older than the corresponding policy freshness window, and no unresolved or rejected approval may remain. Approval records must be action-specific for canonical source selection, rights disposition, publication and installation where those actions occurred.
+
+The ECIG policy validator enforces the exact read-only GitHub permission allowlist (`contents:read`, `pull-requests:read`, `actions:read`), pull-request-only source changes and the trusted-base-only privileged workflow rule. These checks validate the declared policy; they do not themselves prove GitHub repository rulesets or live runtime permissions.

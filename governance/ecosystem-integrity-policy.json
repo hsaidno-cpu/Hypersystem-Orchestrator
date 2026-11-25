@@ -122,5 +122,13 @@
     "ambiguous_create_behavior": "read_back_by_record_key_before_any_retry",
     "retry_policy": "bounded_exponential_backoff_with_jitter_for_safe_operations",
     "concurrency": "one_reconciliation_lease_per_record_key_without_dropping_unrelated_deliveries"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "payload_version": "HSO-ECIG-JSON-1",
+    "canonicalization": "UTF-8_JSON_SORT_KEYS_COMPACT_SEPARATORS_ENSURE_ASCII_FALSE",
+    "exclude_root_field": "signature",
+    "trust_store_path": "governance/ecig-trusted-public-keys.json",
+    "trust_store_update": "reviewed_pull_request_and_human_security_approval"
   }
 }
