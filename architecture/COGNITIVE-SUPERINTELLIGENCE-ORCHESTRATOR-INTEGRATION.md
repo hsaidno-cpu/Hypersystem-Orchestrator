@@ -1,7 +1,7 @@
 # Cognitive Superintelligence Orchestrator — HSO Integration Contract
 
 **Document status:** Architecture proposal / draft integration contract  
-**Revision:** 0.3.0  
+**Revision:** 0.4.0  
 **Date:** 2026-11-25  
 **Parent ecosystem:** Hypersystem-Orchestrator (HSO)  
 **Plugin identity:** `plugins_6b06658b887c8191901493ecd184ab9a`  
@@ -15,7 +15,7 @@ Cognitive Superintelligence Orchestrator (CSO) is a **cognitive-domain specialis
 
 The Plugin Creator package was updated from 0.1.0 to 0.2.0 while preserving the same plugin identity, USER scope and PRIVATE discoverability. Its current read-back inventory contains one master orchestrator, ten specialist skills, two reference documents and 21 acceptance cases. The package update and file read-back do not prove HSO activation, target-host invocation or outcome quality.
 
-The package remains USER / PRIVATE. No canonical Git source repository, package-wide license grant, public redistribution right or generic HSO runtime adapter is asserted.
+The Plugin Creator release pluginrel_6b0674a582e881918729571e5f28cbc2 v0.2.0 is the current authoritative packaged artifact. No canonical Git source repository, package-wide license grant, public redistribution right or generic HSO runtime dispatcher is asserted.
 
 ## 2. Capability decomposition — six modules, ten specialists
 
@@ -134,13 +134,13 @@ The HSO adapter must produce the exact shared top-level structure and required f
 
 Do not add local-only top-level fields such as `request_id`, `plugin_key`, `skill_name` or non-canonical status values. Carry specialist-specific detail in schema-permitted fields. The adapter must validate the serialized envelope against the exact HSO schema before dispatch. If validation or capability readiness fails, mark the handoff BLOCKED; do not bypass the contract.
 
-## 6. Current integration status at revision 0.3.0
+## 6. Current integration status at revision 0.4.0
 
 | Integration plane | Current disposition | Evidence / limitation |
 |---|---|---|
 | Plugin Creator package | **UPDATED — USER / PRIVATE — 0.2.0** | Plugin ID `plugins_6b06658b887c8191901493ecd184ab9a`; release `pluginrel_6b0674a582e881918729571e5f28cbc2`; full inventory read back. |
 | Package acceptance suite | **21 CASES SPECIFIED — NOT RUN** | `tests/acceptance-cases.json` declares `SPECIFICATION_ONLY_NOT_RUN`; static archive checks passed locally before upload, not a host runtime test. |
-| Canonical Git source | **NOT IDENTIFIED** | No dedicated child repository or immutable source commit has been registered. |
+| Current package artifact authority | **PLUGIN CREATOR v0.2.0 — USER / PRIVATE** | Exact package ID and release are read back and identified as the authoritative packaged artifact; this is not a Git source pin. |\n| Canonical Git source | **NOT ESTABLISHED** | No dedicated child repository or immutable Git commit is authorized/registered. |
 | Licensing / redistribution | **NOT ASSESSED / PRIVATE ONLY** | No LICENSE file or explicit package-wide redistribution grant was established. No license was added or inferred by this update. |
 | HSO catalog registration | **DEFERRED** | PRs #12, #15 and #18 remain open; source/rights and version baselines are not stabilized. No catalog or distribution registry file was changed. |
 | HSO integration contract | **DOCUMENTATION PR OPEN** | PR #23 updates this architecture document only. It does not create a catalog entry or canonical source. |
