@@ -1,0 +1,35 @@
+name: ECIG trust-root owner approval
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  verify-gov01-trust-root-decision:
+    if: >-
+      ${{ github.event_name == 'pull_request_target' ||
+          (github.event.issue.pull_request != null &&
+           github.event.issue.state == 'open') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out trusted base implementation only
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Verify current PR state and exact GOV-01 trust-root decision
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+        run: |
+          python tools/verify_ecig_trust_root_approval.py --pr-number "$PR_NUMBER"
