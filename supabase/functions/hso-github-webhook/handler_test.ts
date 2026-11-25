@@ -57,6 +57,12 @@ Deno.test("duplicate delivery returns 409 and never repeats side effects",async(
  const {deps,state}=fake();const h=createWebhookHandler(deps);eq((await h(await req())).status,202);eq((await h(await req())).status,409);
  eq(state.inbox.length,1);eq(state.changes.length,1);eq(state.touches.length,1);eq(state.sync.length,1);
 });
+Deno.test("missing reconciliation token fails closed before persistence",async()=>{
+ const {deps,state}=fake({getSyncToken:()=>undefined});
+ eq((await createWebhookHandler(deps)(await req())).status,503);
+ eq(state.inbox.length,0);eq(state.changes.length,0);eq(state.sync.length,0);
+});
+
 Deno.test("legacy raw-body GitHub signature is rejected",async()=>{
  const {deps,state}=fake();const key=await crypto.subtle.importKey("raw",new TextEncoder().encode("legacy-secret"),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
  const raw=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(body));
