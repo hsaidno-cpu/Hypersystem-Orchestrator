@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 const POLICY = "strategic-priority-v1";
 const ENGINE = "hso-decision-engine-v1";
-import { PRIORITY_WEIGHTS as WEIGHTS, normalizeWorkKey, taskId, calculatePriorityScore, calculateWeightedProgress } from "./policy.mjs";
+import { PRIORITY_WEIGHTS as WEIGHTS, normalizeWorkKey, taskId, calculatePriorityScore, calculateWeightedProgress, hasScopeDecision } from "./policy.mjs";
 const REQUIRED = ["notion-control-center","notion-roadmap","notion-execution-ledger","notion-evidence-registry","github-hso-parent"];
 
 function reply(data: unknown, status = 200) {
@@ -27,6 +27,26 @@ function arr(value: unknown): string[] {
   } catch { /* use delimiter form */ }
   return value.split(/[\n,;]+/).map((x) => x.trim()).filter(Boolean);
 }
+async function fetchAllRows(db: any, table: string, columns = "*", configure?: (query: any) => any) {
+  const output: any[] = [];
+  const pageSize = 500;
+  const maxPages = 10000;
+  for (let page = 0; page < maxPages; page++) {
+    let query: any = db.from(table).select(columns);
+    if (configure) query = configure(query);
+    const { data, error } = await query.range(page * pageSize, (page + 1) * pageSize - 1);
+    if (error) return { data: output, error };
+    const rows = data ?? [];
+    output.push(...rows);
+    if (rows.length < pageSize) return { data: output, error: null };
+  }
+  return { data: output, error: new Error(`Pagination limit exceeded while reading ${table}; refusing truncated decision input`) };
+}
+async function digest(value: unknown) {
+  const bytes = new TextEncoder().encode(JSON.stringify(value));
+  const hash = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 function verified(item: any, evidence: any[]) {
   if (!["Verified", "Accepted"].includes(item.execution_state) || item.gate_state !== "PASS") return false;
   if (!item.source_verified_at || !fresh(item.source_verified_at, 604800)) return false;
@@ -35,7 +55,8 @@ function verified(item: any, evidence: any[]) {
     ev.related_work_item === item.external_id &&
     ["PASS","VERIFIED","ACCEPTED"].includes(String(ev.evidence_state).toUpperCase()) &&
     ev.freshness === "FRESH" &&
-    (ev.verified_at || ["Acceptance Test","Human Review","Release Verification"].includes(ev.evidence_type)) &&
+    ((ev.verified_at && fresh(ev.verified_at, 604800)) ||
+      (["Acceptance Test","Human Review","Release Verification"].includes(ev.evidence_type) && fresh(ev.observed_at, 604800))) &&
     (!item.ci_commit_sha || ev.commit_sha === item.ci_commit_sha) &&
     (!item.head_commit_sha || ev.commit_sha === item.head_commit_sha)
   );
@@ -137,37 +158,94 @@ Deno.serve(async (req) => {
   if (!url || !key) return reply({ error: "backend_not_configured" }, 503);
   const db = createClient(url, key, { auth: { persistSession: false } });
   let requestBody: any = {};
-  try { requestBody = await req.json(); } catch { /* allow explicit re-evaluation without a body */ }
+  try { requestBody = await req.json(); } catch { /* body is required below */ }
   const syncRunId = typeof requestBody.sync_run_id === "string" ? requestBody.sync_run_id : null;
+  if (!syncRunId) return reply({ error: "sync_run_id_required", message: "Decision runs must bind to one explicit completed sync_run_id." }, 400);
 
-  const [sq, iq, eq, snq, cq] = await Promise.all([
-    db.from("hso_sources").select("*").eq("enabled", true),
-    db.from("hso_work_items").select("*").limit(1500),
-    db.from("hso_evidence_records").select("*").limit(2000),
-    syncRunId
-      ? db.from("hso_source_snapshots").select("id,source_key,observed_at,content_hash,sync_run_id").eq("sync_run_id", syncRunId).order("observed_at", { ascending: false })
-      : db.from("hso_source_snapshots").select("id,source_key,observed_at,content_hash,sync_run_id").order("observed_at", { ascending: false }).limit(50),
-    db.from("hso_completion_criteria").select("*").eq("project_key", "hso").eq("required", true)
+  const [sq, iq, eq, snq, cq, syncQ] = await Promise.all([
+    fetchAllRows(db, "hso_sources", "*", (q: any) => q.eq("enabled", true)),
+    fetchAllRows(db, "hso_work_items"),
+    fetchAllRows(db, "hso_evidence_records"),
+    fetchAllRows(db, "hso_source_snapshots", "*", (q: any) => q.eq("sync_run_id", syncRunId).order("observed_at", { ascending: false })),
+    fetchAllRows(db, "hso_completion_criteria", "*", (q: any) => q.eq("project_key", "hso").eq("required", true)),
+    db.from("hso_sync_runs").select("*").eq("id", syncRunId).maybeSingle()
   ]);
-  const errs = [sq.error, iq.error, eq.error, snq.error, cq.error].filter(Boolean);
-  if (errs.length) return reply({ error: "decision_inputs_unavailable", details: errs.map((x: any) => x.message) }, 500);
+  const errs = [sq.error, iq.error, eq.error, snq.error, cq.error, syncQ.error].filter(Boolean);
+  if (errs.length) return reply({ error: "decision_inputs_unavailable", details: errs.map((x: any) => String(x.message ?? x)) }, 500);
+  if (!syncQ.data) return reply({ error: "sync_run_not_found", sync_run_id: syncRunId }, 404);
 
   const sources = sq.data || [];
   const allRoadmapRows = iq.data || [];
-  const items = allRoadmapRows.filter((x: any) => x.record_type === "Work Item");
-  const milestoneRows = allRoadmapRows.filter((x: any) => ["Milestone","Phase"].includes(String(x.record_type)));
+  const roadmapRows = allRoadmapRows.filter((x: any) => x.source_key === "notion-roadmap");
+  const items = roadmapRows.filter((x: any) => x.record_type === "Work Item");
+  const milestoneRows = roadmapRows.filter((x: any) => ["Milestone","Phase"].includes(String(x.record_type)));
   const evidence = eq.data || [], snapshots = snq.data || [], criteria = cq.data || [];
+  const syncRun = syncQ.data;
   const milestoneById = new Map(milestoneRows.filter((x: any) => x.item_key !== null && x.item_key !== undefined).map((x: any) => [String(x.item_key), x]));
   const sourceMap = new Map(sources.map((s: any) => [s.source_key, s]));
   const sourceHealth: Record<string, any> = {};
   const staleSources: any[] = [];
+  const snapshotBySource = new Map<string, any>();
+  const duplicateSnapshotSources: string[] = [];
+  const incompleteSnapshotSources: string[] = [];
   for (const sourceKey of REQUIRED) {
     const src: any = sourceMap.get(sourceKey);
+    const matches = snapshots.filter((snap: any) => snap.source_key === sourceKey);
+    if (matches.length === 1) snapshotBySource.set(sourceKey, matches[0]);
+    else if (matches.length > 1) duplicateSnapshotSources.push(sourceKey);
+    const snap: any = matches.length === 1 ? matches[0] : null;
+    const maxAge = Number(src?.freshness_seconds || 1800);
     const age = src?.last_success_at ? Math.max(0, Math.round((Date.now() - Date.parse(src.last_success_at)) / 1000)) : null;
-    const isFresh = Boolean(src && src.status === "connected" && age !== null && age <= Number(src.freshness_seconds || 1800));
-    sourceHealth[sourceKey] = { status: src?.status || "missing", last_success_at: src?.last_success_at || null, age_seconds: age, freshness_seconds: src?.freshness_seconds || null, fresh: isFresh, last_error: src?.last_error || null };
-    if (!isFresh) staleSources.push({ source_key: sourceKey, ...sourceHealth[sourceKey] });
+    const completeSnapshot = Boolean(snap && snap.is_complete === true && snap.pagination_complete === true &&
+      snap.completeness_state === "COMPLETE" && snap.freshness === "FRESH" && snap.content_hash &&
+      snap.scope_hash && fresh(snap.observed_at, maxAge));
+    if (!completeSnapshot) incompleteSnapshotSources.push(sourceKey);
+    const isFresh = Boolean(src && src.status === "connected" && age !== null && age <= maxAge &&
+      src.last_complete_at && fresh(src.last_complete_at, maxAge) && completeSnapshot);
+    sourceHealth[sourceKey] = {
+      status: src?.status || "missing", last_success_at: src?.last_success_at || null,
+      last_complete_at: src?.last_complete_at || null, age_seconds: age,
+      freshness_seconds: src?.freshness_seconds || null, fresh: isFresh,
+      snapshot_count: matches.length, complete_snapshot: completeSnapshot,
+      snapshot_id: snap?.id || null, last_error: src?.last_error || null
+    };
+    if (!isFresh) staleSources.push({
+      source_key: sourceKey, reason: matches.length > 1 ? "DUPLICATE_SNAPSHOT" : !completeSnapshot ? "SNAPSHOT_INCOMPLETE_OR_MISSING" : "SOURCE_STALE",
+      ...sourceHealth[sourceKey]
+    });
   }
+  const syncSucceeded = syncRun.status === "succeeded";
+  if (!syncSucceeded) staleSources.push({ source_key: "sync-run", reason: "SYNC_RUN_NOT_SUCCEEDED", status: syncRun.status });
+  const roadmapSnapshot: any = snapshotBySource.get("notion-roadmap");
+  const expectedRoadmapIds = Array.isArray(roadmapSnapshot?.snapshot?.page_ids)
+    ? roadmapSnapshot.snapshot.page_ids.map((x: any) => String(x)).sort() : [];
+  const actualRoadmapIds = roadmapRows.map((x: any) => String(x.external_id)).sort();
+  const expectedUnique = new Set(expectedRoadmapIds);
+  const roadmapMembershipMismatch = !roadmapSnapshot ||
+    expectedRoadmapIds.length !== expectedUnique.size ||
+    Number(roadmapSnapshot?.source_total_count) !== expectedRoadmapIds.length ||
+    JSON.stringify(expectedRoadmapIds) !== JSON.stringify(actualRoadmapIds) ||
+    roadmapSnapshot.scope_hash !== await digest(expectedRoadmapIds);
+  const scopeDrift = roadmapMembershipMismatch;
+  if (scopeDrift) staleSources.push({
+    source_key: "notion-roadmap", reason: "ROADMAP_MEMBERSHIP_MISMATCH",
+    expected_count: expectedRoadmapIds.length, actual_count: actualRoadmapIds.length,
+    expected_scope_hash: roadmapSnapshot?.scope_hash || null
+  });
+  const decisionInputsComplete = syncSucceeded && staleSources.length === 0 && !scopeDrift;
+  const snapshotCoverage = {
+    sync_run_id: syncRunId, sync_run_status: syncRun.status,
+    required_sources: REQUIRED,
+    observed_sources: [...new Set(snapshots.map((snap: any) => snap.source_key))],
+    missing_sources: REQUIRED.filter((sourceKey) => !snapshotBySource.has(sourceKey)),
+    duplicate_sources: duplicateSnapshotSources,
+    incomplete_sources: incompleteSnapshotSources,
+    roadmap_expected_record_count: expectedRoadmapIds.length,
+    roadmap_actual_record_count: actualRoadmapIds.length,
+    roadmap_membership_match: !scopeDrift,
+    decision_inputs_complete: decisionInputsComplete,
+    stale_reasons: staleSources,
+  };
 
   const evidenceByTask = new Map<string, any[]>();
   for (const ev of evidence) if (ev.related_work_item) evidenceByTask.set(ev.related_work_item, [...(evidenceByTask.get(ev.related_work_item) || []), ev]);
@@ -184,17 +262,24 @@ Deno.serve(async (req) => {
     const reasons: string[] = [];
     const status = String(item.execution_state || "UNKNOWN");
     const code = item.change_surface === "CODE";
+    const normalizedKey = normalizeWorkKey(item.item_key);
     if (!["Ready","Not started","In progress"].includes(status)) reasons.push("STATUS_NOT_ACTIONABLE");
     if (item.gate_state !== "PASS") reasons.push("GATE_NOT_PASS");
+    if (!decisionInputsComplete) reasons.push("SOURCE_COMPLETENESS_GATE");
     if (staleSources.length) reasons.push("SOURCE_FRESHNESS_GATE");
-    if (duplicateKeys.has(normalizeWorkKey(item.item_key))) reasons.push("DUPLICATE_TASK_ID");
+    if (!normalizedKey) reasons.push("STABLE_TASK_ID_MISSING");
+    if (duplicateKeys.has(normalizedKey)) reasons.push("DUPLICATE_TASK_ID");
+    if (!hasScopeDecision(item)) reasons.push("SCOPE_DECISION_INCOMPLETE");
+    else if (item.scope_inclusion_state === "OUT_OF_SCOPE") reasons.push("WORK_ITEM_OUT_OF_SCOPE");
     const proseDeps = arr(item.dependencies);
     const depIds = arr(item.dependency_work_item_ids);
     if (proseDeps.length && !depIds.length) reasons.push("DEPENDENCY_IDS_UNMAPPED");
     const resolvedDeps: any[] = [];
     for (const depId of depIds) {
-      const dep = itemByKey.get(normalizeWorkKey(depId));
-      if (!dep) reasons.push("DEPENDENCY_NOT_FOUND:" + depId);
+      const dependencyKey = normalizeWorkKey(depId);
+      if (duplicateKeys.has(dependencyKey)) reasons.push("DEPENDENCY_ID_AMBIGUOUS:" + depId);
+      const dep = duplicateKeys.has(dependencyKey) ? null : itemByKey.get(dependencyKey);
+      if (!dep) reasons.push("DEPENDENCY_NOT_FOUND_OR_AMBIGUOUS:" + depId);
       else {
         resolvedDeps.push({ task_id: taskId(dep), title: dep.title, status: dep.execution_state });
         if (!verifiedById.get(dep.id)) reasons.push("DEPENDENCY_NOT_VERIFIED:" + depId);
@@ -258,6 +343,7 @@ Deno.serve(async (req) => {
   eligible.sort((a, b) => b.score - a.score || String(a.item.item_key).localeCompare(String(b.item.item_key)));
 
   const now = new Date().toISOString();
+  const snapshotIds = [...new Set(snapshots.map((snap: any) => snap.id))];
   const groups = new Map<string, any[]>();
   const groupLabels = new Map<string, { title: string; group_type: string }>();
   groups.set("__GLOBAL__", items);
@@ -285,9 +371,22 @@ Deno.serve(async (req) => {
   const progressRows: any[] = [];
   for (const [key, group] of groups) {
     const verifiedIds = new Set(group.filter((x) => verifiedById.get(x.id)).map((x) => String(x.id)));
-    const progress = calculateWeightedProgress(group, verifiedIds);
+    const progress = calculateWeightedProgress(group, verifiedIds, {
+      sourceComplete: decisionInputsComplete, scopeDrift
+    });
+    const scopeRows = group.map((item: any) => ({
+      external_id: item.external_id, item_key: item.item_key,
+      scope_inclusion_state: item.scope_inclusion_state,
+      scope_decision_by: item.scope_decision_by, scope_decision_at: item.scope_decision_at,
+      scope_decision_rationale: item.scope_decision_rationale,
+      scope_weight: item.scope_weight, weight_rationale: item.weight_rationale,
+      scope_weight_approval: item.scope_weight_approval,
+      scope_weight_approved_by: item.scope_weight_approved_by,
+      scope_weight_approved_at: item.scope_weight_approved_at,
+    })).sort((a: any, b: any) => String(a.external_id).localeCompare(String(b.external_id)));
+    const progressScopeHash = await digest(scopeRows);
     progressRows.push({
-      project_key: "hso",
+      project_key: "hso", source_sync_run_id: syncRunId, scope_hash: progressScopeHash,
       milestone_key: key === "__GLOBAL__" ? null : key,
       milestone_title: key === "__GLOBAL__" ? "All work items" : (groupLabels.get(key)?.title ?? key),
       group_type: key === "__GLOBAL__" ? "GLOBAL" : (groupLabels.get(key)?.group_type ?? "ECOSYSTEM_STAGE"),
@@ -295,29 +394,39 @@ Deno.serve(async (req) => {
       baseline_start_date: key === "__GLOBAL__" ? null : (groupLabels.get(key)?.baseline_start_date ?? null),
       target_date: key === "__GLOBAL__" ? null : (groupLabels.get(key)?.target_date ?? null),
       ...progress,
-      methodology_version: "weighted-evidence-v1",
+      is_publishable: progress.is_publishable && decisionInputsComplete && !scopeDrift,
+      measurement_reasons: progress.measurement_reasons,
+      methodology_version: "weighted-evidence-v2",
       computed_at: now
     });
   }
   const prog = await db.from("hso_progress_snapshots").insert(progressRows);
   if (prog.error) return reply({ error: "progress_write_failed", detail: prog.error.message }, 500);
 
-  const snapshotIds = [...new Set(snapshots.map((s: any) => s.id))];
-  const snapshotCoverage = {
-    sync_run_id: syncRunId,
-    observed_sources: [...new Set(snapshots.map((s: any) => s.source_key))],
-    missing_sources: REQUIRED.filter((sourceKey) => !snapshots.some((s: any) => s.source_key === sourceKey))
+  const evidenceById = new Map(evidence.map((ev: any) => [String(ev.id), ev]));
+  const criterionIsVerified = (criterion: any) => {
+    const ev: any = criterion.evidence_record_id ? evidenceById.get(String(criterion.evidence_record_id)) : null;
+    return ["VERIFIED","ACCEPTED"].includes(String(criterion.state).toUpperCase()) &&
+      Boolean(criterion.last_evaluated_at && fresh(criterion.last_evaluated_at, 604800)) &&
+      Boolean(ev && ["PASS","VERIFIED","ACCEPTED"].includes(String(ev.evidence_state).toUpperCase()) &&
+        ev.freshness === "FRESH" && ev.verified_at && fresh(ev.verified_at, 604800));
   };
-  const primary = eligible[0] || null;
+  const primary = decisionInputsComplete ? (eligible[0] || null) : null;
+  const verifiedCriteria = criteria.filter(criterionIsVerified);
   const completionGap = {
     required_criteria_count: criteria.length,
-    verified_criteria_count: criteria.filter((c: any) => ["VERIFIED","ACCEPTED"].includes(c.state) && c.evidence_record_id).length,
-    incomplete_criteria: criteria.filter((c: any) => !["VERIFIED","ACCEPTED"].includes(c.state) || !c.evidence_record_id).map((c: any) => ({ key: c.criterion_key, title: c.title, state: c.state })),
+    verified_criteria_count: verifiedCriteria.length,
+    incomplete_criteria: criteria.filter((c: any) => !criterionIsVerified(c)).map((c: any) => ({
+      key: c.criterion_key, title: c.title, state: c.state,
+      evidence_state: c.evidence_record_id ? (evidenceById.get(String(c.evidence_record_id))?.evidence_state ?? "EVIDENCE_NOT_FOUND") : "EVIDENCE_NOT_LINKED",
+    })),
     baseline_state: criteria.length ? "CONFIGURED" : "NOT_CONFIGURED"
   };
-  const state = primary ? "PRIMARY_SELECTED" : staleSources.length ? "SOURCE_STALE" : "NO_ELIGIBLE_ACTION";
+  const state = primary ? "PRIMARY_SELECTED" : !decisionInputsComplete ? "SOURCE_STALE" : "NO_ELIGIBLE_ACTION";
   const run = await db.from("hso_decision_runs").insert({
     engine_version: ENGINE, policy_version: POLICY, decision_state: state,
+    source_sync_run_id: syncRunId, snapshot_coverage: snapshotCoverage,
+    decision_inputs_complete: decisionInputsComplete,
     primary_work_item_id: primary?.item.id || null, source_health: { ...sourceHealth, snapshot_coverage: snapshotCoverage },
     primary_action: primary ? {
       task_id: taskId(primary.item), title: primary.item.title, score: Math.round(primary.score * 100) / 100,
@@ -384,7 +493,7 @@ Deno.serve(async (req) => {
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(p.text));
     const hash = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2,"0")).join("");
     const artifact = await db.from("hso_prompt_artifacts").insert({
-      work_item_id: primary.item.id, snapshot_id: snapshots[0]?.id || null,
+      work_item_id: primary.item.id, snapshot_id: roadmapSnapshot?.id || null,
       prompt_version: "hso-ready-prompt-v1", prompt_text: p.text,
       prompt_payload: p.payload, context_hash: hash, task_key: taskId(primary.item),
       prompt_state: "generated", created_from_decision_run: run.data.id
@@ -399,8 +508,8 @@ Deno.serve(async (req) => {
     priority_score: primary.score, policy_version: POLICY,
     rationale: { decision_run_id: run.data.id, score_breakdown: primary.breakdown, reasons: ["hard_gates_passed","highest_ranked"] }
   }] : [{
-    decision_type: "NO_ELIGIBLE_ACTION", eligibility_state: staleSources.length ? "SOURCE_STALE" : "NONE_ELIGIBLE",
-    policy_version: POLICY, rationale: { decision_run_id: run.data.id, stale_sources: staleSources, blocked_count: blocked.length }
+    decision_type: "NO_ELIGIBLE_ACTION", eligibility_state: !decisionInputsComplete ? "SOURCE_STALE" : "NONE_ELIGIBLE",
+    policy_version: POLICY, rationale: { decision_run_id: run.data.id, stale_sources: staleSources, blocked_count: blocked.length, decision_inputs_complete: decisionInputsComplete }
   }]);
   if (dec.error) return reply({ error: "decision_projection_failed", detail: dec.error.message }, 500);
 
