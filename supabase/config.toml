@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.hso-reconcile]
 verify_jwt = false
+
+[functions.hso-decision-engine]
+verify_jwt = false

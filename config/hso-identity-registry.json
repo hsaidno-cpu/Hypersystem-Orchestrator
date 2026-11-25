@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0.0",
+  "canonical_identity": {
+    "system_name": "Hypersystem-Orchestrator",
+    "acronym": "HSO",
+    "slug": "hypersystem-orchestrator",
+    "canonical_repository": "hsaidno-cpu/Hypersystem-Orchestrator",
+    "repository_id": "1467501661"
+  },
+  "naming_policy": {
+    "system_display_name": "Hypersystem-Orchestrator",
+    "dashboard_app_name": "HSO Mission Control",
+    "governance_control_plane_name": "HSO Master Control Center",
+    "legacy_aliases": {
+      "HSO": "Acronym in prose and technical identifiers",
+      "Hypersystem Orchestrator": "Historical prose/search alias only",
+      "mission-control": "Vercel project slug only"
+    },
+    "prohibited_aliases": {
+      "HSMART": "Separate project/repository; never an HSO alias, deployment target or database identifier."
+    },
+    "semantic_boundaries": {
+      "system": "Overall HSO ecosystem and parent repository",
+      "dashboard": "HSO Mission Control operational dashboard",
+      "control_plane": "HSO Master Control Center governance and approval source",
+      "work_item": "Atomic Roadmap deliverable keyed by Work Item ID",
+      "execution_record": "Recorded execution attempt and receipt",
+      "evidence_record": "Source-backed support for a claim",
+      "source_snapshot": "Source observation tied to one sync_run_id",
+      "sync_run": "One bounded reconciliation execution",
+      "supabase_project": "Operational data plane keyed by immutable project_ref",
+      "vercel_project": "Deployment unit keyed by immutable project_id"
+    }
+  },
+  "platforms": {
+    "github": {
+      "role": "canonical_source_control",
+      "repository_full_name": "hsaidno-cpu/Hypersystem-Orchestrator",
+      "repository_id": "1467501661",
+      "display_name": "Hypersystem-Orchestrator",
+      "canonical": true
+    },
+    "supabase": {
+      "role": "operational_data_plane",
+      "project_ref": "ehgmtkkppmceaffhwcpc",
+      "project_display_name": {
+        "desired": "Hypersystem-Orchestrator",
+        "observed": "hsaidno-cpu's Project",
+        "rename_state": "PENDING_PROVIDER_MANAGEMENT_API_WRITE"
+      },
+      "project_url": "https://ehgmtkkppmceaffhwcpc.supabase.co",
+      "dashboard_url": "https://supabase.com/dashboard/project/ehgmtkkppmceaffhwcpc",
+      "region": "ap-northeast-1",
+      "database_schema": "public",
+      "table_prefix": "hso_",
+      "immutable_identity_fields": [
+        "project_ref",
+        "project_url",
+        "database_host"
+      ],
+      "rename_rule": "Rename only display name. Never rotate project ref, API host, keys, Auth issuer or database host."
+    },
+    "notion": {
+      "role": "governance_and_authoritative_project_records",
+      "pages": {
+        "control_center": {
+          "id": "42299868397f81b3b8a2d4f936f355cb",
+          "title": "HSO Master Control Center"
+        },
+        "mission_control_runbook": {
+          "id": "42299868397f8108809dd00a3f3990a9",
+          "title": "HSO Mission Control — Architecture & Integration Runbook"
+        },
+        "roadmap": {
+          "id": "42299868397f81d09bc2ff5885fd6471",
+          "title": "HSO Master Roadmap & Milestones"
+        },
+        "execution_ledger": {
+          "id": "42299868397f81c89570eeafc780bf91",
+          "title": "HSO Workflow Execution Ledger"
+        },
+        "evidence_registry": {
+          "id": "42299868397f816ab7efd69ae66e3a77",
+          "title": "HSO Evidence Registry"
+        }
+      },
+      "data_sources": {
+        "roadmap": {
+          "id": "42299868-397f-8166-bc5b-000bad757827",
+          "url": "collection://42299868-397f-8166-bc5b-000bad757827"
+        },
+        "execution_ledger": {
+          "id": "42299868-397f-8167-b8ea-000b720a9a66",
+          "url": "collection://42299868-397f-8167-b8ea-000b720a9a66"
+        },
+        "evidence_registry": {
+          "id": "42299868-397f-817c-bb25-000b49b243fa",
+          "url": "collection://42299868-397f-817c-bb25-000b49b243fa"
+        }
+      },
+      "title_is_not_identity": true,
+      "stable_identity_fields": [
+        "page_id",
+        "data_source_id"
+      ]
+    },
+    "vercel": {
+      "role": "dashboard_hosting",
+      "team_id": "team_PTFhDLqWUlDF5JmMwtNkdErN",
+      "canonical_dashboard_project": {
+        "project_id": "prj_CCBtxCpsVsY6st4TcmmtjoZiCbml",
+        "current_slug": "mission-control",
+        "canonical_app_name": "HSO Mission Control",
+        "repository_full_name": "hsaidno-cpu/Hypersystem-Orchestrator",
+        "root_directory": "apps/mission-control",
+        "state": "CANONICAL_DASHBOARD_DEPLOYMENT"
+      },
+      "secondary_project": {
+        "project_id": "prj_2lmpZ9CPJI0vjfNl7Ho3CMDVYWbB",
+        "current_slug": "hypersystem-orchestrator",
+        "root_directory": "",
+        "state": "NON_CANONICAL_HOLD",
+        "reason": "Separate root project; prior NEXT_NO_VERSION failure. Do not treat as Mission Control or promote without migration."
+      },
+      "stable_identity_fields": [
+        "team_id",
+        "project_id"
+      ],
+      "slug_change_requires_migration": true
+    }
+  },
+  "operational_source_keys": [
+    "notion-control-center",
+    "notion-roadmap",
+    "notion-execution-ledger",
+    "notion-evidence-registry",
+    "github-hso-parent"
+  ],
+  "canonical_terms": {
+    "source_states": [
+      "not_configured",
+      "connected",
+      "degraded"
+    ],
+    "snapshot_states": [
+      "UNKNOWN",
+      "COMPLETE",
+      "INCOMPLETE"
+    ],
+    "scope_states": [
+      "PENDING",
+      "IN_SCOPE",
+      "OUT_OF_SCOPE"
+    ],
+    "weight_approval_states": [
+      "PENDING",
+      "APPROVED",
+      "REJECTED"
+    ],
+    "progress_states": [
+      "UNMEASURED",
+      "PARTIAL_COVERAGE",
+      "SCOPE_UNCONFIRMED",
+      "SCOPE_CONFLICT",
+      "SOURCE_STALE"
+    ],
+    "verification_terms": [
+      "UNKNOWN",
+      "VERIFIED"
+    ]
+  },
+  "identity_precedence": [
+    "Immutable provider ID/ref and source keys",
+    "Canonical registry key",
+    "Provider display name and slug",
+    "Historical aliases for search only"
+  ],
+  "change_control": {
+    "registry_owner": "HSO maintainers; cross-platform rename requires owner approval",
+    "rename_requires": [
+      "Provider update",
+      "Read-back verification",
+      "Registry update",
+      "Notion runbook update",
+      "CI identity validation",
+      "Source reconciliation"
+    ],
+    "prohibit_implicit_id_rotation": true,
+    "prohibit_secret_storage": true
+  }
+}

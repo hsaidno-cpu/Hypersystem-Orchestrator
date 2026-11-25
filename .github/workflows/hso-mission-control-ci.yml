@@ -4,6 +4,14 @@ on:
   pull_request:
     paths:
       - "apps/mission-control/**"
+      - "supabase/functions/hso-decision-engine/**"
+      - "supabase/functions/hso-reconcile/**"
+      - "supabase/migrations/**"
+      - "docs/HSO-MISSION-CONTROL-INTELLIGENCE-SPEC.md"
+      - "docs/HSO-MISSION-CONTROL-MEASUREMENT-INTEGRITY-CONTRACT.md"
+      - "docs/HSO-CANONICAL-IDENTITY-AND-NOMENCLATURE.md"
+      - "config/hso-identity-registry.json"
+      - "tools/validate_hso_identity.py"
       - ".github/workflows/hso-mission-control-ci.yml"
   workflow_dispatch:
 
@@ -19,10 +27,25 @@ jobs:
     steps:
       - name: Check out HSO
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Validate canonical cross-platform identity registry
+        working-directory: ${{ github.workspace }}
+        run: python3 tools/validate_hso_identity.py
       - name: Set up Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "22"
+      - name: Test deterministic decision policy
+        working-directory: ${{ github.workspace }}
+        run: node --test supabase/functions/hso-decision-engine/policy.test.mjs
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type check Supabase Edge Functions
+        working-directory: ${{ github.workspace }}
+        run: |
+          deno check --config supabase/functions/hso-decision-engine/deno.json supabase/functions/hso-decision-engine/index.ts
+          deno check supabase/functions/hso-reconcile/index.ts
       - name: Install dependencies
         run: npm install --no-audit --no-fund --no-package-lock
       - name: Type check
