@@ -118,14 +118,11 @@ class CatalogValidationTests(unittest.TestCase):
             self.assertTrue(edge["input_artifacts"])
             self.assertTrue(edge["output_artifact"])
             self.assertEqual(edge["contract_version"], "1.0.0")
-            if edge["integration_id"] == "INT-PONYTAIL-SDO-001":
-                self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
-                self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
-                self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
-            else:
-                self.assertEqual(edge["status"], "CONTRACT_TESTED")
-                self.assertEqual(edge["schema_contract_test"], "PASS")
-                self.assertEqual(edge["contract_behavior_test"], "PASS")
+            # C2 schema and C3 mock-receiver evidence exists for all matrix edges.
+            # These contract checks do not imply C4 host activation or C5 runtime execution.
+            self.assertEqual(edge["status"], "CONTRACT_TESTED")
+            self.assertEqual(edge["schema_contract_test"], "PASS")
+            self.assertEqual(edge["contract_behavior_test"], "PASS")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
         by_id = {e["integration_id"]: e for e in edges}

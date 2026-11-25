@@ -105,7 +105,7 @@ class CsoHandoffAdapterTests(unittest.TestCase):
     def test_empty_acceptance_criteria_is_rejected_by_hso_schema(self):
         payload = local_payload()
         payload["acceptance_criteria"] = []
-        with self.assertRaisesRegex(HandoffAdapterError, "schema validation failed"):
+        with self.assertRaisesRegex(HandoffAdapterError, "acceptance_criteria must contain at least 1 item"):
             serialize_cso_handoff(
                 payload,
                 source_version_or_commit="0.2.0",
