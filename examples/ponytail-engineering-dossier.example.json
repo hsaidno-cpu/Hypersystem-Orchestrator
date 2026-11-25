@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "dossier_id": "PONY-EXAMPLE-001",
+  "source_plugin": {
+    "plugin_key": "ponytail-engineering-optimizer",
+    "package_version": "0.1.0",
+    "release_id": "pluginrel_6b044f37640081918df7f449298d72cf"
+  },
+  "target": {
+    "repository": "example-org/example-service",
+    "ref": "main",
+    "commit": null
+  },
+  "task": {
+    "mode": "BUILD_OR_CHANGE",
+    "summary": "Synthetic example showing a bounded correction to a service health response."
+  },
+  "objective": "Illustrate how a minimal-change engineering dossier records the selected approach and its verification needs.",
+  "scope": {
+    "included": [
+      "Trace the existing health response path",
+      "Reuse the current response contract",
+      "Specify focused regression checks"
+    ],
+    "excluded": [
+      "Introduce a new monitoring service",
+      "Rework unrelated API routes",
+      "Change deployment topology"
+    ]
+  },
+  "baseline": {
+    "status": "NOT_CHECKED",
+    "inspected_paths": [],
+    "not_checked": [
+      "The example target is fictional; no code was inspected."
+    ]
+  },
+  "decision": {
+    "chosen_option": "Reuse the existing health handler and add only the missing response condition.",
+    "rationale": "The example assumes a matching handler exists; a new abstraction or dependency would not be justified.",
+    "rejected_alternatives": [
+      "Create a new health microservice",
+      "Add an unneeded third-party dependency"
+    ]
+  },
+  "impact_map": [
+    {
+      "surface": "Example health endpoint",
+      "effect": "Response behavior may change for the specified condition.",
+      "evidence_status": "ASSUMPTION"
+    }
+  ],
+  "risk_register": [
+    {
+      "risk_id": "R-001",
+      "severity": "MEDIUM",
+      "trigger": "The example condition overlaps an existing error state.",
+      "impact": "A response could be misclassified.",
+      "mitigation": "Confirm current status semantics and add boundary tests before implementation."
+    }
+  ],
+  "acceptance_criteria": [
+    "Existing health response semantics remain unchanged outside the requested condition.",
+    "The new condition has focused positive and negative regression checks.",
+    "No new dependency or service is introduced without separate evidence."
+  ],
+  "test_plan": [
+    {
+      "test_id": "T-001",
+      "requirement": "Positive health response behavior",
+      "expected_result": "The specified condition returns the documented response.",
+      "status": "PLANNED"
+    },
+    {
+      "test_id": "T-002",
+      "requirement": "Regression behavior",
+      "expected_result": "Existing healthy and failing states retain their current response semantics.",
+      "status": "PLANNED"
+    }
+  ],
+  "authority_boundary": {
+    "analysis_owner": "ponytail-engineering-optimizer",
+    "source_write_owner": "skill-developer-orchestrator",
+    "independent_evaluator": "evaluator-team",
+    "human_approval_required": true
+  },
+  "evidence": [
+    {
+      "claim": "This is a synthetic schema example, not an inspected implementation.",
+      "status": "OBSERVED",
+      "source": "examples/ponytail-engineering-dossier.example.json"
+    }
+  ],
+  "capability_status": "NOT_CHECKED",
+  "completion_status": "READY_FOR_HANDOFF"
+}

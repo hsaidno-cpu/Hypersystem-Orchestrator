@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/contracts/hso-workflow-plan.schema.json",
+  "title": "HSO Declared Workflow Plan",
+  "description": "A plan-only input contract. It declares ownership and dependencies; it does not authorize or execute dispatch.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "intent", "action_authority", "dispatch_requested", "work_packages"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "case_id": {"type": "string", "minLength": 1},
+    "intent": {"type": "string", "minLength": 1},
+    "action_authority": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5"]},
+    "dispatch_requested": {"type": "boolean", "default": false},
+    "work_packages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["package_id", "primary_owner", "supporting_specialists", "depends_on", "capability_status", "write_scope", "requires_approval", "approval_status", "expected_output", "acceptance_criteria"],
+        "properties": {
+          "package_id": {"type": "string", "minLength": 1},
+          "primary_owner": {"type": "string", "minLength": 1},
+          "supporting_specialists": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "capability_status": {"enum": ["READY", "READY_WITH_LIMITATIONS", "NOT_CHECKED", "UNAVAILABLE", "ACCESS_DENIED", "EXPIRED", "BLOCKED", "OUT_OF_SCOPE"]},
+          "capability_evidence": {"type": ["string", "null"]},
+          "write_scope": {"enum": ["READ_ONLY", "PARENT_REPOSITORY_BRANCH_WRITE", "CHILD_REPOSITORY_CHANGE", "EXTERNAL_SIDE_EFFECT", "PRODUCTION_RELEASE"]},
+          "requires_approval": {"type": "boolean"},
+          "approval_status": {"enum": ["NOT_REQUIRED", "PENDING", "APPROVED", "DENIED"]},
+          "approval_reference": {"type": ["string", "null"]},
+          "expected_output": {"type": "string", "minLength": 1},
+          "acceptance_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

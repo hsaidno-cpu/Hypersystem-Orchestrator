@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "registry_revision": "2026-11-23",
+  "registry_revision": "2026-11-25",
   "authority": "Hypersystem-Orchestrator source-provenance and redistribution-rights evidence register. This register records evidence and blockers; it does not grant or transfer copyright.",
   "counts": {
-    "plugin_identity_count": 22,
+    "plugin_identity_count": 23,
     "official_pinned_source_count": 5,
-    "not_identified_git_source_count": 14,
+    "not_identified_git_source_count": 15,
     "candidate_incomplete_count": 2,
     "legacy_redirect_count": 1,
     "currently_installable_count": 0
@@ -29,110 +29,9 @@
   },
   "records": [
     {
-      "plugin_key": "video-explainer-promkes-v4-1-12",
-      "display_name": "Video Explainer Promkes V4.1.12",
-      "platform_package_version": "4.1.12",
-      "source_state": "integrated_submodule",
-      "source_repository_id": "video-explainer-promkes",
-      "source": {
-        "kind": "canonical",
-        "repository_url": "https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
-        "repository_id": "video-explainer-promkes",
-        "visibility": "PUBLIC",
-        "default_branch": "main",
-        "observed_head_sha": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
-        "parent_pinned_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
-        "verification_state": "SUBMODULE_PINNED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "NOT_DECLARED",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "NO_EXPRESS_REDISTRIBUTION_LICENSE_LOCATED",
-        "commercial_use": "No express distribution licence located; do not assume public GitHub visibility grants redistribution rights.",
-        "redistribution_rule": "Keep blocked until the rights holder publishes a licence or provides a written grant.",
-        "rights_evidence": [
-          "Pinned repository tree reviewed; no LICENSE/COPYING/NOTICE path was found. Public visibility alone is not a licence."
-        ]
-      },
-      "distribution": {
-        "status": "blocked",
-        "license_status": "not_declared",
-        "blockers": [
-          "SOURCE_VERSION_BEHIND_DEPLOYED_PACKAGE",
-          "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
-          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
-          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "SUBMODULE_PINNED",
-        "owner_action_required": "Source owner must publish a licence/notice or grant written distribution permission; reconcile public source 4.1.9 with deployed private USER release 4.1.12 and approve any source update.",
-        "next_actions": [
-          "Source owner must publish a licence/notice or grant written distribution permission; reconcile public source 4.1.9 with deployed private USER release 4.1.12 and approve any source update."
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "skill-developer-orchestrator",
-      "display_name": "Skill Developer Orchestrator",
-      "platform_package_version": "0.1.0",
-      "source_state": "integrated_submodule",
-      "source_repository_id": "skill-developer-orchestrator",
-      "source": {
-        "kind": "canonical",
-        "repository_url": "https://github.com/promkespkmbinuang-coder/SPDO",
-        "repository_id": "skill-developer-orchestrator",
-        "visibility": "PUBLIC",
-        "default_branch": "main",
-        "observed_head_sha": "9d3c4bc09179ff857df4f3819be83e1847571add",
-        "parent_pinned_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
-        "verification_state": "SUBMODULE_PINNED"
-      },
-      "rights": {
-        "license_id": "Apache-2.0",
-        "license_status": "CLEARED_APACHE_2_0_CONDITIONAL",
-        "license_file_path": "LICENSE",
-        "license_evidence_url": "https://github.com/promkespkmbinuang-coder/SPDO/blob/9d3c4bc09179ff857df4f3819be83e1847571add/LICENSE",
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "REDISTRIBUTION_PERMITTED_SUBJECT_TO_APACHE_2_0_CONDITIONS",
-        "commercial_use": "Permitted under Apache-2.0 subject to licence conditions; trademark rights are not granted.",
-        "redistribution_rule": "Redistribution is permitted if Apache-2.0 conditions, licence text, applicable notices and modification notices are preserved.",
-        "rights_evidence": [
-          "Exact root LICENSE file at the pinned commit."
-        ]
-      },
-      "distribution": {
-        "status": "blocked",
-        "license_status": "cleared",
-        "blockers": [
-          "SOURCE_INSTRUCTION_PARITY_DRIFT_DETECTED",
-          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
-          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "SUBMODULE_PINNED",
-        "owner_action_required": "Retain Apache-2.0 text and applicable notices; resolve instruction-content parity drift (10,573 vs 23,651 characters) and produce a signed package/host adapter before eligibility.",
-        "next_actions": [
-          "Retain Apache-2.0 text and applicable notices; resolve instruction-content parity drift (10,573 vs 23,651 characters) and produce a signed package/host adapter before eligibility."
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "evaluator-team",
-      "display_name": "Evaluator Team",
-      "platform_package_version": "1.0.0",
+      "plugin_key": "agent-jailbreak-skill-ds",
+      "display_name": "Agent Jailbreak Skill DS",
+      "platform_package_version": "0.2.0",
       "source_state": "pending_repository",
       "source_repository_id": null,
       "source": {
@@ -184,164 +83,9 @@
       "plugin_creator_discoverability": "PRIVATE"
     },
     {
-      "plugin_key": "master-photo-restoration",
-      "display_name": "Master Photo Restoration",
-      "platform_package_version": "1.0.0",
-      "source_state": "pending_repository",
-      "source_repository_id": null,
-      "source": {
-        "kind": "not_identified",
-        "repository_url": null,
-        "repository_id": null,
-        "visibility": "NOT_IDENTIFIED",
-        "default_branch": null,
-        "observed_head_sha": null,
-        "parent_pinned_commit": null,
-        "verification_state": "NOT_IDENTIFIED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "NOT_ASSESSED",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
-        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
-        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
-        "rights_evidence": [
-          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
-        ]
-      },
-      "distribution": {
-        "status": "snapshot_only",
-        "license_status": "not_assessed",
-        "blockers": [
-          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
-        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
-        "next_actions": [
-          "Confirm the exact package owner and source-of-truth",
-          "Authorize a new dedicated repository (private by default)",
-          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
-          "Choose license/redistribution policy, required attribution and commercial restrictions",
-          "Add tests, manifest, changelog and immutable first release",
-          "Verify parity, then add a parent submodule"
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "anatomi-prompt-v3-octa-prompt",
-      "display_name": "Anatomi Prompt V3.0 — Octa-Prompt",
-      "platform_package_version": "3.0.0",
-      "source_state": "integrated_submodule",
-      "source_repository_id": "anatomi-prompt-strategis",
-      "source": {
-        "kind": "canonical",
-        "repository_url": "https://github.com/hsaidno-cpu/anatomi-prompt-strategis",
-        "repository_id": "anatomi-prompt-strategis",
-        "visibility": "PRIVATE",
-        "default_branch": "main",
-        "observed_head_sha": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
-        "parent_pinned_commit": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
-        "verification_state": "SUBMODULE_PINNED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "PRIVATE_NO_LICENSE",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "PRIVATE_SOURCE_NO_LICENSE_CLEARANCE",
-        "commercial_use": "No express distribution licence located; do not assume public GitHub visibility grants redistribution rights.",
-        "redistribution_rule": "Keep blocked until the rights holder publishes a licence or provides a written grant.",
-        "rights_evidence": [
-          "Pinned repository tree reviewed; no LICENSE/COPYING/NOTICE path was found. Public visibility alone is not a licence."
-        ]
-      },
-      "distribution": {
-        "status": "private_source_restricted",
-        "license_status": "private_not_cleared",
-        "blockers": [
-          "PRIVATE_SOURCE_ACCESS_REQUIRED",
-          "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
-          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
-          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "SUBMODULE_PINNED",
-        "owner_action_required": "Keep repository private. Choose a licence and obtain explicit owner approval for any redistribution outside authorized collaborators; preserve access controls.",
-        "next_actions": [
-          "Keep repository private. Choose a licence and obtain explicit owner approval for any redistribution outside authorized collaborators; preserve access controls."
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "skill-analyzer",
-      "display_name": "SKILL ANALYZER",
-      "platform_package_version": "1.0.0",
-      "source_state": "integrated_submodule",
-      "source_repository_id": "skill-analyzer",
-      "source": {
-        "kind": "canonical",
-        "repository_url": "https://github.com/hsaidno-cpu/skill-analyzer",
-        "repository_id": "skill-analyzer",
-        "visibility": "PUBLIC",
-        "default_branch": "main",
-        "observed_head_sha": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
-        "parent_pinned_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
-        "verification_state": "SUBMODULE_PINNED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "NOT_DECLARED",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "NO_EXPRESS_REDISTRIBUTION_LICENSE_LOCATED",
-        "commercial_use": "No express distribution licence located; do not assume public GitHub visibility grants redistribution rights.",
-        "redistribution_rule": "Keep blocked until the rights holder publishes a licence or provides a written grant.",
-        "rights_evidence": [
-          "Pinned repository tree reviewed; no LICENSE/COPYING/NOTICE path was found. Public visibility alone is not a licence."
-        ]
-      },
-      "distribution": {
-        "status": "review_required",
-        "license_status": "not_declared",
-        "blockers": [
-          "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
-          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
-          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "SUBMODULE_PINNED",
-        "owner_action_required": "Choose and publish a licence or provide a separate written distribution grant; keep blocked until licence and attribution are pinned.",
-        "next_actions": [
-          "Choose and publish a licence or provide a separate written distribution grant; keep blocked until licence and attribution are pinned."
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "godex-motion-audio",
-      "display_name": "GODEX Motion Audio",
-      "platform_package_version": "2.0.0",
+      "plugin_key": "agent-skills-atlas",
+      "display_name": "Agent Skills Atlas",
+      "platform_package_version": "0.3.1",
       "source_state": "pending_repository",
       "source_repository_id": null,
       "source": {
@@ -447,211 +191,51 @@
       "plugin_creator_discoverability": "PRIVATE"
     },
     {
-      "plugin_key": "agent-jailbreak-skill-ds",
-      "display_name": "Agent Jailbreak Skill DS",
-      "platform_package_version": "0.2.0",
-      "source_state": "pending_repository",
-      "source_repository_id": null,
+      "plugin_key": "anatomi-prompt-v3-octa-prompt",
+      "display_name": "Anatomi Prompt V3.0 — Octa-Prompt",
+      "platform_package_version": "3.0.0",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "anatomi-prompt-strategis",
       "source": {
-        "kind": "not_identified",
-        "repository_url": null,
-        "repository_id": null,
-        "visibility": "NOT_IDENTIFIED",
-        "default_branch": null,
-        "observed_head_sha": null,
-        "parent_pinned_commit": null,
-        "verification_state": "NOT_IDENTIFIED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "NOT_ASSESSED",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
-        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
-        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
-        "rights_evidence": [
-          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
-        ]
-      },
-      "distribution": {
-        "status": "snapshot_only",
-        "license_status": "not_assessed",
-        "blockers": [
-          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
-        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
-        "next_actions": [
-          "Confirm the exact package owner and source-of-truth",
-          "Authorize a new dedicated repository (private by default)",
-          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
-          "Choose license/redistribution policy, required attribution and commercial restrictions",
-          "Add tests, manifest, changelog and immutable first release",
-          "Verify parity, then add a parent submodule"
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "motion-graphic-arifanara-v-01",
-      "display_name": "Motion Graphic by arifanara V.01",
-      "platform_package_version": "0.2.0",
-      "source_state": "pending_repository",
-      "source_repository_id": null,
-      "source": {
-        "kind": "not_identified",
-        "repository_url": null,
-        "repository_id": null,
-        "visibility": "NOT_IDENTIFIED",
-        "default_branch": null,
-        "observed_head_sha": null,
-        "parent_pinned_commit": null,
-        "verification_state": "NOT_IDENTIFIED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "NOT_ASSESSED",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
-        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
-        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
-        "rights_evidence": [
-          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
-        ]
-      },
-      "distribution": {
-        "status": "snapshot_only",
-        "license_status": "not_assessed",
-        "blockers": [
-          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
-        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
-        "next_actions": [
-          "Confirm the exact package owner and source-of-truth",
-          "Authorize a new dedicated repository (private by default)",
-          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
-          "Choose license/redistribution policy, required attribution and commercial restrictions",
-          "Add tests, manifest, changelog and immutable first release",
-          "Verify parity, then add a parent submodule"
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "plugin-agent-orchestrator",
-      "display_name": "Plugin Agent Orchestrator",
-      "platform_package_version": "2.0.0",
-      "source_state": "pending_repository",
-      "source_repository_id": null,
-      "source": {
-        "kind": "not_identified",
-        "repository_url": null,
-        "repository_id": null,
-        "visibility": "NOT_IDENTIFIED",
-        "default_branch": null,
-        "observed_head_sha": null,
-        "parent_pinned_commit": null,
-        "verification_state": "NOT_IDENTIFIED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "NOT_ASSESSED",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
-        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
-        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
-        "rights_evidence": [
-          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
-        ]
-      },
-      "distribution": {
-        "status": "snapshot_only",
-        "license_status": "not_assessed",
-        "blockers": [
-          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
-        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
-        "next_actions": [
-          "Confirm the exact package owner and source-of-truth",
-          "Authorize a new dedicated repository (private by default)",
-          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
-          "Choose license/redistribution policy, required attribution and commercial restrictions",
-          "Add tests, manifest, changelog and immutable first release",
-          "Verify parity, then add a parent submodule"
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
-      "plugin_key": "photo-fixer",
-      "display_name": "Photo Fixer",
-      "platform_package_version": "1.0.0",
-      "source_state": "candidate_repository",
-      "source_repository_id": "photo-fixer-candidate",
-      "source": {
-        "kind": "candidate",
-        "repository_url": "https://github.com/hsaidno-cpu/Photo-Fixer",
-        "repository_id": "photo-fixer-candidate",
-        "visibility": "PUBLIC",
+        "kind": "canonical",
+        "repository_url": "https://github.com/hsaidno-cpu/anatomi-prompt-strategis",
+        "repository_id": "anatomi-prompt-strategis",
+        "visibility": "PRIVATE",
         "default_branch": "main",
-        "observed_head_sha": "95339901f84cdae861efcebd9820cb2e1efdc27d",
-        "parent_pinned_commit": null,
-        "verification_state": "CANDIDATE_INCOMPLETE"
+        "observed_head_sha": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
+        "parent_pinned_commit": "06b46b88ed7eddc437792fae715f255cbe4eb13d",
+        "verification_state": "SUBMODULE_PINNED"
       },
       "rights": {
-        "license_id": "Apache-2.0",
-        "license_status": "DECLARED_APACHE_2_0_CANDIDATE_ONLY",
-        "license_file_path": "LICENSE",
-        "license_evidence_url": "https://github.com/hsaidno-cpu/Photo-Fixer/blob/95339901f84cdae861efcebd9820cb2e1efdc27d/LICENSE",
+        "license_id": null,
+        "license_status": "PRIVATE_NO_LICENSE",
+        "license_file_path": null,
+        "license_evidence_url": null,
         "required_notice_path": null,
         "required_notice_url": null,
-        "rights_state": "LICENSE_DECLARED_BUT_PLUGIN_SOURCE_IDENTITY_AND_TREE_INCOMPLETE",
-        "commercial_use": "Apache-2.0 applies to the candidate repository contents, but this does not prove that the candidate is the complete canonical plugin source or that omitted platform content is covered.",
-        "redistribution_rule": "Do not publish/install as a plugin release until package identity, source tree and rights provenance are verified; preserve Apache-2.0 conditions if using candidate files.",
+        "rights_state": "PRIVATE_SOURCE_NO_LICENSE_CLEARANCE",
+        "commercial_use": "No express distribution licence located; do not assume public GitHub visibility grants redistribution rights.",
+        "redistribution_rule": "Keep blocked until the rights holder publishes a licence or provides a written grant.",
         "rights_evidence": [
-          "Exact root LICENSE file exists at observed candidate head; candidate source currently lacks a complete plugin manifest/skill tree."
+          "Pinned repository tree reviewed; no LICENSE/COPYING/NOTICE path was found. Public visibility alone is not a licence."
         ]
       },
       "distribution": {
-        "status": "candidate_incomplete",
-        "license_status": "not_assessed",
+        "status": "private_source_restricted",
+        "license_status": "private_not_cleared",
         "blockers": [
-          "CANONICAL_PACKAGE_SOURCE_INCOMPLETE",
-          "PACKAGE_ARTIFACT_NOT_PUBLISHED"
+          "PRIVATE_SOURCE_ACCESS_REQUIRED",
+          "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
+          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
         ],
         "eligible_for_redistribution": false
       },
       "migration": {
-        "status": "CANDIDATE_INCOMPLETE",
-        "owner_action_required": "Restore plugin manifest, master/subskill tree, references, tests and release history; then have owner confirm canonical promotion and retain Apache-2.0 notices.",
+        "status": "SUBMODULE_PINNED",
+        "owner_action_required": "Keep repository private. Choose a licence and obtain explicit owner approval for any redistribution outside authorized collaborators; preserve access controls.",
         "next_actions": [
-          "Restore plugin manifest, master/subskill tree, references, tests and release history; then have owner confirm canonical promotion and retain Apache-2.0 notices."
+          "Keep repository private. Choose a licence and obtain explicit owner approval for any redistribution outside authorized collaborators; preserve access controls."
         ]
       },
       "plugin_creator_scope": "USER",
@@ -759,60 +343,6 @@
       "plugin_creator_discoverability": "PRIVATE"
     },
     {
-      "plugin_key": "cortex-workbench",
-      "display_name": "Cortex Workbench",
-      "platform_package_version": "1.0.0",
-      "source_state": "pending_repository",
-      "source_repository_id": null,
-      "source": {
-        "kind": "not_identified",
-        "repository_url": null,
-        "repository_id": null,
-        "visibility": "NOT_IDENTIFIED",
-        "default_branch": null,
-        "observed_head_sha": null,
-        "parent_pinned_commit": null,
-        "verification_state": "NOT_IDENTIFIED"
-      },
-      "rights": {
-        "license_id": null,
-        "license_status": "NOT_ASSESSED",
-        "license_file_path": null,
-        "license_evidence_url": null,
-        "required_notice_path": null,
-        "required_notice_url": null,
-        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
-        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
-        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
-        "rights_evidence": [
-          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
-        ]
-      },
-      "distribution": {
-        "status": "snapshot_only",
-        "license_status": "not_assessed",
-        "blockers": [
-          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
-        ],
-        "eligible_for_redistribution": false
-      },
-      "migration": {
-        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
-        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
-        "next_actions": [
-          "Confirm the exact package owner and source-of-truth",
-          "Authorize a new dedicated repository (private by default)",
-          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
-          "Choose license/redistribution policy, required attribution and commercial restrictions",
-          "Add tests, manifest, changelog and immutable first release",
-          "Verify parity, then add a parent submodule"
-        ]
-      },
-      "plugin_creator_scope": "USER",
-      "plugin_creator_discoverability": "PRIVATE"
-    },
-    {
       "plugin_key": "commandcraft-56",
       "display_name": "CommandCraft 56",
       "platform_package_version": "0.1.0",
@@ -867,9 +397,279 @@
       "plugin_creator_discoverability": "PRIVATE"
     },
     {
-      "plugin_key": "agent-skills-atlas",
-      "display_name": "Agent Skills Atlas",
-      "platform_package_version": "0.3.1",
+      "plugin_key": "cortex-workbench",
+      "display_name": "Cortex Workbench",
+      "platform_package_version": "1.0.0",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source": {
+        "kind": "not_identified",
+        "repository_url": null,
+        "repository_id": null,
+        "visibility": "NOT_IDENTIFIED",
+        "default_branch": null,
+        "observed_head_sha": null,
+        "parent_pinned_commit": null,
+        "verification_state": "NOT_IDENTIFIED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_ASSESSED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
+        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
+        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
+        "rights_evidence": [
+          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
+        ]
+      },
+      "distribution": {
+        "status": "snapshot_only",
+        "license_status": "not_assessed",
+        "blockers": [
+          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
+        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
+        "next_actions": [
+          "Confirm the exact package owner and source-of-truth",
+          "Authorize a new dedicated repository (private by default)",
+          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
+          "Choose license/redistribution policy, required attribution and commercial restrictions",
+          "Add tests, manifest, changelog and immutable first release",
+          "Verify parity, then add a parent submodule"
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "evaluator-team",
+      "display_name": "Evaluator Team",
+      "platform_package_version": "1.0.0",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source": {
+        "kind": "not_identified",
+        "repository_url": null,
+        "repository_id": null,
+        "visibility": "NOT_IDENTIFIED",
+        "default_branch": null,
+        "observed_head_sha": null,
+        "parent_pinned_commit": null,
+        "verification_state": "NOT_IDENTIFIED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_ASSESSED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
+        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
+        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
+        "rights_evidence": [
+          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
+        ]
+      },
+      "distribution": {
+        "status": "snapshot_only",
+        "license_status": "not_assessed",
+        "blockers": [
+          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
+        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
+        "next_actions": [
+          "Confirm the exact package owner and source-of-truth",
+          "Authorize a new dedicated repository (private by default)",
+          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
+          "Choose license/redistribution policy, required attribution and commercial restrictions",
+          "Add tests, manifest, changelog and immutable first release",
+          "Verify parity, then add a parent submodule"
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "godex-motion-audio",
+      "display_name": "GODEX Motion Audio",
+      "platform_package_version": "2.0.0",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source": {
+        "kind": "not_identified",
+        "repository_url": null,
+        "repository_id": null,
+        "visibility": "NOT_IDENTIFIED",
+        "default_branch": null,
+        "observed_head_sha": null,
+        "parent_pinned_commit": null,
+        "verification_state": "NOT_IDENTIFIED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_ASSESSED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
+        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
+        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
+        "rights_evidence": [
+          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
+        ]
+      },
+      "distribution": {
+        "status": "snapshot_only",
+        "license_status": "not_assessed",
+        "blockers": [
+          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
+        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
+        "next_actions": [
+          "Confirm the exact package owner and source-of-truth",
+          "Authorize a new dedicated repository (private by default)",
+          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
+          "Choose license/redistribution policy, required attribution and commercial restrictions",
+          "Add tests, manifest, changelog and immutable first release",
+          "Verify parity, then add a parent submodule"
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "growthforge-business-os",
+      "display_name": "GrowthForge Business OS",
+      "platform_package_version": "1.1.1",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source": {
+        "kind": "not_identified",
+        "repository_url": null,
+        "repository_id": null,
+        "visibility": "NOT_IDENTIFIED",
+        "default_branch": null,
+        "observed_head_sha": null,
+        "parent_pinned_commit": null,
+        "verification_state": "NOT_IDENTIFIED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_ASSESSED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
+        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
+        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
+        "rights_evidence": [
+          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
+        ]
+      },
+      "distribution": {
+        "status": "snapshot_only",
+        "license_status": "not_assessed",
+        "blockers": [
+          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
+        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
+        "next_actions": [
+          "Confirm the exact package owner and source-of-truth",
+          "Authorize a new dedicated repository (private by default)",
+          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
+          "Choose license/redistribution policy, required attribution and commercial restrictions",
+          "Add tests, manifest, changelog and immutable first release",
+          "Verify parity, then add a parent submodule"
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "master-photo-restoration",
+      "display_name": "Master Photo Restoration",
+      "platform_package_version": "1.0.0",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source": {
+        "kind": "not_identified",
+        "repository_url": null,
+        "repository_id": null,
+        "visibility": "NOT_IDENTIFIED",
+        "default_branch": null,
+        "observed_head_sha": null,
+        "parent_pinned_commit": null,
+        "verification_state": "NOT_IDENTIFIED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_ASSESSED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
+        "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
+        "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
+        "rights_evidence": [
+          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
+        ]
+      },
+      "distribution": {
+        "status": "snapshot_only",
+        "license_status": "not_assessed",
+        "blockers": [
+          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
+        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
+        "next_actions": [
+          "Confirm the exact package owner and source-of-truth",
+          "Authorize a new dedicated repository (private by default)",
+          "Populate exact full master/subskill source and references from the authorized Plugin Creator archive",
+          "Choose license/redistribution policy, required attribution and commercial restrictions",
+          "Add tests, manifest, changelog and immutable first release",
+          "Verify parity, then add a parent submodule"
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "motion-graphic-arifanara-v-01",
+      "display_name": "Motion Graphic by arifanara V.01",
+      "platform_package_version": "0.2.0",
       "source_state": "pending_repository",
       "source_repository_id": null,
       "source": {
@@ -977,9 +777,58 @@
       "plugin_creator_discoverability": "PRIVATE"
     },
     {
-      "plugin_key": "workflow-systems-orchestrator",
-      "display_name": "AI Workflow Systems Orchestrator",
-      "platform_package_version": "0.2.0",
+      "plugin_key": "photo-fixer",
+      "display_name": "Photo Fixer",
+      "platform_package_version": "1.0.0",
+      "source_state": "candidate_repository",
+      "source_repository_id": "photo-fixer-candidate",
+      "source": {
+        "kind": "candidate",
+        "repository_url": "https://github.com/hsaidno-cpu/Photo-Fixer",
+        "repository_id": "photo-fixer-candidate",
+        "visibility": "PUBLIC",
+        "default_branch": "main",
+        "observed_head_sha": "95339901f84cdae861efcebd9820cb2e1efdc27d",
+        "parent_pinned_commit": null,
+        "verification_state": "CANDIDATE_INCOMPLETE"
+      },
+      "rights": {
+        "license_id": "Apache-2.0",
+        "license_status": "DECLARED_APACHE_2_0_CANDIDATE_ONLY",
+        "license_file_path": "LICENSE",
+        "license_evidence_url": "https://github.com/hsaidno-cpu/Photo-Fixer/blob/95339901f84cdae861efcebd9820cb2e1efdc27d/LICENSE",
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "LICENSE_DECLARED_BUT_PLUGIN_SOURCE_IDENTITY_AND_TREE_INCOMPLETE",
+        "commercial_use": "Apache-2.0 applies to the candidate repository contents, but this does not prove that the candidate is the complete canonical plugin source or that omitted platform content is covered.",
+        "redistribution_rule": "Do not publish/install as a plugin release until package identity, source tree and rights provenance are verified; preserve Apache-2.0 conditions if using candidate files.",
+        "rights_evidence": [
+          "Exact root LICENSE file exists at observed candidate head; candidate source currently lacks a complete plugin manifest/skill tree."
+        ]
+      },
+      "distribution": {
+        "status": "candidate_incomplete",
+        "license_status": "not_assessed",
+        "blockers": [
+          "CANONICAL_PACKAGE_SOURCE_INCOMPLETE",
+          "PACKAGE_ARTIFACT_NOT_PUBLISHED"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "CANDIDATE_INCOMPLETE",
+        "owner_action_required": "Restore plugin manifest, master/subskill tree, references, tests and release history; then have owner confirm canonical promotion and retain Apache-2.0 notices.",
+        "next_actions": [
+          "Restore plugin manifest, master/subskill tree, references, tests and release history; then have owner confirm canonical promotion and retain Apache-2.0 notices."
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "plugin-agent-orchestrator",
+      "display_name": "Plugin Agent Orchestrator",
+      "platform_package_version": "2.0.0",
       "source_state": "pending_repository",
       "source_repository_id": null,
       "source": {
@@ -1031,9 +880,66 @@
       "plugin_creator_discoverability": "PRIVATE"
     },
     {
-      "plugin_key": "growthforge-business-os",
-      "display_name": "GrowthForge Business OS",
-      "platform_package_version": "1.1.1",
+      "plugin_key": "ponytail-engineering-optimizer",
+      "display_name": "Ponytail Engineering System",
+      "platform_package_version": "0.1.0",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source": {
+        "kind": "not_identified",
+        "repository_url": null,
+        "repository_id": null,
+        "visibility": "NOT_IDENTIFIED",
+        "default_branch": null,
+        "observed_head_sha": null,
+        "parent_pinned_commit": null,
+        "verification_state": "NOT_IDENTIFIED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_ASSESSED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_CANONICAL_GIT_SOURCE_OR_REDISTRIBUTION_LICENSE_IDENTIFIED",
+        "commercial_use": "Not assessed. The verified Plugin Creator release is USER/PRIVATE. The public upstream Ponytail repository is methodology provenance only; its MIT licence is not a package-wide licence grant for this derivative.",
+        "redistribution_rule": "Snapshot-only. Keep the USER/PRIVATE package non-installable and do not copy or redistribute its instructions outside the authorized private scope until the derivative's owner, canonical source and redistribution terms are explicitly approved.",
+        "rights_evidence": [
+          "Plugin Creator package plugins_6b044f34a5a481919ffc95eadee4383b is verified at release pluginrel_6b044f37640081918df7f449298d72cf, version 0.1.0, scope USER and discoverability PRIVATE (2026-11-23).",
+          "No dedicated canonical Git source for this derivative package has been accepted. Public upstream DietrichGebert/ponytail v5.3.3 is methodology provenance only, not this adaptation's canonical source or redistribution authority."
+        ]
+      },
+      "distribution": {
+        "status": "snapshot_only",
+        "license_status": "not_assessed",
+        "blockers": [
+          "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+          "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE",
+          "PACKAGE_LICENSE_NOT_INDEPENDENTLY_ASSESSED",
+          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
+        "owner_action_required": "Package owner must confirm ownership, approve whether a dedicated Git repository should be created (private by default), and decide licence/redistribution terms before any package content is mirrored or released.",
+        "next_actions": [
+          "Confirm package ownership and the exact USER/PRIVATE Plugin Creator release as the current source-of-truth.",
+          "Authorize a dedicated canonical repository, private by default, or explicitly retain Plugin Creator as the only authoritative source.",
+          "Resolve the derivative package's licence, commercial-use and redistribution terms independently of the upstream methodology licence.",
+          "Only after explicit rights clearance, populate the authorized repository with the complete master and specialist source files, references, manifest and tests.",
+          "Pin an immutable initial commit, compare instruction parity, then update the parent submodule and release records."
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "progressive-roadmap-evaluator",
+      "display_name": "Progressive Roadmap Evaluator (PRE)",
+      "platform_package_version": "0.1.1",
       "source_state": "pending_repository",
       "source_repository_id": null,
       "source": {
@@ -1057,7 +963,8 @@
         "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
         "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
         "rights_evidence": [
-          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
+          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory.",
+          "Plugin Creator package scope is USER and discoverability is PRIVATE; this is access metadata, not a redistribution grant."
         ]
       },
       "distribution": {
@@ -1065,13 +972,14 @@
         "license_status": "not_assessed",
         "blockers": [
           "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
+          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
+          "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE"
         ],
         "eligible_for_redistribution": false
       },
       "migration": {
         "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
-        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
+        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized. Private Plugin Creator source requires an explicit owner-approved export path; no public mirror is authorized.",
         "next_actions": [
           "Confirm the exact package owner and source-of-truth",
           "Authorize a new dedicated repository (private by default)",
@@ -1134,9 +1042,160 @@
       "plugin_creator_discoverability": "PRIVATE"
     },
     {
-      "plugin_key": "progressive-roadmap-evaluator",
-      "display_name": "Progressive Roadmap Evaluator (PRE)",
-      "platform_package_version": "0.1.1",
+      "plugin_key": "skill-analyzer",
+      "display_name": "SKILL ANALYZER",
+      "platform_package_version": "1.0.0",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "skill-analyzer",
+      "source": {
+        "kind": "canonical",
+        "repository_url": "https://github.com/hsaidno-cpu/skill-analyzer",
+        "repository_id": "skill-analyzer",
+        "visibility": "PUBLIC",
+        "default_branch": "main",
+        "observed_head_sha": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
+        "parent_pinned_commit": "c469af7977c9bf6dcb3f5ab7b085a6de20d87004",
+        "verification_state": "SUBMODULE_PINNED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_DECLARED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_EXPRESS_REDISTRIBUTION_LICENSE_LOCATED",
+        "commercial_use": "No express distribution licence located; do not assume public GitHub visibility grants redistribution rights.",
+        "redistribution_rule": "Keep blocked until the rights holder publishes a licence or provides a written grant.",
+        "rights_evidence": [
+          "Pinned repository tree reviewed; no LICENSE/COPYING/NOTICE path was found. Public visibility alone is not a licence."
+        ]
+      },
+      "distribution": {
+        "status": "review_required",
+        "license_status": "not_declared",
+        "blockers": [
+          "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
+          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "SUBMODULE_PINNED",
+        "owner_action_required": "Choose and publish a licence or provide a separate written distribution grant; keep blocked until licence and attribution are pinned.",
+        "next_actions": [
+          "Choose and publish a licence or provide a separate written distribution grant; keep blocked until licence and attribution are pinned."
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "skill-developer-orchestrator",
+      "display_name": "Skill Developer Orchestrator",
+      "platform_package_version": "0.1.0",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "skill-developer-orchestrator",
+      "source": {
+        "kind": "canonical",
+        "repository_url": "https://github.com/promkespkmbinuang-coder/SPDO",
+        "repository_id": "skill-developer-orchestrator",
+        "visibility": "PUBLIC",
+        "default_branch": "main",
+        "observed_head_sha": "9d3c4bc09179ff857df4f3819be83e1847571add",
+        "parent_pinned_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
+        "verification_state": "SUBMODULE_PINNED"
+      },
+      "rights": {
+        "license_id": "Apache-2.0",
+        "license_status": "CLEARED_APACHE_2_0_CONDITIONAL",
+        "license_file_path": "LICENSE",
+        "license_evidence_url": "https://github.com/promkespkmbinuang-coder/SPDO/blob/9d3c4bc09179ff857df4f3819be83e1847571add/LICENSE",
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "REDISTRIBUTION_PERMITTED_SUBJECT_TO_APACHE_2_0_CONDITIONS",
+        "commercial_use": "Permitted under Apache-2.0 subject to licence conditions; trademark rights are not granted.",
+        "redistribution_rule": "Redistribution is permitted if Apache-2.0 conditions, licence text, applicable notices and modification notices are preserved.",
+        "rights_evidence": [
+          "Exact root LICENSE file at the pinned commit."
+        ]
+      },
+      "distribution": {
+        "status": "blocked",
+        "license_status": "cleared",
+        "blockers": [
+          "SOURCE_INSTRUCTION_PARITY_DRIFT_DETECTED",
+          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "SUBMODULE_PINNED",
+        "owner_action_required": "Retain Apache-2.0 text and applicable notices; resolve instruction-content parity drift (10,573 vs 23,651 characters) and produce a signed package/host adapter before eligibility.",
+        "next_actions": [
+          "Retain Apache-2.0 text and applicable notices; resolve instruction-content parity drift (10,573 vs 23,651 characters) and produce a signed package/host adapter before eligibility."
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "video-explainer-promkes-v4-1-12",
+      "display_name": "Video Explainer Promkes V4.1.12",
+      "platform_package_version": "4.1.12",
+      "source_state": "integrated_submodule",
+      "source_repository_id": "video-explainer-promkes",
+      "source": {
+        "kind": "canonical",
+        "repository_url": "https://github.com/promkespkmbinuang-coder/VIDEO-ANIMATION-EXPLAINER-PROMKES-PROMPT-CREATOR",
+        "repository_id": "video-explainer-promkes",
+        "visibility": "PUBLIC",
+        "default_branch": "main",
+        "observed_head_sha": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
+        "parent_pinned_commit": "f8f8c0f29ff9d851fa75eba764978c24bdd79416",
+        "verification_state": "SUBMODULE_PINNED"
+      },
+      "rights": {
+        "license_id": null,
+        "license_status": "NOT_DECLARED",
+        "license_file_path": null,
+        "license_evidence_url": null,
+        "required_notice_path": null,
+        "required_notice_url": null,
+        "rights_state": "NO_EXPRESS_REDISTRIBUTION_LICENSE_LOCATED",
+        "commercial_use": "No express distribution licence located; do not assume public GitHub visibility grants redistribution rights.",
+        "redistribution_rule": "Keep blocked until the rights holder publishes a licence or provides a written grant.",
+        "rights_evidence": [
+          "Pinned repository tree reviewed; no LICENSE/COPYING/NOTICE path was found. Public visibility alone is not a licence."
+        ]
+      },
+      "distribution": {
+        "status": "blocked",
+        "license_status": "not_declared",
+        "blockers": [
+          "SOURCE_VERSION_BEHIND_DEPLOYED_PACKAGE",
+          "LICENSE_NOT_DECLARED_OR_NOT_FOUND",
+          "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+          "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+        ],
+        "eligible_for_redistribution": false
+      },
+      "migration": {
+        "status": "SUBMODULE_PINNED",
+        "owner_action_required": "Source owner must publish a licence/notice or grant written distribution permission; reconcile public source 4.1.9 with deployed private USER release 4.1.12 and approve any source update.",
+        "next_actions": [
+          "Source owner must publish a licence/notice or grant written distribution permission; reconcile public source 4.1.9 with deployed private USER release 4.1.12 and approve any source update."
+        ]
+      },
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
+    },
+    {
+      "plugin_key": "workflow-systems-orchestrator",
+      "display_name": "AI Workflow Systems Orchestrator",
+      "platform_package_version": "0.2.0",
       "source_state": "pending_repository",
       "source_repository_id": null,
       "source": {
@@ -1160,8 +1219,7 @@
         "commercial_use": "Not assessed. Plugin Creator USER/PRIVATE package inventory is not a public redistribution licence.",
         "redistribution_rule": "Snapshot-only. Do not copy into public child repositories or distribute outside authorized private scope without explicit rights-holder approval and a licence decision.",
         "rights_evidence": [
-          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory.",
-          "Plugin Creator package scope is USER and discoverability is PRIVATE; this is access metadata, not a redistribution grant."
+          "The parent catalog records a Plugin Creator package identity/version and an instruction snapshot; no canonical Git source or redistribution licence is identified in the accepted source inventory."
         ]
       },
       "distribution": {
@@ -1169,14 +1227,13 @@
         "license_status": "not_assessed",
         "blockers": [
           "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
-          "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE"
+          "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE"
         ],
         "eligible_for_redistribution": false
       },
       "migration": {
         "status": "NOT_STARTED_NO_CANONICAL_SOURCE",
-        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized. Private Plugin Creator source requires an explicit owner-approved export path; no public mirror is authorized.",
+        "owner_action_required": "Owner/GOV-01 must approve creation of a dedicated canonical repository and select repository visibility plus redistribution terms. Keep private by default until authorized.",
         "next_actions": [
           "Confirm the exact package owner and source-of-truth",
           "Authorize a new dedicated repository (private by default)",

@@ -1,0 +1,21 @@
+{
+  "schema_version":"1.0.0",
+  "case_id":"HSO-RUNTIME-RECOVERY-001",
+  "requested_by":"ci-fault-injection-test",
+  "action_authority":"S3",
+  "environment":"SANDBOX",
+  "work_packages":[
+    {
+      "package_id":"WP-RECOVERY-001",
+      "task_type":"test.recovery_path",
+      "action_id":"test.flaky_write_text",
+      "target_path":"artifacts/recovery-proof.txt",
+      "input":{"content":"HSO bounded retry and recovery proof\n"},
+      "depends_on":[],
+      "idempotency_key":"hso-runtime-recovery-001-artifact",
+      "expected_sha256":"1361a91acb2a4ce01f837a5c2514d2986faf50b5d35f2673c3a05961ad9cec87",
+      "max_attempts":2,
+      "recovery":{"on_action_failure":"ROLLBACK_IF_CREATED","on_verification_failure":"ROLLBACK_IF_CREATED"}
+    }
+  ]
+}

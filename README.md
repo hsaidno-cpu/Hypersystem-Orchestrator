@@ -18,7 +18,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 ## What is included now
 
-The registry contains **22 plugin identities** supplied for this ecosystem.
+The registry contains **23 plugin identities** supplied for this ecosystem.
 
 Five verified official plugin source repositories are pinned as Git submodules:
 
@@ -32,7 +32,7 @@ Five verified official plugin source repositories are pinned as Git submodules:
 
 The other plugin identities remain recorded with explicit source states. Instruction snapshots and candidate repositories are not treated as canonical distributable source packages.
 
-## The 22 registered plugins
+## The 23 registered plugins
 
 1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
@@ -56,6 +56,7 @@ The other plugin identities remain recorded with explicit source states. Instruc
 20. GrowthForge Business OS
 21. PVEE Promkes Super Orchestrator
 22. Progressive Roadmap Evaluator (PRE)
+23. Ponytail Engineering System
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
@@ -88,6 +89,10 @@ python tools/resolve_distribution.py --manifest distribution/manifests/manifest.
 
 The resolver is plan-only. It does not download, install, enable, authorize or execute plugins. See [distribution/README.md](distribution/README.md) for the operational boundary.
 
+## Ponytail Engineering System
+
+[Ponytail integration and ownership contract](docs/PONYTAIL-ENGINEERING-INTEGRATION.md). The package is USER/PRIVATE; only its metadata pointer is kept here. The upstream Ponytail repository is cited as methodology provenance, not as the derivative package's canonical source.
+
 ## Repository map
 
 - catalog/ — plugin identity, source inventory, compatibility, distribution eligibility and platform adapter registry.
@@ -95,16 +100,16 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 - plugin-instructions/ — isolated instruction bundles or source pointers; snapshots do not become distributable source.
 - distribution/ — dry-run installation manifests and package selection examples.
 - contracts/ — registration, handoff, package, installation, entitlement and lock schemas.
-- architecture/ — system boundary, responsibility matrix, positioning, routing and integration topology.
+- architecture/ — system boundary, responsibility matrix, positioning, routing, integration topology and the ecosystem control-plane operating contract.
 - governance/ — contribution, authority, security, versioning, release and snapshot rules.
 - roadmap/ — progressive stages, source-repository onboarding backlog and evidence-based exit criteria.
-- tools/ — repository-local catalog/distribution validators and dry-run resolver.
-- tests/ — standard-library checks for catalog, distribution and eligibility invariants.
+- tools/ — repository-local validators, dry-run resolver, plan compiler and supervised sandbox runtime.
+- tests/ — catalog/distribution/eligibility regressions, C2/C3 contract assurance, planning and runtime recovery/security tests.
 - .github/workflows/ — automated static validation.
 
 ## Complete plugin instruction vault
 
-The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **256 skill definitions** across 22 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **265 skill definitions** across 23 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
@@ -123,11 +128,19 @@ Plugin Creator package versions, canonical Git source versions and embedded skil
 
 ## Source inventory
 
-Five official source repositories are pinned, two candidate/incomplete sources are tracked, thirteen plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
+Five official source repositories are pinned, two candidate/incomplete sources are tracked, fourteen plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
 
 ## Skill migration audit
 
 The date-bound, evidence-backed migration baseline is documented in [SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md](docs/SKILL-MIGRATION-FORENSIC-BASELINE-2026-11-23.md). It separates catalog coverage, canonical source onboarding, source-content parity, compatibility testing and distribution readiness. An indexed instruction is not proof of canonical source synchronization.
+
+The ecosystem-level operating model, route arbitration, authority boundaries and execution gates are specified in [SUPER-ORCHESTRATOR-CONTROL-PLANE.md](architecture/SUPER-ORCHESTRATOR-CONTROL-PLANE.md). This is a design/control-plane contract, not a claim that a hosted runtime or automatic plugin dispatcher is deployed. The portable eight-pillar operating instruction is [HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md](prompts/HSO-SUPER-ORCHESTRATOR-MASTER-PROMPT.md); it remains a draft until target-host testing and owner release.
+
+A bounded [plan-only workflow planner](docs/HSO-PLAN-ONLY-ORCHESTRATOR.md) now validates declared owners, capability states, authority, approvals and DAG dependencies. It returns an ordered plan and blockers; it does not invoke plugins or dispatch work.
+
+A controlled [Super-Orchestrator runtime](docs/HSO-SUPER-ORCHESTRATOR-RUNTIME.md) probes registered capabilities, arbitrates one primary owner plus bounded specialists, enforces policy, executes dependency-ordered work, verifies actual targets and records a hash-chained audit. The always-on CI path proves the sandbox runtime only. A separate P0 Remote MCP adapter for one SKILL ANALYZER tool is registered on the PR branch, but its public endpoint/OIDC configuration is not yet verified; no live plugin invocation is claimed. Generic plugin dispatch, generic multi-server MCP and staging/production remain blocked.
+
+The next step is a deliberately narrow [P0 Codex CLI host invocation pilot](docs/HSO-P0-CODEX-SKILL-INVOCATION-PILOT.md): one pinned SKILL ANALYZER source, one Codex CLI host, one approval-gated synthetic task and one invocation receipt. Its live paid call is manual-only and remains NOT_RUN until the protected default-branch workflow is explicitly approved; it does not enable generic plugin dispatch.
 
 ## Architecture principles
 
@@ -142,15 +155,20 @@ The date-bound, evidence-backed migration baseline is documented in [SKILL-MIGRA
 
 ## Validate
 
-Requires Python 3.10+ and no third-party packages.
+Requires Python 3.10+. Catalog and distribution validation and the plan-only planner use the Python standard library. Contract/regression tests also use the pinned test dependencies in `requirements-test.txt`.
 
 ~~~bash
+python -m pip install -r requirements-test.txt
 python tools/validate_catalog.py
 python tools/validate_distribution.py
+python tools/plan_hso_workflow.py examples/hso-workflow-plan.example.json
+python tools/hso_super_orchestrator.py discover --output /tmp/hso-capabilities.json
+python tools/hso_super_orchestrator.py run examples/hso-runtime-execution.example.json --workspace /tmp/hso-target --ledger /tmp/hso-ledger.sqlite --audit /tmp/hso-audit.jsonl --receipt /tmp/hso-receipt.json
+python tools/hso_super_orchestrator.py verify-audit /tmp/hso-audit.jsonl
 python -m unittest discover -s tests -v
 ~~~
 
-Static CI checks do not prove that ChatGPT, Claude, Gemini or Copilot can install or run a plugin. Host activation and real runtime invocation require separate evidence for each target.
+The example intentionally reports blockers for capability states marked `NOT_CHECKED`; the planner exits successfully only because the declared plan is structurally valid. A blocker is not silently promoted to readiness. Static CI checks and plan generation do not prove that ChatGPT, Claude, Gemini or Copilot can install or run a plugin. Host activation and real runtime invocation require separate evidence for each target.
 
 ## Notion project documentation
 

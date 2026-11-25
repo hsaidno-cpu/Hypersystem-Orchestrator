@@ -1,0 +1,33 @@
+{
+  "schema_version":"1.0.0",
+  "case_id":"HSO-RUNTIME-SANDBOX-001",
+  "requested_by":"authorized-workflow-request",
+  "action_authority":"S3",
+  "environment":"SANDBOX",
+  "work_packages":[
+    {
+      "package_id":"WP-ARTIFACT-CREATE",
+      "task_type":"artifact.create",
+      "action_id":"sandbox.write_text",
+      "target_path":"artifacts/runtime-proof.txt",
+      "input":{"content":"Hypersystem Orchestrator runtime proof v1\n"},
+      "depends_on":[],
+      "idempotency_key":"hso-runtime-sandbox-001-create",
+      "expected_sha256":"6d3f0d9c9f634212abc09aa1b3c1469eab48395668c38c5230638475e631cc88",
+      "max_attempts":2,
+      "recovery":{"on_action_failure":"ROLLBACK_IF_CREATED","on_verification_failure":"ROLLBACK_IF_CREATED"}
+    },
+    {
+      "package_id":"WP-ARTIFACT-VERIFY",
+      "task_type":"artifact.verify",
+      "action_id":"sandbox.verify_sha256",
+      "target_path":"artifacts/runtime-proof.txt",
+      "input":{"expected_sha256":"6d3f0d9c9f634212abc09aa1b3c1469eab48395668c38c5230638475e631cc88"},
+      "depends_on":["WP-ARTIFACT-CREATE"],
+      "idempotency_key":"hso-runtime-sandbox-001-verify",
+      "expected_sha256":"6d3f0d9c9f634212abc09aa1b3c1469eab48395668c38c5230638475e631cc88",
+      "max_attempts":1,
+      "recovery":{"on_action_failure":"NONE","on_verification_failure":"NONE"}
+    }
+  ]
+}

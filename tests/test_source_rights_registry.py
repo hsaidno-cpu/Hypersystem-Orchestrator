@@ -18,14 +18,14 @@ class SourceRightsRegistryTests(unittest.TestCase):
         self.registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
         self.records = {x["plugin_key"]: x for x in self.registry["records"]}
 
-    def test_all_22_identities_have_exactly_one_rights_record(self):
-        self.assertEqual(self.registry["counts"]["plugin_identity_count"], 22)
+    def test_all_23_identities_have_exactly_one_rights_record(self):
+        self.assertEqual(self.registry["counts"]["plugin_identity_count"], 23)
         self.assertEqual(set(self.records), {x["plugin_key"] for x in self.catalog["plugins"]})
-        self.assertEqual(len(self.registry["records"]), 22)
+        self.assertEqual(len(self.registry["records"]), 23)
 
     def test_verified_source_counts_match_current_parent_gitlinks(self):
         self.assertEqual(self.registry["counts"]["official_pinned_source_count"], 5)
-        self.assertEqual(self.registry["counts"]["not_identified_git_source_count"], 14)
+        self.assertEqual(self.registry["counts"]["not_identified_git_source_count"], 15)
         self.assertEqual(self.registry["counts"]["candidate_incomplete_count"], 2)
         self.assertEqual(self.registry["counts"]["legacy_redirect_count"], 1)
 
@@ -87,11 +87,21 @@ class SourceRightsRegistryTests(unittest.TestCase):
 
     def test_pending_plugin_creator_snapshots_are_not_release_packages(self):
         pending = [item for item in self.registry["records"] if item["source_state"] == "pending_repository"]
-        self.assertEqual(len(pending), 14)
+        self.assertEqual(len(pending), 15)
         for item in pending:
             self.assertIsNone(item["source"]["repository_url"])
             self.assertEqual(item["rights"]["license_status"], "NOT_ASSESSED")
             self.assertFalse(item["distribution"]["eligible_for_redistribution"])
+
+    def test_ponytail_private_derivative_has_no_public_redistribution_grant(self):
+        item = self.records["ponytail-engineering-optimizer"]
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertEqual(item["plugin_creator_scope"], "USER")
+        self.assertEqual(item["plugin_creator_discoverability"], "PRIVATE")
+        self.assertEqual(item["rights"]["license_status"], "NOT_ASSESSED")
+        self.assertEqual(item["distribution"]["status"], "snapshot_only")
+        self.assertFalse(item["distribution"]["eligible_for_redistribution"])
+        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["distribution"]["blockers"])
 
     def test_validator_passes_and_installable_count_remains_zero(self):
         result = subprocess.run(

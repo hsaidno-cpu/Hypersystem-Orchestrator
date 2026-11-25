@@ -113,12 +113,12 @@ def validate() -> None:
     for name, value in observed.items():
         if counts.get(name) != value:
             raise ValueError(f"{name}: expected {value}, recorded {counts.get(name)}")
-    if counts["official_pinned_source_count"] != 5 or counts["not_identified_git_source_count"] != 14 or counts["candidate_incomplete_count"] != 2 or counts["legacy_redirect_count"] != 1:
+    if counts["official_pinned_source_count"] != 5 or counts["not_identified_git_source_count"] != 15 or counts["candidate_incomplete_count"] != 2 or counts["legacy_redirect_count"] != 1:
         raise ValueError("Source migration baseline counts changed; re-audit before updating expectations")
     if counts["currently_installable_count"] != 0:
         raise ValueError("This reviewed source/rights baseline expects zero installable packages")
     print(f"PASS: {len(records)} source/rights records map one-to-one to {len(expected)} plugin identities")
-    print("PASS: 5 pinned sources, 14 not identified, 2 incomplete candidates, 1 legacy redirect")
+    print("PASS: 5 pinned sources, 15 not identified, 2 incomplete candidates, 1 legacy redirect")
     print("PASS: source pins, candidate/pending boundaries and license/distribution statuses are consistent")
     print("NOTE: registry records provenance and blockers; it does not grant or transfer copyright")
     print("NOTE: 0 plugin packages are currently cleared for installation/distribution")

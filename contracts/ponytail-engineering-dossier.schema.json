@@ -1,0 +1,373 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/contracts/ponytail-engineering-dossier.schema.json",
+  "title": "Ponytail Engineering Dossier",
+  "description": "A bounded engineering-method handoff. It does not grant source-write, merge, release or runtime authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "dossier_id",
+    "source_plugin",
+    "target",
+    "task",
+    "objective",
+    "scope",
+    "baseline",
+    "decision",
+    "impact_map",
+    "risk_register",
+    "acceptance_criteria",
+    "test_plan",
+    "authority_boundary",
+    "evidence",
+    "capability_status",
+    "completion_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "dossier_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_plugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_key",
+        "package_version",
+        "release_id"
+      ],
+      "properties": {
+        "plugin_key": {
+          "const": "ponytail-engineering-optimizer"
+        },
+        "package_version": {
+          "type": "string"
+        },
+        "release_id": {
+          "type": "string"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "ref",
+        "commit"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "summary"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "BUILD_OR_CHANGE",
+            "AUDIT_REPOSITORY",
+            "REVIEW_CHANGE",
+            "TEST_PLAN",
+            "SECURITY_RELIABILITY",
+            "DEBT_LEDGER",
+            "EFFICIENCY_EVALUATION"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "included",
+        "excluded"
+      ],
+      "properties": {
+        "included": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "excluded": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "inspected_paths",
+        "not_checked"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "VERIFIED",
+            "PARTIAL",
+            "NOT_CHECKED"
+          ]
+        },
+        "inspected_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_checked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chosen_option",
+        "rationale",
+        "rejected_alternatives"
+      ],
+      "properties": {
+        "chosen_option": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rejected_alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "impact_map": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "surface",
+          "effect",
+          "evidence_status"
+        ],
+        "properties": {
+          "surface": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effect": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_status": {
+            "enum": [
+              "OBSERVED",
+              "VERIFIED_SOURCE",
+              "ASSUMPTION",
+              "UNKNOWN"
+            ]
+          }
+        }
+      }
+    },
+    "risk_register": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "risk_id",
+          "severity",
+          "trigger",
+          "impact",
+          "mitigation"
+        ],
+        "properties": {
+          "risk_id": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "CRITICAL",
+              "HIGH",
+              "MEDIUM",
+              "LOW",
+              "INFO"
+            ]
+          },
+          "trigger": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string"
+          },
+          "mitigation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "test_plan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "test_id",
+          "requirement",
+          "expected_result",
+          "status"
+        ],
+        "properties": {
+          "test_id": {
+            "type": "string"
+          },
+          "requirement": {
+            "type": "string"
+          },
+          "expected_result": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PLANNED",
+              "PASS",
+              "FAIL",
+              "BLOCKED",
+              "NOT_RUN",
+              "UNVERIFIABLE"
+            ]
+          }
+        }
+      }
+    },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analysis_owner",
+        "source_write_owner",
+        "independent_evaluator",
+        "human_approval_required"
+      ],
+      "properties": {
+        "analysis_owner": {
+          "const": "ponytail-engineering-optimizer"
+        },
+        "source_write_owner": {
+          "const": "skill-developer-orchestrator"
+        },
+        "independent_evaluator": {
+          "const": "evaluator-team"
+        },
+        "human_approval_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claim",
+          "status",
+          "source"
+        ],
+        "properties": {
+          "claim": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "OBSERVED",
+              "VERIFIED_SOURCE",
+              "USER_CLAIM",
+              "ASSUMPTION",
+              "INFERENCE",
+              "HYPOTHESIS",
+              "UNKNOWN"
+            ]
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "capability_status": {
+      "enum": [
+        "READY",
+        "READY_WITH_LIMITATIONS",
+        "NOT_CHECKED",
+        "UNAVAILABLE",
+        "ACCESS_DENIED",
+        "BLOCKED"
+      ]
+    },
+    "completion_status": {
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "PARTIAL",
+        "BLOCKED",
+        "READY_FOR_HANDOFF",
+        "VERIFIED",
+        "FAILED"
+      ]
+    }
+  }
+}

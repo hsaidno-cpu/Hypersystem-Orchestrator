@@ -6,9 +6,16 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      approve_single_billable_invocation:
+        description: "Authorize one billable OpenAI Responses API run for the synthetic, analysis-only SKILL ANALYZER case."
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   validate:
@@ -30,5 +37,256 @@ jobs:
         run: python tools/validate_distribution.py
       - name: Validate canonical source and redistribution rights
         run: python tools/validate_source_rights.py
+      - name: Validate plan-only workflow example
+        run: python tools/plan_hso_workflow.py examples/hso-workflow-plan.example.json --output /tmp/hso-workflow-plan.json
       - name: Run unit and resolver tests
         run: python -m unittest discover -s tests -v
+      - name: Probe real sandbox capabilities
+        run: python tools/hso_super_orchestrator.py discover --output /tmp/hso-capability-receipt.json
+      - name: Execute dependency-ordered sandbox workflow
+        run: >-
+          python tools/hso_super_orchestrator.py run examples/hso-runtime-execution.example.json
+          --workspace /tmp/hso-runtime-target
+          --ledger /tmp/hso-runtime-ledger.sqlite
+          --audit /tmp/hso-runtime-audit.jsonl
+          --receipt /tmp/hso-runtime-receipt.json
+      - name: Verify sandbox execution audit
+        run: python tools/hso_super_orchestrator.py verify-audit /tmp/hso-runtime-audit.jsonl
+      - name: Execute retry and recovery fault-injection workflow
+        env:
+          HSO_ENABLE_TEST_ADAPTERS: "1"
+        run: >-
+          python tools/hso_super_orchestrator.py run examples/hso-runtime-recovery.example.json
+          --workspace /tmp/hso-recovery-target
+          --ledger /tmp/hso-recovery-ledger.sqlite
+          --audit /tmp/hso-recovery-audit.jsonl
+          --receipt /tmp/hso-recovery-receipt.json
+      - name: Verify recovery audit
+        run: python tools/hso_super_orchestrator.py verify-audit /tmp/hso-recovery-audit.jsonl
+      - name: Preserve runtime receipts and target evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hso-super-orchestrator-runtime-${{ github.sha }}
+          path: |
+            /tmp/hso-capability-receipt.json
+            /tmp/hso-runtime-target
+            /tmp/hso-runtime-ledger.sqlite
+            /tmp/hso-runtime-audit.jsonl
+            /tmp/hso-runtime-receipt.json
+            /tmp/hso-recovery-target
+            /tmp/hso-recovery-ledger.sqlite
+            /tmp/hso-recovery-audit.jsonl
+            /tmp/hso-recovery-receipt.json
+          retention-days: 30
+
+  p0-remote-mcp-skill-invocation:
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' &&
+           github.ref == 'refs/heads/architecture/control-plane-operating-contract-20261123' &&
+           github.actor == 'hsaidno-cpu' &&
+           inputs.approve_single_billable_invocation == true &&
+           github.run_attempt == 1 }}
+    environment: hso-p0-remote-mcp-live
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out PR branch without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Fail closed unless P0 environment has an independent required reviewer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          repository = os.environ["GITHUB_REPOSITORY"]
+          environment = "hso-p0-remote-mcp-live"
+          base = f"https://api.github.com/repos/{repository}/environments/{environment}"
+          headers = {
+              "Accept": "application/vnd.github+json",
+              "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+              "X-GitHub-Api-Version": "2026-03-10",
+          }
+          def get_json(url):
+              request = urllib.request.Request(url, headers=headers)
+              with urllib.request.urlopen(request, timeout=15) as response:
+                  return json.loads(response.read().decode("utf-8"))
+
+          details = get_json(base)
+          rules = details.get("protection_rules", [])
+          reviewer_rules = [rule for rule in rules if rule.get("type") == "required_reviewers"]
+          if len(reviewer_rules) != 1:
+              raise SystemExit("P0 environment must have exactly one required_reviewers protection rule")
+          rule = reviewer_rules[0]
+          reviewers = rule.get("reviewers", [])
+          if not reviewers:
+              raise SystemExit("P0 environment has no required human reviewer")
+          if rule.get("prevent_self_review") is not True:
+              raise SystemExit("P0 environment must prevent the workflow requester from approving their own job")
+          if not any(item.get("type") in {"User", "Team"} for item in reviewers):
+              raise SystemExit("P0 environment reviewer configuration is invalid")
+          branch_policy = details.get("deployment_branch_policy") or {}
+          if branch_policy.get("custom_branch_policies") is not True:
+              raise SystemExit("P0 environment must restrict deployments with a custom branch policy")
+          policies = get_json(base + "/deployment-branch-policies")
+          allowed = {item.get("name") for item in policies.get("branch_policies", [])}
+          expected = "architecture/control-plane-operating-contract-20261123"
+          if allowed != {expected}:
+              raise SystemExit(f"P0 environment branch policy must allow only {expected!r}; observed {sorted(allowed)}")
+          print(json.dumps({
+              "environment": environment,
+              "required_reviewers": len(reviewers),
+              "prevent_self_review": True,
+              "allowed_branches": sorted(allowed),
+              "secrets_are_not_read_or_printed": True,
+          }, indent=2))
+          PY
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned contract-test dependencies
+        run: python -m pip install -r requirements-test.txt
+
+      - name: Initialize and verify only the approved SKILL ANALYZER source pin
+        run: |
+          git submodule update --init --depth 1 plugins/skill-analyzer
+          python - <<'PY'
+          from pathlib import Path
+          from tools.remote_mcp_responses_adapter import inspect_local_skill_source
+          print(inspect_local_skill_source(Path.cwd()))
+          PY
+
+      - name: Zero-inference Remote MCP and OIDC preflight
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MCP_SERVER_URL: ${{ vars.MCP_SERVER_URL }}
+          MCP_OIDC_TOKEN_URL: ${{ vars.MCP_OIDC_TOKEN_URL }}
+          MCP_OIDC_CLIENT_ID: ${{ vars.MCP_OIDC_CLIENT_ID }}
+          MCP_OIDC_CLIENT_SECRET: ${{ secrets.MCP_OIDC_CLIENT_SECRET }}
+          MCP_OIDC_AUDIENCE: ${{ vars.MCP_OIDC_AUDIENCE }}
+        run: |
+          python tools/hso_super_orchestrator.py discover --output /tmp/hso-p0-remote-mcp-capabilities.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          receipt = json.loads(Path("/tmp/hso-p0-remote-mcp-capabilities.json").read_text())
+          cap = next(x for x in receipt["capabilities"]
+                     if x["capability_id"] == "plugin.skill.invoke.remote-mcp.skill-analyzer")
+          details = cap.get("probe_details", {})
+          print(json.dumps({
+              "capability_id": cap["capability_id"],
+              "status": cap["status"],
+              "host": details.get("host"),
+              "server_label": details.get("server_label"),
+              "tool_name": details.get("tool_name"),
+              "allowed_tools": details.get("allowed_tools"),
+              "billable_inference_performed": details.get("billable_inference_performed")
+          }, indent=2))
+          if cap["status"] != "READY_WITH_LIMITATIONS":
+              raise SystemExit("P0 Remote MCP preflight did not reach READY_WITH_LIMITATIONS")
+          if details.get("billable_inference_performed") is not False:
+              raise SystemExit("zero-inference preflight unexpectedly reports a billable inference")
+          PY
+
+      - name: Issue one five-minute signed scope-bound approval
+        env:
+          HSO_APPROVAL_HMAC_KEY: ${{ secrets.HSO_APPROVAL_HMAC_KEY }}
+          MCP_SERVER_URL: ${{ vars.MCP_SERVER_URL }}
+          MCP_OIDC_AUDIENCE: ${{ vars.MCP_OIDC_AUDIENCE }}
+        run: python tools/issue_p0_skill_approval.py --output /tmp/hso-p0-approval.json
+
+      - name: Prepare the exact one-package invocation request
+        env:
+          HSO_APPROVAL_HMAC_KEY: ${{ secrets.HSO_APPROVAL_HMAC_KEY }}
+          MCP_SERVER_URL: ${{ vars.MCP_SERVER_URL }}
+        run: |
+          python tools/prepare_p0_skill_workflow.py \
+            --approval-receipt /tmp/hso-p0-approval.json \
+            --output /tmp/hso-p0-workflow.json
+
+      - name: Invoke exactly one approved Remote MCP analysis tool
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          HSO_APPROVAL_HMAC_KEY: ${{ secrets.HSO_APPROVAL_HMAC_KEY }}
+          MCP_SERVER_URL: ${{ vars.MCP_SERVER_URL }}
+          MCP_OIDC_TOKEN_URL: ${{ vars.MCP_OIDC_TOKEN_URL }}
+          MCP_OIDC_CLIENT_ID: ${{ vars.MCP_OIDC_CLIENT_ID }}
+          MCP_OIDC_CLIENT_SECRET: ${{ secrets.MCP_OIDC_CLIENT_SECRET }}
+          MCP_OIDC_AUDIENCE: ${{ vars.MCP_OIDC_AUDIENCE }}
+        run: |
+          python tools/hso_super_orchestrator.py run /tmp/hso-p0-workflow.json \
+            --workspace "$GITHUB_WORKSPACE" \
+            --ledger /tmp/hso-p0-ledger.sqlite \
+            --audit /tmp/hso-p0-audit.jsonl \
+            --receipt /tmp/hso-p0-run-receipt.json
+
+      - name: Verify the actual host call, tool allowlist and independent target digest
+        run: |
+          python tools/hso_super_orchestrator.py verify-audit /tmp/hso-p0-audit.jsonl
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          run = json.loads(Path("/tmp/hso-p0-run-receipt.json").read_text())
+          package = run["package_outcomes"]["WP-P0-SKILL-ANALYZER-INVOKE"]
+          artifact_path = Path("artifacts/p0-skill-analyzer-invocation.json")
+          artifact = json.loads(artifact_path.read_text())
+          invocation = artifact["invocation_receipt"]
+          actual = hashlib.sha256(artifact_path.read_bytes()).hexdigest()
+
+          assert run["status"] == "SUCCEEDED", run["status"]
+          assert package["status"] == "SUCCEEDED", package["status"]
+          assert package["verification"]["verified"] is True
+          assert package["verification"]["sha256"] == actual
+          assert invocation["host"] == "openai-responses-api"
+          assert invocation["plugin"]["source_commit"] == "c469af7977c9bf6dcb3f5ab7b085a6de20d87004"
+          assert invocation["remote_mcp"]["tool_name"] == "invoke_skill_analyzer"
+          assert invocation["remote_mcp"]["allowed_tools"] == ["invoke_skill_analyzer"]
+          assert invocation["remote_mcp"]["additional_tools_exposed_to_model"] == 0
+          assert invocation["host_session"]["mcp_call_id"]
+          assert invocation["host_session"]["approval_request_id"]
+          assert invocation["verification"]["mcp_call_completed"] is True
+          assert invocation["verification"]["gateway_result_contract_valid"] is True
+          assert run["audit"]["hash_chain_valid"] is True
+
+          print(json.dumps({
+              "run_status": run["status"],
+              "host": invocation["host"],
+              "model": invocation["model"],
+              "mcp_server_label": invocation["remote_mcp"]["server_label"],
+              "mcp_tool": invocation["remote_mcp"]["tool_name"],
+              "host_response_id": invocation["host_session"]["final_response_id"],
+              "mcp_call_id": invocation["host_session"]["mcp_call_id"],
+              "approval_request_id": invocation["host_session"]["approval_request_id"],
+              "result_sha256": invocation["gateway_result"]["result_sha256"],
+              "target_sha256_read_back": actual,
+              "audit_hash_chain_valid": run["audit"]["hash_chain_valid"],
+              "remote_source_attestation": invocation["verification"]["remote_source_attestation"]
+          }, indent=2))
+          PY
+
+      - name: Preserve invocation and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hso-p0-remote-mcp-skill-analyzer-${{ github.run_id }}
+          path: |
+            /tmp/hso-p0-remote-mcp-capabilities.json
+            /tmp/hso-p0-ledger.sqlite
+            /tmp/hso-p0-audit.jsonl
+            /tmp/hso-p0-run-receipt.json
+            artifacts/p0-skill-analyzer-invocation.json
+          if-no-files-found: warn
+          retention-days: 30

@@ -3,8 +3,8 @@
 **As-of:** 2026-11-23  
 **Parent:** Hypersystem Orchestrator  
 **Verified official plugin source repositories:** 5  
-**Remaining Git source identities not integrated:** 16 (14 NOT_IDENTIFIED + 2 CANDIDATE_INCOMPLETE)
-**Platform package-source provenance:** 14/14 NOT_IDENTIFIED packages have a verified USER/PRIVATE Plugin Creator manifest and file inventory; canonical Git source migration remains pending.
+**Remaining Git source identities not integrated:** 17 (15 NOT_IDENTIFIED + 2 CANDIDATE_INCOMPLETE)
+**Platform package-source provenance:** 15/15 NOT_IDENTIFIED packages have a verified USER/PRIVATE Plugin Creator manifest and file inventory; canonical Git source migration remains pending.
 
 ## 1. Source classifications
 
@@ -56,7 +56,7 @@
 13. People & Business Competency Academy — 0.1.0
 14. Progressive Roadmap Evaluator (PRE) — 0.1.1
 
-Plugin Creator version metadata and a complete USER/PRIVATE package file inventory verify a platform package source, not a canonical Git source release. Do not invent repository URLs from plugin slugs or treat a source dataset as the wrapper plugin's canonical source. For these 14 plugins, Git source migration remains pending and no redistribution license is declared in the current package manifest.
+Plugin Creator version metadata and a complete USER/PRIVATE package file inventory verify a platform package source, not a canonical Git source release. Do not invent repository URLs from plugin slugs or treat a source dataset as the wrapper plugin's canonical source. For these 15 plugins, Git source migration remains pending and no redistribution license is declared in the current package manifest.
 
 ## 5. Repository creation and onboarding acceptance
 
@@ -112,6 +112,15 @@ The machine-readable companion register is `catalog/source-rights-registry.json`
 | Photo Fixer candidate | Public candidate at `95339901f84cdae861efcebd9820cb2e1efdc27d`; Apache-2.0 root LICENSE; source package incomplete | Apache-2.0 applies to repository contents, not proof of complete plugin package identity | Candidate only; no installable package |
 | PVEE candidate | Public candidate at `1ab0c41081ccdbb91cc9dec0a2864acd0de00d54`; Apache-2.0 root LICENSE; source package incomplete | Apache-2.0 applies to repository contents, not proof of complete plugin package identity | Candidate only; no installable package |
 
-The remaining 14 NOT_IDENTIFIED Plugin Creator package identities have no accepted canonical Git source or independent redistribution licence in this baseline. Their USER/PRIVATE platform scope is evidence of access/discoverability, not permission to export or republish. Keep them snapshot-only and private-restricted until each owner approves a source repository, visibility, licence and distribution scope. The parent Apache-2.0 licence must not be used as a substitute for child-plugin permission.
+The remaining 15 NOT_IDENTIFIED Plugin Creator package identities have no accepted canonical Git source or independent redistribution licence in this baseline. Their USER/PRIVATE platform scope is evidence of access/discoverability, not permission to export or republish. Keep them snapshot-only and private-restricted until each owner approves a source repository, visibility, licence and distribution scope. The parent Apache-2.0 licence must not be used as a substitute for child-plugin permission.
 
-**Current verified baseline:** 22 identities; 5 pinned official sources; 14 source identities not identified; 2 incomplete candidates; 1 legacy redirect; 0 installable packages. Source pinning and licence evidence are separate gates.
+**Current verified baseline (2026-11-25):** 23 identities; 5 pinned official sources; 15 source identities not identified; 2 incomplete candidates; 1 legacy redirect; 0 installable packages. Source pinning and licence evidence are separate gates.
+
+
+### Added pending source identity: Ponytail Engineering System
+
+- Plugin Creator package: `plugins_6b044f34a5a481919ffc95eadee4383b`
+- Verified release: `pluginrel_6b044f37640081918df7f449298d72cf`, version `0.1.0`, scope/discoverability `USER / PRIVATE`
+- Canonical Git source: `NOT_IDENTIFIED`; the public upstream Ponytail repository is methodology provenance, not the derivative package's source authority.
+- Rights: `NOT_ASSESSED`; no package-level redistribution grant has been established.
+- Disposition: keep `snapshot_only`, private and non-installable until owner approval, canonical-source decision and independent licence/redistribution decision are recorded.

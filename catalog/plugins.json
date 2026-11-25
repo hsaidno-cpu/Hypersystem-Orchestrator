@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "catalog_revision": "2026-11-23",
-  "expected_plugin_count": 22,
+  "expected_plugin_count": 23,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1054,6 +1054,64 @@
       "plugin_creator_scope": "USER",
       "plugin_creator_discoverability": "PRIVATE",
       "deployed_plugin_version": "0.1.1"
+    },
+    {
+      "plugin_key": "ponytail-engineering-optimizer",
+      "display_name": "Ponytail Engineering System",
+      "plugin_creator_id": "plugins_6b044f34a5a481919ffc95eadee4383b",
+      "primary_domain": "minimal-complete-software-engineering",
+      "purpose": "Engineering-method system for coding work: codebase understanding, minimal complete change design, repository audit, contextual change review, risk-based testing, security/reliability gates and evidence-based debt/efficiency evaluation.",
+      "responsibility_owner": "Owns the engineering-method dossier and decision logic for the smallest complete and safe software change, read-only repository audit/review and risk-based verification design.",
+      "boundary": "Does not own source writes, commits, pull requests, merges or releases; SDO owns the engineering lifecycle. Does not own independent quality judgement (Evaluator Team), general analytical methodology (SKILL ANALYZER), technical plugin/system forensics (A.S.F.R.E.E), reusable workflow architecture (AI Workflow Systems Orchestrator), ecosystem control-plane arbitration (HSO), or agent runtime lifecycle (Plugin Agent Orchestrator). No autonomous dispatcher, installer, CI runner or production runtime is included.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "Plugin Creator USER/PRIVATE release 0.1.0 verified on 2026-11-23, release pluginrel_6b044f37640081918df7f449298d72cf. The upstream Ponytail repository is a third-party methodology reference at v5.3.3, not the canonical Git source or version authority for this separately created adaptation.",
+      "related_plugins": [
+        "skill-developer-orchestrator",
+        "evaluator-team",
+        "skill-analyzer",
+        "asfree-canonical",
+        "workflow-systems-orchestrator"
+      ],
+      "primary_triggers": [
+        "Design the smallest complete and safe change for a coding, refactoring or bug-fix task",
+        "Audit a repository or subsystem for correctness, security, reliability, load, missing tests or unnecessary complexity",
+        "Review a concrete diff, commit or pull request in the context of its callers and tests",
+        "Create a risk-based regression plan or evaluate deferred engineering shortcuts and measured efficiency"
+      ],
+      "negative_triggers": [
+        "General analytical methodology for non-engineering problems; route to SKILL ANALYZER",
+        "Forensic anatomy or reconstruction of an AI plugin, skill or agent; route to A.S.F.R.E.E",
+        "Independent evaluation and final quality judgement; route to Evaluator Team",
+        "Source-code writes, commits, pull requests, release preparation or plugin engineering lifecycle; route to SDO",
+        "Reusable workflow, SOP or project-system architecture; route to AI Workflow Systems Orchestrator",
+        "AI-agent product/runtime lifecycle; route to Plugin Agent Orchestrator",
+        "Do not claim plugin dispatch, test execution, host activation or production runtime without direct evidence"
+      ],
+      "source_classification": "NOT_IDENTIFIED",
+      "instruction_snapshot_path": "plugin-instructions/ponytail-engineering-optimizer/SOURCE-POINTER.md",
+      "instruction_skill_count": 9,
+      "instruction_capture_date": "2026-11-23",
+      "instruction_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT",
+      "target_version": null,
+      "version_reconciliation_status": "NOT_VERIFIED",
+      "platform_package_version": "0.1.0",
+      "platform_current_release_id": "pluginrel_6b044f37640081918df7f449298d72cf",
+      "platform_scope": "USER",
+      "platform_discoverability": "PRIVATE",
+      "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
+      "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
+      "repository_version": null,
+      "version_alignment_note": "The private Plugin Creator release is verified at 0.1.0. No dedicated canonical Git source for this derivative package has been accepted. Upstream Ponytail v5.3.3 is methodology provenance, not this package's source release.",
+      "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
+      "deployed_plugin_version": "0.1.0",
+      "plugin_creator_current_release_id": "pluginrel_6b044f37640081918df7f449298d72cf",
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE",
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No independent canonical Git source exists for parity comparison. The full USER/PRIVATE instruction files remain in the private Plugin Creator package; the public parent repository stores only a metadata pointer and concise skill index."
     }
   ]
 }
