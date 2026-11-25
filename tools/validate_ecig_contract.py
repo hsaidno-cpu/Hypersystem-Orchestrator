@@ -146,9 +146,9 @@ def validate_policy(schema: dict[str, Any], policy: dict[str, Any]) -> None:
         if (
             isinstance(value, bool)
             or not isinstance(value, (int, float))
-            or not math.isfinite(value)
             or value <= 0
             or value > upper_bound
+            or (isinstance(value, float) and not math.isfinite(value))
         ):
             raise ContractError(
                 f"ECIG freshness policy {field} must be a finite positive number "
