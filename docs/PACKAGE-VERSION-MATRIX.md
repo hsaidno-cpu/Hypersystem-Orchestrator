@@ -1,5 +1,7 @@
 # Plugin Package Version Matrix and Adoption Decisions
 
+> **Historical snapshot:** this document preserves the package/source analysis captured on 2026-11-22 and is not the live version registry. The current registry is generated from catalog/plugins.json and catalog/repositories.json: [CURRENT-VERSION-REGISTRY.md](CURRENT-VERSION-REGISTRY.md). Its freshness and parent gitlink checks run in CI.
+
 **Inventory date:** 2026-11-22  
 **Authority:** exact Plugin Creator IDs/current release metadata plus inspected canonical Git source manifests where available.
 

@@ -118,14 +118,11 @@ class CatalogValidationTests(unittest.TestCase):
             self.assertTrue(edge["input_artifacts"])
             self.assertTrue(edge["output_artifact"])
             self.assertEqual(edge["contract_version"], "1.0.0")
-            if edge["integration_id"] == "INT-PONYTAIL-SDO-001":
-                self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
-                self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
-                self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
-            else:
-                self.assertEqual(edge["status"], "CONTRACT_TESTED")
-                self.assertEqual(edge["schema_contract_test"], "PASS")
-                self.assertEqual(edge["contract_behavior_test"], "PASS")
+            # C2/C3 contract checks are independent of C4 host activation and C5 runtime execution.
+            # This includes Ponytail-SDO after the current compatibility evidence correction.
+            self.assertEqual(edge["status"], "CONTRACT_TESTED")
+            self.assertEqual(edge["schema_contract_test"], "PASS")
+            self.assertEqual(edge["contract_behavior_test"], "PASS")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
         by_id = {e["integration_id"]: e for e in edges}

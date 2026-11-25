@@ -2,10 +2,15 @@
 """Validate the Hypersystem Orchestrator ecosystem catalog using stdlib only."""
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
+import subprocess
+from datetime import date
 from pathlib import Path
+from urllib.parse import quote
+from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "catalog" / "plugins.json"
@@ -44,6 +49,92 @@ def parse_submodules(path: Path):
     return result
 
 
+def read_gitlink_sha(path: str) -> str:
+    """Read the exact gitlink SHA from HEAD without initializing submodules."""
+    try:
+        completed = subprocess.run(
+            ["git", "ls-tree", "HEAD", "--", path],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        fail(f"Cannot inspect gitlink for {path}: {exc}")
+    lines = [line for line in completed.stdout.splitlines() if line.endswith("\t" + path)]
+    if len(lines) != 1:
+        fail(f"Expected exactly one git tree entry for submodule {path}; found {len(lines)}")
+    metadata, _entry_path = lines[0].split("\t", 1)
+    parts = metadata.split()
+    if len(parts) != 3 or parts[0] != "160000" or parts[1] != "commit":
+        fail(f"{path}: expected a gitlink (mode 160000, type commit), got {metadata}")
+    return parts[2]
+
+
+def git_blob_sha(content: bytes) -> str:
+    """Return Git's SHA-1 object ID for a blob's exact byte content."""
+    header = b"blob " + str(len(content)).encode("ascii") + b"\0"
+    return hashlib.sha1(header + content).hexdigest()
+
+
+def verify_source_manifest(repo: dict) -> str:
+    """Verify a public source manifest at its immutable commit; fail closed."""
+    repository_id = repo["repository_id"]
+    visibility = repo.get("visibility")
+    mode = repo.get("source_manifest_verification_mode")
+
+    if visibility == "private":
+        if mode != "PRIVATE_MANUAL_READBACK_ONLY":
+            fail(f"{repository_id}: private source must be explicitly marked PRIVATE_MANUAL_READBACK_ONLY")
+        # The public GitHub Actions workflow has no credential for private child repositories.
+        # The exact manifest SHA/commit was manually read back by the authorized connector.
+        return "PRIVATE_MANUAL_READBACK_ONLY"
+
+    if visibility != "public":
+        fail(f"{repository_id}: unsupported source visibility '{visibility}'")
+    if mode != "CI_RAW_CONTENT_GIT_BLOB":
+        fail(f"{repository_id}: public source must use CI_RAW_CONTENT_GIT_BLOB verification")
+    full_name = repo.get("full_name", "")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", full_name):
+        fail(f"{repository_id}: invalid GitHub owner/repository locator for manifest verification")
+    manifest_path = repo.get("source_manifest_path", "")
+    if not manifest_path or manifest_path.startswith("/") or ".." in manifest_path.split("/"):
+        fail(f"{repository_id}: unsafe source_manifest_path")
+    encoded_path = quote(manifest_path, safe="/._-")
+    url = (
+        f"https://raw.githubusercontent.com/{full_name}/"
+        f"{repo['pinned_commit']}/{encoded_path}"
+    )
+    request = Request(url, headers={"User-Agent": "HSO-source-manifest-validator/1.0"})
+    try:
+        with urlopen(request, timeout=20) as response:
+            content = response.read(1_048_577)
+    except Exception as exc:
+        fail(f"{repository_id}: could not read pinned source manifest from GitHub: {exc}")
+    if len(content) > 1_048_576:
+        fail(f"{repository_id}: source manifest exceeds 1 MiB validation limit")
+    actual_blob_sha = git_blob_sha(content)
+    if actual_blob_sha != repo["source_manifest_blob_sha"]:
+        fail(
+            f"{repository_id}: pinned source manifest blob SHA mismatch; "
+            f"expected {repo['source_manifest_blob_sha']}, got {actual_blob_sha}"
+        )
+    try:
+        manifest = json.loads(content.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        fail(f"{repository_id}: pinned source manifest is not valid UTF-8 JSON: {exc}")
+    if manifest.get("version") != repo["source_manifest_version"]:
+        fail(
+            f"{repository_id}: pinned manifest version {manifest.get('version')!r} "
+            f"does not match registered {repo['source_manifest_version']!r}"
+        )
+    if manifest.get("version") != repo.get("package_version"):
+        fail(
+            f"{repository_id}: pinned manifest version does not match repositories.json package_version"
+        )
+    return "CI_RAW_CONTENT_GIT_BLOB"
+
+
 def validate():
     catalog = load_json(CATALOG_PATH)
     repo_doc = load_json(REPOSITORIES_PATH)
@@ -52,6 +143,13 @@ def validate():
 
     if not isinstance(plugins, list) or not isinstance(repositories, list):
         fail("Catalog plugins and repositories must both be arrays")
+    try:
+        catalog_revision = date.fromisoformat(catalog.get("catalog_revision", ""))
+    except (TypeError, ValueError):
+        fail("catalog_revision must be an ISO-8601 calendar date")
+    if catalog_revision > date.today():
+        fail("catalog_revision must not be in the future")
+
     if len(plugins) != catalog.get("expected_plugin_count"):
         fail(f"Expected {catalog.get('expected_plugin_count')} plugin records, found {len(plugins)}")
 
@@ -101,6 +199,8 @@ def validate():
                 fail(f"{key}: candidate source must be marked candidate_not_integrated")
         if state == "integrated_submodule":
             repo = next(r for r in repositories if r["repository_id"] == repo_id)
+            if plugin.get("repository_version") != repo.get("source_manifest_version"):
+                fail(f"{key}: repository_version differs from the registered source manifest version")
             if repo.get("status") not in {"integrated_submodule", "integrated_submodule_private"}:
                 fail(f"{key}: integrated plugin repository is not marked integrated")
             if not repo.get("submodule_path") or not repo.get("pinned_commit"):
@@ -111,6 +211,22 @@ def validate():
                 fail(f"{key}: canonical redirect must point to a registered alias_of target")
             if alias == key:
                 fail(f"{key}: alias cannot point to itself")
+        observed_metadata = plugin.get("platform_metadata_observed_at")
+        try:
+            observed_date = date.fromisoformat(observed_metadata or "")
+        except (TypeError, ValueError):
+            fail(f"{key}: platform_metadata_observed_at must be an ISO-8601 date")
+        if observed_date > date.today():
+            fail(f"{key}: Plugin Creator metadata observation date is in the future")
+        if observed_date > catalog_revision:
+            fail(f"{key}: Plugin Creator metadata observation date is later than catalog_revision")
+        metadata_age_days = (date.today() - observed_date).days
+        if metadata_age_days > 30:
+            fail(
+                f"{key}: Plugin Creator metadata is stale ({metadata_age_days} days); "
+                "re-read current metadata and release ID before updating the registry"
+            )
+
         if not plugin.get("primary_triggers") or not plugin.get("negative_triggers"):
             fail(f"{key}: positive and negative routing triggers are required")
         if not isinstance(plugin.get("instruction_skill_count"), int) or plugin["instruction_skill_count"] < 1:
@@ -156,6 +272,8 @@ def validate():
                 fail(f"{key}: unknown related plugin '{related}'")
 
     submodules = parse_submodules(GITMODULES_PATH)
+    public_manifest_checks = 0
+    private_manifest_skips = 0
     for repo in repositories:
         path = repo.get("submodule_path")
         if repo.get("status") in {"integrated_submodule", "integrated_submodule_private"}:
@@ -168,6 +286,37 @@ def validate():
                 fail(f"{repo['repository_id']}: .gitmodules URL does not match catalog URL")
             if not re.fullmatch(r"[0-9a-f]{40}", repo.get("pinned_commit", "")):
                 fail(f"{repo['repository_id']}: pinned_commit must be a 40-character SHA")
+            actual_gitlink_sha = read_gitlink_sha(path)
+            if actual_gitlink_sha != repo["pinned_commit"]:
+                fail(
+                    f"{repo['repository_id']}: parent gitlink SHA {actual_gitlink_sha} "
+                    f"does not match repositories.json pinned_commit {repo['pinned_commit']}"
+                )
+            manifest_fields = [
+                "source_manifest_path",
+                "source_manifest_blob_sha",
+                "source_manifest_version",
+                "source_manifest_commit",
+                "source_manifest_verified_at",
+            ]
+            for field in manifest_fields:
+                if not repo.get(field):
+                    fail(f"{repo['repository_id']}: missing {field} for the pinned source manifest")
+            if repo["source_manifest_commit"] != repo["pinned_commit"]:
+                fail(f"{repo['repository_id']}: source manifest was not verified at its pinned commit")
+            if not re.fullmatch(r"[0-9a-f]{40}", repo["source_manifest_blob_sha"]):
+                fail(f"{repo['repository_id']}: source_manifest_blob_sha must be a 40-character SHA")
+            if repo.get("package_version") != repo["source_manifest_version"]:
+                fail(f"{repo['repository_id']}: package_version conflicts with source manifest version")
+            try:
+                date.fromisoformat(repo["source_manifest_verified_at"])
+            except ValueError:
+                fail(f"{repo['repository_id']}: source_manifest_verified_at must be an ISO-8601 date")
+            verification_mode = verify_source_manifest(repo)
+            if verification_mode == "CI_RAW_CONTENT_GIT_BLOB":
+                public_manifest_checks += 1
+            else:
+                private_manifest_skips += 1
     if len(submodules) != 5:
         fail(f"Expected 5 verified source submodules at this stage, found {len(submodules)}")
 
@@ -188,6 +337,12 @@ def validate():
     print(f"PASS: {len(plugins)} unique plugin identities")
     print(f"PASS: {len(repositories)} repository records")
     print(f"PASS: {len(submodules)} declared and pinned source submodules")
+    print("PASS: parent gitlink SHAs equal registered source pins")
+    print("PASS: integrated source manifest provenance is recorded and internally consistent")
+    print(f"PASS: {public_manifest_checks} public source manifests fetched at pinned commits and Git-blob-hash/version verified")
+    if private_manifest_skips:
+        print(f"NOTE: {private_manifest_skips} private source manifest(s) require manual authorized read-back; CI does not claim to verify private repository contents")
+    print("PASS: Plugin Creator metadata observations are no older than 30 days")
     print("PASS: source-state, alias, relationship and repository URL consistency")
     print("PASS: every plugin has a segregated instruction snapshot/pointer and explicit routing boundaries")
     print(f"PASS: {snapshot_index['total_skill_records']} indexed skill instruction records across {len(plugins)} plugins")

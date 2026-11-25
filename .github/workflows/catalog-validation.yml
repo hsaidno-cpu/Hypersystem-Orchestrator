@@ -35,6 +35,8 @@ jobs:
         run: python tools/validate_catalog.py
       - name: Validate distribution eligibility and platform registry
         run: python tools/validate_distribution.py
+      - name: Verify generated current package/source version registry
+        run: python tools/render_package_version_matrix.py --check
       - name: Validate plan-only workflow example
         run: python tools/plan_hso_workflow.py examples/hso-workflow-plan.example.json --output /tmp/hso-workflow-plan.json
       - name: Run unit and resolver tests

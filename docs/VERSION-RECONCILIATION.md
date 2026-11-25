@@ -1,5 +1,7 @@
 # Version Reconciliation and Adoption Policy
 
+> **Current-state pointer (2026-11-24):** for the latest package release IDs, Git source pins, metadata observation dates and parity states, use the generated [CURRENT-VERSION-REGISTRY.md](CURRENT-VERSION-REGISTRY.md). This document retains dated reconciliation analysis and release decisions; its historical sections are not a live package registry.
+
 ## 1. Version authority
 
 The highest version is adopted from authoritative release evidence, not from the largest string in a display name. Distinguish:
