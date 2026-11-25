@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/docs/hsar/hsar-component.schema.json",
+  "title": "HSAR Component Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "component_id",
+    "name",
+    "entity_type",
+    "lifecycle_status",
+    "evidence_status"
+  ],
+  "properties": {
+    "component_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "entity_type": {
+      "enum": [
+        "ecosystem",
+        "platform",
+        "system",
+        "subsystem",
+        "plugin",
+        "agent",
+        "orchestrator",
+        "skill",
+        "subskill",
+        "module",
+        "script",
+        "function",
+        "api",
+        "mcp_server",
+        "connector",
+        "data_store",
+        "schema",
+        "contract",
+        "workflow",
+        "policy",
+        "role",
+        "test",
+        "evidence",
+        "release",
+        "external_dependency"
+      ]
+    },
+    "layer": {
+      "enum": [
+        "ecosystem",
+        "system",
+        "plugin_agent_orchestrator",
+        "skill_subskill",
+        "module_script_function",
+        "interface_infrastructure",
+        "operations_governance"
+      ]
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lifecycle_status": {
+      "enum": [
+        "proposed",
+        "specified",
+        "implemented",
+        "verified",
+        "deployed",
+        "production_ready",
+        "deprecated",
+        "retired",
+        "unknown"
+      ]
+    },
+    "implementation_maturity": {
+      "enum": [
+        "discovered",
+        "catalogued",
+        "source_verified",
+        "packaged",
+        "host_tested",
+        "executable",
+        "deployed",
+        "production_ready",
+        "unknown"
+      ]
+    },
+    "runtime_status": {
+      "enum": [
+        "not_configured",
+        "not_run",
+        "mock_tested",
+        "sandbox_tested",
+        "host_tested",
+        "invocation_verified",
+        "production_observed",
+        "unknown"
+      ]
+    },
+    "evidence_status": {
+      "enum": [
+        "supported",
+        "partially_supported",
+        "unverified",
+        "stale",
+        "contradicted",
+        "not_applicable"
+      ]
+    },
+    "confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "unverified"
+      ]
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "primary_duties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "functional_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "non_goals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "authority_boundary": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "processing_logic": {
+      "type": "string"
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "script_anatomy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "signature": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "commit_sha": {
+            "type": "string"
+          },
+          "blob_sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "relation_type",
+          "target_component_id"
+        ],
+        "properties": {
+          "relation_type": {
+            "enum": [
+              "parent_of",
+              "child_of",
+              "depends_on",
+              "invokes",
+              "invoked_by",
+              "consumes",
+              "provides",
+              "governed_by",
+              "tested_by",
+              "evidenced_by",
+              "related_to"
+            ]
+          },
+          "target_component_id": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "source": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "format": "uri"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "path": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "blob_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rights_state": {
+          "enum": [
+            "cleared",
+            "restricted",
+            "review_required",
+            "unknown",
+            "not_applicable"
+          ]
+        }
+      },
+      "required": [
+        "repository",
+        "branch",
+        "commit_sha"
+      ],
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_handling": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "security_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "status"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "static",
+              "unit",
+              "integration",
+              "host",
+              "runtime",
+              "security",
+              "parity"
+            ]
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "blocked",
+              "not_run",
+              "not_assessed"
+            ]
+          },
+          "evidence_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "tested_commit_sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "documentation_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "last_scanned_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "change_history": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
