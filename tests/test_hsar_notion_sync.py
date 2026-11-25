@@ -4,8 +4,8 @@ import urllib.error
 
 from scripts.hsar_notion_sync import (
     JsonHttpClient, HsarSyncService, SyncError, redact,
-    read_rich_text, read_select, stable_json_hash,
-    event_pr_numbers, is_same_repository_pull_request,
+    read_rich_text, read_select, stable_json_hash, event_pr_numbers,
+    is_same_repository_pull_request, assert_write_enabled,
 )
 
 
@@ -14,12 +14,7 @@ class FakeGitHub:
         return ([{"filename": "docs/hsar/example.md", "sha": "b" * 40, "status": "modified", "changes": 4}], False)
 
     def list_workflow_runs(self, repo, head_sha):
-        return [{
-            "name": "Docs validation", "run_number": 12, "status": "completed",
-            "conclusion": "success", "url": "https://github.com/example/run/12",
-            "head_sha": head_sha, "created_at": "2026-11-26T00:00:00Z",
-            "updated_at": "2026-11-26T00:10:00Z",
-        }]
+        return [{"name": "Docs validation", "run_number": 12, "status": "completed", "conclusion": "success", "url": "https://github.com/example/run/12", "head_sha": head_sha, "created_at": "2026-11-26T00:00:00Z", "updated_at": "2026-11-26T00:10:00Z"}]
 
 
 class FakeNotion:
@@ -66,6 +61,14 @@ class SyncContractTests(unittest.TestCase):
         self.notion = FakeNotion()
         self.service = HsarSyncService(self.github, self.notion, "hsaidno-cpu/Hypersystem-Orchestrator")
 
+    def test_write_gate_defaults_closed(self):
+        with patch.dict("os.environ", {}, clear=True):
+            with self.assertRaises(SyncError):
+                assert_write_enabled(False)
+            assert_write_enabled(True)
+        with patch.dict("os.environ", {"HSAR_NOTION_SYNC_ENABLED": "true"}):
+            assert_write_enabled(False)
+
     def test_hash_is_order_independent(self):
         self.assertEqual(stable_json_hash({"a": 1, "b": 2}), stable_json_hash({"b": 2, "a": 1}))
 
@@ -98,7 +101,8 @@ class SyncContractTests(unittest.TestCase):
         self.assertEqual(second.status, "UPDATED")
         self.assertEqual(first.page_id, second.page_id)
         props = self.notion.get_page(second.page_id)["properties"]
-        self.assertIn("Changed title", read_rich_text(props, "Change Summary"))
+        self.assertIn("PR #9", read_rich_text(props, "Automation Sync Receipt"))
+        self.assertNotIn("Change Summary", props)
 
     def test_non_idempotent_create_transport_error_is_not_retried(self):
         client = JsonHttpClient("test-token", "https://example.invalid")
@@ -123,12 +127,17 @@ class SyncContractTests(unittest.TestCase):
             self.service.upsert_pr(make_pr())
         self.assertEqual(self.notion.writes, 0)
 
-    def test_human_decision_is_never_overwritten(self):
+    def test_human_managed_fields_are_never_overwritten(self):
         result = self.service.upsert_pr(make_pr())
         page = self.notion.get_page(result.page_id)
         page["properties"]["Decision State"] = {"select": {"name": "Approved"}}
+        page["properties"]["Acceptance Evidence"] = {"rich_text": [{"plain_text": "GOV-01 accepted"}]}
+        page["properties"]["Change"] = {"title": [{"plain_text": "Human curated title"}]}
         self.service.upsert_pr(make_pr("A newer title"))
-        self.assertEqual(read_select(page["properties"], "Decision State"), "Approved")
+        props = page["properties"]
+        self.assertEqual(read_select(props, "Decision State"), "Approved")
+        self.assertEqual(read_rich_text(props, "Acceptance Evidence"), "GOV-01 accepted")
+        self.assertEqual(read_rich_text(props, "Change"), "Human curated title")
 
 
 if __name__ == "__main__":
