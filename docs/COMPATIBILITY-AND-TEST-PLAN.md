@@ -45,8 +45,8 @@ These are interface definitions and routing constraints. They are not hard runti
 |---|---|---|---|
 | C0 — Identity | Producer/consumer exist, source/version identity is known | Plugin catalog and source registry | STATIC_VALIDATED by parent CI |
 | C1 — Routing | Positive/negative trigger and primary owner are correct | Routing contract and regression assertions | STATIC_VALIDATED by parent CI |
-| C2 — Schema | Real payload validates against the handoff JSON Schema | 14 synthetic valid fixtures + negative schema cases; CI run #45149817422 | PASS — 14/14 |
-| C3 — Contract behavior | Producer artifact can be accepted or rejected by consumer using mock/fixture data | 14 mock receiver acceptances + negative producer/recipient/version/output cases; CI run #45149817422 | PASS — 14/14 (mock) |
+| C2 — Schema | Synthetic payloads validate against the handoff JSON Schema | Historical 14 fixtures on 23 Nov; current 15 fixtures and negative schema cases; CI run #45698994293 | PASS — 15/15 current |
+| C3 — Contract behavior | Producer artifact can be accepted or rejected by consumer using mock/fixture data | Historical 14 mock acceptances on 23 Nov; current 15 strict mock receiver acceptances plus negative mismatch cases; CI run #45698994293 | PASS — 15/15 current (mock) |
 | C4 — Host activation | Named host, model/provider and release select the expected plugin route | Host/version test evidence | NOT_RUN |
 | C5 — Runtime | Actual end-to-end handoff/execution and artifact read-back | Trace, output artifact, timestamps and failure evidence | NOT_RUN |
 
