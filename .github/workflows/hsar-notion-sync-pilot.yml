@@ -4,12 +4,6 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, closed]
-  workflow_run:
-    workflows:
-      - Catalog and distribution validation
-      - HSO Mission Control synchronization
-    types: [completed]
-    branches: [main]
   push:
     branches: [main]
   schedule:
@@ -73,6 +67,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
           NOTION_HSAR_CHANGE_DATA_SOURCE_ID: ${{ vars.NOTION_HSAR_CHANGE_DATA_SOURCE_ID }}
+          HSAR_NOTION_SYNC_ENABLED: ${{ vars.HSAR_NOTION_SYNC_ENABLED }}
           HSAR_ALLOWED_REPOSITORIES: hsaidno-cpu/Hypersystem-Orchestrator
         run: python scripts/hsar_notion_sync.py
 
