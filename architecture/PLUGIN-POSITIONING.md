@@ -188,6 +188,7 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 | Cortex Workbench | General knowledge-work command workbench | Business-specific OS or specialized command alias catalog |
 | CommandCraft 56 | 56 text command aliases and compact task profiles | Native slash-command UI or general case orchestration |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy and adoption maturity | Claiming every mapped skill is executable |
+| Agent Ecosystem Intelligence Orchestrator | External AI-agent repository/catalog intelligence: discovery, provenance, static implementation review, use-case taxonomy, cross-method benchmarking, risk and HSO/HSMART readiness, plus agent prompt blueprints | Agent runtime/deployment owned by Plugin Agent Orchestrator; canonical HSO capability inventory by Agent Skills Atlas; independent evaluation by Evaluator Team; source engineering by SDO; canonical prompt refinement by Anatomi Prompt |
 | Ponytail Engineering System | Minimal-complete software change method, codebase mapping, repository audit, contextual change review, risk-based tests and evidence-led engineering debt | Repository write/release lifecycle (SDO), independent quality judgement (Evaluator Team), technical plugin forensics (A.S.F.R.E.E), reusable workflow architecture (WSO) or ecosystem control-plane routing (HSO) |
 | People & Business Competency Academy | Human competency diagnosis, learning pathways, deliberate practice, simulation, workplace transfer and evidence-led learner progress | AI capability inventory/adoption, commercial business decisions/deliverables, psychotherapy or claims of competence based only on reading/self-rating |
 | GrowthForge Business OS | Business strategy, commercial, marketing, finance and operating work | General non-business knowledge work or technical plugin engineering |
@@ -212,6 +213,16 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 - Independent evaluation is not performed by the same workstream that approves its own implementation.
 - Health-truth decisions remain with PVEE and qualified human authorities.
 - Visual production remains separate from audio truth and from health communication governance.
+
+## Agent Ecosystem Intelligence Orchestrator — external agent intelligence, not agent runtime
+
+**Philosophy:** turn external AI-agent repositories and catalogs into a traceable capability map and a governed adoption decision.
+
+It owns source discovery/provenance, local-code versus external-reference separation, repository inventory, static implementation review, use-case and framework taxonomy, cross-method comparison, security/privacy/license screening, HSO/HSMART fit-gap, readiness recommendations and agent prompt blueprint generation.
+
+It does not own agent runtime lifecycle, installation, deployment, access or fleet operations (Plugin Agent Orchestrator); canonical HSO skill inventory (Agent Skills Atlas); independent evaluation (Evaluator Team); general method selection (SKILL ANALYZER); technical plugin reconstruction (A.S.F.R.E.E); source writes and releases (SDO); generic workflow architecture (Workflow Systems); or the canonical Octa-Prompt review (Anatomi Prompt).
+
+**Adoption rule:** catalog presence, README instructions, source inspection and contract definition never imply executable behavior, host activation or runtime verification. Candidate code remains REFERENCE_ONLY/SANDBOX until source rights, security controls, tests, ownership, adapter and actual runtime receipts are established.
 
 ## Ponytail Engineering System — method specialist, not a global orchestrator
 
