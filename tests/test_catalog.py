@@ -120,13 +120,16 @@ class CatalogValidationTests(unittest.TestCase):
             self.assertTrue(edge["input_artifacts"])
             self.assertTrue(edge["output_artifact"])
             self.assertEqual(edge["contract_version"], "1.0.0")
-            # The catalog is authoritative for the evidence stage. All current
-            # edges, including Ponytail -> SDO, have passing schema and behavior
-            # contract tests. Host activation and real runtime execution remain
-            # untested, so CONTRACT_TESTED must never be promoted beyond that.
-            self.assertEqual(edge["status"], "CONTRACT_TESTED")
-            self.assertEqual(edge["schema_contract_test"], "PASS")
-            self.assertEqual(edge["contract_behavior_test"], "PASS")
+            # A declared handoff may precede its schema/behavior test suite.
+            # Only the tested edges may claim C2/C3 PASS; host/runtime remain
+            # separate evidence stages and must not be inferred from contracts.
+            if edge["status"] == "CONTRACT_TESTED":
+                self.assertEqual(edge["schema_contract_test"], "PASS")
+                self.assertEqual(edge["contract_behavior_test"], "PASS")
+            else:
+                self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
+                self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
+                self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
         by_id = {e["integration_id"]: e for e in edges}
@@ -259,7 +262,7 @@ class CatalogValidationTests(unittest.TestCase):
         item = next(p for p in catalog["plugins"] if p["plugin_key"] == "vibe-coding-mentor")
         source = next(r for r in repositories["repositories"] if r["repository_id"] == "vibe-coding-mentor")
         indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "vibe-coding-mentor")
-        self.assertEqual(catalog["expected_plugin_count"], 25)
+        self.assertEqual(catalog["expected_plugin_count"], 26)
         self.assertEqual(item["source_state"], "private_repository_source")
         self.assertEqual(item["source_repository_id"], "vibe-coding-mentor")
         self.assertEqual(item["source_classification"], "OFFICIAL_PRIVATE_REPOSITORY_LICENSE_UNASSESSED")
@@ -279,8 +282,38 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(source["license_status"], "NOT_ASSESSED")
         self.assertEqual(indexed["skill_count"], 10)
         self.assertEqual(indexed["source_commit"], source["pinned_commit"])
-        self.assertEqual(snapshots["total_skill_records"], 289)
+        self.assertEqual(snapshots["total_skill_records"], 300)
         self.assertTrue((ROOT / item["instruction_snapshot_path"]).is_file())
+
+    def test_agent_ecosystem_intelligence_is_private_snapshot_and_declarative_only(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        snapshots = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        distributions = json.loads((ROOT / "catalog" / "distribution-registry.json").read_text(encoding="utf-8"))
+        compatibility = json.loads((ROOT / "catalog" / "compatibility-matrix.json").read_text(encoding="utf-8"))
+        item = next(p for p in catalog["plugins"] if p["plugin_key"] == "agent-ecosystem-intelligence-orchestrator")
+        indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "agent-ecosystem-intelligence-orchestrator")
+        distribution = next(p for p in distributions["plugins"] if p["plugin_key"] == "agent-ecosystem-intelligence-orchestrator")
+        edge = next(p for p in compatibility["integrations"] if p["integration_id"] == "INT-AEIO-PAO-001")
+        self.assertEqual(catalog["expected_plugin_count"], 26)
+        self.assertEqual(item["plugin_creator_id"], "plugins_6b0755ff9620819190e7c69641d3107e")
+        self.assertEqual(item["source_state"], "pending_repository")
+        self.assertEqual(item["platform_package_version"], "0.1.0")
+        self.assertEqual(item["platform_current_release_id"], "pluginrel_6b075601c1988191afe8a25a561e4547")
+        self.assertEqual(item["platform_scope"], "USER")
+        self.assertEqual(item["platform_discoverability"], "PRIVATE")
+        self.assertEqual(item["instruction_skill_count"], 11)
+        self.assertEqual(item["source_instruction_parity_status"], "NOT_APPLICABLE")
+        self.assertTrue((ROOT / item["instruction_snapshot_path"]).is_file())
+        self.assertEqual(indexed["skill_count"], 11)
+        self.assertEqual(indexed["public_mirror_status"], "POINTER_AND_METADATA_ONLY")
+        self.assertEqual(snapshots["total_skill_records"], 300)
+        self.assertEqual(distribution["distribution_status"], "snapshot_only")
+        self.assertEqual(distribution["license_status"], "not_assessed")
+        self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
+        self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
+        self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
+        self.assertEqual(edge["host_activation_test"], "NOT_RUN")
+        self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
 
 if __name__ == "__main__":
     unittest.main()

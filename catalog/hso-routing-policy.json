@@ -94,6 +94,21 @@
         "plugin.skill.invoke"
       ],
       "decision_rationale": "Vibe Coding Mentor owns non-IT product discovery, PRD/MVP specification and PRD-to-builder prompt compilation. This is a declarative route only. The generic plugin.skill.invoke capability remains NOT_CONFIGURED; HSO must return BLOCKED_CAPABILITY until a dedicated VCM private-source host adapter, endpoint, authentication/authorization contract and verified invocation receipt exist."
+    },
+    "plugin.agent_ecosystem_intelligence": {
+      "rule_id": "ROUTE-PLUGIN-AEIO-001",
+      "primary_owner": "agent-ecosystem-intelligence-orchestrator",
+      "supporting_specialists": [
+        "skill-analyzer",
+        "asfree-canonical",
+        "evaluator-team",
+        "skill-developer-orchestrator"
+      ],
+      "action_id": "plugin.skill.invoke",
+      "required_capabilities": [
+        "plugin.skill.invoke"
+      ],
+      "decision_rationale": "AEIO owns external AI-agent repository intelligence and prompt blueprinting. SKILL ANALYZER supplies general method selection; A.S.F.R.E.E owns deep technical reconstruction; Evaluator Team supplies independent judgement; SDO owns accepted source engineering. This route is declarative only: the generic plugin.skill.invoke host capability is not configured for AEIO, so HSO must fail closed with BLOCKED_CAPABILITY until a verified host adapter, authorization contract and invocation receipt exist."
     }
   }
 }

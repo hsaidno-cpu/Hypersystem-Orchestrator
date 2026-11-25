@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "registry_revision": "2026-11-26",
   "authority": "Hypersystem-Orchestrator parent registry",
-  "plugin_count": 25,
+  "plugin_count": 26,
   "installability_rule": "Eligible only when status is installable_public or installable_private, license_status is cleared, package_artifact exists, source_commit is pinned, and target adapter has host_tested or runtime_verified evidence.",
   "selection_modes": {
     "single": "Exactly one eligible plugin.",
@@ -511,6 +511,30 @@
         "INDEPENDENT_EVALUATION_NOT_COMPLETED"
       ],
       "eligibility_note": "Canonical private source and package parity are verified at commit 84214752bb298002b96f9ff1c60e16b7a09e99d7; package CI passed. Distribution remains restricted because no license/redistribution grant has been selected, source is private, no install artifact is published, the VCM host adapter is not configured, builder tests are NOT_RUN and independent evaluation is outstanding."
+    },
+    {
+      "plugin_key": "agent-ecosystem-intelligence-orchestrator",
+      "display_name": "Agent Ecosystem Intelligence Orchestrator",
+      "source_state": "pending_repository",
+      "source_repository_id": null,
+      "source_commit": null,
+      "source_version": null,
+      "platform_package_version": "0.1.0",
+      "distribution_status": "snapshot_only",
+      "license_status": "not_assessed",
+      "package_artifact": null,
+      "hard_dependencies": [],
+      "dependency_metadata_status": "not_assessed",
+      "blockers": [
+        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE",
+        "PACKAGE_LICENSE_AND_REDISTRIBUTION_RIGHTS_NOT_ASSESSED",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED",
+        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
+        "AEIO_TO_HSO_HOST_ADAPTER_NOT_CONFIGURED"
+      ],
+      "eligibility_note": "The Plugin Creator USER/PRIVATE package v0.1.0 and 11-skill inventory were read back on 2026-11-26. No canonical Git source, package license/redistribution assessment, public artifact or host-tested adapter exists. Full private instructions are not mirrored in this public repository. This record is snapshot_only and is not installable."
     }
   ]
 }

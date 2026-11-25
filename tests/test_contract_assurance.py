@@ -1,4 +1,4 @@
-"""C2/C3 assurance for the 15 declared cross-plugin handoff contracts.
+"""C2/C3 assurance for the currently contract-tested cross-plugin handoffs.
 
 C2 validates deterministic synthetic payloads against the published JSON Schema.
 C3 exercises a strict mock receiver; no plugin, host or runtime is invoked.
@@ -61,19 +61,28 @@ class HandoffContractAssuranceTests(unittest.TestCase):
         cls.fixture_doc = load_json(FIXTURE_PATH)
         Draft202012Validator.check_schema(cls.schema)
         cls.validator = Draft202012Validator(cls.schema)
-        cls.edges = {
+        cls.all_edges = {
             edge["integration_id"]: edge
             for edge in cls.matrix["integrations"]
+        }
+        cls.edges = {
+            integration_id: edge
+            for integration_id, edge in cls.all_edges.items()
+            if edge["status"] == "CONTRACT_TESTED"
         }
         cls.fixtures = {
             fixture["fixture_id"]: fixture["payload"]
             for fixture in cls.fixture_doc["fixtures"]
         }
 
-    def test_fixture_inventory_covers_all_15_matrix_edges(self):
-        self.assertEqual(self.matrix["integration_count"], 15)
-        self.assertEqual(self.fixture_doc["count"], 15)
+    def test_fixture_inventory_covers_all_contract_tested_matrix_edges(self):
+        self.assertEqual(self.matrix["integration_count"], len(self.all_edges))
+        self.assertEqual(self.fixture_doc["count"], len(self.edges))
         self.assertEqual(set(self.fixtures), set(self.edges))
+        self.assertEqual(
+            set(self.all_edges) - set(self.edges),
+            {"INT-AEIO-PAO-001"},
+        )
 
     def test_c2_all_synthetic_payloads_validate_against_schema(self):
         failures = []
@@ -107,7 +116,7 @@ class HandoffContractAssuranceTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             self.validator.validate(payload)
 
-    def test_c3_mock_receiver_accepts_all_15_matching_contracts(self):
+    def test_c3_mock_receiver_accepts_all_currently_tested_matching_contracts(self):
         accepted = []
         for integration_id, payload in self.fixtures.items():
             receipt = mock_receiver_accept(
@@ -150,16 +159,20 @@ class HandoffContractAssuranceTests(unittest.TestCase):
     def test_fixture_metadata_does_not_claim_runtime_evidence(self):
         self.assertIn("do not assert host activation or runtime execution",
                       self.fixture_doc["purpose"])
-        for edge in self.matrix["integrations"]:
+        for edge in self.all_edges.values():
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
 
 
-    def test_matrix_records_c2_c3_pass_without_claiming_c4_c5(self):
-        for edge in self.matrix["integrations"]:
-            self.assertEqual(edge["status"], "CONTRACT_TESTED")
-            self.assertEqual(edge["schema_contract_test"], "PASS")
-            self.assertEqual(edge["contract_behavior_test"], "PASS")
+    def test_matrix_records_only_executed_c2_c3_and_preserves_unexecuted_edges(self):
+        for edge in self.all_edges.values():
+            if edge["status"] == "CONTRACT_TESTED":
+                self.assertEqual(edge["schema_contract_test"], "PASS")
+                self.assertEqual(edge["contract_behavior_test"], "PASS")
+            else:
+                self.assertEqual(edge["status"], "INTERFACE_DEFINED_NOT_EXECUTED")
+                self.assertEqual(edge["schema_contract_test"], "NOT_RUN")
+                self.assertEqual(edge["contract_behavior_test"], "NOT_RUN")
             self.assertEqual(edge["host_activation_test"], "NOT_RUN")
             self.assertEqual(edge["runtime_execution_test"], "NOT_RUN")
 

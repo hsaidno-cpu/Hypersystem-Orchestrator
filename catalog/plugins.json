@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "catalog_revision": "2026-11-26",
-  "expected_plugin_count": 25,
+  "expected_plugin_count": 26,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1216,6 +1216,69 @@
       "source_sync_status": "SOURCE_PACKAGE_PARITY_VERIFIED",
       "source_instruction_parity_status": "MATCH",
       "source_instruction_parity_note": "18/18 package files (2 manifests, 6 references, 10 SKILL.md files) are byte-for-byte identical between Plugin Creator release pluginrel_6b0744c2806481919620bdf8b8719f57 and canonical private Git commit 84214752bb298002b96f9ff1c60e16b7a09e99d7. CI run 45701037593 passes validator and four package-contract unit tests."
+    },
+    {
+      "plugin_key": "agent-ecosystem-intelligence-orchestrator",
+      "display_name": "Agent Ecosystem Intelligence Orchestrator",
+      "plugin_creator_id": "plugins_6b0755ff9620819190e7c69641d3107e",
+      "primary_domain": "external-ai-agent-ecosystem-intelligence",
+      "purpose": "Evidence-led discovery, audit, classification, use-case mapping, benchmarking and integration-readiness analysis of external AI-agent repositories and catalogs, including agent-prompt blueprint generation.",
+      "responsibility_owner": "Owns external agent-ecosystem intelligence: source discovery and provenance, repository/catalog inventory, static implementation review, taxonomy and use-case analysis, cross-method/framework comparison, security/privacy/license screening, HSO/HSMART capability fit-gap, readiness recommendations and agent prompt blueprint.",
+      "boundary": "Does not own AI-agent product/runtime lifecycle, deployment, access or fleet operations (Plugin Agent Orchestrator); canonical HSO capability inventory (Agent Skills Atlas); source writes, PRs, merges or releases (Skill Developer Orchestrator); general analytical method selection (SKILL ANALYZER); technical plugin reconstruction authority (A.S.F.R.E.E); independent evaluation (Evaluator Team); reusable workflow architecture (AI Workflow Systems Orchestrator); canonical eight-pillar prompt refinement (Anatomi Prompt); or media/reference-to-prompt reconstruction (AI Prompt Finder & Creator). No runtime, installer, dispatcher or autonomous crawler is implied.",
+      "source_repository_id": null,
+      "source_state": "pending_repository",
+      "release_version": null,
+      "version_evidence": "Plugin Creator current release metadata and file inventory read back on 2026-11-26: v0.1.0, USER/PRIVATE, one master orchestrator plus ten subskills; pluginrel_6b075601c1988191afe8a25a561e4547. No canonical Git source repository has been designated.",
+      "related_plugins": [
+        "plugin-agent-orchestrator",
+        "agent-skills-atlas",
+        "skill-analyzer",
+        "asfree-canonical",
+        "evaluator-team",
+        "skill-developer-orchestrator",
+        "workflow-systems-orchestrator",
+        "anatomi-prompt-v3-octa-prompt",
+        "ai-prompt-finder-creator"
+      ],
+      "source_classification": "NOT_IDENTIFIED",
+      "primary_triggers": [
+        "Audit an external AI-agent repository or catalog and determine what is locally implemented versus externally referenced.",
+        "Map agent use-cases, frameworks, dependencies, input/output contracts, autonomy and maturity.",
+        "Compare agent capabilities with HSO/HSMART and determine overlap, canonical ownership and handoff boundaries.",
+        "Assess security, privacy, license provenance, test coverage and integration readiness for AI agents.",
+        "Generate an evidence-backed prompt blueprint for a new or improved AI agent."
+      ],
+      "negative_triggers": [
+        "Execute, host, deploy, operate, provision or scale an AI-agent product/runtime; route to Plugin Agent Orchestrator.",
+        "Modify plugin or skill source, commit, open/merge a PR or release a package; route to SDO after accepted dossier.",
+        "Make independent final quality judgement or acceptance decision; route to Evaluator Team.",
+        "Select general analytical methodologies for non-agent topics; route to SKILL ANALYZER.",
+        "Perform technical plugin reconstruction as the primary task; route to A.S.F.R.E.E.",
+        "Perform final canonical eight-pillar prompt audit; route to Anatomi Prompt.",
+        "Infer host activation or runtime execution from catalog presence, static inspection or contract tests."
+      ],
+      "instruction_snapshot_path": "plugin-instructions/agent-ecosystem-intelligence-orchestrator/SOURCE-POINTER.md",
+      "instruction_skill_count": 11,
+      "instruction_capture_date": "2026-11-26",
+      "instruction_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_SNAPSHOT",
+      "target_version": null,
+      "version_reconciliation_status": "NOT_VERIFIED",
+      "platform_package_version": "0.1.0",
+      "platform_current_release_id": "pluginrel_6b075601c1988191afe8a25a561e4547",
+      "platform_scope": "USER",
+      "platform_discoverability": "PRIVATE",
+      "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
+      "version_alignment_state": "PLATFORM_ONLY_SOURCE_NOT_IDENTIFIED",
+      "repository_version": null,
+      "version_alignment_note": "Plugin Creator private release v0.1.0 is verified. No canonical Git source, source parity, host adapter or runtime invocation has been established. Public HSO parent stores metadata and a private pointer only.",
+      "version_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_ONLY",
+      "source_sync_status": "GITHUB_SOURCE_NOT_IDENTIFIED",
+      "source_instruction_parity_status": "NOT_APPLICABLE",
+      "source_instruction_parity_note": "No canonical Git source exists for source-to-package parity comparison. Full instruction files remain in the private Plugin Creator package; the public HSO parent stores only a pointer and concise skill index.",
+      "deployed_plugin_version": "0.1.0",
+      "plugin_creator_current_release_id": "pluginrel_6b075601c1988191afe8a25a561e4547",
+      "plugin_creator_scope": "USER",
+      "plugin_creator_discoverability": "PRIVATE"
     }
   ]
 }

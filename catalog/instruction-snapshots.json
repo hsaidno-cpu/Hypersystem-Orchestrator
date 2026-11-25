@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "capture_date": "2026-11-26",
-  "total_skill_records": 289,
+  "total_skill_records": 300,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1656,6 +1656,62 @@
       "source_repository_id": "vibe-coding-mentor",
       "source_commit": "84214752bb298002b96f9ff1c60e16b7a09e99d7",
       "source_version": "0.1.0"
+    },
+    {
+      "plugin_key": "agent-ecosystem-intelligence-orchestrator",
+      "instruction_path": "plugin-instructions/agent-ecosystem-intelligence-orchestrator/SOURCE-POINTER.md",
+      "origin": "private_plugin_creator_release_pointer",
+      "skill_count": 11,
+      "skills": [
+        {
+          "skill_name": "agent-ecosystem-intelligence-orchestrator",
+          "description": "Master routing, evidence ledger, audit workflow, HSO boundary and adoption decisions."
+        },
+        {
+          "skill_name": "source-discovery-provenance",
+          "description": "Discovers repositories and references, pins exact sources and reconciles inventory denominators."
+        },
+        {
+          "skill_name": "repository-catalog-auditor",
+          "description": "Audits catalog, index, metadata, dependencies, tests and CI consistency."
+        },
+        {
+          "skill_name": "agent-implementation-forensics",
+          "description": "Inspects static code, control flow, data flow, permissions and side effects."
+        },
+        {
+          "skill_name": "agent-taxonomy-usecase-mapper",
+          "description": "Classifies capabilities, user jobs, inputs/outputs, frameworks, autonomy and maturity."
+        },
+        {
+          "skill_name": "cross-method-benchmark",
+          "description": "Applies cross-method analysis, framework comparisons and repeatable benchmark design."
+        },
+        {
+          "skill_name": "security-privacy-license-auditor",
+          "description": "Assesses threat models, privacy, code execution, supply chain and license provenance."
+        },
+        {
+          "skill_name": "hso-hsmart-capability-mapper",
+          "description": "Maps fit-gap, responsibility ownership and integration contracts to HSO/HSMART."
+        },
+        {
+          "skill_name": "integration-readiness-roadmap",
+          "description": "Creates evidence-gated adoption decisions, priorities, readiness and acceptance criteria."
+        },
+        {
+          "skill_name": "agent-prompt-generator",
+          "description": "Generates an eight-pillar AI-agent prompt blueprint with an Anatomi Prompt handoff."
+        },
+        {
+          "skill_name": "acceptance-evidence-assurer",
+          "description": "Assures L1-L4 coverage, test receipts and evidence-based verdicts."
+        }
+      ],
+      "plugin_creator_id": "plugins_6b0755ff9620819190e7c69641d3107e",
+      "plugin_creator_release_id": "pluginrel_6b075601c1988191afe8a25a561e4547",
+      "package_version": "0.1.0",
+      "public_mirror_status": "POINTER_AND_METADATA_ONLY"
     }
   ]
 }
