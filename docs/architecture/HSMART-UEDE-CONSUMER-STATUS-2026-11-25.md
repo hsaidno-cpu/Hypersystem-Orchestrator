@@ -135,3 +135,15 @@ The existing HSO PR sequence including #15, #24, #25 and the other ecosystem cha
 - HSMART remains a separate related platform repository. Neither this file nor HSMART's UEDE PR stack merges repositories or grants distribution rights.
 
 This snapshot should be reconciled again after the HSO catalog, Mission Control source state, PR #25 CI/deployment or HSMART PR stack changes.
+
+
+
+## 9. Follow-up: compatibility-gate repair and Vercel capacity — 25 November 2026
+
+The catalog-validation failure on HSO main, PR #25 and consumer-doc PR #26 was traced to a stale special-case assertion for `INT-PONYTAIL-SDO-001`. The canonical compatibility row records `CONTRACT_TESTED`, schema `PASS`, behavior `PASS`, host activation `NOT_RUN`, and runtime execution `NOT_RUN`. The test incorrectly expected `INTERFACE_DEFINED_NOT_EXECUTED` and both contract tests `NOT_RUN`.
+
+A narrow baseline test correction is now proposed in [HSO PR #27](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/27), head `c86f5c440ec351580a0aab3e63c53cda671a7799`. The change preserves the distinction between contract testing and actual host/runtime execution. On this exact head, the Catalog and Distribution Validation workflow completed successfully ([run 45610209291](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45610209291)); Mission Control synchronization workflow completed as a fail-safe workflow, with the event-delivery/reconciliation steps still skipped when configuration is absent ([run 45610209327](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/45610209327)). PR #27 remains OPEN / DRAFT / NOT MERGED.
+
+The exact PR #27 SHA also reports Vercel deployment rate limits for both `mission-control` and `hypersystem-orchestrator` project contexts, with a retry window of 24 hours. This is a provider build-capacity blocker, not a code-test result. Do not infer that one project deployment succeeded because another deployment context previously succeeded.
+
+PR #25 (head `4e0dc360591e1c7c6ed6d9e075befd9b6e62fc29`) and PR #26 (head `60f2b7ed20691542f292c9345dd36ebf18b54282`) are still based on the old main test baseline. After human disposition of PR #27, rebase/retarget those branches to the corrected base, rerun exact-head CI, and inspect each project's deployment result independently. No merge has been made.
