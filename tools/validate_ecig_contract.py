@@ -207,7 +207,7 @@ def validate_policy(schema: dict[str, Any], policy: dict[str, Any]) -> None:
         raise ContractError("ECIG signature must exclude only the root signature field")
     if signature.get("trust_store_path") != str(TRUSTED_KEYS_PATH.relative_to(ROOT)):
         raise ContractError("ECIG trusted-key registry path has drifted")
-    if signature.get("trust_store_update") != "GOV-01_signed_exact_head_disposition_and_audited_key_ceremony":
+    if signature.get("trust_store_update") != "GOV-01_exact_head_APPROVE_TRUST_ROOT_comment_and_audited_key_ceremony":
         raise ContractError("ECIG trust-root updates must use the sole GOV-01 signed exact-head decision")
     if signature.get("evidence_proof_version") != "HSO-ECIG-EVIDENCE-1":
         raise ContractError("Unsupported ECIG evidence proof version")
