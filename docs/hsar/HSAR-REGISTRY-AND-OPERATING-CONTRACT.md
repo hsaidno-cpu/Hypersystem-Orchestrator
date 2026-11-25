@@ -1,7 +1,7 @@
 # HSAR — HSO System Anatomy & Architecture Registry
 
 **Version:** 0.3.0  
-**Status:** Proposed operating contract; PR not merged  
+**Status:** Accepted operating contract; GOV-01 accepted and PR #30 merged to main on 26 November 2026 (merge commit `42aa2da826ad17f2b9d6a648c118f14c7a0390a0`)  
 **Owner boundary:** HSO ecosystem knowledge, forensic scanning and controlled improvement  
 **Related platform:** HSMART, maintained as a separate system and repository
 
