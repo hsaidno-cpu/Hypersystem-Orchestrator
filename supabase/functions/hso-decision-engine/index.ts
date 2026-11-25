@@ -232,7 +232,26 @@ Deno.serve(async (req) => {
     expected_count: expectedRoadmapIds.length, actual_count: actualRoadmapIds.length,
     expected_scope_hash: roadmapSnapshot?.scope_hash || null
   });
-  const decisionInputsComplete = syncSucceeded && staleSources.length === 0 && !scopeDrift;
+  const sourceSnapshotComplete = syncSucceeded && staleSources.length === 0 && !scopeDrift;
+  const scopeDecisionMissing = items.filter((item: any) => !hasScopeDecision(item));
+  const inScopeItems = items.filter((item: any) => item.scope_inclusion_state === "IN_SCOPE");
+  const inScopeKeyCounts = new Map<string, number>();
+  for (const item of inScopeItems) {
+    const key = normalizeWorkKey(item.item_key);
+    if (key) inScopeKeyCounts.set(key, (inScopeKeyCounts.get(key) || 0) + 1);
+  }
+  const duplicateInScopeKeys = [...inScopeKeyCounts.entries()].filter(([, count]) => count > 1).map(([key]) => key);
+  const missingInScopeIds = inScopeItems.filter((item: any) => !normalizeWorkKey(item.item_key)).map((item: any) => item.external_id);
+  const scopeIntegrityComplete = scopeDecisionMissing.length === 0 && duplicateInScopeKeys.length === 0 && missingInScopeIds.length === 0;
+  const decisionInputsComplete = sourceSnapshotComplete && scopeIntegrityComplete;
+  const scopeIntegrity = {
+    work_item_count: items.length,
+    scope_decisions_missing: scopeDecisionMissing.length,
+    in_scope_count: inScopeItems.length,
+    duplicate_in_scope_task_ids: duplicateInScopeKeys,
+    missing_in_scope_task_ids: missingInScopeIds,
+    complete: scopeIntegrityComplete,
+  };
   const snapshotCoverage = {
     sync_run_id: syncRunId, sync_run_status: syncRun.status,
     required_sources: REQUIRED,
@@ -243,6 +262,8 @@ Deno.serve(async (req) => {
     roadmap_expected_record_count: expectedRoadmapIds.length,
     roadmap_actual_record_count: actualRoadmapIds.length,
     roadmap_membership_match: !scopeDrift,
+    source_snapshot_complete: sourceSnapshotComplete,
+    scope_integrity: scopeIntegrity,
     decision_inputs_complete: decisionInputsComplete,
     stale_reasons: staleSources,
   };
@@ -265,7 +286,8 @@ Deno.serve(async (req) => {
     const normalizedKey = normalizeWorkKey(item.item_key);
     if (!["Ready","Not started","In progress"].includes(status)) reasons.push("STATUS_NOT_ACTIONABLE");
     if (item.gate_state !== "PASS") reasons.push("GATE_NOT_PASS");
-    if (!decisionInputsComplete) reasons.push("SOURCE_COMPLETENESS_GATE");
+    if (!sourceSnapshotComplete) reasons.push("SOURCE_COMPLETENESS_GATE");
+    if (!scopeIntegrityComplete) reasons.push("SCOPE_INTEGRITY_GATE");
     if (staleSources.length) reasons.push("SOURCE_FRESHNESS_GATE");
     if (!normalizedKey) reasons.push("STABLE_TASK_ID_MISSING");
     if (duplicateKeys.has(normalizedKey)) reasons.push("DUPLICATE_TASK_ID");
@@ -384,7 +406,7 @@ Deno.serve(async (req) => {
   for (const [key, group] of groups) {
     const verifiedIds = new Set(group.filter((x) => verifiedById.get(x.id)).map((x) => String(x.id)));
     const progress = calculateWeightedProgress(group, verifiedIds, {
-      sourceComplete: decisionInputsComplete, scopeDrift
+      sourceComplete: sourceSnapshotComplete, scopeDrift
     });
     const scopeRows = group.map((item: any) => ({
       external_id: item.external_id, item_key: item.item_key,
@@ -434,7 +456,7 @@ Deno.serve(async (req) => {
     })),
     baseline_state: criteria.length ? "CONFIGURED" : "NOT_CONFIGURED"
   };
-  const state = primary ? "PRIMARY_SELECTED" : !decisionInputsComplete ? "SOURCE_STALE" : "NO_ELIGIBLE_ACTION";
+  const state = primary ? "PRIMARY_SELECTED" : !sourceSnapshotComplete ? "SOURCE_STALE" : "NO_ELIGIBLE_ACTION";
   const run = await db.from("hso_decision_runs").insert({
     engine_version: ENGINE, policy_version: POLICY, decision_state: state,
     source_sync_run_id: syncRunId, snapshot_coverage: snapshotCoverage,
@@ -526,7 +548,7 @@ Deno.serve(async (req) => {
     priority_score: primary.score, policy_version: POLICY,
     rationale: { decision_run_id: run.data.id, score_breakdown: primary.breakdown, reasons: ["hard_gates_passed","highest_ranked"] }
   }] : [{
-    decision_type: "NO_ELIGIBLE_ACTION", eligibility_state: !decisionInputsComplete ? "SOURCE_STALE" : "NONE_ELIGIBLE",
+    decision_type: "NO_ELIGIBLE_ACTION", eligibility_state: !sourceSnapshotComplete ? "SOURCE_STALE" : "NONE_ELIGIBLE",
     policy_version: POLICY, rationale: { decision_run_id: run.data.id, stale_sources: staleSources, blocked_count: blocked.length, decision_inputs_complete: decisionInputsComplete }
   }]);
   if (dec.error) return reply({ error: "decision_projection_failed", detail: dec.error.message }, 500);
@@ -535,7 +557,9 @@ Deno.serve(async (req) => {
     decision_run_id: run.data.id, sync_run_id: syncRunId, snapshot_coverage: snapshotCoverage, decision_state: state,
     primary_action: primary ? { task_id: taskId(primary.item), title: primary.item.title, priority_score: primary.score } : null,
     eligible_count: eligible.length, blocked_count: blocked.length,
-    pending_approval_count: pending.length, progress: progressRows[0],
+    pending_approval_count: pending.length, scope_integrity: scopeIntegrity,
+    source_snapshot_complete: sourceSnapshotComplete, decision_inputs_complete: decisionInputsComplete,
+    progress: progressRows[0],
     progress_milestones: progressRows.slice(1), completion_gap: completionGap, prompt_artifact_id: promptId
   });
 });
