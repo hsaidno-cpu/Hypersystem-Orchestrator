@@ -1124,7 +1124,7 @@
       "source_repository_id": "executive-workday-orchestrator",
       "source_state": "private_canonical_repository",
       "release_version": "0.1.0",
-      "version_evidence": "Private canonical Git source https://github.com/hsaidno-cpu/executive-workday-orchestrator is pinned at 69166133cdc65d1f4f358daec005677db5cd0. Exact source snapshot matches the current private Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f / package 0.1.0: 17/17 Git blob SHA matches (14 SKILL.md files plus two manifests and package README). Rights to the cited upstream work remain uncleared; repository remains private.",
+      "version_evidence": "Private canonical Git source https://github.com/hsaidno-cpu/executive-workday-orchestrator is pinned at 388e59d58a96096effb4999c019e92b3c38539ed. Exact source snapshot matches the current private Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f / package 0.1.0: 17/17 Git blob SHA matches (14 SKILL.md files plus two manifests and package README). Rights to the cited upstream work remain uncleared; repository remains private.",
       "related_plugins": [
         "workflow-systems-orchestrator",
         "plugin-agent-orchestrator",
@@ -1155,14 +1155,14 @@
       "platform_source_authority": "PLUGIN_CREATOR_CURRENT_RELEASE_METADATA",
       "version_alignment_state": "SOURCE_AND_PLATFORM_MATCH",
       "repository_version": "0.1.0",
-      "version_alignment_note": "Private canonical Git source version 0.1.0 and Plugin Creator package version 0.1.0 align on 17/17 exact source-file blob hashes at commit 69166133cdc65d1f4f358daec005677db5cd0. This is source/package parity only, not copyright clearance or permission to distribute publicly.",
+      "version_alignment_note": "Private canonical Git source version 0.1.0 and Plugin Creator package version 0.1.0 align on 17/17 exact source-file blob hashes at commit 388e59d58a96096effb4999c019e92b3c38539ed. This is source/package parity only, not copyright clearance or permission to distribute publicly.",
       "version_authority": "PRIVATE_CANONICAL_GIT_SOURCE_AND_PLUGIN_CREATOR_RELEASE",
       "deployed_plugin_version": "0.1.0",
       "target_version": null,
       "version_reconciliation_status": "SOURCE_AND_PLATFORM_MATCH",
       "source_sync_status": "SOURCE_SNAPSHOT_PARITY_MATCH",
       "source_instruction_parity_status": "MATCH",
-      "source_instruction_parity_note": "17/17 source files were copied from Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f and verified by exact Git blob SHA in the private Git source at 69166133cdc65d1f4f358daec005677db5cd0. The public HSO repository retains only this metadata pointer; private instruction bodies remain excluded pending third-party rights clearance."
+      "source_instruction_parity_note": "17/17 source files were copied from Plugin Creator release pluginrel_6b073a6285d481918d11cdbf1bb7643f and verified by exact Git blob SHA in the private Git source at 388e59d58a96096effb4999c019e92b3c38539ed. The public HSO repository retains only this metadata pointer; private instruction bodies remain excluded pending third-party rights clearance."
     }
   ]
 }
