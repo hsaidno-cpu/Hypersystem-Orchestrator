@@ -85,8 +85,11 @@ class EwoRoutingContractTests(unittest.TestCase):
                          "pluginrel_6b073a6285d481918d11cdbf1bb7643f")
         self.assertEqual(self.plugin["platform_scope"], "USER")
         self.assertEqual(self.plugin["platform_discoverability"], "PRIVATE")
-        self.assertEqual(self.plugin["source_state"], "pending_repository")
-        self.assertIsNone(self.plugin["source_repository_id"])
+        self.assertEqual(self.plugin["source_state"], "private_canonical_repository")
+        self.assertEqual(self.plugin["source_repository_id"], "executive-workday-orchestrator")
+        self.assertEqual(self.plugin["repository_version"], "0.1.0")
+        self.assertEqual(self.plugin["version_alignment_state"], "SOURCE_AND_PLATFORM_MATCH")
+        self.assertEqual(self.plugin["source_instruction_parity_status"], "MATCH")
 
     def test_registry_snapshot_contains_exactly_fourteen_unique_skills(self):
         names = {item["skill_name"] for item in self.snapshot["skills"]}
