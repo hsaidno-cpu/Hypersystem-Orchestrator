@@ -177,7 +177,7 @@ The generator does not request private chain-of-thought. It asks for concise, ob
 | Domain decomposition | Ten subskills plus one prompt-generator | PASS — package contents verified |
 | Existing skills retained | Seven previous skill files remain present | PASS — inventory read-back |
 | HSO identity | No new plugin identity; existing record updated | PROPOSED in HSO branch; not merged |
-| HSO instruction index | 18 APFC metadata entries and aggregate total 290 | PROPOSED in HSO branch; CI pending |
+| HSO instruction index | 18 APFC metadata entries and aggregate total 290 | PASS: Catalog/distribution validation and 157 unit/resolver tests on commit cf1a5aac; Vercel checks remain FAILURE (build-rate-limit) |
 | Rights/source | Canonical Git repository and distribution rights verified | BLOCKED / NOT_ASSESSED |
 | HSO static contract | Existing Finder-to-Anatomi C2/C3 contract remains distinct | Already CONTRACT_TESTED; no new runtime edge claimed |
 | Host activation | Named target host route invokes package | NOT_RUN |
