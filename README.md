@@ -128,7 +128,7 @@ Plugin Creator package versions, canonical Git source versions and embedded skil
 
 ## Source inventory
 
-Five official source repositories are pinned, two candidate/incomplete sources are tracked, fourteen plugin identities remain NOT_IDENTIFIED and one identity is a legacy redirect. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
+Five official source repositories are pinned, two candidate/incomplete sources are tracked, fifteen identities remain pending canonical source identification and one identity is a legacy redirect. The catalog is 23 identities total; see the [UEDE HSO capability audit](architecture/UEDE-HSO-CAPABILITY-AUDIT-2026-11-25.md) for the date-bound breakdown. See [SOURCE-REPOSITORY-STATUS.md](docs/SOURCE-REPOSITORY-STATUS.md). An instruction snapshot is not a canonical source repository.
 
 ## Skill migration audit
 
