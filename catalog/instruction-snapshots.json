@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "capture_date": "2026-11-26",
-  "total_skill_records": 279,
+  "total_skill_records": 289,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -1599,6 +1599,58 @@
       ],
       "plugin_creator_id": "plugins_6b073a60088081918a8958ab761cb505",
       "plugin_creator_release_id": "pluginrel_6b073a6285d481918d11cdbf1bb7643f",
+      "package_version": "0.1.0",
+      "public_mirror_status": "POINTER_AND_METADATA_ONLY"
+    },
+    {
+      "plugin_key": "vibe-coding-mentor",
+      "instruction_path": "plugin-instructions/vibe-coding-mentor/SOURCE-POINTER.md",
+      "origin": "private_plugin_creator_release_pointer",
+      "skill_count": 10,
+      "skills": [
+        {
+          "skill_name": "vibe-coding-mentor",
+          "description": "Use as the master orchestrator when a non-IT project owner wants to turn a digital-product idea into a structured PRD, define an MVP, review product requirements, or compile a PRD into prompts for Cursor, Bolt, or Lovable."
+        },
+        {
+          "skill_name": "idea-intake-discovery",
+          "description": "Use when a product idea is rough, scattered, contradictory, or lacks the context needed to prepare a PRD."
+        },
+        {
+          "skill_name": "problem-user-audience-architect",
+          "description": "Use when the PRD needs a clear problem statement, target users, actors, use cases, permissions, or audience boundaries."
+        },
+        {
+          "skill_name": "mvp-requirements-scope-architect",
+          "description": "Use when the product idea must be decomposed into testable requirements and explicit MVP, future, and out-of-scope boundaries."
+        },
+        {
+          "skill_name": "user-flow-ux-spec-architect",
+          "description": "Use when requirements need to become user journeys, screens, interactions, states, validation, and error paths."
+        },
+        {
+          "skill_name": "product-logic-data-architect",
+          "description": "Use when the product needs clear business rules, conceptual data entities, status lifecycle, permissions, or integrations."
+        },
+        {
+          "skill_name": "stack-cost-advisor",
+          "description": "Use when comparing technology stacks, hosting, databases, authentication, costs, free-tier limits, lock-in, and migration options."
+        },
+        {
+          "skill_name": "builder-platform-adapter",
+          "description": "Use when adapting implementation instructions to a specific AI coding builder such as Cursor, Bolt.new, or Lovable."
+        },
+        {
+          "skill_name": "prd-to-builder-prompt-compiler",
+          "description": "Use when converting an existing PRD into staged, traceable execution prompts for Cursor, Bolt.new, Lovable, or another AI coding builder."
+        },
+        {
+          "skill_name": "prd-quality-gate",
+          "description": "Use before handing a PRD or builder prompt to verify completeness, consistency, traceability, assumptions, risk, and testability."
+        }
+      ],
+      "plugin_creator_id": "plugins_6b0744bffe9c8191a5eb9c932fcc3f24",
+      "plugin_creator_release_id": "pluginrel_6b0744c2806481919620bdf8b8719f57",
       "package_version": "0.1.0",
       "public_mirror_status": "POINTER_AND_METADATA_ONLY"
     }
