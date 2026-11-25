@@ -14,6 +14,8 @@ from tools.validate_ecig_contract import (
     EXAMPLE_PATH,
     ContractError,
     attestation_signing_bytes,
+    evidence_binding_sha256,
+    evidence_signing_bytes,
     load_contract,
     load_trusted_public_keys,
     validate_attestation,
@@ -124,13 +126,13 @@ def synced_attestation():
             "decision": "APPROVED",
             "decision_reference": decision_reference,
             "decided_at": observed_at,
-            "approver": "test-fixture-authority",
+            "approver": "hsaidno-cpu",
         })
         item["evidence"].append({
             "kind": "HUMAN_DECISION",
             "locator": decision_reference,
             "observed_at": observed_at,
-            "verifier": "test-fixture-decision-reader",
+            "verifier": "hsaidno-cpu",
             "sha256": f"{index + 9:x}" * 64,
         })
     item["signature"] = {
@@ -143,18 +145,27 @@ def synced_attestation():
     return item, timestamp
 
 
-def signed_synced_attestation():
+def signed_synced_attestation(private_key=None):
     item, timestamp = synced_attestation()
-    private_key = Ed25519PrivateKey.generate()
-    signature_value = private_key.sign(attestation_signing_bytes(item))
-    item["signature"]["value"] = base64.b64encode(signature_value).decode("ascii")
+    private_key = private_key or Ed25519PrivateKey.generate()
+    key_id = "gov01-ephemeral-test-key"
     public_key = private_key.public_key().public_bytes(
         encoding=serialization.Encoding.Raw,
         format=serialization.PublicFormat.Raw,
     )
-    trusted = {
-        "hso-ecig-ephemeral-test-key": base64.b64encode(public_key).decode("ascii")
-    }
+    trusted = {key_id: base64.b64encode(public_key).decode("ascii")}
+
+    for evidence in item["evidence"]:
+        evidence["binding_sha256"] = evidence_binding_sha256(item, evidence)
+        evidence["proof"] = {"algorithm": "Ed25519", "key_id": key_id, "value": ""}
+        evidence["proof"]["value"] = base64.b64encode(
+            private_key.sign(evidence_signing_bytes(item, evidence))
+        ).decode("ascii")
+
+    item["signature"] = {"algorithm": "Ed25519", "key_id": key_id, "value": ""}
+    item["signature"]["value"] = base64.b64encode(
+        private_key.sign(attestation_signing_bytes(item))
+    ).decode("ascii")
     return item, trusted, timestamp
 
 
@@ -179,7 +190,7 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
             "kind": "HUMAN_DECISION",
             "locator": "https://evidence.example.test/decision/1",
             "observed_at": item["observed_at"],
-            "verifier": "test-fixture-decision-reader",
+            "verifier": "hsaidno-cpu",
         })
         with self.assertRaises(ValidationError):
             Draft202012Validator(self.schema).validate(item)
@@ -206,6 +217,41 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "signature verification failed"):
             validate_attestation(
                 tampered, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+
+    def test_synced_rejects_tampered_or_untrusted_evidence_proofs(self):
+        for mutation in ("digest", "locator", "key"):
+            private_key = Ed25519PrivateKey.generate()
+            item, trusted, timestamp = signed_synced_attestation(private_key)
+            evidence = item["evidence"][0]
+            if mutation == "digest":
+                evidence["sha256"] = "f" * 64
+            elif mutation == "locator":
+                evidence["locator"] = "https://attacker.example.invalid/replaced"
+            else:
+                evidence["proof"]["key_id"] = "untrusted-verifier"
+            # Re-sign only the outer envelope so failure must come from the evidence proof.
+            item["signature"]["value"] = base64.b64encode(
+                private_key.sign(attestation_signing_bytes(item))
+            ).decode("ascii")
+            with self.subTest(mutation=mutation), self.assertRaises(ContractError):
+                validate_attestation(
+                    item, self.schema, self.policy,
+                    trusted_public_keys=trusted, now=timestamp,
+                )
+
+    def test_synced_evidence_binding_includes_exact_target_and_claim(self):
+        private_key = Ed25519PrivateKey.generate()
+        item, trusted, timestamp = signed_synced_attestation(private_key)
+        item["target"]["target_scope"] = "different-target"
+        # Re-sign the outer envelope; the evidence claim signatures remain stale.
+        item["signature"]["value"] = base64.b64encode(
+            private_key.sign(attestation_signing_bytes(item))
+        ).decode("ascii")
+        with self.assertRaisesRegex(ContractError, "binding digest does not match"):
+            validate_attestation(
+                item, self.schema, self.policy,
                 trusted_public_keys=trusted, now=timestamp,
             )
 
@@ -360,6 +406,29 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
         policy["github"]["privileged_pull_request_rule"] = "checkout_pr_head"
         with self.assertRaisesRegex(ContractError, "privileged pull-request rule"):
             validate_policy(self.schema, policy)
+
+    def test_policy_requires_gov01_as_the_only_human_approval_authority(self):
+        altered = copy.deepcopy(self.policy)
+        altered["authority"]["human_decision_authority"] = "independent_reviewer"
+        with self.assertRaisesRegex(ContractError, "authority must remain GOV-01"):
+            validate_policy(self.schema, altered)
+
+        altered = copy.deepcopy(self.policy)
+        altered["authority"]["additional_human_approvers"] = ["security-reviewer"]
+        with self.assertRaisesRegex(ContractError, "second human approver"):
+            validate_policy(self.schema, altered)
+
+    def test_policy_requires_gov01_exact_head_trust_root_change(self):
+        altered = copy.deepcopy(self.policy)
+        altered["signature"]["trust_store_update"] = "reviewed_pull_request_and_human_security_approval"
+        with self.assertRaisesRegex(ContractError, "sole GOV-01"):
+            validate_policy(self.schema, altered)
+
+    def test_attestation_entry_point_revalidates_policy(self):
+        altered = copy.deepcopy(self.policy)
+        altered["freshness_hours_or_days"]["source_commit_hours"] = 8760
+        with self.assertRaisesRegex(ContractError, "no greater than 24"):
+            validate_attestation(sample_attestation(), self.schema, altered)
 
     def test_policy_rejects_freshness_window_expansion(self):
         policy = copy.deepcopy(self.policy)
