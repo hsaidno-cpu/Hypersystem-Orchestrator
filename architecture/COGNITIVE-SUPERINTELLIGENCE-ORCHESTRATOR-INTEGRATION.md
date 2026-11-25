@@ -1,7 +1,7 @@
 # Cognitive Superintelligence Orchestrator — HSO Integration Contract
 
 **Document status:** Architecture proposal / draft integration contract  
-**Revision:** 0.2.0  
+**Revision:** 0.3.0  
 **Date:** 2026-11-25  
 **Parent ecosystem:** Hypersystem-Orchestrator (HSO)  
 **Plugin identity:** `plugins_6b06658b887c8191901493ecd184ab9a`  
@@ -134,7 +134,7 @@ The HSO adapter must produce the exact shared top-level structure and required f
 
 Do not add local-only top-level fields such as `request_id`, `plugin_key`, `skill_name` or non-canonical status values. Carry specialist-specific detail in schema-permitted fields. The adapter must validate the serialized envelope against the exact HSO schema before dispatch. If validation or capability readiness fails, mark the handoff BLOCKED; do not bypass the contract.
 
-## 6. Current integration status at revision 0.2.0
+## 6. Current integration status at revision 0.3.0
 
 | Integration plane | Current disposition | Evidence / limitation |
 |---|---|---|
@@ -145,7 +145,7 @@ Do not add local-only top-level fields such as `request_id`, `plugin_key`, `skil
 | HSO catalog registration | **DEFERRED** | PRs #12, #15 and #18 remain open; source/rights and version baselines are not stabilized. No catalog or distribution registry file was changed. |
 | HSO integration contract | **DOCUMENTATION PR OPEN** | PR #23 updates this architecture document only. It does not create a catalog entry or canonical source. |
 | Generic HSO plugin dispatch | **BLOCKED / NOT CONFIGURED FOR CSO** | Existing SKILL ANALYZER Remote MCP capability is specifically scoped and is not a generic CSO adapter. |
-| HSO handoff serialization | **SPECIFIED — IMPLEMENTATION NOT VERIFIED** | Adapter mapping is documented against the shared schema; no live adapter or schema-bound invocation is claimed. |
+| HSO handoff serialization | **SERIALIZER IMPLEMENTED — LOCAL CONTRACT TESTS ADDED** | `tools/cso_handoff_adapter.py` maps only approved CSO labels, validates the serialized envelope against the checked-in strict HSO schema, and fails closed on unknown fields/statuses. No network dispatch or host invocation is implemented or claimed. |
 | Named-host activation / runtime | **NOT RUN** | No CSO host activation or live invocation evidence is asserted. |
 | Automatic GitHub ↔ Notion synchronization | **NOT VERIFIED** | Editing this document/page does not prove that a separate synchronization pipeline ran. |
 
@@ -178,3 +178,24 @@ CSO may be described as **package-updated** at v0.2.0. It must not be described 
 - **Release gate:** human approval, rights disposition, rollback plan and exact release artifact verified.
 
 No merge, public publication, installation, host activation, production deployment or automatic approval is implied by this document.
+
+
+## 5.1 Implemented serializer boundary (revision 0.3.0)
+
+HSO now contains a bounded serialization adapter at `tools/cso_handoff_adapter.py` and contract tests at `tests/test_cso_handoff_adapter.py`.
+
+The adapter:
+- fixes the source identity to `cognitive-superintelligence-orchestrator` and requires the exact source version/commit as an explicit argument;
+- requires the recipient plugin key and contract version from the HSO router instead of guessing an unregistered parent-plugin identity;
+- maps local `OBSERVATION` to `OBSERVED` and `VERIFIED_SOURCE_CLAIM` to `VERIFIED_SOURCE`;
+- narrows `PREDICTION` to `HYPOTHESIS`, while rejecting labels such as `NORMATIVE_JUDGMENT`, `RECOMMENDATION` and `SOURCE_SUPPORTED` when they are incorrectly supplied as epistemic facts;
+- accepts only the HSO capability/completion enums and a known allowlist of local DTO fields;
+- validates the final envelope against the exact checked-in `contracts/plugin-handoff.schema.json` before returning it.
+
+This component is a **serializer and schema gate**, not a network transport, authentication layer, MCP server, plugin dispatcher or proof of host activation. HSO's Mission Control reconciliation endpoint is a data-synchronization endpoint and must not be used as a plugin invocation substitute. The recipient identity must be supplied by an authorized HSO router implementation. Unknown local fields fail closed rather than being forwarded or silently discarded.
+
+The new unit tests cover the CSO-020 handoff shape, both documented enum aliases, canonical enum pass-through, unsupported status rejection, unknown-field rejection, mandatory acceptance criteria and explicit recipient identity. A passing unit test establishes only schema serialization correctness.
+
+## 5.2 Host execution boundary
+
+The 21 CSO cases remain `SPECIFICATION_ONLY_NOT_RUN`. This repository currently has no verified CSO runtime endpoint, MCP tool name, host credential or invocation action. The existing CI job for a separate Remote MCP capability is not a CSO dispatcher. Therefore, neither adapter tests nor sandbox tests may be recorded as host acceptance. The 21 cases must only transition to PASS/FAIL after each case is executed against a named host with version, tool/skill invocation evidence and captured output.
