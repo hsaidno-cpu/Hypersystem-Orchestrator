@@ -18,7 +18,7 @@ This is a hybrid multi-repository architecture. It is not a monorepo, does not s
 
 ## What is included now
 
-The registry contains **23 plugin identities** supplied for this ecosystem.
+The registry contains **24 plugin identities** supplied for this ecosystem.
 
 Five verified official plugin source repositories are pinned as Git submodules:
 
@@ -32,7 +32,7 @@ Five verified official plugin source repositories are pinned as Git submodules:
 
 The other plugin identities remain recorded with explicit source states. Instruction snapshots and candidate repositories are not treated as canonical distributable source packages.
 
-## The 23 registered plugins
+## The 24 registered plugins
 
 1. Video Explainer Promkes V4.1.12
 2. Skill Developer Orchestrator
@@ -57,6 +57,7 @@ The other plugin identities remain recorded with explicit source states. Instruc
 21. PVEE Promkes Super Orchestrator
 22. Progressive Roadmap Evaluator (PRE)
 23. Ponytail Engineering System
+24. Executive Workday Orchestrator
 
 The machine-readable identities and statuses are in [catalog/plugins.json](catalog/plugins.json).
 
@@ -107,9 +108,9 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 - tests/ — catalog/distribution/eligibility regressions, C2/C3 contract assurance, planning and runtime recovery/security tests.
 - .github/workflows/ — automated static validation.
 
-## Complete plugin instruction vault
+## Plugin instruction registry
 
-The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **265 skill definitions** across 23 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
+The parent maintains an isolated instruction boundary for every registered plugin. The machine-readable index records **265 skill definitions** across 24 plugin identities. These snapshots do not merge source ownership or replace canonical plugin repositories. Start at [plugin-instructions/README.md](plugin-instructions/README.md) and inspect [catalog/instruction-snapshots.json](catalog/instruction-snapshots.json).
 
 ## Distinct plugin positioning
 
@@ -119,6 +120,7 @@ The normative responsibility boundaries are in [PLUGIN-POSITIONING.md](architect
 - People & Business Competency Academy owns the development and evidence-based transfer of human People/Business Skills; Agent Skills Atlas owns AI capability inventory, while GrowthForge owns business-domain decisions and deliverables.
 - Evaluator Team owns independent quality judgement; SDO owns the engineering lifecycle and accepted implementation.
 - Anatomi Prompt audits/designs prompts using eight Octa-Prompt pillars; AI Prompt Finder & Creator analyzes source content and turns it into a prompt.
+- Executive Workday Orchestrator owns workday-level task, project, meeting, communication, focus and review coordination; it delegates generic workflow architecture to WSO, agent-product lifecycle to Plugin Agent Orchestrator, source engineering to SDO, independent judgement to Evaluator Team and universal prompt architecture to Anatomi Prompt.
 - Photo Fixer owns general photo editing; Master Photo Restoration is reserved for restoration of old/damaged photographs.
 - GODEX owns audio/voice-over truth and post; Motion Graphic owns general visual-first animation; PVEE owns health communication truth/governance; Video Explainer owns the technical production engine after PVEE approval.
 
