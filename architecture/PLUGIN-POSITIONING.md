@@ -184,6 +184,7 @@ It consumes PVEE's approved Fact Lock and campaign brief. It may run a consisten
 | Plugin Agent Orchestrator | AI-agent lifecycle: design, build/operate, deployment, access and ecosystem | Skill/plugin source lifecycle owned by SDO |
 | AI Workflow Systems Orchestrator | Reusable workflow, SOP, project, module and orchestration architecture | Agent product lifecycle or plugin source implementation |
 | Executive Workday Orchestrator | Workday-level task, project, calendar/meeting, communication, knowledge, focus and productivity-review coordination | Generic reusable workflow architecture, AI-agent product/runtime lifecycle, plugin source engineering or independent evaluation |
+| Vibe Coding Mentor | Non-IT digital-product discovery, MVP/requirements, PRD quality and PRD-to-AI-builder prompt compilation | Universal prompt architecture (Anatomi Prompt), reference/content-to-prompt reconstruction (AI Prompt Finder), workday prompt generation (EWO), generic workflow/SOP architecture (WSO), business strategy (GrowthForge), or application execution/deployment |
 | Cortex Workbench | General knowledge-work command workbench | Business-specific OS or specialized command alias catalog |
 | CommandCraft 56 | 56 text command aliases and compact task profiles | Native slash-command UI or general case orchestration |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy and adoption maturity | Claiming every mapped skill is executable |
