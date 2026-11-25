@@ -80,7 +80,7 @@ def sample_attestation():
     }
 
 
-def synced_attestation():
+def synced_attestation(performed_actions=None):
     item = sample_attestation()
     observed_at = item["observed_at"]
     timestamp = parsed_utc(observed_at)
@@ -98,6 +98,7 @@ def synced_attestation():
     item["documentation"]["projection_digest"] = "1" * 64
     item["rights"]["state"] = "CLEARED"
     item["overall_state"] = "SYNCED"
+    item["performed_actions"] = list(performed_actions or [])
     item["evidence"] = []
     evidence_kinds = (
         "COMMIT", "MANIFEST", "PACKAGE_READBACK",
@@ -117,6 +118,7 @@ def synced_attestation():
         "ownership_license_or_redistribution_disposition",
         "package_publication_republication_or_release_channel_promotion",
         "target_install_upgrade_enable_disable_or_uninstall",
+        *item["performed_actions"],
     )
     item["approvals"] = []
     for index, action in enumerate(actions):
@@ -145,8 +147,8 @@ def synced_attestation():
     return item, timestamp
 
 
-def signed_synced_attestation(private_key=None):
-    item, timestamp = synced_attestation()
+def signed_synced_attestation(private_key=None, performed_actions=None):
+    item, timestamp = synced_attestation(performed_actions=performed_actions)
     private_key = private_key or Ed25519PrivateKey.generate()
     key_id = "gov01-ephemeral-test-key"
     public_key = private_key.public_key().public_bytes(
@@ -318,6 +320,28 @@ class EcosystemIntegrityContractTests(unittest.TestCase):
                     item, self.schema, self.policy,
                     trusted_public_keys=trusted, now=timestamp,
                 )
+
+    def test_synced_requires_approval_for_instruction_overwrite_action(self):
+        private_key = Ed25519PrivateKey.generate()
+        item, trusted, timestamp = signed_synced_attestation(private_key)
+        item["performed_actions"] = ["instruction_overwrite_or_cross_plane_content_replacement"]
+        item["signature"]["value"] = base64.b64encode(
+            private_key.sign(attestation_signing_bytes(item))
+        ).decode("ascii")
+        with self.assertRaisesRegex(ContractError, "missing required human approval"):
+            validate_attestation(
+                item, self.schema, self.policy,
+                trusted_public_keys=trusted, now=timestamp,
+            )
+
+        item, trusted, timestamp = signed_synced_attestation(
+            private_key=private_key,
+            performed_actions=["instruction_overwrite_or_cross_plane_content_replacement"],
+        )
+        validate_attestation(
+            item, self.schema, self.policy,
+            trusted_public_keys=trusted, now=timestamp,
+        )
 
     def test_synced_requires_each_action_specific_approval(self):
         item, trusted, timestamp = signed_synced_attestation()
