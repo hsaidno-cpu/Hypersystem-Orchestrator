@@ -3,7 +3,8 @@
 **Contract:** `contracts/ewo-routing-contracts.json`  
 **Static validator:** `tests/test_ewo_routing_contracts.py`  
 **Package:** `0.1.0` · Plugin Creator release `pluginrel_6b073a6285d481918d11cdbf1bb7643f` · USER/PRIVATE  
-**HSO parent PR:** [#33](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/33)
+**HSO parent PR:** [#33](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/33)  
+**Latest static CI evidence:** run #237, exact tested head `9963011dfb4028ca16d52a79c57134b272f94692`
 
 ## 1. Scope
 
@@ -76,7 +77,10 @@ The GitHub connector currently used for HSO changes does not expose a repository
 
 ## 6. Completion states
 
-- Static contract corpus and validator: **implemented in this branch**; CI result pending.
+- Static contract corpus: **implemented** (14 positive, 14 negative, 6 ambiguous cases).
+- Static contract validator: **PASS** in GitHub Actions run #237 on exact head `9963011dfb4028ca16d52a79c57134b272f94692`; all 155 unit/resolver tests passed, along with catalog/distribution validators, sandbox workflow and recovery checks.
+- Mission Control event-ingestion: **PASS** in run #480.
+- P0 remote-MCP EWO invocation: **SKIPPED**; this is not host activation evidence.
 - Live EWO model/host invocation: **NOT RUN**.
 - EWO-specific positive/negative/ambiguous model behavior: **NOT VERIFIED**.
 - Canonical private source repository: **BLOCKED by missing repository-creation capability**.
