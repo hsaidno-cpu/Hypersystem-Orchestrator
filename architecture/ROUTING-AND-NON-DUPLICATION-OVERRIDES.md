@@ -120,6 +120,7 @@ The Academy may use a real business task as a transfer context, but the learning
 | Plugin Agent Orchestrator | AI-agent product lifecycle: design, build/operate, deployment, runtime, access, tenant/ecosystem and scaling | Skill/plugin package lifecycle (SDO) or generic reusable workflow architecture |
 | AI Workflow Systems Orchestrator | Reusable workflow, SOP, project, modular skill/workspace and automation architecture | AI-agent product lifecycle or direct source implementation |
 | Executive Workday Orchestrator | Workday operations: daily planning, task intake/prioritization, projects, meetings, communication drafts, notes, adaptive scheduling and outcome reviews | Generic reusable workflow/SOP architecture (WSO), AI-agent product/runtime lifecycle (Plugin Agent Orchestrator), plugin source engineering (SDO), independent evaluation (Evaluator Team) or universal prompt architecture (Anatomi Prompt) |
+| Vibe Coding Mentor | Non-IT software-product discovery, requirements/MVP, PRD quality and PRD-to-builder prompt compilation | Universal prompt architecture (Anatomi Prompt), reference-to-prompt reconstruction (AI Prompt Finder), workday prompt generation (EWO), generic reusable workflow/SOP architecture (WSO), business strategy (GrowthForge), or application code execution/deployment |
 | Cortex Workbench | General knowledge-work routing for understanding, learning, research, writing, thinking, productivity and code workflows | Business OS ownership or native slash-command UI |
 | CommandCraft 56 | Registry and resolution of 56 text-command aliases/task profiles | Native platform command menu, case-level orchestration or persistent automation |
 | Agent Skills Atlas | Capability inventory, provenance, taxonomy, compatibility mapping and staged adoption | Claiming mapped/discovered assets are installed, callable or executable |
@@ -138,6 +139,7 @@ The Academy may use a real business task as a transfer context, but the learning
 | Create/change/test/release a plugin or skill | SDO | A.S.F.R.E for anatomy; Evaluator Team for independent evaluation; Anatomi Prompt for instruction design |
 | Audit/build a prompt structurally under eight pillars | Anatomi Prompt | Finder only when source content first needs to be analyzed |
 | Turn an image/video/document/reference into a prompt | AI Prompt Finder & Creator | Anatomi Prompt for subsequent eight-pillar hardening |
+| Turn a non-IT app/product idea into an MVP-scoped PRD, product requirements, or a staged AI-builder prompt | Vibe Coding Mentor | GrowthForge for a separate business brief; Anatomi Prompt for universal prompt structure; AI Prompt Finder only for analysis of supplied source content |
 | General photo edit | Photo Fixer | Master Photo Restoration only if the actual task changes into archival restoration |
 | Old/damaged/archival photo restoration | Master Photo Restoration | Photo Fixer is not the primary restoration route |
 | Audio, transcript, VO timing, SFX/BGM, mix or audio QA | GODEX | Motion Graphic/Video Explainer only for separate visual/renderer artifacts |
