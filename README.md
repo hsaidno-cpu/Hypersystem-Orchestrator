@@ -100,7 +100,7 @@ The resolver is plan-only. It does not download, install, enable, authorize or e
 - plugin-instructions/ — isolated instruction bundles or source pointers; snapshots do not become distributable source.
 - distribution/ — dry-run installation manifests and package selection examples.
 - contracts/ — registration, handoff, package, installation, entitlement and lock schemas.
-- architecture/ — system boundary, responsibility matrix, positioning, routing, integration topology and the ecosystem control-plane operating contract.
+- architecture/ — system boundary, responsibility matrix, positioning, routing, integration topology, ecosystem control-plane operating contract and dated HSMART UEDE consumer status.
 - governance/ — contribution, authority, security, versioning, release and snapshot rules.
 - roadmap/ — progressive stages, source-repository onboarding backlog and evidence-based exit criteria.
 - tools/ — repository-local validators, dry-run resolver, plan compiler and supervised sandbox runtime.
@@ -177,6 +177,8 @@ Read [docs/NOTION-DOCUMENTATION.md](docs/NOTION-DOCUMENTATION.md) for the Notion
 ## Related but separate platform
 
 [HSMART](https://github.com/hsaidno-cpu/HSMART) is tracked as a related platform repository, not merged into this plugin portfolio. Any future integration requires an explicit interface contract and approved architecture decision record.
+
+The current consumer integration snapshot is documented in [HSMART-UEDE-CONSUMER-STATUS-2026-11-25.md](docs/architecture/HSMART-UEDE-CONSUMER-STATUS-2026-11-25.md). It records the HSMART PR #32–#36 stack, the pinned 23-plugin/265-skill catalog, Mission Control source-connection state and the non-claims around live invocation and roadmap acceptance.
 
 ## License and source rights
 
