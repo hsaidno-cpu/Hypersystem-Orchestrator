@@ -220,6 +220,13 @@ Deno.serve(async (req) => {
   });
 
   if (outbox.error || audit.error) {
+    if (!outbox.error) {
+      await db.from("hso_command_outbox").update({
+        state: "dead_letter",
+        last_error: audit.error ? "audit_write_failed" : "command_persistence_incomplete",
+        updated_at: new Date().toISOString(),
+      }).eq("command_id", created.id);
+    }
     await db.from("hso_slack_commands").update({ state: "blocked_incomplete_persistence" }).eq("id", created.id);
     return response(slackText(
       "Command " + created.id + " was partially recorded but persistence is incomplete. It is blocked and was not dispatched. Reconciliation is required.",
