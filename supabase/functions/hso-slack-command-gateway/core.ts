@@ -79,7 +79,10 @@ export async function slackSignature(
 export function redactLikelySecrets(value: string): string {
   return value
     .replace(/\bBearer\s+[A-Za-z0-9._~+\/=-]{12,}/gi, "Bearer [REDACTED]")
-    .replace(/\b(?:sk|rk|ghp|github_pat)_[A-Za-z0-9_-]{12,}\b/gi, "[REDACTED_TOKEN]")
+    .replace(/\b(?:sk|rk|ghp|gho|ghu|ghs|github_pat)_[A-Za-z0-9_-]{12,}\b/gi, "[REDACTED_TOKEN]")
+    .replace(/\bsk-[A-Za-z0-9_-]{12,}\b/gi, "[REDACTED_TOKEN]")
+    .replace(/\bxox[baprs]-[A-Za-z0-9-]{12,}\b/gi, "[REDACTED_TOKEN]")
+    .replace(/\bglpat-[A-Za-z0-9_-]{12,}\b/gi, "[REDACTED_TOKEN]")
     .replace(/\b([A-Z0-9_]*(?:TOKEN|SECRET|PASSWORD|API_KEY)[A-Z0-9_]*\s*[:=]\s*)\S+/gi, "$1[REDACTED]")
     .slice(0, 12000);
 }
