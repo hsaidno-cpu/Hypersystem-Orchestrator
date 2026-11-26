@@ -23,6 +23,7 @@ class SourceCapabilityLedgerTests(unittest.TestCase):
         self.assertEqual(report["duplicate_blob_groups"], 5)
         self.assertEqual(report["duplicate_path_records"], 15)
         self.assertEqual(report["skill_metadata_rows"], 289)
+        self.assertEqual(report["source_uri_declared"] + report["source_uri_not_declared"], 289)
 
     def test_capability_readiness_is_not_promoted_by_path_match(self):
         report = validate_ledgers(ROOT)
