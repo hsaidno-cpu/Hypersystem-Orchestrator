@@ -1,7 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 import {
   boundedBatchSize,
-  constantTimeEqual,
   gitBlobSha,
   migrationAcceptanceState,
   sha256Hex,
@@ -33,14 +32,16 @@ function githubHeaders(token?: string | null): HeadersInit {
   };
 }
 
-async function vaultSecret(db: any, name: string): Promise<string | null> {
-  const { data, error } = await db.schema("vault")
-    .from("decrypted_secrets")
-    .select("decrypted_secret")
-    .eq("name", name)
-    .maybeSingle();
-  if (error) throw new Error("vault_read_failed:" + name);
-  return typeof data?.decrypted_secret === "string" ? data.decrypted_secret : null;
+async function verifyWatchdogToken(db: any, supplied: string): Promise<boolean> {
+  const { data, error } = await db.rpc("hso_verify_migration_token", { p_token: supplied });
+  if (error) throw new Error("watchdog_token_verification_failed");
+  return data === true;
+}
+
+async function getGithubReadToken(db: any): Promise<string | null> {
+  const { data, error } = await db.rpc("hso_get_migration_github_read_token");
+  if (error) return null;
+  return typeof data === "string" && data.length > 0 ? data : null;
 }
 
 async function fetchJson(url: string, headers: HeadersInit): Promise<any> {
@@ -283,15 +284,13 @@ Deno.serve(async (req: Request) => {
   const db = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  let expectedToken: string | null = null;
+  const suppliedToken = req.headers.get("x-hso-migration-token") ?? "";
   try {
-    expectedToken = await vaultSecret(db, "hso_migration_watchdog_token");
+    if (!suppliedToken || !(await verifyWatchdogToken(db, suppliedToken))) {
+      return response({ error: "unauthorized" }, 401);
+    }
   } catch {
     return response({ error: "watchdog_secret_unavailable" }, 503);
-  }
-  const suppliedToken = req.headers.get("x-hso-migration-token") ?? "";
-  if (!expectedToken || !constantTimeEqual(suppliedToken, expectedToken)) {
-    return response({ error: "unauthorized" }, 401);
   }
 
   let body: any = {};
@@ -318,7 +317,7 @@ Deno.serve(async (req: Request) => {
     if (runError || !run) throw new Error("run_record_create_failed:" + (runError?.message ?? "no row"));
     runId = run.id;
 
-    const privateToken = await vaultSecret(db, "hso_github_read_token").catch(() => null);
+    const privateToken = await getGithubReadToken(db);
     const headers = githubHeaders(privateToken);
     const sourceResults = await Promise.all(SOURCE_BOUNDARIES.map((source) => {
       if (source.visibility === "private" && !privateToken) {
