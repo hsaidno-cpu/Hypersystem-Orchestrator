@@ -22,8 +22,21 @@
 - Private Anatomi and VCM source trees remain PRIVATE_ACCESS_PENDING until that token is supplied and permitted.
 - Public GitHub recursive-tree read does not require a token, but API rate limits are recorded.
 
-## Activation gates
-Deploy the Edge Function; apply its schema/RPC/Vault/cron migration; verify scheduled request and run receipt; then mark the watchdog worker ACTIVE. Code on a Git branch or a cron row alone is not runtime acceptance.
+## Live activation and first receipt — 26 November 2026
+
+The background migration worker is now **ACTIVE** in Supabase:
+- Edge Function: `hso-migration-watchdog`, deployed version **4**, status ACTIVE. JWT verification is disabled only for this function because the handler authenticates a dedicated Vault-backed bearer token; Supabase gateway access also uses the publishable API key.
+- Database migration applied: `20261126033330_hso_migration_watchdog_foundation_v1`.
+- Cron job: `hso-migration-watchdog`, active schedule `17 */2 * * *` (every two hours at minute 17 UTC).
+- An authenticated manual invocation returned HTTP **200** and created run receipt `8fd7091b-446f-438d-9a8b-36379013f052`.
+- First corrected scan state: **PARTIAL**, not COMPLETE. It enumerated 8/10 boundaries, 745 path records and 735 unique Git blob IDs; 10 duplicate path rows; 32 blob payloads hash-verified over two manual batches; 703 remain pending; 0 read failures; all 289 capability metadata rows are seeded; 0 capabilities accepted.
+- Anatomi Prompt private (100 blobs) and Vibe Coding Mentor private (24 blobs) remain PRIVATE_ACCESS_PENDING because no owner-authorized read-only GitHub token has been stored in Vault.
+- The prior 864 count remains a historical denominator; direct tree baseline is 869/859. The live database contains only eight scanned public/candidate boundaries until the two private sources are authorized.
+
+The function and cron are live, but the **full migration remains OPEN**. The first scan exposed and corrected an FK insert-order defect; subsequent exact-head CI passed. Do not infer completion from HTTP 200 or an active cron row.
+
 - The worker is not the generic skill invocation gateway.
 - It does not write or distribute package content.
-- It never marks semantic parity, runtime, or security acceptance on its own.
+- It does not semantically review content or run capability tests.
+- It never marks parity, runtime, rights or security acceptance on its own.
+- Slack `/hso` ingress in PR #43 is separate and remains NOT_DEPLOYED / DISPATCH_DISABLED until Slack App signing secret, team ID, GOV-01 identity, merge, deployment and acceptance tests are completed.
