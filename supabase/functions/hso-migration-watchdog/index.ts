@@ -155,7 +155,7 @@ async function scanBoundary(db: any, source: (typeof SOURCE_BOUNDARIES)[number],
     const blobRows = blobs.map((entry: any) => ({
       blob_sha: entry.sha,
       size_bytes: Number(entry.size ?? 0),
-      content_status: source.visibility === "private" ? "private_access_pending" : "pending",
+      content_status: "pending",
       source_repository_full_name: source.repository_full_name,
       source_boundary_key: source.boundary_key,
       source_path: entry.path,
