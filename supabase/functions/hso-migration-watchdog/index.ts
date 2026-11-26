@@ -141,6 +141,22 @@ async function scanBoundary(db: any, source: (typeof SOURCE_BOUNDARIES)[number],
     );
     if (!Array.isArray(tree.tree)) throw new Error("github_tree_missing");
     const blobs = tree.tree.filter((entry: any) => entry.type === "blob");
+    const sourceUpsert = await db.from("hso_migration_sources").upsert({
+      boundary_key: source.boundary_key,
+      repository_full_name: source.repository_full_name,
+      commit_sha: source.commit_sha,
+      visibility: source.visibility,
+      expected_blob_paths: source.expected_blob_paths,
+      observed_blob_paths: blobs.length,
+      tree_sha: tree.sha ?? null,
+      tree_truncated: Boolean(tree.truncated),
+      status: tree.truncated ? "tree_truncated" : "scanning",
+      last_scanned_at: scannedAt,
+      last_error: null,
+      latest_run_id: runId,
+    }, { onConflict: "boundary_key" });
+    if (sourceUpsert.error) throw new Error("source_record_upsert:" + sourceUpsert.error.message);
+
     const pathRows = blobs.map((entry: any) => ({
       boundary_key: source.boundary_key,
       repository_full_name: source.repository_full_name,
