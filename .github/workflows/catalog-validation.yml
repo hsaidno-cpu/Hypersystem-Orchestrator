@@ -302,7 +302,7 @@ jobs:
       - name: Check out frozen PR head or pushed commit
         uses: actions/checkout@v4
         with:
-          ref: \${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
           submodules: false
 
@@ -346,9 +346,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: hso-independent-evaluation-\${{ github.sha }}
+          name: hso-independent-evaluation-${{ github.sha }}
           path: |
-            \${{ runner.temp }}/sdo-independent-evaluation.json
-            \${{ runner.temp }}/sdo-independent-evaluation.json.sha256
+            ${{ runner.temp }}/sdo-independent-evaluation.json
+            ${{ runner.temp }}/sdo-independent-evaluation.json.sha256
           if-no-files-found: error
           retention-days: 30
