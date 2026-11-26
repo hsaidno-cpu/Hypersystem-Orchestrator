@@ -117,9 +117,9 @@ def validate_ledgers(root: Path) -> dict[str, Any]:
         raise LedgerValidationError("the previous 864-path L1 denominator must remain explicitly recorded")
     if actual_total != 869:
         raise LedgerValidationError(f"observed source path count changed: expected 869, found {actual_total}")
-    if index.get("unique_git_blob_sha1_count") != len(blob_groups):
+    if index.get("git_blob_sha1_unique_content_groups") != len(blob_groups):
         raise LedgerValidationError("index unique Git blob SHA-1 count disagrees with path manifest")
-    if index.get("duplicate_groups") != len(duplicates):
+    if index.get("duplicate_blob_groups") != len(duplicates):
         raise LedgerValidationError("index duplicate group count disagrees with path manifest")
     if index.get("duplicate_path_records") != duplicate_path_records:
         raise LedgerValidationError("index duplicate path count disagrees with path manifest")
@@ -127,8 +127,6 @@ def validate_ledgers(root: Path) -> dict[str, Any]:
     hso = next((x for x in boundaries if x["boundary_key"] == "hso"), None)
     if not hso or hso["previous_expected"] != 161 or hso["actual"] != 166 or hso["delta"] != 5:
         raise LedgerValidationError("the five-path HSO L1 count drift must remain visible")
-    if index.get("disposition") if "disposition" in index else None:
-        pass
 
     crosswalk_records = crosswalk.get("records")
     if not isinstance(crosswalk_records, list) or len(crosswalk_records) != 289:
