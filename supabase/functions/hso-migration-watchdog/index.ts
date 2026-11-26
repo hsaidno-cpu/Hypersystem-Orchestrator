@@ -15,7 +15,7 @@ import {
 } from "./core.ts";
 
 const HSO_SNAPSHOT_COMMIT = "69479c9fc898d12d6780964fb431fb9a89b1c675";
-const CATALOG_BLOB_SHA = "edc1566f41373c00dde45e5b2acee8b" === "none" ? "" : "edc1566f41373c00dde45a52474d1e55ace38891";
+const CATALOG_BLOB_SHA = "edc1566f41373c00dde45a52474d1e55ace38891";
 const INSTRUCTION_SNAPSHOT_BLOB_SHA = "f58ac947a7b5015f67fdaeb5c62b28c238d695b2";
 const GITHUB_API = "https://api.github.com";
 const MAX_UPSERT_BATCH = 400;
@@ -322,14 +322,27 @@ Deno.serve(async (req: Request) => {
     const headers = githubHeaders(privateToken);
     const sourceResults = await Promise.all(SOURCE_BOUNDARIES.map((source) => {
       if (source.visibility === "private" && !privateToken) {
-        return Promise.resolve({
-          boundary_key: source.boundary_key,
-          repository_full_name: source.repository_full_name,
-          expected_blob_paths: source.expected_blob_paths,
-          observed_blob_paths: null,
-          status: "private_access_pending",
-          error: "hso_github_read_token_not_configured",
-        });
+        return (async () => {
+          await db.from("hso_migration_sources").upsert({
+            boundary_key: source.boundary_key,
+            repository_full_name: source.repository_full_name,
+            commit_sha: source.commit_sha,
+            visibility: source.visibility,
+            expected_blob_paths: source.expected_blob_paths,
+            status: "private_access_pending",
+            last_scanned_at: new Date().toISOString(),
+            last_error: "hso_github_read_token_not_configured",
+            latest_run_id: run.id,
+          }, { onConflict: "boundary_key" });
+          return {
+            boundary_key: source.boundary_key,
+            repository_full_name: source.repository_full_name,
+            expected_blob_paths: source.expected_blob_paths,
+            observed_blob_paths: null,
+            status: "private_access_pending",
+            error: "hso_github_read_token_not_configured",
+          };
+        })();
       }
       return scanBoundary(db, source, headers, run.id);
     }));
