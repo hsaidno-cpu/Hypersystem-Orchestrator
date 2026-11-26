@@ -112,3 +112,88 @@ comment on table public.hso_command_outbox is
   'Durable outbox for future governed HSO workers; dispatch remains separately gated.';
 comment on table public.hso_slack_command_audit is
   'Append-only record of Slack command ingress decisions; never stores Slack response_url or credentials.';
+
+
+-- Enqueue command, outbox event and ingress audit in one database transaction.
+-- A failure in any insert rolls back all three records.
+create or replace function public.hso_enqueue_slack_command(
+  p_team_id text,
+  p_channel_id text,
+  p_actor_slack_user_id text,
+  p_trigger_id text,
+  p_command_name text,
+  p_arguments text,
+  p_request_sha256 text,
+  p_received_at timestamptz
+)
+returns table(command_id uuid, command_state text, outbox_id uuid)
+language plpgsql
+security invoker
+set search_path = ''
+as $function$
+declare
+  v_command_id uuid;
+  v_outbox_id uuid;
+begin
+  insert into public.hso_slack_commands (
+    team_id, channel_id, actor_slack_user_id, trigger_id,
+    command_name, arguments, request_sha256, state,
+    dispatch_enabled, received_at, updated_at
+  ) values (
+    p_team_id, p_channel_id, p_actor_slack_user_id, p_trigger_id,
+    p_command_name, p_arguments, p_request_sha256, 'pending_worker',
+    false, p_received_at, p_received_at
+  )
+  returning id into v_command_id;
+
+  insert into public.hso_command_outbox (
+    command_id, event_type, payload, state, created_at, updated_at
+  ) values (
+    v_command_id,
+    'hso.command.' || p_command_name,
+    jsonb_build_object(
+      'command_id', v_command_id,
+      'command_name', p_command_name,
+      'arguments', p_arguments,
+      'team_id', p_team_id,
+      'channel_id', p_channel_id,
+      'actor_slack_user_id', p_actor_slack_user_id,
+      'received_at', p_received_at
+    ),
+    'pending',
+    p_received_at,
+    p_received_at
+  )
+  returning id into v_outbox_id;
+
+  insert into public.hso_slack_command_audit (
+    command_id, event_type, actor_slack_user_id, actor_role,
+    request_sha256, details, created_at
+  ) values (
+    v_command_id,
+    'command_received',
+    p_actor_slack_user_id,
+    'GOV-01',
+    p_request_sha256,
+    jsonb_build_object(
+      'command_name', p_command_name,
+      'arguments_redacted', p_arguments,
+      'outbox_id', v_outbox_id
+    ),
+    p_received_at
+  );
+
+  return query select v_command_id, 'pending_worker'::text, v_outbox_id;
+end;
+$function$;
+
+revoke all on function public.hso_enqueue_slack_command(
+  text, text, text, text, text, text, text, timestamptz
+) from public, anon, authenticated;
+grant execute on function public.hso_enqueue_slack_command(
+  text, text, text, text, text, text, text, timestamptz
+) to service_role;
+
+comment on function public.hso_enqueue_slack_command(
+  text, text, text, text, text, text, text, timestamptz
+) is 'Atomically writes an HSO Slack command, its durable outbox event and append-only ingress audit record.';
