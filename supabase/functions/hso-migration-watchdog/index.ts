@@ -206,8 +206,37 @@ async function scanBoundary(db: any, source: (typeof SOURCE_BOUNDARIES)[number],
       discrepancy: blobs.length - source.expected_blob_paths,
     };
   } catch (error) {
-    const status = source.visibility === "private" ? "private_access_pending" : "scan_failed";
+    const isRateLimited = Boolean((error as any)?.rateLimited);
+    const status = isRateLimited ? "rate_limited" :
+      source.visibility === "private" ? "private_access_pending" : "scan_failed";
     const message = String((error as any)?.message ?? error).slice(0, 500);
+
+    if (isRateLimited) {
+      const { data: prior } = await db.from("hso_migration_sources")
+        .select("observed_blob_paths,tree_sha,tree_truncated")
+        .eq("boundary_key", source.boundary_key)
+        .maybeSingle();
+      if (prior) {
+        await db.from("hso_migration_sources").update({
+          status,
+          last_scanned_at: scannedAt,
+          last_error: message,
+          latest_run_id: runId,
+        }).eq("boundary_key", source.boundary_key);
+        return {
+          boundary_key: source.boundary_key,
+          repository_full_name: source.repository_full_name,
+          expected_blob_paths: source.expected_blob_paths,
+          observed_blob_paths: prior.observed_blob_paths,
+          tree_sha: prior.tree_sha,
+          tree_truncated: prior.tree_truncated,
+          status,
+          error: message,
+          prior_tree_preserved: true,
+        };
+      }
+    }
+
     await db.from("hso_migration_sources").upsert({
       boundary_key: source.boundary_key,
       repository_full_name: source.repository_full_name,
@@ -278,14 +307,25 @@ async function readBlobBatch(db: any, headers: HeadersInit, limit: number) {
       results.push({ blob_sha: item.blob_sha, status: state, content_sha256: contentSha256, byte_length: bytes.length });
     } catch (error) {
       const message = String((error as any)?.message ?? error).slice(0, 500);
+      const nextAttempt = Number(item.attempt_count ?? 0) + 1;
+      if ((error as any)?.rateLimited) {
+        await db.from("hso_migration_blobs").update({
+          content_status: "pending",
+          last_error: "github_rate_limited:" + message,
+          attempt_count: nextAttempt,
+          last_read_at: new Date().toISOString(),
+        }).eq("blob_sha", item.blob_sha);
+        results.push({ blob_sha: item.blob_sha, status: "deferred_rate_limited", attempt_count: nextAttempt });
+        break;
+      }
       await db.from("hso_migration_blobs").update({
         content_status: "failed",
         last_error: message,
-        attempt_count: Number(item.attempt_count ?? 0) + 1,
+        attempt_count: nextAttempt,
         last_read_at: new Date().toISOString(),
       }).eq("blob_sha", item.blob_sha);
-      results.push({ blob_sha: item.blob_sha, status: "failed", error: message });
-      if ((error as any)?.rateLimited || message.includes("github_http_403")) break;
+      results.push({ blob_sha: item.blob_sha, status: "failed", error: message, attempt_count: nextAttempt });
+      if (message.includes("github_http_403")) break;
     }
   }
   return results;
