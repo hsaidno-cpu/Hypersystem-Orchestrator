@@ -40,3 +40,8 @@ The function and cron are live, but the **full migration remains OPEN**. The fir
 - It does not semantically review content or run capability tests.
 - It never marks parity, runtime, rights or security acceptance on its own.
 - Slack `/hso` ingress in PR #43 is separate and remains NOT_DEPLOYED / DISPATCH_DISABLED until Slack App signing secret, team ID, GOV-01 identity, merge, deployment and acceptance tests are completed.
+
+
+## GitHub rate-limit behavior
+
+The worker now classifies authenticated/unauthenticated GitHub 403 responses with exhausted rate-limit headers as `rate_limited`. A prior completed tree/path inventory is preserved; a rate-limited blob fetch returns to `pending` and is retried on a later schedule. Do not count rate-limit deferral as content corruption. Store an owner-authorized least-privilege GitHub read-only token in Vault as `hso_github_read_token`; it should cover public repositories and the two private sources (Anatomi Prompt and Vibe Coding Mentor).
