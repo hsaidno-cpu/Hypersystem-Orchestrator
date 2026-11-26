@@ -330,6 +330,7 @@ jobs:
           assert report["candidate"]["candidate_id"] == "SDO-PLUGIN-0.1.0-20261126"
           assert report["evaluator"]["read_only"] is True
           assert report["evaluator"]["identity_separated"] is True
+          assert report["evaluator"]["trusted_execution_context"] is False
           assert report["integrity"]["candidate_mutated"] is False
           print(json.dumps({
               "evaluation_id": report["evaluation_id"],
@@ -338,6 +339,7 @@ jobs:
               "score_percent": report["score"]["percent"],
               "evaluator": report["evaluator"]["identity"],
               "read_only": report["evaluator"]["read_only"],
+              "trusted_execution_context": report["evaluator"]["trusted_execution_context"],
               "candidate_mutated": report["integrity"]["candidate_mutated"]
           }, indent=2))
           PY
