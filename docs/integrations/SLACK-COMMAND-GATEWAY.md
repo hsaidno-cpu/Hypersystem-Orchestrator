@@ -64,8 +64,8 @@ Commands are accepted only from the configured GOV-01 identity in the designated
 
 - Slack trigger_id plus team ID is the idempotency key.
 - Command arguments are redacted for common token/secret patterns and size-limited.
-- Command intake and outbox writes are separate durable records.
-- If only one of command/outbox/audit writes succeeds, the command is marked blocked_incomplete_persistence and not dispatched; reconciliation is required.
+- A single PostgreSQL RPC transaction writes the command, outbox event and ingress audit atomically.
+- If any insert fails, the entire transaction rolls back; no half-persisted command is accepted or dispatched.
 - hso_slack_command_audit has an append-only trigger and grants that exclude update/delete.
 - No approval receipt, GitHub mutation, Notion mutation, roadmap update or worker dispatch is performed by this ingress.
 
