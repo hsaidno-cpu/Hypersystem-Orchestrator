@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "candidate": {
+    "candidate_id": "SDO-PLUGIN-0.1.0-20261126",
+    "plugin_key": "skill-developer-orchestrator",
+    "version": "0.1.0",
+    "source_repository": "promkespkmbinuang-coder/SPDO",
+    "source_commit": "9d3c4bc09179ff857df4f3819be83e1847571add",
+    "package_release_id": "pluginrel_6afdee10a5688191ad8fc37a9d0d827b",
+    "package_digest": null,
+    "target_host": "ChatGPT Plugin Creator runtime"
+  },
+  "builder_identity": "skill-developer-orchestrator",
+  "approver_identity": "GOV-01",
+  "evaluator": {
+    "identity": "hso-independent-evaluation-ci",
+    "version": "1.0.0",
+    "read_only": true
+  },
+  "required_domains": [
+    "provenance",
+    "source_parity",
+    "behavior",
+    "security",
+    "runtime",
+    "independence"
+  ],
+  "checks": [
+    {
+      "domain": "provenance",
+      "status": "PASS",
+      "rationale": "The canonical SPDO repository, immutable source commit, plugin identity, package version, and current Plugin Creator release ID have been read back. This does not imply content parity.",
+      "evidence_refs": [
+        "https://github.com/promkespkmbinuang-coder/SPDO/tree/9d3c4bc09179ff857df4f3819be83e1847571add",
+        "Plugin Creator package Plugin_a5294996e38c8191b8e20b2d9f61447a / release pluginrel_6afdee10a5688191ad8fc37a9d0d827b"
+      ],
+      "evidence_digests": [
+        "9d3c4bc09179ff857df4f3819be83e1847571add"
+      ]
+    },
+    {
+      "domain": "source_parity",
+      "status": "FAIL",
+      "rationale": "The seven shared files were compared after line-ending normalization and 0/7 are identical. The package has .codex-plugin/plugin.json only; the Git repository has LICENSE only. The package is the richer operational copy, but no synchronized release has been created.",
+      "evidence_refs": [
+        "https://github.com/promkespkmbinuang-coder/SPDO/tree/9d3c4bc09179ff857df4f3819be83e1847571add",
+        "Plugin Creator current release pluginrel_6afdee10a5688191ad8fc37a9d0d827b"
+      ],
+      "evidence_digests": [
+        "94f5f5556ad83366ce316d2a4ad43c2afafffadf",
+        "88ae79dd21a273ab1b59d3066387aca1d79ac8be",
+        "e0095fef6ca2b61dc4ae8cdf8dc7ec9292a42bfb",
+        "0a38b103c6aa74ea3456bf8ae6873aa7e5507004",
+        "8dfebd24f330caf98b47177783175f0db70ae5f3"
+      ]
+    },
+    {
+      "domain": "behavior",
+      "status": "NOT_RUN",
+      "rationale": "The acceptance cases are specifications, not executed behavior evidence for the installed SDO plugin on a named host.",
+      "evidence_refs": [
+        "https://github.com/promkespkmbinuang-coder/SPDO/blob/main/tests/acceptance-cases.json"
+      ],
+      "evidence_digests": [
+        "8dfebd24f330caf98b47177783175f0db70ae5f3"
+      ]
+    },
+    {
+      "domain": "security",
+      "status": "NOT_RUN",
+      "rationale": "A current target-host security and authorization test report for SDO has not been supplied.",
+      "evidence_refs": []
+    },
+    {
+      "domain": "runtime",
+      "status": "BLOCKED",
+      "rationale": "No named-host SDO invocation receipt or runtime artifact is available in this evaluation bundle.",
+      "evidence_refs": [
+        "https://github.com/promkespkmbinuang-coder/SPDO/blob/main/README.md"
+      ],
+      "evidence_digests": [
+        "310257c004c063c90611c12ddbbdee0ac17affe8"
+      ]
+    }
+  ]
+}
