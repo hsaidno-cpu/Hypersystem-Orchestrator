@@ -1,0 +1,26 @@
+name: HSO migration watchdog validation
+on:
+  push:
+    branches: ["feat/hso-migration-watchdog-20261126"]
+  pull_request:
+    branches: ["main"]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check migration watchdog
+        run: deno check --config supabase/functions/hso-migration-watchdog/deno.json supabase/functions/hso-migration-watchdog/index.ts
+      - name: Run migration watchdog unit tests
+        run: deno test --config supabase/functions/hso-migration-watchdog/deno.json supabase/functions/hso-migration-watchdog/core_test.ts
