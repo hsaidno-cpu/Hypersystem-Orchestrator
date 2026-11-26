@@ -139,9 +139,19 @@ def validate_ledgers(root: Path) -> dict[str, Any]:
     }
     observed_states = Counter()
     for row in crosswalk_records:
-        for field in ("plugin_key", "skill_name", "source_uri", "source_mapping_status"):
+        for field in ("plugin_key", "skill_name", "source_mapping_status"):
             if not isinstance(row.get(field), str) or not row[field]:
                 raise LedgerValidationError(f"skill crosswalk row missing {field}")
+        uri = row.get("source_uri")
+        uri_state = row.get("source_uri_state")
+        if uri_state == "DECLARED":
+            if not isinstance(uri, str) or not uri.strip():
+                raise LedgerValidationError("declared source_uri must be a non-empty string")
+        elif uri_state == "NOT_DECLARED":
+            if uri is not None:
+                raise LedgerValidationError("NOT_DECLARED source_uri must remain null")
+        else:
+            raise LedgerValidationError("source_uri_state must explicitly declare DECLARED or NOT_DECLARED")
         observed_states[row["source_mapping_status"]] += 1
         candidates = row.get("source_path_candidates", [])
         if not isinstance(candidates, list):
@@ -176,6 +186,8 @@ def validate_ledgers(root: Path) -> dict[str, Any]:
         "duplicate_blob_groups": len(duplicates),
         "duplicate_path_records": duplicate_path_records,
         "skill_metadata_rows": len(crosswalk_records),
+        "source_uri_declared": sum(1 for row in crosswalk_records if row.get("source_uri_state") == "DECLARED"),
+        "source_uri_not_declared": sum(1 for row in crosswalk_records if row.get("source_uri_state") == "NOT_DECLARED"),
         "skill_mapping_states": dict(observed_states),
         "content_sha256": "NOT_COMPUTED",
         "semantic_parity": "NOT_COMPARED",
