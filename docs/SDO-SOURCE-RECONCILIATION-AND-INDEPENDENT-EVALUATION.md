@@ -72,9 +72,11 @@ Domains and weights:
 | Evaluator independence | 10 |
 | **Total** | **100** |
 
-The evaluator runs in a separate GitHub Actions job with contents: read and actions: read; it cannot write the candidate repository. It does not auto-approve, merge, release or deploy. A hard provenance/security/independence failure returns FAIL. Missing, blocked, unrun or unverifiable required evidence returns HOLD. Only complete evidence can return PASS.
+The evaluator runs in a separate GitHub Actions job with contents: read and actions: read; it cannot write the candidate repository. It does not auto-approve, merge, release or deploy. A hard provenance/security/identity-overlap failure returns FAIL. Missing, blocked, unrun or unverifiable required evidence returns HOLD.
 
-The current SDO dossier intentionally returns HOLD: provenance is recorded, but source parity is 0/7, behavior and security tests are not run against a named target host, and host runtime acceptance remains blocked. A successful CI run of the evaluator proves that the evaluation mechanism executed; it does not mean the SDO candidate passed.
+A declared evaluator name and a separate read-only job are not sufficient to prove trust independence. The independence domain can return PASS only when the evaluation is executed by the workflow from protected main (push/workflow_dispatch, refs/heads/main, GITHUB_REF_PROTECTED=true, and workflow ref on main). An evaluation executed from a PR-controlled workflow is UNVERIFIABLE, even if the evaluator label differs from builder/approver. This PR is a bootstrap implementation and therefore must not certify its own independence. After trusted code is reviewed and merged, a later main-bound evaluation can establish that domain.
+
+The current SDO dossier intentionally returns HOLD: provenance is recorded, but source parity is 0/7, behavior and security tests are not run against a named target host, and host runtime acceptance remains blocked. A successful CI run of the evaluator proves that the evaluation mechanism executed; it does not mean the SDO candidate passed. While this bootstrap PR executes from a PR-controlled ref, the evaluator-independence domain is UNVERIFIABLE and the expected disposition is HOLD.
 
 ## 6. Boundary from Evaluator Team plugin
 
