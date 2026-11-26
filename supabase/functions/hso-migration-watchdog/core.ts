@@ -46,15 +46,17 @@ export function hex(bytes: Uint8Array): string {
 }
 
 export async function sha256Hex(bytes: Uint8Array): Promise<string> {
-  return hex(new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)));
+  const owned = new Uint8Array(new ArrayBuffer(bytes.byteLength));
+  owned.set(bytes);
+  return hex(new Uint8Array(await crypto.subtle.digest("SHA-256", owned.buffer)));
 }
 
 export async function gitBlobSha(bytes: Uint8Array): Promise<string> {
   const header = new TextEncoder().encode("blob " + bytes.length + "\0");
-  const framed = new Uint8Array(header.length + bytes.length);
+  const framed = new Uint8Array(new ArrayBuffer(header.length + bytes.length));
   framed.set(header, 0);
   framed.set(bytes, header.length);
-  return hex(new Uint8Array(await crypto.subtle.digest("SHA-1", framed)));
+  return hex(new Uint8Array(await crypto.subtle.digest("SHA-1", framed.buffer)));
 }
 
 export function boundedBatchSize(value: unknown, fallback = 16, max = 32): number {

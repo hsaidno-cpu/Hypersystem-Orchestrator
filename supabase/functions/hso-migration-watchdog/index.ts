@@ -453,6 +453,10 @@ Deno.serve(async (req: Request) => {
     }).eq("id", runId);
     return response({ error: "migration_watchdog_failed", run_id: runId, detail: message }, 500);
   } finally {
-    await db.rpc("hso_release_migration_watchdog", { p_lease_token: leaseToken }).catch(() => undefined);
+    try {
+      await db.rpc("hso_release_migration_watchdog", { p_lease_token: leaseToken });
+    } catch {
+      // Lease expiry remains the bounded recovery path if release RPC fails.
+    }
   }
 });
