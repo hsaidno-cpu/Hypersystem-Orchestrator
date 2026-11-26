@@ -233,7 +233,7 @@ async function scanBoundary(db: any, source: (typeof SOURCE_BOUNDARIES)[number],
 async function readBlobBatch(db: any, headers: HeadersInit, limit: number) {
   const { data: pending, error } = await db.from("hso_migration_blobs")
     .select("blob_sha,size_bytes,source_repository_full_name,source_path,source_visibility,attempt_count")
-    .eq("content_status", "pending")
+    .or("content_status.eq.pending,and(content_status.eq.failed,attempt_count.lt.3)")
     .order("size_bytes", { ascending: true })
     .limit(limit);
   if (error) throw new Error("pending_blob_query_failed:" + error.message);
