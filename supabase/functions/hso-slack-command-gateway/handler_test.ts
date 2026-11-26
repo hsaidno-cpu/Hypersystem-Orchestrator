@@ -7,9 +7,9 @@ import {
 } from "./core.ts";
 
 Deno.test("accepts timestamps within the five-minute window", () => {
-  if (!isFreshSlackTimestamp("1000", 1000)) throw new Error("current timestamp rejected");
-  if (!isFreshSlackTimestamp("700", 1000)) throw new Error("inclusive boundary rejected");
-  if (isFreshSlackTimestamp("699", 1000)) throw new Error("stale timestamp accepted");
+  if (!isFreshSlackTimestamp("1700000000", 1700000000)) throw new Error("current timestamp rejected");
+  if (!isFreshSlackTimestamp("1699999700", 1700000000)) throw new Error("inclusive boundary rejected");
+  if (isFreshSlackTimestamp("1699999699", 1700000000)) throw new Error("stale timestamp accepted");
 });
 
 Deno.test("rejects malformed timestamps", () => {
