@@ -161,81 +161,53 @@ Deno.serve(async (req) => {
     arguments: safeArguments,
   }));
 
-  const { data: created, error: insertError } = await db.from("hso_slack_commands")
-    .insert({
-      team_id: teamId,
-      channel_id: channelId,
-      actor_slack_user_id: userId,
-      trigger_id: triggerId,
-      command_name: parsed.name,
-      arguments: safeArguments,
-      request_sha256: requestHash,
-      state: "pending_worker",
-      dispatch_enabled: false,
-    })
-    .select("id,state")
-    .single();
+  const receivedAt = new Date().toISOString();
+  const { data: enqueueData, error: enqueueError } = await db.rpc(
+    "hso_enqueue_slack_command",
+    {
+      p_team_id: teamId,
+      p_channel_id: channelId,
+      p_actor_slack_user_id: userId,
+      p_trigger_id: triggerId,
+      p_command_name: parsed.name,
+      p_arguments: safeArguments,
+      p_request_sha256: requestHash,
+      p_received_at: receivedAt,
+    },
+  );
+  const created = Array.isArray(enqueueData) ? enqueueData[0] : enqueueData;
 
-  if (insertError) {
-    if (insertError.code === "23505") {
+  if (enqueueError) {
+    if (enqueueError.code === "23505") {
       const { data: existing } = await db.from("hso_slack_commands")
         .select("id,state,request_sha256")
         .eq("team_id", teamId)
         .eq("trigger_id", triggerId)
         .maybeSingle();
       if (existing?.request_sha256 === requestHash) {
-        return response(slackText("Duplicate delivery safely deduplicated. Command " + existing.id + " remains " + existing.state + "."), 200);
+        return response(slackText(
+          "Duplicate delivery safely deduplicated. Command " + existing.id + " remains " + existing.state + ".",
+        ), 200);
       }
-      return response(slackText("Duplicate trigger identifier with a different payload rejected. No second command was created."), 200);
+      return response(slackText(
+        "Duplicate trigger identifier with a different payload rejected. No second command was created.",
+      ), 200);
     }
-    return response(slackText("Command could not be recorded. HSO did not execute it."), 200);
+    return response(slackText(
+      "Atomic command persistence failed. No command/outbox/audit partial write was committed; HSO did not execute it.",
+    ), 200);
   }
 
-  const outbox = await db.from("hso_command_outbox").insert({
-    command_id: created.id,
-    event_type: "hso.command." + parsed.name,
-    payload: {
-      command_id: created.id,
-      command_name: parsed.name,
-      arguments: safeArguments,
-      team_id: teamId,
-      channel_id: channelId,
-      actor_slack_user_id: userId,
-      received_at: new Date().toISOString(),
-    },
-    state: "pending",
-  });
-
-  const audit = await db.from("hso_slack_command_audit").insert({
-    command_id: created.id,
-    event_type: "command_received",
-    actor_slack_user_id: userId,
-    actor_role: "GOV-01",
-    request_sha256: requestHash,
-    details: {
-      command_name: parsed.name,
-      arguments_redacted: safeArguments,
-      outbox_written: !outbox.error,
-    },
-  });
-
-  if (outbox.error || audit.error) {
-    if (!outbox.error) {
-      await db.from("hso_command_outbox").update({
-        state: "dead_letter",
-        last_error: audit.error ? "audit_write_failed" : "command_persistence_incomplete",
-        updated_at: new Date().toISOString(),
-      }).eq("command_id", created.id);
-    }
-    await db.from("hso_slack_commands").update({ state: "blocked_incomplete_persistence" }).eq("id", created.id);
+  if (!created?.command_id || !created?.outbox_id) {
     return response(slackText(
-      "Command " + created.id + " was partially recorded but persistence is incomplete. It is blocked and was not dispatched. Reconciliation is required.",
+      "Command persistence returned an incomplete receipt. Treating this request as blocked; no dispatch was performed.",
     ), 200);
   }
 
   return response(slackText(
-    "Command " + created.id + " recorded as *pending_worker*.\n" +
+    "Command " + created.command_id + " recorded as *pending_worker*.\n" +
+    "Outbox item: " + created.outbox_id + "\n" +
     "Dispatch enabled: *no* (v1 has no live command worker).\n" +
-    "No repository, Notion, Supabase business-state or worker operation was executed by this ingress. A separate governed worker must claim and verify this outbox item.",
+    "Command, outbox and ingress audit were committed atomically. No repository, Notion, Supabase business-state or worker operation was executed by this ingress.",
   ), 200);
 });
