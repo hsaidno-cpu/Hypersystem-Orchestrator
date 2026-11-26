@@ -54,7 +54,7 @@ Deno.test("acceptance never marks migration complete with missing test/runtime r
     allRuntimeReceiptsPresent: false,
     securityAcceptancePassed: false,
   });
-  if (state !== "CAPABILITY_VERIFIED") throw new Error("acceptance gate bypassed");
+  if (state !== "SOURCE_VERIFIED") throw new Error("acceptance gate bypassed");
 });
 
 Deno.test("partial source trees keep the migration acceptance open", () => {
