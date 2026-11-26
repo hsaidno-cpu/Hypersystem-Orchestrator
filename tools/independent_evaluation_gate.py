@@ -115,6 +115,18 @@ def validate_input(document: Any) -> dict[str, Any]:
     }
 
 
+def _trusted_evaluator_context(context: dict[str, str] | None) -> bool:
+    """Trust evaluation only when the workflow itself runs from protected main."""
+    context = context or {}
+    workflow_ref = context.get("GITHUB_WORKFLOW_REF", "")
+    return (
+        context.get("GITHUB_EVENT_NAME") in {"push", "workflow_dispatch"}
+        and context.get("GITHUB_REF") == "refs/heads/main"
+        and context.get("GITHUB_REF_PROTECTED", "").lower() == "true"
+        and workflow_ref.endswith("@refs/heads/main")
+    )
+
+
 def evaluate_document(
     document: Any,
     *,
@@ -124,11 +136,12 @@ def evaluate_document(
     evaluated_at: str | None = None,
 ) -> dict[str, Any]:
     data = validate_input(document)
-    independent = (
+    identity_separated = (
         data["evaluator_identity"] != data["builder_identity"]
         and data["evaluator_identity"] != data["approver_identity"]
         and data["evaluator_read_only"] is True
     )
+    trusted_execution_context = _trusted_evaluator_context(execution_context)
     results: list[dict[str, Any]] = []
     hard_failures: list[str] = []
     unresolved: list[str] = []
@@ -138,13 +151,16 @@ def evaluate_document(
     for domain in data["required_domains"]:
         weight = DOMAIN_WEIGHTS[domain]
         if domain == "independence":
-            status = "PASS" if independent else "FAIL"
-            rationale = (
-                "Evaluator is read-only and distinct from both builder and approver."
-                if independent
-                else "Evaluator identity overlaps builder/approver or evaluator is not read-only."
-            )
-            refs = ["independent-evaluation CI job and evaluator engine source"]
+            if not identity_separated:
+                status = "FAIL"
+                rationale = "Evaluator identity overlaps builder/approver or evaluator is not read-only."
+            elif trusted_execution_context:
+                status = "PASS"
+                rationale = "Evaluator is read-only and distinct from builder/approver; execution came from the protected main workflow context."
+            else:
+                status = "UNVERIFIABLE"
+                rationale = "Evaluator label and read-only job are declared, but the workflow did not execute from a protected main ref. PR-controlled evaluator code cannot certify its own independence."
+            refs = ["independent-evaluation CI job and evaluator engine source", "GitHub Actions event/ref/protection context"]
             digests = [evaluator_engine_sha256]
         else:
             check = data["checks"].get(domain)
@@ -204,7 +220,8 @@ def evaluate_document(
             "identity": data["evaluator_identity"],
             "version": data["evaluator_version"],
             "read_only": data["evaluator_read_only"],
-            "identity_separated": independent,
+            "identity_separated": identity_separated,
+            "trusted_execution_context": trusted_execution_context,
             "engine_sha256": evaluator_engine_sha256,
         },
         "required_domains": data["required_domains"],
@@ -282,7 +299,7 @@ def evaluate_file(input_path: Path, output_path: Path) -> dict[str, Any]:
         raise EvaluationInputError(f"input dossier cannot be read ({type(exc).__name__})") from exc
     context = {
         key: os.environ[key]
-        for key in ("GITHUB_SHA", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_WORKFLOW", "GITHUB_ACTOR")
+        for key in ("GITHUB_SHA", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_WORKFLOW", "GITHUB_ACTOR", "GITHUB_EVENT_NAME", "GITHUB_REF", "GITHUB_REF_PROTECTED", "GITHUB_WORKFLOW_REF", "GITHUB_WORKFLOW_SHA")
         if os.environ.get(key)
     }
     report = evaluate_document(
