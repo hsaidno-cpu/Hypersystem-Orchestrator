@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 
 const corsHeaders = {
   "access-control-allow-origin": "*",
-  "access-control-allow-headers": "content-type, x-hso-signature, x-hso-delivery, x-host-id",
+  "access-control-allow-headers": "content-type, authorization, x-hso-signature, x-hso-delivery, x-host-id, x-host-token, x-pre-artifact-sha256",
   "access-control-allow-methods": "GET, POST, OPTIONS",
   "cache-control": "no-store",
 };
@@ -39,6 +39,108 @@ async function verifyHsoSignature(req: Request, raw: string, secret: string): Pr
   return safeEqual(supplied, await hmacHex(secret, raw));
 }
 
+
+async function resolveSecret(supabase: any, name: string): Promise<string | null> {
+  const envValue = Deno.env.get(name);
+  if (envValue) return envValue;
+  const { data, error } = await supabase.rpc("pre_federation_get_secret", { secret_name: name });
+  if (error) {
+    console.error("vault_secret_lookup_failed", { name, message: error.message });
+    return null;
+  }
+  return typeof data === "string" && data.length > 0 ? data : null;
+}
+
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(copy).set(bytes);
+  return copy;
+}
+
+async function sha256Hex(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", toArrayBuffer(bytes));
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function base64Bytes(value: string): Uint8Array {
+  const binary = atob(value);
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
+
+function decodeBase64Url(value: string): Uint8Array {
+  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+  return base64Bytes(padded);
+}
+
+async function verifyGitHubOidc(req: Request, role: "publisher" | "verifier" | "reconciler" | "asfree-rpeds"): Promise<Record<string, any> | null> {
+  try {
+    const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+    if (!bearer) return null;
+    const parts = bearer.split(".");
+    if (parts.length !== 3) return null;
+    const header = JSON.parse(new TextDecoder().decode(decodeBase64Url(parts[0])));
+    const claims = JSON.parse(new TextDecoder().decode(decodeBase64Url(parts[1])));
+    if (header.alg !== "RS256" || typeof header.kid !== "string") return null;
+
+    const expectedAudience = `${Deno.env.get("SUPABASE_URL")}/functions/v1/pre-core-federation`;
+    const audience = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
+    const now = Math.floor(Date.now() / 1000);
+    if (claims.iss !== "https://token.actions.githubusercontent.com" ||
+        !audience.includes(expectedAudience) ||
+        typeof claims.exp !== "number" || claims.exp <= now ||
+        (typeof claims.nbf === "number" && claims.nbf > now + 60)) return null;
+
+    const jwksResponse = await fetch("https://token.actions.githubusercontent.com/.well-known/jwks");
+    if (!jwksResponse.ok) return null;
+    const jwks = await jwksResponse.json();
+    const jwk = Array.isArray(jwks.keys) ? jwks.keys.find((key: any) => key.kid === header.kid) : null;
+    if (!jwk) return null;
+    const verificationKey = await crypto.subtle.importKey(
+      "jwk", jwk, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"],
+    );
+    const signingInput = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
+    const signatureValid = await crypto.subtle.verify(
+      { name: "RSASSA-PKCS1-v1_5" }, verificationKey,
+      toArrayBuffer(decodeBase64Url(parts[2])), toArrayBuffer(signingInput),
+    );
+    if (!signatureValid) return null;
+
+    const repo = String(claims.repository ?? "");
+    const ref = String(claims.ref ?? "");
+    const workflowRef = String(claims.workflow_ref ?? "");
+    const allowed = {
+      publisher: repo === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna" &&
+        ref === "refs/heads/main" &&
+        workflowRef === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna/.github/workflows/pre-release-publish.yml@refs/heads/main",
+      verifier: repo === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna" &&
+        ref === "refs/heads/main" &&
+        workflowRef === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna/.github/workflows/pre-release-verify.yml@refs/heads/main",
+      reconciler: repo === "hsaidno-cpu/Hypersystem-Orchestrator" &&
+        ref === "refs/heads/main" &&
+        workflowRef === "hsaidno-cpu/Hypersystem-Orchestrator/.github/workflows/pre-rpeds-federation.yml@refs/heads/main",
+      "asfree-rpeds": repo === "hsaidno-cpu/A.S.F.R.E.E" &&
+        ref === "refs/heads/main" &&
+        workflowRef === "hsaidno-cpu/A.S.F.R.E.E/.github/workflows/pre-rpeds-host-adopt.yml@refs/heads/main",
+    }[role];
+    return allowed ? claims : null;
+  } catch (error) {
+    console.error("github_oidc_verification_error", String(error));
+    return null;
+  }
+}
+
+async function authorizedHost(supabase: any, req: Request, hostId: string): Promise<boolean> {
+  const { data: host } = await supabase.from("pre_host_subscriptions")
+    .select("host_auth_secret_ref,host_auth_status").eq("host_id", hostId).maybeSingle();
+  if (!host || host.host_auth_status !== "CONFIGURED") return false;
+  const hostToken = req.headers.get("x-host-token") ??
+    (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  const hostSecret = host.host_auth_secret_ref ? await resolveSecret(supabase, host.host_auth_secret_ref) : null;
+  if (hostSecret && safeEqual(hostToken, hostSecret)) return true;
+  return hostId === "asfree-rpeds" && Boolean(await verifyGitHubOidc(req, "asfree-rpeds"));
+}
+
 function validSha256(value: unknown): value is string {
   return typeof value === "string" && /^[a-f0-9]{64}$/.test(value);
 }
@@ -64,9 +166,10 @@ function validateReleaseEvent(value: unknown): string | null {
   if (typeof value.contract_version !== "string" || !value.contract_version) return "invalid_contract_version";
   if (typeof value.compatibility_range !== "string" || !value.compatibility_range) return "invalid_compatibility_range";
   if (!["stable", "candidate", "preview"].includes(String(value.release_channel))) return "invalid_release_channel";
-  if (!isObject(value.issuer) || typeof value.issuer.identity !== "string" || typeof value.issuer.key_id !== "string" || typeof value.issuer.signature !== "string" || value.issuer.signature.length < 16) return "invalid_issuer";
+  if (!isObject(value.issuer) || typeof value.issuer.identity !== "string" || typeof value.issuer.key_id !== "string" || typeof value.issuer.identity_ref !== "string" || value.issuer.identity_ref.length < 16) return "invalid_issuer";
   if (!validIsoDate(value.issued_at)) return "invalid_issued_at";
   if (!Array.isArray(value.capability_classes) || value.capability_classes.length === 0 || value.capability_classes.some((x) => !["SHARED_DNA", "HOST_ADAPTATION"].includes(String(x)))) return "invalid_capability_class";
+  if (!Array.isArray(value.target_host_ids) || value.target_host_ids.length === 0 || value.target_host_ids.some((x) => typeof x !== "string" || !x)) return "invalid_target_host_ids";
   if (typeof value.is_breaking !== "boolean") return "is_breaking_boolean_required";
   return null;
 }
@@ -83,31 +186,99 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const syncToken = Deno.env.get("HSO_SYNC_TOKEN");
-  if (!url || !serviceKey || !syncToken) {
+  if (!url || !serviceKey) {
     return reply({ error: "federation_not_configured", missing: [
       ...(!url ? ["SUPABASE_URL"] : []),
       ...(!serviceKey ? ["SUPABASE_SERVICE_ROLE_KEY"] : []),
-      ...(!syncToken ? ["HSO_SYNC_TOKEN"] : []),
     ] }, 503);
   }
 
   const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
+  const syncToken = await resolveSecret(supabase, "HSO_SYNC_TOKEN");
+  if (!syncToken) return reply({ error: "federation_not_configured", missing: ["HSO_SYNC_TOKEN"] }, 503);
   const path = new URL(req.url).pathname.replace(/\/+$/, "").split("/").pop() ?? "";
 
   if (req.method === "GET" && path === "health") {
-    return reply({ service: "pre-core-federation", status: "ACTIVE", signed_transport: true, independent_verifier_configured: Boolean(Deno.env.get("PRE_RELEASE_VERIFIER_TOKEN")), reconciliation_endpoint: "POST /reconcile", persistence: "SUPABASE_POSTGRES" });
+    const verifierSecret = await resolveSecret(supabase, "PRE_RELEASE_VERIFIER_TOKEN");
+    return reply({
+      service: "pre-core-federation", status: "ACTIVE", signed_transport: true,
+      publisher_vault_configured: Boolean(syncToken),
+      independent_verifier_configured: Boolean(verifierSecret),
+      artifact_storage: "pre-release-artifacts",
+      reconciliation_endpoint: "POST /reconcile",
+      persistence: "SUPABASE_POSTGRES",
+    });
+  }
+
+  if (req.method === "POST" && path === "artifact") {
+    const expectedDigest = (req.headers.get("x-pre-artifact-sha256") ?? "").trim().toLowerCase();
+    if (!validSha256(expectedDigest)) return reply({ error: "artifact_sha256_header_required" }, 400);
+    const bytes = new Uint8Array(await req.arrayBuffer());
+    const actualDigest = await sha256Hex(bytes);
+    if (actualDigest !== expectedDigest) return reply({ error: "artifact_digest_mismatch" }, 409);
+
+    const supplied = (req.headers.get("x-hso-signature") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
+    const expected = await hmacHex(syncToken, `${actualDigest}\\n${bytes.length}`);
+    const hmacAuthenticated = Boolean(supplied && safeEqual(supplied, expected));
+    const oidcAuthenticated = Boolean(await verifyGitHubOidc(req, "publisher"));
+    if (!hmacAuthenticated && !oidcAuthenticated) return reply({ error: "publisher_authentication_required" }, 401);
+
+    const storagePath = `${actualDigest}.tar.gz`;
+    const { error } = await supabase.storage.from("pre-release-artifacts").upload(storagePath, bytes, {
+      contentType: "application/gzip", cacheControl: "0", upsert: false,
+    });
+    if (error && !String(error.message ?? "").toLowerCase().includes("already exists")) {
+      return reply({ error: "artifact_storage_failed", detail: error.message }, 500);
+    }
+    const sourceLocator = `${url}/functions/v1/pre-core-federation/artifact?sha256=${actualDigest}`;
+    return reply({ accepted: true, artifact_sha256: actualDigest, bytes: bytes.length, source_locator: sourceLocator }, 201);
+  }
+
+  if (req.method === "GET" && path === "artifact") {
+    const digest = new URL(req.url).searchParams.get("sha256") ?? "";
+    if (!validSha256(digest)) return reply({ error: "valid_sha256_required" }, 400);
+    const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+    const verifierToken = await resolveSecret(supabase, "PRE_RELEASE_VERIFIER_TOKEN");
+    const verifierAuthenticated = Boolean(
+      (verifierToken && safeEqual(bearer, verifierToken)) ||
+      (await verifyGitHubOidc(req, "verifier"))
+    );
+    const hostId = new URL(req.url).searchParams.get("host_id");
+    if (!verifierAuthenticated) {
+      if (!hostId || !(await authorizedHost(supabase, req, hostId))) return reply({ error: "artifact_access_denied" }, 401);
+      const { data: released } = await supabase.from("pre_kernel_releases")
+        .select("event_id").eq("artifact_sha256", digest).eq("processing_state", "RELEASED")
+        .eq("artifact_digest_verified", true).eq("issuer_signature_verified", true)
+        .eq("contract_validated", true).limit(1).maybeSingle();
+      if (!released) return reply({ error: "artifact_not_released" }, 404);
+    }
+    const { data: file, error } = await supabase.storage.from("pre-release-artifacts").download(`${digest}.tar.gz`);
+    if (error || !file) return reply({ error: "artifact_not_found" }, 404);
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (await sha256Hex(bytes) !== digest) return reply({ error: "stored_artifact_integrity_failure" }, 409);
+    return new Response(bytes, { status: 200, headers: {
+      ...corsHeaders, "content-type": "application/gzip", "content-length": String(bytes.length),
+      "content-disposition": `attachment; filename="pre-rpeds-${digest}.tar.gz"`,
+    }});
   }
 
   if (req.method === "POST" && path === "release") {
     const raw = await req.text();
-    if (!(await verifyHsoSignature(req, raw, syncToken))) return reply({ error: "invalid_signature" }, 401);
+    const oidcPublisher = await verifyGitHubOidc(req, "publisher");
+    if (!oidcPublisher && !(await verifyHsoSignature(req, raw, syncToken))) return reply({ error: "invalid_signature" }, 401);
     let event: unknown;
     try { event = JSON.parse(raw); } catch { return reply({ error: "invalid_json" }, 400); }
     const invalid = validateReleaseEvent(event);
     if (invalid) return reply({ error: invalid }, 422);
 
     const e = event as Record<string, any>;
+    const expectedLocator = `${url}/functions/v1/pre-core-federation/artifact?sha256=${e.artifact_sha256}`;
+    if (e.source_locator !== expectedLocator) return reply({ error: "source_locator_must_reference_registered_private_artifact" }, 422);
+    const { data: storedArtifact, error: artifactReadError } = await supabase.storage
+      .from("pre-release-artifacts").download(`${e.artifact_sha256}.tar.gz`);
+    if (artifactReadError || !storedArtifact) return reply({ error: "artifact_not_uploaded" }, 409);
+    const storedBytes = new Uint8Array(await storedArtifact.arrayBuffer());
+    if (await sha256Hex(storedBytes) !== e.artifact_sha256) return reply({ error: "stored_artifact_digest_mismatch" }, 409);
     const { data: inserted, error } = await supabase.from("pre_kernel_releases").insert({
       event_id: e.event_id,
       idempotency_key: e.idempotency_key,
@@ -122,7 +293,7 @@ Deno.serve(async (req: Request) => {
       issuer_identity: e.issuer.identity,
       issuer_key_id: e.issuer.key_id,
       signature_verified: false,
-      publisher_hmac_verified: true,
+      publisher_hmac_verified: !oidcPublisher,
       artifact_digest_verified: false,
       issuer_signature_verified: false,
       contract_validated: false,
@@ -130,12 +301,18 @@ Deno.serve(async (req: Request) => {
       publisher_run_ref: typeof e.publisher_run_ref === "string" ? e.publisher_run_ref : null,
       origin_lineage: Array.isArray(e.origin_lineage) ? e.origin_lineage : [],
       capability_classes: Array.isArray(e.capability_classes) ? e.capability_classes : [],
-      payload: e,
+      payload: { ...e, _publisher_oidc: oidcPublisher ? {
+        repository: oidcPublisher.repository,
+        workflow_ref: oidcPublisher.workflow_ref,
+        ref: oidcPublisher.ref,
+        sha: oidcPublisher.sha,
+        run_id: oidcPublisher.run_id,
+      } : null },
       processing_state: "PUBLISHER_AUTHENTICATED",
       issued_at: e.issued_at,
       processed_at: new Date().toISOString(),
       verification_evidence: {
-        transport_hmac: "PASS",
+        transport_auth: oidcPublisher ? "GITHUB_OIDC_SIGNATURE_VERIFIED" : "HMAC_SHA256",
         artifact_digest: "NOT_VERIFIED",
         issuer_signature: "NOT_VERIFIED",
         compatibility_contract: "NOT_VERIFIED"
@@ -157,9 +334,15 @@ Deno.serve(async (req: Request) => {
       .select("host_id,host_name,subscribed_channel,enabled")
       .eq("enabled", true);
     if (hostError) return reply({ error: "host_registry_read_failed", detail: hostError.message }, 500);
+    const enabledHostIds = new Set((hosts ?? []).map((host: any) => host.host_id));
+    const targetHostIds = new Set(e.target_host_ids as string[]);
+    if ([...targetHostIds].some((hostId) => !enabledHostIds.has(hostId))) {
+      return reply({ error: "release_target_host_not_registered_or_disabled" }, 422);
+    }
 
     const receipts = [];
     for (const host of hosts ?? []) {
+      if (!targetHostIds.has(host.host_id)) continue;
       const channelMatches = host.subscribed_channel === "all" || host.subscribed_channel === e.release_channel;
       if (!channelMatches) continue;
       const { data: receipt, error: receiptError } = await supabase.from("pre_host_adoption_receipts").insert({
@@ -195,9 +378,12 @@ Deno.serve(async (req: Request) => {
 
   if (req.method === "POST" && path === "attest") {
     const raw = await req.text();
-    const verifierToken = Deno.env.get("PRE_RELEASE_VERIFIER_TOKEN");
+    const verifierToken = await resolveSecret(supabase, "PRE_RELEASE_VERIFIER_TOKEN");
     if (!verifierToken) return reply({ error: "release_verifier_not_configured" }, 503);
-    if (!(await verifyHsoSignature(req, raw, verifierToken))) return reply({ error: "invalid_verifier_signature" }, 401);
+    const oidcVerifier = await verifyGitHubOidc(req, "verifier");
+    if (!oidcVerifier && !(await verifyHsoSignature(req, raw, verifierToken))) {
+      return reply({ error: "invalid_verifier_signature" }, 401);
+    }
 
     let body: unknown;
     try { body = JSON.parse(raw); } catch { return reply({ error: "invalid_json" }, 400); }
@@ -219,22 +405,75 @@ Deno.serve(async (req: Request) => {
     if (release.processing_state !== "PUBLISHER_AUTHENTICATED") {
       return reply({ error: "release_not_in_attestable_state", state: release.processing_state }, 409);
     }
-    if (body.verified_artifact_sha256 !== release.artifact_sha256) {
+    const { data: packageBlob, error: packageError } = await supabase.storage
+      .from("pre-release-artifacts").download(`${release.artifact_sha256}.tar.gz`);
+    if (packageError || !packageBlob) return reply({ error: "independent_verifier_artifact_unavailable" }, 409);
+    const packageBytes = new Uint8Array(await packageBlob.arrayBuffer());
+    const computedDigest = await sha256Hex(packageBytes);
+    if (computedDigest !== release.artifact_sha256 || body.verified_artifact_sha256 !== computedDigest) {
       await supabase.from("pre_kernel_releases").update({
         processing_state: "QUARANTINED",
-        last_error: "Verified artifact digest does not match publisher envelope.",
-        verification_evidence: { ...body, digest_match: false }
+        last_error: "Independent artifact digest does not match the immutable publisher envelope.",
+        verification_evidence: { verifier_report: body, computed_digest: computedDigest, digest_match: false }
       }).eq("event_id", eventId);
       return reply({ error: "artifact_digest_mismatch_quarantined" }, 409);
     }
 
+    const releaseEvent = release.payload as Record<string, any>;
+    if (validateReleaseEvent(releaseEvent) !== null || body.is_breaking !== releaseEvent.is_breaking ||
+        body.compatibility_verified !== true) {
+      await supabase.from("pre_kernel_releases").update({
+        processing_state: "QUARANTINED",
+        last_error: "Independent contract and compatibility validation failed.",
+        verification_evidence: { verifier_report: body, contract_validated: false }
+      }).eq("event_id", eventId);
+      return reply({ error: "contract_or_compatibility_validation_failed_quarantined" }, 409);
+    }
+    const publisherProof = releaseEvent._publisher_oidc;
+    const publisherIdentityValid = isObject(publisherProof) &&
+      publisherProof.repository === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna" &&
+      publisherProof.ref === "refs/heads/main" &&
+      publisherProof.workflow_ref === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna/.github/workflows/pre-release-publish.yml@refs/heads/main" &&
+      typeof publisherProof.sha === "string" && /^[a-f0-9]{40}$/.test(publisherProof.sha);
+    const issuerEnvelopeValid =
+      releaseEvent.issuer?.identity === "https://token.actions.githubusercontent.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna" &&
+      releaseEvent.issuer?.key_id === publisherProof?.sha &&
+      releaseEvent.issuer?.identity_ref === releaseEvent.publisher_run_ref &&
+      releaseEvent.source_commit === publisherProof?.sha;
+    const independentRebuildVerified = body.independent_rebuild_verified === true &&
+      body.independent_rebuild_commit === publisherProof?.sha &&
+      body.independent_rebuild_sha256 === computedDigest &&
+      typeof body.independent_rebuild_ref === "string" && body.independent_rebuild_ref.length > 0;
+    if (!publisherIdentityValid || !issuerEnvelopeValid || !independentRebuildVerified) {
+      await supabase.from("pre_kernel_releases").update({
+        processing_state: "QUARANTINED",
+        last_error: "Publisher OIDC identity or independent deterministic source rebuild verification is missing.",
+        verification_evidence: {
+          verifier_report: body,
+          publisher_identity_valid: Boolean(publisherIdentityValid),
+          issuer_envelope_valid: Boolean(issuerEnvelopeValid),
+          independent_rebuild_verified: Boolean(independentRebuildVerified)
+        }
+      }).eq("event_id", eventId);
+      return reply({ error: "publisher_identity_or_independent_rebuild_invalid_quarantined" }, 409);
+    }
+    if (!Array.isArray(body.evidence_refs) || body.evidence_refs.length === 0) {
+      return reply({ error: "verifier_evidence_refs_required" }, 422);
+    }
+
     const evidence = {
       artifact_digest: "PASS",
-      issuer_signature: "PASS",
+      issuer_signature: "PASS_GITHUB_OIDC_TOKEN_SIGNATURE_AND_WORKFLOW_IDENTITY",
       compatibility_contract: "PASS",
       compatibility_verified: true,
       evidence_refs: body.evidence_refs,
-      verifier_identity: body.verifier_identity ?? "PRE_RELEASE_VERIFIER",
+      verifier_identity: body.verifier_identity ?? "GITHUB_ACTIONS_INDEPENDENT_VERIFIER",
+      computed_artifact_sha256: computedDigest,
+      publisher_identity: publisherProof,
+      independent_rebuild: "PASS",
+      independent_rebuild_ref: body.independent_rebuild_ref,
+      independent_rebuild_commit: body.independent_rebuild_commit,
+      independent_rebuild_sha256: body.independent_rebuild_sha256,
       verified_at: new Date().toISOString()
     };
     const { error: updateError } = await supabase.from("pre_kernel_releases").update({
@@ -257,7 +496,9 @@ Deno.serve(async (req: Request) => {
     const isBreaking = release.payload?.is_breaking === true || body.is_breaking === true;
     const sharedDna = capabilityClasses.length > 0 && capabilityClasses.every((value) => value === "SHARED_DNA");
     const receipts = [];
+    const releaseTargets = Array.isArray(release.payload?.target_host_ids) ? new Set(release.payload.target_host_ids) : null;
     for (const host of hosts ?? []) {
+      if (releaseTargets && !releaseTargets.has(host.host_id)) continue;
       if (host.enabled !== true || (host.subscribed_channel !== "all" && host.subscribed_channel !== release.payload?.release_channel)) continue;
       const eligible = host.policy_profile_status === "VERIFIED" &&
         host.auto_adopt_nonbreaking === true &&
@@ -296,10 +537,7 @@ Deno.serve(async (req: Request) => {
     if (host.host_auth_status !== "CONFIGURED" || !host.host_auth_secret_ref) {
       return reply({ error: "host_auth_not_configured" }, 503);
     }
-    const hostSecret = Deno.env.get(host.host_auth_secret_ref);
-    const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
-    const hostToken = req.headers.get("x-host-token") ?? bearer;
-    if (!hostSecret || !safeEqual(hostToken, hostSecret)) return reply({ error: "host_unauthorized" }, 401);
+    if (!(await authorizedHost(supabase, req, hostId))) return reply({ error: "host_unauthorized" }, 401);
     const { data: release, error: releaseError } = await supabase.from("pre_kernel_releases")
       .select("event_id,release_version,release_id,source_locator,artifact_sha256,contract_version,compatibility_range,release_channel,capability_classes,processing_state,artifact_digest_verified,issuer_signature_verified,contract_validated,source_commit,verification_evidence,issued_at")
       .eq("processing_state", "RELEASED")
@@ -333,8 +571,9 @@ Deno.serve(async (req: Request) => {
     if (hostAuth.host_auth_status !== "CONFIGURED" || !hostAuth.host_auth_secret_ref) {
       return reply({ error: "host_auth_not_configured" }, 503);
     }
-    const hostSecret = Deno.env.get(hostAuth.host_auth_secret_ref);
-    if (!hostSecret || !(await verifyHsoSignature(req, raw, hostSecret))) {
+    const hostSecret = await resolveSecret(supabase, hostAuth.host_auth_secret_ref);
+    const oidcHost = hostId === "asfree-rpeds" ? await verifyGitHubOidc(req, "asfree-rpeds") : null;
+    if (!oidcHost && (!hostSecret || !(await verifyHsoSignature(req, raw, hostSecret)))) {
       return reply({ error: "invalid_host_signature" }, 401);
     }
 
@@ -404,7 +643,8 @@ Deno.serve(async (req: Request) => {
 
   if (req.method === "POST" && path === "reconcile") {
     const raw = await req.text();
-    if (!(await verifyHsoSignature(req, raw, syncToken))) return reply({ error: "invalid_signature" }, 401);
+    const oidcReconciler = await verifyGitHubOidc(req, "reconciler");
+    if (!oidcReconciler && !(await verifyHsoSignature(req, raw, syncToken))) return reply({ error: "invalid_signature" }, 401);
     let body: unknown = {};
     if (raw.trim()) { try { body = JSON.parse(raw); } catch { return reply({ error: "invalid_json" }, 400); } }
     if (!isObject(body)) return reply({ error: "body_must_be_object" }, 422);
