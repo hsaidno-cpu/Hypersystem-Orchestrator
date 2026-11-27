@@ -59,6 +59,7 @@ class CatalogValidationTests(unittest.TestCase):
 
     def test_package_version_planes_are_recorded_without_collapsing_source_and_deployment(self):
         catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        repositories = json.loads((ROOT / "catalog" / "repositories.json").read_text(encoding="utf-8"))
         by_key = {p["plugin_key"]: p for p in catalog["plugins"]}
         for item in catalog["plugins"]:
             self.assertTrue(item["platform_package_version"])
