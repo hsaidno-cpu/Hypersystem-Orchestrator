@@ -1,0 +1,64 @@
+name: PRE–RPEDS shared DNA federation
+
+on:
+  repository_dispatch:
+    types: [pre_shared_dna_release]
+  workflow_dispatch:
+    inputs:
+      release_event_json:
+        description: Signed PRE_SHARED_DNA_RELEASE envelope (leave blank for reconciliation only)
+        required: false
+        type: string
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pre-rpeds-federation-${{ github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish-release:
+    if: ${{ github.event_name == 'repository_dispatch' || (github.event_name == 'workflow_dispatch' && inputs.release_event_json != '') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Check publisher configuration
+        env:
+          PRE_FEDERATION_URL: ${{ vars.PRE_FEDERATION_URL }}
+          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+        run: |
+          if [ -z "$PRE_FEDERATION_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
+            echo "::warning::NOT_CONFIGURED: PRE_FEDERATION_URL / HSO_SYNC_TOKEN are missing."
+            echo "Release event not delivered; provision the signed publisher bridge." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+      - name: Publish signed release event
+        env:
+          PRE_FEDERATION_URL: ${{ vars.PRE_FEDERATION_URL }}
+          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: python tools/pre_rpeds_federation_sync.py publish --event-file "$GITHUB_EVENT_PATH"
+
+  scheduled-reconciliation:
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.release_event_json == '') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Check reconciliation configuration
+        env:
+          PRE_FEDERATION_URL: ${{ vars.PRE_FEDERATION_URL }}
+          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+        run: |
+          if [ -z "$PRE_FEDERATION_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
+            echo "::warning::NOT_CONFIGURED: PRE_FEDERATION_URL / HSO_SYNC_TOKEN are missing."
+            echo "Scheduled reconciliation skipped; provision the publisher credential." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+      - name: Reconcile missing host receipts
+        env:
+          PRE_FEDERATION_URL: ${{ vars.PRE_FEDERATION_URL }}
+          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+        run: python tools/pre_rpeds_federation_sync.py reconcile
