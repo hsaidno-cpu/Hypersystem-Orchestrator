@@ -130,7 +130,7 @@ Deno.serve(async (req) => {
   }
 
   const failedCi = eventType === "workflow_run" && compact.workflow_run?.conclusion === "failure";
-  const pullRequestChanged = eventType === "pull_request";
+  const pullRequestChanged = eventType === "pull_request" || eventType === "pull_request_target";
   const changeTitle = failedCi
     ? "CI failed: " + (compact.workflow_run?.name ?? "workflow")
     : pullRequestChanged
