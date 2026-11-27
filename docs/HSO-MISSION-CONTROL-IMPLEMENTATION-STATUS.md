@@ -1,48 +1,81 @@
 # HSO Mission Control implementation status
 
-Updated: 2026-11-24
+Updated: 2026-11-28
 
-## Current implementation
+## Executive disposition
 
-- Canonical repository: `hsaidno-cpu/Hypersystem-Orchestrator`.
-- Feature branch: `feat/hso-mission-control-foundation-20261124`.
-- Draft PR: #21.
-- Next.js app: `apps/mission-control`.
-- Supabase project: `ehgmtkkppmceaffhwcpc`.
-- Applied migration versions: `20261124063356`, `20261124063509`, `20261124074200`.
-- Edge Functions: `hso-notion-webhook` v3, `hso-github-webhook` v3, `hso-reconcile` v3.
-- GitHub app build/typecheck exact-head CI: passed on `6858d77c810a0785d14aa7acef363dc42a03c730`.
-- Integration workflow: passed in NOT_CONFIGURED skip mode; no claim of live sync.
-- Catalog validation: fails on pre-existing compatibility status assertion mismatch; isolated from this dashboard build.
+**PARTIALLY DEPLOYED.** PRE Federation is active and one PRE v0.1.6 → A.S.F.R.E.E/RPEDS repository/CI acceptance cycle is VERIFIED. HSO Mission Control's GitHub Actions path still has failed ingestion/reconciliation runs pending the OIDC/Vault source repair, merge, deployment and live read-back. These states must not be conflated.
+
+## Canonical environment
+
+- Repository: hsaidno-cpu/Hypersystem-Orchestrator.
+- Supabase project: ehgmtkkppmceaffhwcpc (ACTIVE_HEALTHY, Postgres 17.12).
+- PRE Federation Edge Function: pre-core-federation ACTIVE v7.
+- HSO Mission Control deployed functions observed:
+  - hso-github-webhook ACTIVE v4.
+  - hso-reconcile ACTIVE v8.
+  - hso-notion-webhook ACTIVE v5.
+  - hso-decision-engine ACTIVE v7.
+- Vault metadata confirms HSO_SYNC_TOKEN exists. Secret contents were not read or exposed. The helper pre_federation_get_secret(text) is SECURITY DEFINER and callable only by service_role and postgres.
+- HSO dashboard tables use RLS; service-role access remains server-side.
+
+## P0: source/deployment drift
+
+The deployed Edge Function bodies did not match the HSO GitHub main source:
+
+| Function | Deployed version | Deployed lines | Main source lines | Finding |
+|---|---:|---:|---:|---|
+| hso-github-webhook | v4 | 128 | 105 | Deployed change-event projection missing in main |
+| hso-reconcile | v8 | 511 | 290 | Main source omits pagination, snapshot and richer Notion mappings |
+| hso-notion-webhook | v5 | 155 | 98 | Deployed event and recovery logic missing in main |
+| hso-decision-engine | v7 | 580 approx. | Not tracked | Deployed function and policy module absent from main |
+
+The remediation branch restores the active deployed implementation as canonical source before introducing OIDC/Vault changes. Do not deploy stale main versions over the active functions.
+
+## P0: Mission Control authentication repair (change branch)
+
+The current main workflow .github/workflows/hso-mission-control-sync.yml expects HSO_GITHUB_WEBHOOK_URL and GitHub Actions secret HSO_SYNC_TOKEN. The scheduled and ingestion runs failed because that legacy configuration was unavailable:
+
+- [Scheduled reconciliation failure — run 46045159313](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/46045159313).
+- [Event ingestion failure — run 46037294270](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/46037294270).
+- [Event ingestion failure — run 46037257259](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/46037257259).
+
+The repair branch changes this to:
+- GitHub Actions OIDC with id-token: write, no long-lived HSO token in GitHub Actions.
+- Exact repository ID/name, main ref, workflow_ref, event allowlist, endpoint-specific audience, issuer, expiry and RS256/JWKS verification.
+- Trusted main checkout only; pull_request_target event payloads are treated as untrusted data and no PR-head code is executed.
+- Server-side Vault retrieval of HSO_SYNC_TOKEN for internal function-to-function calls and compatibility routes.
+- SHA-256 canonical event payload hashes and unique (provider, delivery_id) idempotency.
+- Restoration of deployed GitHub/Notion webhook and decision-engine source files.
+- Unit/contract tests plus Deno type-check coverage for all restored Mission Control functions.
+
+**This branch is not yet a deployed fix.** The workflow and Edge Functions must be merged/deployed before live acceptance is attempted.
 
 ## Current gate state
 
-| Gate | State | Notes |
+| Gate | State | Evidence / boundary |
 |---|---|---|
-| Repository implementation | READY FOR REVIEW | Draft PR only |
-| Database foundation | APPLIED | HSO tables + RLS |
-| Edge Function deployment | ACTIVE | v3; secrets still required |
-| Dashboard build | PASS | Typecheck + Next build |
-| Live GitHub events | BLOCKED | Repository variable/secret absent |
-| Live Notion events | BLOCKED | Notion internal connection/token/webhook absent |
-| Scheduled reconciliation | BLOCKED | Workflow must be merged to default branch and secrets configured |
-| First admin access | BLOCKED | No active row in `hso_members` yet |
-| Vercel project | BLOCKED | Waiting for team consent; no deployment created |
+| Supabase project health | PASS | Project reports ACTIVE_HEALTHY |
+| PRE shared-DNA release integrity | PASS | 37 source pins, deterministic archive and independent verifier |
+| PRE → RPEDS repository/CI acceptance | VERIFIED | Host receipt, version/digest read-back, AFSA policy and rollback ref |
+| Mission Control schema/RLS | APPLIED | Tables and unique provider/delivery indexes present |
+| Mission Control workflow on main | BLOCKED | Legacy webhook URL/shared-token configuration failed |
+| Mission Control OIDC/Vault source repair | IN REVIEW | Separate branch; not live |
+| HSO Edge Functions source parity | BLOCKED until merge | Four deployed/source drifts identified; source recovery in branch |
+| Live GitHub event ingestion | NOT VERIFIED | Requires merge, deployment and persisted receipt read-back |
+| Duplicate/replay idempotency | PARTIAL | Unique indexes exist; real replay test pending |
+| Scheduled reconciliation | NOT VERIFIED | Must run after OIDC deployment and prove sync run/snapshots |
+| Notion sync | BLOCKED / UNKNOWN | API connection and complete live source read-back not proven |
+| Vercel admin/Preview | NOT VERIFIED | No new production deployment claim |
+| PRE Standalone / HSAR / HSO host adoption | PENDING | Each needs distinct auth, profile, acceptance and receipt |
+| Live Plugin Creator / remote MCP invocation | NOT VERIFIED | CI contract or skipped job is not runtime proof |
 
-## Edge Function behavior (v3)
+## Non-negotiable interpretation rules
 
-- Notion webhook supports signed verification challenge and event HMAC verification.
-- Both Notion and GitHub event endpoints persist an idempotent event then attempt immediate reconciliation using `HSO_SYNC_TOKEN`.
-- Failed immediate invocation does not discard the inbox event; the 15-minute scheduled reconciler is the recovery mechanism.
-- Reconciler reads latest source state and maps actual Notion schema properties into normalized fields. Missing integration credentials remain explicitly not configured.
-- Event ingestion alone never promotes a source to connected.
-
-## Required external configuration
-
-1. Supabase Edge Function secrets: `HSO_SYNC_TOKEN`, `NOTION_API_TOKEN`, `NOTION_WEBHOOK_VERIFICATION_TOKEN`; optional `GITHUB_TOKEN` and `GITHUB_WEBHOOK_SECRET`.
-2. GitHub Actions variable `HSO_GITHUB_WEBHOOK_URL` and secret `HSO_SYNC_TOKEN`.
-3. Notion internal connection shared only with the four HSO source pages/databases, plus its webhook subscription.
-4. Vercel team consent, Git link, project environment variables.
-5. Add the first administrator to `public.hso_members` after Supabase Auth sign-in.
-
-Do not merge or deploy production based only on app build success. Complete data mapping, security, sync, access and preview acceptance first.
+- ACTIVE Edge Function means deployed, not authenticated end-to-end.
+- OIDC acceptance requires token signature, issuer, exact audience, expiry, repository identity, main ref, workflow_ref and allowed event to pass.
+- Event ingestion is not source reconciliation.
+- A 2xx webhook response is not proof that all source snapshots are complete or fresh.
+- A successful sync run is not a PRE host-adoption receipt.
+- VERIFIED for RPEDS applies only to the documented private, non-commercial repository/CI acceptance boundary. It is not live Plugin Creator deployment, public redistribution or commercial permission.
+- Auto-adoption remains disabled.
