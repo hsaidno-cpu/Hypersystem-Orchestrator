@@ -1008,7 +1008,7 @@
       "source_repository_id": null,
       "source_state": "pending_repository",
       "release_version": "0.1.5",
-      "version_evidence": "Plugin Creator exact-ID read-back on 2026-11-27 verifies v0.1.5, USER/PRIVATE, release pluginrel_6b095bf2f4308191bf7d46ce98da36f7. The package contains one master orchestrator and 13 subskills. No independent canonical PRE Git source repository is registered yet.",
+      "version_evidence": "Plugin Creator exact-ID read-back on 2026-11-27 verifies v0.1.5, USER/PRIVATE, release pluginrel_6b095bf2f4308191bf7d46ce98da36f7. The package contains one master orchestrator and 13 subskills. No independent canonical Git source repository for PRE is registered yet.",
       "related_plugins": [
         "skill-analyzer",
         "asfree-canonical",
