@@ -51,8 +51,14 @@ async function resolveSecret(supabase: any, name: string): Promise<string | null
   return typeof data === "string" && data.length > 0 ? data : null;
 }
 
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(copy).set(bytes);
+  return copy;
+}
+
 async function sha256Hex(bytes: Uint8Array): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  const digest = await crypto.subtle.digest("SHA-256", toArrayBuffer(bytes));
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
@@ -95,7 +101,8 @@ async function verifyGitHubOidc(req: Request, role: "publisher" | "verifier" | "
     );
     const signingInput = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
     const signatureValid = await crypto.subtle.verify(
-      { name: "RSASSA-PKCS1-v1_5" }, verificationKey, decodeBase64Url(parts[2]), signingInput,
+      { name: "RSASSA-PKCS1-v1_5" }, verificationKey,
+      toArrayBuffer(decodeBase64Url(parts[2])), toArrayBuffer(signingInput),
     );
     if (!signatureValid) return null;
 
