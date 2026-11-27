@@ -33,7 +33,7 @@ class SourceParityAuditTests(unittest.TestCase):
         self.assertEqual(item["source_sync_status"], "SOURCE_PLATFORM_VERSION_MATCH_PARITY_NOT_COMPARED")
         self.assertEqual(item["repository_version"], "0.5.0-rc.2")
         self.assertEqual(item["platform_package_version"], "0.5.0-rc.2")
-        self.assertIn("byte-level", item["source_instruction_parity_note"].lower())
+        self.assertIn("byte-for-byte", item["source_instruction_parity_note"].lower())
 
     def test_sdo_same_version_does_not_hide_four_file_drift(self):
         item = self.plugins["skill-developer-orchestrator"]
