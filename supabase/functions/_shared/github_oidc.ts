@@ -18,6 +18,12 @@ function decodeBase64Url(value: string): Uint8Array {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(copy).set(bytes);
+  return copy;
+}
+
 function constantTimeEqual(left: string, right: string): boolean {
   if (left.length !== right.length) return false;
   let mismatch = 0;
@@ -95,8 +101,8 @@ export async function verifyGitHubActionsOidc(
     const signatureValid = await crypto.subtle.verify(
       { name: "RSASSA-PKCS1-v1_5" },
       verificationKey,
-      decodeBase64Url(parts[2]),
-      signingInput,
+      toArrayBuffer(decodeBase64Url(parts[2])),
+      toArrayBuffer(signingInput),
     );
     return signatureValid ? claims as Record<string, unknown> : null;
   } catch (error) {
