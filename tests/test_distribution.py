@@ -34,17 +34,13 @@ class DistributionValidationTests(unittest.TestCase):
     def test_people_business_competency_academy_remains_snapshot_only(self):
         registry = self.load(REGISTRY)
         item = next(p for p in registry["plugins"] if p["plugin_key"] == "people-business-competency-academy")
-        self.assertEqual(item["distribution_status"], "private_source_restricted")
-        self.assertEqual(item["source_state"], "private_repository_source")
-        self.assertEqual(item["source_repository_id"], "pre-rpeds-shared-roadmap-dna")
-        self.assertEqual(item["source_commit"], "98008cdf3e082fd4cc8de03e51b2863fbae8cf11")
-        self.assertEqual(item["source_version"], "0.1.6")
+        self.assertEqual(item["distribution_status"], "snapshot_only")
+        self.assertEqual(item["source_state"], "pending_repository")
         self.assertEqual(item["license_status"], "not_assessed")
+        self.assertIsNone(item["source_commit"])
         self.assertIsNone(item["package_artifact"])
-        self.assertIn("LICENSE_RIGHTS_NOT_ASSESSED", item["blockers"])
-        self.assertIn("PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE", item["blockers"])
-        self.assertIn("HOST_ADAPTER_NOT_CONFIGURED", item["blockers"])
-        self.assertIn("INDEPENDENT_RELEASE_ATTESTATION_NOT_COMPLETED", item["blockers"])
+        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
+        self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
 
     def test_executive_workday_orchestrator_remains_snapshot_only_until_release_gates_pass(self):
         registry = self.load(REGISTRY)
