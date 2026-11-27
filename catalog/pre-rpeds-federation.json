@@ -48,7 +48,13 @@
       ],
       "candidate_source_version": "0.5.0-rc.1",
       "source_pr": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/pull/13",
-      "source_pr_status": "OPEN_CI_REVALIDATION"
+      "source_pr_status": "MERGED",
+      "source_commit": "de6b0cecea5ce9c3aaf05bc57320b8f0dd2d9b3b",
+      "source_version": "0.5.0-rc.1",
+      "platform_last_verified_version": "0.3.2",
+      "platform_last_verified_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2",
+      "platform_last_verified_at": "2026-11-27",
+      "runtime_package_state": "PLATFORM_BEHIND_SOURCE"
     }
   ],
   "shared_dna_kernel": [
@@ -86,11 +92,11 @@
     {
       "host_id": "asfree-rpeds",
       "host_name": "A.S.F.R.E.E / RPEDS",
-      "adapter_status": "SOURCE_PR_OPEN",
+      "adapter_status": "SOURCE_MERGED",
       "policy_profile_status": "PENDING_REVIEW",
       "auto_adopt_nonbreaking": false,
       "candidate_host_version": "0.5.0-rc.1",
-      "adoption_state": "SOURCE_PR_PENDING"
+      "adoption_state": "SOURCE_MERGED_PLATFORM_BEHIND"
     },
     {
       "host_id": "hsar",
@@ -149,7 +155,7 @@
       "PRE canonical source repository not registered",
       "Plugin Creator release-event publisher or authenticated polling bridge not configured",
       "per-host environment secrets not provisioned",
-      "A.S.F.R.E.E PR #13 not yet merged and deployed",
+      "A.S.F.R.E.E source merged, but Plugin Creator package remains at 0.3.2 and host read-back of the new source is pending",
       "HSAR adapter and policy profile not registered",
       "host regression and read-back acceptance not run"
     ]
