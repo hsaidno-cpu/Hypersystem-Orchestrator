@@ -33,8 +33,8 @@ function constantTimeEqual(left: string, right: string): boolean {
   return mismatch === 0;
 }
 
-async function getJwks(): Promise<JsonWebKey[]> {
-  if (cachedJwks && cachedJwks.expiresAt > Date.now()) return cachedJwks.keys;
+async function getJwks(forceRefresh = false): Promise<JsonWebKey[]> {
+  if (!forceRefresh && cachedJwks && cachedJwks.expiresAt > Date.now()) return cachedJwks.keys;
   const response = await fetch(GITHUB_JWKS_URL, {
     headers: { "accept": "application/json" },
     signal: AbortSignal.timeout(10000),
@@ -77,8 +77,9 @@ export async function verifyGitHubActionsOidc(
       claims?.iss !== "https://token.actions.githubusercontent.com" ||
       !audience.includes(policy.audience) ||
       typeof claims?.exp !== "number" || claims.exp <= now ||
+      typeof claims?.iat !== "number" || claims.iat > now + 60 ||
+      claims.exp - claims.iat > 900 ||
       (typeof claims?.nbf === "number" && claims.nbf > now + 60) ||
-      (typeof claims?.iat === "number" && claims.iat > now + 60) ||
       claims?.repository !== policy.repository ||
       (policy.repositoryId && String(claims?.repository_id ?? "") !== policy.repositoryId) ||
       claims?.ref !== branchRef ||
@@ -86,8 +87,20 @@ export async function verifyGitHubActionsOidc(
       !policy.allowedEvents.includes(String(claims?.event_name ?? ""))
     ) return null;
 
-    const jwks = await getJwks();
-    const jwk = jwks.find((candidate: any) => candidate?.kid === header.kid && candidate?.kty === "RSA");
+    let jwks = await getJwks();
+    let jwk = jwks.find((candidate: any) =>
+      candidate?.kid === header.kid && candidate?.kty === "RSA" &&
+      (!candidate?.use || candidate.use === "sig") &&
+      (!candidate?.alg || candidate.alg === "RS256")
+    );
+    if (!jwk) {
+      jwks = await getJwks(true);
+      jwk = jwks.find((candidate: any) =>
+        candidate?.kid === header.kid && candidate?.kty === "RSA" &&
+        (!candidate?.use || candidate.use === "sig") &&
+        (!candidate?.alg || candidate.alg === "RS256")
+      );
+    }
     if (!jwk) return null;
 
     const verificationKey = await crypto.subtle.importKey(
