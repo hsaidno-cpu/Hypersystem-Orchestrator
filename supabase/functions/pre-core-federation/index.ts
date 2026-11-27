@@ -56,41 +56,6 @@ async function sha256Hex(bytes: Uint8Array): Promise<string> {
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-function base64Bytes(value: string): Uint8Array {
-  const binary = atob(value);
-  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
-}
-
-function canonicalize(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(canonicalize);
-  if (isObject(value)) {
-    return Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonicalize(value[key])]));
-  }
-  return value;
-}
-
-function issuerSigningPayload(event: Record<string, any>): Uint8Array {
-  const payload = JSON.parse(JSON.stringify(event));
-  if (payload.issuer && typeof payload.issuer === "object") delete payload.issuer.signature;
-  return new TextEncoder().encode(JSON.stringify(canonicalize(payload)));
-}
-
-async function verifyIssuerSignature(event: Record<string, any>, publicKeyB64: string): Promise<boolean> {
-  try {
-    const publicKey = await crypto.subtle.importKey(
-      "raw", base64Bytes(publicKeyB64), { name: "Ed25519" }, false, ["verify"],
-    );
-    return await crypto.subtle.verify(
-      { name: "Ed25519" }, publicKey,
-      base64Bytes(String(event.issuer?.signature ?? "")),
-      issuerSigningPayload(event),
-    );
-  } catch (error) {
-    console.error("issuer_signature_verification_error", String(error));
-    return false;
-  }
-}
-
 function decodeBase64Url(value: string): Uint8Array {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
   const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
@@ -222,12 +187,10 @@ Deno.serve(async (req: Request) => {
 
   if (req.method === "GET" && path === "health") {
     const verifierSecret = await resolveSecret(supabase, "PRE_RELEASE_VERIFIER_TOKEN");
-    const issuerPublicKey = await resolveSecret(supabase, "PRE_RELEASE_SIGNER_PUBLIC_KEY");
     return reply({
       service: "pre-core-federation", status: "ACTIVE", signed_transport: true,
       publisher_vault_configured: Boolean(syncToken),
       independent_verifier_configured: Boolean(verifierSecret),
-      issuer_public_key_configured: Boolean(issuerPublicKey),
       artifact_storage: "pre-release-artifacts",
       reconciliation_endpoint: "POST /reconcile",
       persistence: "SUPABASE_POSTGRES",
@@ -317,7 +280,7 @@ Deno.serve(async (req: Request) => {
       issuer_identity: e.issuer.identity,
       issuer_key_id: e.issuer.key_id,
       signature_verified: false,
-      publisher_hmac_verified: true,
+      publisher_hmac_verified: Boolean(oidcPublisher || syncToken),
       artifact_digest_verified: false,
       issuer_signature_verified: false,
       contract_validated: false,
@@ -325,12 +288,18 @@ Deno.serve(async (req: Request) => {
       publisher_run_ref: typeof e.publisher_run_ref === "string" ? e.publisher_run_ref : null,
       origin_lineage: Array.isArray(e.origin_lineage) ? e.origin_lineage : [],
       capability_classes: Array.isArray(e.capability_classes) ? e.capability_classes : [],
-      payload: e,
+      payload: { ...e, _publisher_oidc: oidcPublisher ? {
+        repository: oidcPublisher.repository,
+        workflow_ref: oidcPublisher.workflow_ref,
+        ref: oidcPublisher.ref,
+        sha: oidcPublisher.sha,
+        run_id: oidcPublisher.run_id,
+      } : null },
       processing_state: "PUBLISHER_AUTHENTICATED",
       issued_at: e.issued_at,
       processed_at: new Date().toISOString(),
       verification_evidence: {
-        transport_hmac: "PASS",
+        transport_auth: oidcPublisher ? "GITHUB_OIDC_SIGNATURE_VERIFIED" : "HMAC_SHA256",
         artifact_digest: "NOT_VERIFIED",
         issuer_signature: "NOT_VERIFIED",
         compatibility_contract: "NOT_VERIFIED"
@@ -441,14 +410,21 @@ Deno.serve(async (req: Request) => {
       }).eq("event_id", eventId);
       return reply({ error: "contract_or_compatibility_validation_failed_quarantined" }, 409);
     }
-    const signerPublicKey = await resolveSecret(supabase, "PRE_RELEASE_SIGNER_PUBLIC_KEY");
-    if (!signerPublicKey || !(await verifyIssuerSignature(releaseEvent, signerPublicKey))) {
+    const publisherProof = releaseEvent._publisher_oidc;
+    const publisherIdentityValid = isObject(publisherProof) &&
+      publisherProof.repository === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna" &&
+      publisherProof.ref === "refs/heads/main" &&
+      publisherProof.workflow_ref === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna/.github/workflows/pre-release-publish.yml@refs/heads/main" &&
+      typeof publisherProof.sha === "string" && /^[a-f0-9]{40}$/.test(publisherProof.sha);
+    const provenanceVerified = body.provenance_attestation_verified === true &&
+      body.provenance_attestation_ref && typeof body.provenance_attestation_ref === "string";
+    if (!publisherIdentityValid || !provenanceVerified) {
       await supabase.from("pre_kernel_releases").update({
         processing_state: "QUARANTINED",
-        last_error: "Pinned PRE issuer Ed25519 signature verification failed.",
-        verification_evidence: { verifier_report: body, issuer_signature_verified: false }
+        last_error: "Publisher OIDC identity or independent GitHub artifact provenance attestation is missing.",
+        verification_evidence: { verifier_report: body, publisher_identity_valid: Boolean(publisherIdentityValid), provenance_verified: Boolean(provenanceVerified) }
       }).eq("event_id", eventId);
-      return reply({ error: "issuer_signature_invalid_quarantined" }, 409);
+      return reply({ error: "publisher_identity_or_provenance_invalid_quarantined" }, 409);
     }
     if (!Array.isArray(body.evidence_refs) || body.evidence_refs.length === 0) {
       return reply({ error: "verifier_evidence_refs_required" }, 422);
@@ -456,13 +432,14 @@ Deno.serve(async (req: Request) => {
 
     const evidence = {
       artifact_digest: "PASS",
-      issuer_signature: "PASS",
+      issuer_signature: "PASS_GITHUB_OIDC_AND_ARTIFACT_ATTESTATION",
       compatibility_contract: "PASS",
       compatibility_verified: true,
       evidence_refs: body.evidence_refs,
       verifier_identity: body.verifier_identity ?? "GITHUB_ACTIONS_INDEPENDENT_VERIFIER",
       computed_artifact_sha256: computedDigest,
-      signer_key_id: releaseEvent.issuer.key_id,
+      publisher_identity: publisherProof,
+      provenance_attestation_ref: body.provenance_attestation_ref,
       verified_at: new Date().toISOString()
     };
     const { error: updateError } = await supabase.from("pre_kernel_releases").update({
