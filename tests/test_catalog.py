@@ -305,3 +305,6 @@ if __name__ == "__main__":
         self.assertFalse(registry['adoption_policy']['default_auto_adopt_nonbreaking'])
         self.assertEqual(registry['readiness']['status'], 'PARTIALLY_DEPLOYED')
         self.assertEqual(registry['readiness']['release_event_test'], 'NOT_RUN')
+        self.assertEqual(registry['readiness']['edge_function_version'], 5)
+        self.assertEqual(registry['readiness']['reconciliation_endpoint'], 'DEPLOYED')
+        self.assertFalse(registry['readiness']['runtime_verified'])
