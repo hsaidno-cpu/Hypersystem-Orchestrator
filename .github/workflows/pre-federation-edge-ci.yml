@@ -6,6 +6,8 @@ on:
       - "supabase/functions/pre-core-federation/**"
       - "supabase/functions/hso-github-webhook/**"
       - "supabase/functions/hso-reconcile/**"
+      - "supabase/functions/hso-notion-webhook/**"
+      - "supabase/functions/hso-decision-engine/**"
       - "supabase/functions/_shared/**"
       - "supabase/migrations/*pre_release_private_artifact_bucket*"
       - ".github/workflows/pre-federation-edge-ci.yml"
@@ -35,3 +37,5 @@ jobs:
           deno check supabase/functions/pre-core-federation/index.ts
           deno check supabase/functions/hso-github-webhook/index.ts
           deno check supabase/functions/hso-reconcile/index.ts
+          deno check supabase/functions/hso-notion-webhook/index.ts
+          deno check supabase/functions/hso-decision-engine/index.ts
