@@ -115,8 +115,8 @@
       "policy_profile_status": "PENDING_REVIEW",
       "auto_adopt_nonbreaking": false,
       "edge_function": "pre-core-federation",
-      "edge_function_version": 4,
-      "adoption_state": "PUBLISHER_AND_HOST_AUTH_PENDING"
+      "edge_function_version": 5,
+      "adoption_state": "RELEASE_EVENT_PUBLISHER_AND_HOST_AUTH_PENDING"
     }
   ],
   "adoption_policy": {
@@ -146,7 +146,7 @@
     "database_registry": "DEPLOYED",
     "service_role_policies": "DEPLOYED",
     "edge_function": "ACTIVE_DEPLOYED",
-    "edge_function_version": 4,
+    "edge_function_version": 5,
     "event_publisher": "NOT_CONFIGURED",
     "release_event_test": "NOT_RUN",
     "host_secret_provisioning": "NOT_CONFIGURED",
@@ -154,20 +154,25 @@
     "host_readback": "NOT_RUN",
     "runtime_verified": false,
     "blockers": [
-      "PRE canonical source repository not registered; current USER/PRIVATE release is tracked by Plugin Creator metadata only",
-      "Plugin Creator release-event publisher or authenticated polling bridge not configured",
-      "per-host environment secrets not provisioned; all host auth states remain NOT_CONFIGURED",
-      "A.S.F.R.E.E source is merged at 0.5.0-rc.1, but its Plugin Creator package remains 0.3.2 and host read-back is pending",
-      "HSAR package adapter 0.3.1 is updated, but its HSO policy profile remains PENDING_PROFILE and host authentication is not configured",
-      "host regression, exact package/digest read-back and rollback acceptance are not run",
-      "no PRE release event, host adoption receipt or capability contribution has yet been recorded"
+      "PRE canonical source repository and source release authority are not registered",
+      "Plugin Creator release event relay is not connected; publisher workflow has no observed release event",
+      "PRE_FEDERATION_URL and HSO_SYNC_TOKEN repository settings are not confirmed configured",
+      "PRE_RELEASE_VERIFIER_TOKEN and per-host PRE_HOST_TOKEN_* secrets are not configured or independently verified",
+      "PRE Standalone, A.S.F.R.E.E/RPEDS, HSAR and HSO host policy profiles remain pending; auto-adoption remains false",
+      "A.S.F.R.E.E source 0.5.0-rc.1 is merged but Plugin Creator package remains v0.3.2",
+      "HSAR adapter package v0.3.1 is updated but host authentication and policy profile remain pending",
+      "No PRE release event, adoption receipt or capability contribution is recorded; host test/read-back/rollback acceptance remain NOT_RUN"
     ],
-    "host_adapter_inventory": "PRE_STANDALONE_0.1.6; ASFREE_RPEDS_SOURCE_MERGED_PLATFORM_BEHIND; HSAR_ADAPTER_0.3.1_PROFILE_PENDING; HSO_FEDERATION_RUNTIME_V4",
+    "host_adapter_inventory": "PRE_STANDALONE_0.1.6_PROFILE_PENDING; ASFREE_RPEDS_SOURCE_MERGED_PLATFORM_BEHIND; HSAR_ADAPTER_0.3.1_PROFILE_PENDING; HSO_EDGE_V5_ACTIVE_PUBLISHER_NOT_CONFIGURED",
     "release_event_publisher": "NOT_CONFIGURED",
     "database_event_counts": {
       "pre_kernel_releases": 0,
       "pre_host_adoption_receipts": 0,
       "pre_capability_contributions": 0
-    }
+    },
+    "reconciliation_endpoint": "DEPLOYED",
+    "reconciliation_workflow": "MERGED_NOT_CONFIGURED",
+    "publisher_bridge_source": "MERGED_NOT_CONFIGURED",
+    "edge_function_sha256": "195b8ff3cc611a3caea38c786146012ddd3212760b7849e52225a812a102079a"
   }
 }

@@ -14,7 +14,7 @@ The HSO Supabase registry contains pre_kernel_releases, pre_host_subscriptions, 
 
 ## Edge Function
 
-Supabase Edge Function pre-core-federation is deployed at version 4 in project ehgmtkkppmceaffhwcpc.
+Supabase Edge Function pre-core-federation is deployed at version 5 in project ehgmtkkppmceaffhwcpc. Deployment read-back SHA-256: `195b8ff3cc611a3caea38c786146012ddd3212760b7849e52225a812a102079a`.
 
 - GET /health reports service availability/configuration only.
 - POST /release accepts a release envelope after HMAC verification using HSO_SYNC_TOKEN; event and idempotency keys are unique. Per-host receipts are created. Unverified host profiles are held.
@@ -25,7 +25,7 @@ Host auth references store environment variable names, not credential values. Th
 
 ## Deployed versus not yet live
 
-Deployed: four registry tables, RLS/service-role permissions, explicit service-role policies, four initial host records, host auth references and Edge Function v4.
+Deployed: four registry tables, RLS/service-role permissions, explicit service-role policies, four initial host records, host auth references and Edge Function v5.
 
 Not yet accepted end-to-end: Plugin Creator release publisher, signed event delivery, per-host secret provisioning, A.S.F.R.E.E Plugin Creator update/read-back, HSAR adapter/policy profile, host regression receipts and rollback drill.
 
@@ -44,7 +44,7 @@ Automatic adoption is disabled by default. It may be enabled for additive, non-b
 | PRE Standalone | 0.1.6 current; host policy profile pending | No |
 | A.S.F.R.E.E / RPEDS | Source merged at `de6b0ce`; Plugin Creator 0.3.2 remains behind source 0.5.0-rc.1; host read-back pending | No |
 | HSAR | Plugin Creator adapter package 0.3.1 updated; HSO policy profile and host authentication pending | No |
-| HSO | Registry and Edge Function v2 deployed; event publisher and credentials pending | No |
+| HSO | Registry and Edge Function v5 deployed; publisher and host credentials pending | No |
 
 Machine-readable status: catalog/pre-rpeds-federation.json.
 
@@ -81,3 +81,16 @@ A direct database read-back found zero rows in `pre_kernel_releases`, `pre_host_
 The open source candidate adds an idempotent `POST /reconcile` recovery route and a 15-minute scheduled GitHub Actions workflow. The reconciliation logic does not overwrite existing receipts and queues a host for testing only when every capability class in the event is `SHARED_DNA`, the event is explicitly non-breaking, the host policy profile is `VERIFIED`, and host auto-adoption is explicitly enabled. Mixed `SHARED_DNA` + `HOST_ADAPTATION` events remain held. `VERIFIED` adoption also requires policy refs, adapter version, rollback ref, exact read-back and all-PASS tests.
 
 The source PR and CI do not provision GitHub/Supabase secrets, create a Plugin Creator release event feed, or deploy the new reconciliation route. Those remain distinct activation steps. The migration file is a source mirror of already-applied live migration `20261127105413`; it must not be replayed against the production database.
+
+
+## HSO PR #50 merged and Edge Function v5 deployment read-back — 27 November 2026
+
+- HSO PR #50 is merged at `a13c710d8e40e2b66cc036fe535a317d53abba7c`.
+- Supabase `pre-core-federation` is ACTIVE v5. Read-back reports the deployed source hash `195b8ff3cc611a3caea38c786146012ddd3212760b7849e52225a812a102079a`.
+- The new `POST /reconcile` endpoint repairs missing per-host receipts idempotently. It never overwrites existing receipts or marks a host ADOPTED/VERIFIED by itself.
+- Auto-queue eligibility now requires every event capability class to be `SHARED_DNA`, `is_breaking=false`, a `VERIFIED` host policy profile and explicit host opt-in. Mixed `HOST_ADAPTATION` events remain held.
+- A host can be `VERIFIED` only with a verified host policy profile, compatible AFSA disposition, policy references, adapter version, rollback reference, matching release/read-back version and digest, and all-PASS test results.
+- The GitHub Actions workflow schedules reconciliation every 15 minutes and accepts a signed publisher dispatch. The workflow and code are merged, but credentials and the Plugin Creator release relay remain unconfigured/not verified.
+- Live database read-back still shows zero release events and zero adoption receipts. No host is upgraded by this merge or deployment alone.
+
+**Runtime status:** Edge Function deployed and source read-back verified; event delivery and host adoption remain NOT CONFIGURED / NOT RUN. A direct HTTP health request could not be completed from the current inspection environment, so HTTP endpoint health is not claimed.
