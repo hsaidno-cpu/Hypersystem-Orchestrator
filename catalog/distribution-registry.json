@@ -257,7 +257,7 @@
       "source_repository_id": "asfree",
       "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "source_version": "0.5.0-rc.2",
-      "platform_package_version": "0.3.2",
+      "platform_package_version": "0.5.0-rc.2",
       "distribution_status": "review_required",
       "license_status": "review_required",
       "package_artifact": null,
@@ -265,12 +265,12 @@
       "dependency_metadata_status": "not_assessed",
       "blockers": [
         "POLYFORM_NONCOMMERCIAL_TERMS_REQUIRE_DISTRIBUTION_REVIEW",
-        "PLUGIN_CREATOR_PACKAGE_BEHIND_CANONICAL_SOURCE",
         "PACKAGE_ARTIFACT_NOT_PUBLISHED",
         "PLATFORM_ADAPTER_NOT_HOST_TESTED",
-        "RPEDS_AFSA_HOST_POLICY_PROFILE_AND_READBACK_PENDING"
+        "RPEDS_AFSA_HOST_POLICY_PROFILE_AND_READBACK_PENDING",
+        "INSTRUCTION_CONTENT_PARITY_DRIFT_REMAINS"
       ],
-      "eligibility_note": "Canonical A.S.F.R.E.E source is pinned at 0.5.0-rc.2 (commit f814cff8e800136a6e3a1f664b41085076f19ac8). Plugin Creator remains USER/PRIVATE v0.3.2. The source is governed by PolyForm Noncommercial 1.0.0; no public redistribution or installable package artifact is authorized by this record. Creator update, exact read-back, host policy and runtime adoption remain pending."
+      "eligibility_note": "Canonical A.S.F.R.E.E source and Plugin Creator package metadata/read-back both identify 0.5.0-rc.2. Creator release pluginrel_6b097130b520819197895298a0a0f73c is USER/PRIVATE with 15 skill documents. The update is a partial overlay, not proof of full source-instruction parity. PolyForm Noncommercial 1.0.0 remains in force; no public redistribution or installable public artifact is authorized by this record. Host policy and runtime adoption remain pending."
     },
     {
       "plugin_key": "asfree-legacy",

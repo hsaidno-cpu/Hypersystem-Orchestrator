@@ -103,3 +103,12 @@ The source PR and CI do not provision GitHub/Supabase secrets, create a Plugin C
 - RPEDS remains a first-class native A.S.F.R.E.E workstream with four modules; it is not deleted or replaced by PRE. PRE Standalone and RPEDS share roadmap DNA and release lineage.
 - Parent HSO submodule pin and source registries are being advanced to this commit. Plugin Creator package remains **0.3.2**, release `pluginrel_6b00fc6b23bc8191a5930132969e52c2`; deployment read-back and source/platform parity are still pending.
 - PolyForm Noncommercial 1.0.0 terms remain in force. No broader redistribution is implied by the public parent repository.
+
+
+## A.S.F.R.E.E Creator package read-back — 27 November 2026
+
+- Plugin Creator A.S.F.R.E.E was updated to `0.5.0-rc.2`, release `pluginrel_6b097130b520819197895298a0a0f73c`, preserving plugin identity, USER scope and PRIVATE discoverability.
+- Read-back confirms 55 package files and 15 `SKILL.md` documents, including `rpeds-progressive-development` and `rpeds-adaptive-functional-situational-adapter`.
+- Source and Creator package version metadata now match. Instruction-content parity remains `DRIFT_DETECTED`: 13 pre-existing skill bodies were retained rather than overwritten; the overlay adds RPEDS and AFSA but does not refresh all 13 bodies to canonical source.
+- The A.S.F.R.E.E/RPEDS host policy profile is still `PENDING_REVIEW`, host token is `NOT_CONFIGURED`, auto-adoption remains disabled, and no host adoption receipt exists.
+- The HSO catalog is being reconciled to this Creator release read-back. Public distribution remains `review_required` under PolyForm Noncommercial 1.0.0.
