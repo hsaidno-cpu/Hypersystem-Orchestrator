@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "last_inventory_date": "2026-11-26",
+  "last_inventory_date": "2026-11-27",
   "repositories": [
     {
       "repository_id": "hypersystem-orchestrator",
@@ -41,14 +41,14 @@
       "default_branch": "main",
       "role": "plugin_source",
       "status": "integrated_submodule",
-      "pinned_commit": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
+      "pinned_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "submodule_path": "plugins/asfree",
-      "verified_artifact": "README.md and plugin/plugin.json inspected 2026-11-22; package version 0.5.0-rc.1 is a release candidate.",
+      "verified_artifact": "README.md, plugin/plugin.json, M00, O01–O12, RPEDS progressive-development and AFSA host-adapter skill paths inspected at main commit f814cff8e800136a6e3a1f664b41085076f19ac8; package version 0.5.0-rc.2 is a release candidate.",
       "source_classification": "OFFICIAL_PUBLIC_SOURCE",
       "license_status": "POLYFORM_NONCOMMERCIAL_1_0_0",
       "license_url": "https://polyformproject.org/licenses/noncommercial/1.0.0",
       "required_notice": "Copyright (c) 2026 Hary Saidno and A.S.F.R.E.E contributors.",
-      "package_version": "0.5.0-rc.1",
+      "package_version": "0.5.0-rc.2",
       "package_version_status": "RELEASE_CANDIDATE"
     },
     {
