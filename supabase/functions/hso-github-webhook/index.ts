@@ -84,7 +84,15 @@ Deno.serve(async (req) => {
     workflowRef: "hsaidno-cpu/Hypersystem-Orchestrator/.github/workflows/hso-mission-control-sync.yml@refs/heads/main",
     allowedEvents: ["push", "pull_request_target", "workflow_run"],
   });
-  const oidcAuthenticated = Boolean(oidcClaims && oidcClaims.event_name === eventType);
+  const expectedDelivery = oidcClaims?.run_id
+    ? "github-actions-" + String(oidcClaims.run_id) + "-" + eventType
+    : "";
+  const oidcAuthenticated = Boolean(
+    oidcClaims &&
+    oidcClaims.event_name === eventType &&
+    expectedDelivery &&
+    delivery === expectedDelivery
+  );
   const hsoSig = (req.headers.get("x-hso-signature") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
   const githubSig = (req.headers.get("x-hub-signature-256") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
   const hsoHmacAuthenticated = Boolean(hsoSecret && hsoSig && safeEqual(hsoSig, await hmacHex(hsoSecret, raw)));
@@ -96,6 +104,9 @@ Deno.serve(async (req) => {
   let event: Record<string, any>;
   try { event = JSON.parse(raw); } catch { return Response.json({ error: "invalid_json" }, { status: 400, headers: cors }); }
 
+  if (event.repository?.full_name !== "hsaidno-cpu/Hypersystem-Orchestrator") {
+    return Response.json({ error: "event_repository_mismatch" }, { status: 422, headers: cors });
+  }
   const compact = compactPayload(event);
   const payloadHash = await sha256Hex(JSON.stringify(compact));
   const { data: insertedEvents, error } = await supabase.from("hso_integration_events").upsert({
@@ -109,6 +120,14 @@ Deno.serve(async (req) => {
   }, { onConflict: "provider,delivery_id", ignoreDuplicates: true }).select("id");
   if (error) return Response.json({ error: "event_store_failed", detail: error.message }, { status: 500, headers: cors });
   const duplicateDelivery = !insertedEvents || insertedEvents.length === 0;
+  if (duplicateDelivery) {
+    const { data: existing, error: existingError } = await supabase.from("hso_integration_events")
+      .select("payload_hash").eq("provider", "github").eq("delivery_id", delivery).maybeSingle();
+    if (existingError) return Response.json({ error: "duplicate_event_readback_failed" }, { status: 500, headers: cors });
+    if (!existing || existing.payload_hash !== payloadHash) {
+      return Response.json({ error: "delivery_id_payload_conflict" }, { status: 409, headers: cors });
+    }
+  }
 
   const failedCi = eventType === "workflow_run" && compact.workflow_run?.conclusion === "failure";
   const pullRequestChanged = eventType === "pull_request";
