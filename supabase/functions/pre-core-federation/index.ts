@@ -70,24 +70,8 @@ function canonicalize(value: unknown): unknown {
 }
 
 function issuerSigningPayload(event: Record<string, any>): Uint8Array {
-  const payload = {
-    event_id: event.event_id,
-    event_type: event.event_type,
-    canonical_identity: event.canonical_identity,
-    version: event.version,
-    release_id: event.release_id,
-    source_locator: event.source_locator,
-    artifact_sha256: event.artifact_sha256,
-    contract_version: event.contract_version,
-    compatibility_range: event.compatibility_range,
-    release_channel: event.release_channel,
-    capability_classes: event.capability_classes,
-    is_breaking: event.is_breaking,
-    source_commit: event.source_commit ?? null,
-    issued_at: event.issued_at,
-    idempotency_key: event.idempotency_key,
-    issuer: { identity: event.issuer?.identity, key_id: event.issuer?.key_id },
-  };
+  const payload = JSON.parse(JSON.stringify(event));
+  if (payload.issuer && typeof payload.issuer === "object") delete payload.issuer.signature;
   return new TextEncoder().encode(JSON.stringify(canonicalize(payload)));
 }
 
@@ -279,7 +263,10 @@ Deno.serve(async (req: Request) => {
     if (!validSha256(digest)) return reply({ error: "valid_sha256_required" }, 400);
     const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
     const verifierToken = await resolveSecret(supabase, "PRE_RELEASE_VERIFIER_TOKEN");
-    const verifierAuthenticated = Boolean(verifierToken && safeEqual(bearer, verifierToken));
+    const verifierAuthenticated = Boolean(
+      (verifierToken && safeEqual(bearer, verifierToken)) ||
+      (await verifyGitHubOidc(req, "verifier"))
+    );
     const hostId = new URL(req.url).searchParams.get("host_id");
     if (!verifierAuthenticated) {
       if (!hostId || !(await authorizedHost(supabase, req, hostId))) return reply({ error: "artifact_access_denied" }, 401);
