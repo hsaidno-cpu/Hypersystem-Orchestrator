@@ -424,12 +424,12 @@
     },
     {
       "plugin_key": "progressive-roadmap-evaluator",
-      "display_name": "Progressive Roadmap Evaluator (PRE)",
+      "display_name": "PRE–RPEDS Shared Roadmap DNA",
       "source_state": "pending_repository",
       "source_repository_id": null,
       "source_commit": null,
       "source_version": null,
-      "platform_package_version": "0.1.1",
+      "platform_package_version": "0.1.5",
       "distribution_status": "snapshot_only",
       "license_status": "not_assessed",
       "package_artifact": null,
@@ -437,10 +437,11 @@
       "dependency_metadata_status": "not_assessed",
       "blockers": [
         "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
-        "INSTRUCTION_SNAPSHOT_IS_NOT_A_RELEASE_PACKAGE",
+        "INSTRUCTION_SNAPSHOT_COVERS_9_OF_14_SKILL_DEFINITIONS",
+        "LICENSE_AND_REUSE_BASIS_NOT_ASSESSED_FOR_PARENT_REPUBLICATION",
         "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE"
       ],
-      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.1 is verified, but no canonical Git source, independently cleared distribution license or public package artifact is registered. The parent instruction bundle is a provenance snapshot, not an installable release."
+      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.5 is verified, release pluginrel_6b095bf2f4308191bf7d46ce98da36f7. The parent contains a historical nine-skill instruction snapshot, not a current complete release package. No canonical PRE source repository, complete public artifact or independently cleared publication rights are registered."
     },
     {
       "plugin_key": "ponytail-engineering-optimizer",

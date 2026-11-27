@@ -204,10 +204,11 @@ class CatalogValidationTests(unittest.TestCase):
         indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
         self.assertEqual(catalog["expected_plugin_count"], len(catalog["plugins"]))
         self.assertEqual(pre["plugin_creator_id"], "plugins_6b038580bc488191ac56d9e586071bfc")
-        self.assertEqual(pre["platform_package_version"], "0.1.1")
-        self.assertEqual(pre["platform_current_release_id"], "pluginrel_6b0385d7a4488191a681997c0d9ae531")
+        self.assertEqual(pre["platform_package_version"], "0.1.5")
+        self.assertEqual(pre["platform_current_release_id"], "pluginrel_6b095bf2f4308191bf7d46ce98da36f7")
         self.assertEqual(pre["source_state"], "pending_repository")
         self.assertIsNone(pre["source_repository_id"])
+        self.assertEqual(pre["current_installed_skill_count"], 14)
         self.assertEqual(pre["instruction_skill_count"], 9)
         self.assertEqual(indexed["skill_count"], 9)
         self.assertEqual(
@@ -284,3 +285,17 @@ class CatalogValidationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_pre_rpeds_federation_registry_preserves_peer_manifestations(self):
+        registry = json.loads((ROOT / 'catalog' / 'pre-rpeds-federation.json').read_text(encoding='utf-8'))
+        self.assertEqual(registry['canonical_identity'], 'pre-rpeds-shared-roadmap-dna')
+        manifestations = {item['manifestation_id']: item for item in registry['manifestations']}
+        self.assertIn('pre-standalone', manifestations)
+        self.assertIn('asfree-rpeds', manifestations)
+        self.assertEqual(manifestations['pre-standalone']['kind'], 'FIRST_CLASS_MANIFESTATION')
+        self.assertEqual(manifestations['asfree-rpeds']['kind'], 'FIRST_CLASS_MANIFESTATION')
+        self.assertEqual(len(manifestations['asfree-rpeds']['retained_modules']), 4)
+        self.assertFalse(registry['adoption_policy']['default_auto_adopt_nonbreaking'])
+        self.assertEqual(registry['readiness']['status'], 'PARTIALLY_DEPLOYED')
+        self.assertEqual(registry['readiness']['release_event_test'], 'NOT_RUN')

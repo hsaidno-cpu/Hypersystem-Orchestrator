@@ -130,6 +130,9 @@ def validate():
             fail(f"{key}: positive and negative routing triggers are required")
         if not isinstance(plugin.get("instruction_skill_count"), int) or plugin["instruction_skill_count"] < 1:
             fail(f"{key}: instruction_skill_count must be a positive integer")
+        current_skill_count = plugin.get("current_installed_skill_count")
+        if current_skill_count is not None and (not isinstance(current_skill_count, int) or current_skill_count < plugin["instruction_skill_count"]):
+            fail(f"{key}: current_installed_skill_count must be an integer >= snapshot-covered instruction_skill_count")
         snapshot_path = ROOT / plugin["instruction_snapshot_path"]
         if not snapshot_path.is_file():
             fail(f"{key}: instruction snapshot path is missing: {plugin['instruction_snapshot_path']}")

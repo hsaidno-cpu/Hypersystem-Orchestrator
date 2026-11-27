@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0.0",
+  "registry_revision": "2026-11-27",
+  "canonical_identity": "pre-rpeds-shared-roadmap-dna",
+  "canonical_package": {
+    "plugin_key": "progressive-roadmap-evaluator",
+    "plugin_creator_id": "plugins_6b038580bc488191ac56d9e586071bfc",
+    "version": "0.1.5",
+    "release_id": "pluginrel_6b095bf2f4308191bf7d46ce98da36f7",
+    "scope": "USER",
+    "discoverability": "PRIVATE",
+    "source_repository_id": null,
+    "source_state": "pending_repository"
+  },
+  "manifestations": [
+    {
+      "manifestation_id": "pre-standalone",
+      "name": "PRE Standalone",
+      "kind": "FIRST_CLASS_MANIFESTATION",
+      "host_id": "pre-standalone",
+      "role": "independent roadmap competency",
+      "owns_independent_case_coordination": true,
+      "current_version": "0.1.5",
+      "current_release_id": "pluginrel_6b095bf2f4308191bf7d46ce98da36f7",
+      "retained_extensions": [
+        "standalone roadmap intake and orchestration",
+        "next-action intelligence",
+        "continuation-prompt generation"
+      ]
+    },
+    {
+      "manifestation_id": "asfree-rpeds",
+      "name": "RPEDS in A.S.F.R.E.E",
+      "kind": "FIRST_CLASS_MANIFESTATION",
+      "host_id": "asfree-rpeds",
+      "role": "native A.S.F.R.E.E roadmap workstream under M00",
+      "owns_independent_case_coordination": false,
+      "retained_modules": [
+        "Roadmap Architecture Planner",
+        "Progressive Development Manager",
+        "Continuous Evaluation Engine",
+        "Adaptive Roadmap Optimizer"
+      ],
+      "retained_extensions": [
+        "M00 case handoff",
+        "O01–O12 specialist integration",
+        "A.S.F.R.E.E SOP and host procedures"
+      ],
+      "candidate_source_version": "0.5.0-rc.1",
+      "source_pr": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/pull/13",
+      "source_pr_status": "MERGED",
+      "source_commit": "de6b0cecea5ce9c3aaf05bc57320b8f0dd2d9b3b",
+      "source_version": "0.5.0-rc.1",
+      "platform_last_verified_version": "0.3.2",
+      "platform_last_verified_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2",
+      "platform_last_verified_at": "2026-11-27",
+      "runtime_package_state": "PLATFORM_BEHIND_SOURCE"
+    }
+  ],
+  "shared_dna_kernel": [
+    "R0-R9 lifecycle semantics",
+    "roadmap object model",
+    "objective-phase-milestone-work-item graph",
+    "typed dependency DAG and risk model",
+    "multi-dimensional progress and verification contracts",
+    "evidence and hard-gate semantics",
+    "revision-safe adaptive decisions",
+    "process event and audit semantics",
+    "assurance, closure and learning",
+    "next-action intelligence and continuation-prompt contracts",
+    "two-way capability-learning federation",
+    "release compatibility and adoption receipts"
+  ],
+  "host_extension_policy": {
+    "preserve_unique_host_capabilities": true,
+    "allow_two_way_validated_contributions": true,
+    "host_only_sop_is_shared": false,
+    "private_case_data_is_shared": false,
+    "credentials_or_authority_grants_are_shared": false,
+    "reverse_contribution_requires_sanitization_and_validation": true
+  },
+  "host_adapters": [
+    {
+      "host_id": "pre-standalone",
+      "host_name": "PRE Standalone",
+      "adapter_status": "SPECIFIED",
+      "policy_profile_status": "PENDING_PROFILE",
+      "auto_adopt_nonbreaking": false,
+      "current_kernel_version": "0.1.5",
+      "adoption_state": "SOURCE_CURRENT"
+    },
+    {
+      "host_id": "asfree-rpeds",
+      "host_name": "A.S.F.R.E.E / RPEDS",
+      "adapter_status": "SOURCE_MERGED",
+      "policy_profile_status": "PENDING_REVIEW",
+      "auto_adopt_nonbreaking": false,
+      "candidate_host_version": "0.5.0-rc.1",
+      "adoption_state": "SOURCE_MERGED_PLATFORM_BEHIND"
+    },
+    {
+      "host_id": "hsar",
+      "host_name": "HSAR",
+      "adapter_status": "CONDITIONAL_ROUTING_ONLY",
+      "policy_profile_status": "PENDING_PROFILE",
+      "auto_adopt_nonbreaking": false,
+      "adoption_state": "NOT_ACTIVATED"
+    },
+    {
+      "host_id": "hso",
+      "host_name": "HSO Control Plane",
+      "adapter_status": "FEDERATION_REGISTRY_DEPLOYED",
+      "policy_profile_status": "PENDING_REVIEW",
+      "auto_adopt_nonbreaking": false,
+      "edge_function": "pre-core-federation",
+      "edge_function_version": 2,
+      "adoption_state": "EVENT_PUBLISHER_NOT_CONFIGURED"
+    }
+  ],
+  "adoption_policy": {
+    "default_auto_adopt_nonbreaking": false,
+    "afsa_dispositions": [
+      "DIRECT_COMPATIBLE",
+      "ADAPTED_COMPATIBLE",
+      "HELD_FOR_AUTHORITY",
+      "QUARANTINED_OR_REJECTED"
+    ],
+    "requires_host_gate": [
+      "authority",
+      "security",
+      "privacy",
+      "identity",
+      "permission",
+      "licensing",
+      "data-flow",
+      "SOP",
+      "breaking schema",
+      "major version",
+      "irreversible action"
+    ]
+  },
+  "readiness": {
+    "status": "PARTIALLY_DEPLOYED",
+    "database_registry": "DEPLOYED",
+    "service_role_policies": "DEPLOYED",
+    "edge_function": "DEPLOYED",
+    "edge_function_version": 2,
+    "event_publisher": "NOT_CONFIGURED",
+    "release_event_test": "NOT_RUN",
+    "host_secret_provisioning": "NOT_CONFIGURED",
+    "host_ci_adoption": "NOT_RUN",
+    "host_readback": "NOT_RUN",
+    "runtime_verified": false,
+    "blockers": [
+      "PRE canonical source repository not registered",
+      "Plugin Creator release-event publisher or authenticated polling bridge not configured",
+      "per-host environment secrets not provisioned",
+      "A.S.F.R.E.E source merged, but Plugin Creator package remains at 0.3.2 and host read-back of the new source is pending",
+      "HSAR adapter and policy profile not registered",
+      "host regression and read-back acceptance not run"
+    ]
+  }
+}

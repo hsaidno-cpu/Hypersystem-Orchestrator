@@ -1,0 +1,284 @@
+import { createClient } from "npm:@supabase/supabase-js@2.57.0";
+
+const corsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-headers": "content-type, x-hso-signature, x-hso-delivery, x-host-id",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
+  "cache-control": "no-store",
+};
+
+function reply(body: unknown, status = 200) {
+  return Response.json(body, { status, headers: corsHeaders });
+}
+
+async function hmacHex(secret: string, raw: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(raw));
+  return [...new Uint8Array(signature)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return result === 0;
+}
+
+async function verifyHsoSignature(req: Request, raw: string, secret: string): Promise<boolean> {
+  const supplied = (req.headers.get("x-hso-signature") ?? "")
+    .replace(/^sha256=/i, "")
+    .trim()
+    .toLowerCase();
+  if (!supplied) return false;
+  return safeEqual(supplied, await hmacHex(secret, raw));
+}
+
+function validSha256(value: unknown): value is string {
+  return typeof value === "string" && /^[a-f0-9]{64}$/.test(value);
+}
+
+function validIsoDate(value: unknown): value is string {
+  return typeof value === "string" && Number.isFinite(Date.parse(value));
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function validateReleaseEvent(value: unknown): string | null {
+  if (!isObject(value)) return "event_must_be_object";
+  if (value.event_type !== "PRE_SHARED_DNA_RELEASE") return "unsupported_event_type";
+  if (value.canonical_identity !== "pre-rpeds-shared-roadmap-dna") return "invalid_canonical_identity";
+  if (typeof value.event_id !== "string" || value.event_id.length < 8) return "invalid_event_id";
+  if (typeof value.idempotency_key !== "string" || value.idempotency_key.length < 16) return "invalid_idempotency_key";
+  if (typeof value.version !== "string" || !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$/.test(value.version)) return "invalid_semver";
+  if (typeof value.release_id !== "string" || value.release_id.length < 8) return "invalid_release_id";
+  if (typeof value.source_locator !== "string" || !value.source_locator.startsWith("https://")) return "invalid_source_locator";
+  if (!validSha256(value.artifact_sha256)) return "invalid_artifact_sha256";
+  if (typeof value.contract_version !== "string" || !value.contract_version) return "invalid_contract_version";
+  if (typeof value.compatibility_range !== "string" || !value.compatibility_range) return "invalid_compatibility_range";
+  if (!["stable", "candidate", "preview"].includes(String(value.release_channel))) return "invalid_release_channel";
+  if (!isObject(value.issuer) || typeof value.issuer.identity !== "string" || typeof value.issuer.key_id !== "string") return "invalid_issuer";
+  if (!validIsoDate(value.issued_at)) return "invalid_issued_at";
+  if (Array.isArray(value.capability_classes) && value.capability_classes.some((x) => !["SHARED_DNA", "HOST_ADAPTATION"].includes(String(x)))) return "invalid_capability_class";
+  return null;
+}
+
+async function parseJson(req: Request) {
+  try {
+    return { value: await req.json(), error: null };
+  } catch {
+    return { value: null, error: "invalid_json" };
+  }
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const url = Deno.env.get("SUPABASE_URL");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const syncToken = Deno.env.get("HSO_SYNC_TOKEN");
+  if (!url || !serviceKey || !syncToken) {
+    return reply({ error: "federation_not_configured", missing: [
+      ...(!url ? ["SUPABASE_URL"] : []),
+      ...(!serviceKey ? ["SUPABASE_SERVICE_ROLE_KEY"] : []),
+      ...(!syncToken ? ["HSO_SYNC_TOKEN"] : []),
+    ] }, 503);
+  }
+
+  const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
+  const path = new URL(req.url).pathname.replace(/\/+$/, "").split("/").pop() ?? "";
+
+  if (req.method === "GET" && path === "health") {
+    return reply({ service: "pre-core-federation", status: "ACTIVE", signed_transport: true, persistence: "SUPABASE_POSTGRES" });
+  }
+
+  if (req.method === "POST" && path === "release") {
+    const raw = await req.text();
+    if (!(await verifyHsoSignature(req, raw, syncToken))) return reply({ error: "invalid_signature" }, 401);
+    let event: unknown;
+    try { event = JSON.parse(raw); } catch { return reply({ error: "invalid_json" }, 400); }
+    const invalid = validateReleaseEvent(event);
+    if (invalid) return reply({ error: invalid }, 422);
+
+    const e = event as Record<string, any>;
+    const { data: inserted, error } = await supabase.from("pre_kernel_releases").insert({
+      event_id: e.event_id,
+      idempotency_key: e.idempotency_key,
+      canonical_identity: e.canonical_identity,
+      release_version: e.version,
+      release_id: e.release_id,
+      source_locator: e.source_locator,
+      artifact_sha256: e.artifact_sha256,
+      contract_version: e.contract_version,
+      compatibility_range: e.compatibility_range,
+      release_channel: e.release_channel,
+      issuer_identity: e.issuer.identity,
+      issuer_key_id: e.issuer.key_id,
+      signature_verified: true,
+      origin_lineage: Array.isArray(e.origin_lineage) ? e.origin_lineage : [],
+      capability_classes: Array.isArray(e.capability_classes) ? e.capability_classes : ["SHARED_DNA"],
+      payload: e,
+      processing_state: "VALIDATED",
+      issued_at: e.issued_at,
+      processed_at: new Date().toISOString(),
+    }).select("id,event_id,release_version,release_id,artifact_sha256,processing_state").single();
+
+    if (error) {
+      if (error.code === "23505") {
+        const { data: existing } = await supabase.from("pre_kernel_releases")
+          .select("id,event_id,release_version,release_id,artifact_sha256,processing_state")
+          .or("event_id.eq." + encodeURIComponent(e.event_id) + ",idempotency_key.eq." + encodeURIComponent(e.idempotency_key))
+          .maybeSingle();
+        if (existing) return reply({ accepted: true, duplicate: true, release: existing }, 200);
+      }
+      return reply({ error: "release_persistence_failed", detail: error.message }, 500);
+    }
+
+    const { data: hosts, error: hostError } = await supabase.from("pre_host_subscriptions")
+      .select("host_id,host_name,subscribed_channel,policy_profile_status,auto_adopt_nonbreaking,enabled")
+      .eq("enabled", true);
+
+    if (hostError) return reply({ error: "host_registry_read_failed", detail: hostError.message }, 500);
+
+    const receipts = [];
+    for (const host of hosts ?? []) {
+      const channelMatches = host.subscribed_channel === "all" || host.subscribed_channel === e.release_channel;
+      if (!channelMatches) continue;
+
+      const preApproved = host.policy_profile_status === "VERIFIED" && host.auto_adopt_nonbreaking === true;
+      const disposition = preApproved ? "DIRECT_COMPATIBLE" : "NOT_ASSESSED";
+      const state = preApproved ? "QUEUED_FOR_TESTS" : "HELD";
+      const reason = preApproved
+        ? "Host policy is pre-verified; run required host checks before adoption."
+        : "Host adapter policy profile or pre-approved auto-adoption rule is not verified.";
+
+      const { data: receipt, error: receiptError } = await supabase.from("pre_host_adoption_receipts").insert({
+        event_id: e.event_id,
+        host_id: host.host_id,
+        candidate_kernel_version: e.version,
+        artifact_sha256: e.artifact_sha256,
+        adapter_disposition: disposition,
+        adoption_state: state,
+        reason,
+        receipt_payload: { release_id: e.release_id, host_name: host.host_name, release_channel: e.release_channel },
+      }).select("id,host_id,adoption_state,adapter_disposition").single();
+
+      if (receiptError && receiptError.code !== "23505") {
+        receipts.push({ host_id: host.host_id, state: "RECEIPT_ERROR", error: receiptError.message });
+      } else {
+        receipts.push({ host_id: host.host_id, state: receipt?.adoption_state ?? "ALREADY_RECORDED" });
+      }
+
+      await supabase.from("pre_host_subscriptions").update({
+        last_event_at: new Date().toISOString(),
+        sync_state: preApproved ? "ELIGIBILITY_CHECK_REQUIRED" : "POLICY_PROFILE_PENDING",
+        updated_at: new Date().toISOString(),
+      }).eq("host_id", host.host_id);
+    }
+
+    return reply({ accepted: true, duplicate: false, release: inserted, host_receipts: receipts }, 202);
+  }
+
+  if (req.method === "GET" && path === "latest") {
+    const hostId = new URL(req.url).searchParams.get("host_id");
+    if (!hostId) return reply({ error: "host_id_required" }, 400);
+    const { data: host, error: hostError } = await supabase.from("pre_host_subscriptions")
+      .select("*").eq("host_id", hostId).maybeSingle();
+    if (hostError || !host) return reply({ error: "host_not_registered" }, 404);
+    if (host.host_auth_status !== "CONFIGURED" || !host.host_auth_secret_ref) {
+      return reply({ error: "host_auth_not_configured" }, 503);
+    }
+    const hostSecret = Deno.env.get(host.host_auth_secret_ref);
+    const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+    const hostToken = req.headers.get("x-host-token") ?? bearer;
+    if (!hostSecret || !safeEqual(hostToken, hostSecret)) return reply({ error: "host_unauthorized" }, 401);
+    const { data: release, error: releaseError } = await supabase.from("pre_kernel_releases")
+      .select("event_id,release_version,release_id,source_locator,artifact_sha256,contract_version,compatibility_range,release_channel,capability_classes,processing_state,issued_at")
+      .eq("processing_state", "VALIDATED")
+      .order("received_at", { ascending: false })
+      .limit(1).maybeSingle();
+    if (releaseError) return reply({ error: "release_lookup_failed", detail: releaseError.message }, 500);
+    const { data: receipts } = release ? await supabase.from("pre_host_adoption_receipts")
+      .select("*").eq("event_id", release.event_id).eq("host_id", hostId).limit(1) : { data: [] };
+    const safeHost = { ...host };
+    delete safeHost.host_auth_secret_ref;
+    return reply({ host: safeHost, latest_release: release ?? null, adoption_receipt: receipts?.[0] ?? null });
+  }
+
+  if (req.method === "POST" && path === "adoption") {
+    const raw = await req.text();
+    let body: unknown;
+    try { body = JSON.parse(raw); } catch { return reply({ error: "invalid_json" }, 400); }
+    if (!isObject(body)) return reply({ error: "body_must_be_object" }, 422);
+    const eventId = String(body.event_id ?? "");
+    const hostId = String(body.host_id ?? "");
+    const state = String(body.adoption_state ?? "");
+    const allowed = ["QUEUED_FOR_TESTS","PR_OPENED","APPROVAL_PENDING","ADOPTED","VERIFIED","HELD","QUARANTINED","REJECTED","RETRY_PENDING","DEAD_LETTER","ROLLED_BACK","REVOKED"];
+    if (!eventId || !hostId || !allowed.includes(state)) return reply({ error: "invalid_adoption_envelope" }, 422);
+
+    const { data: hostAuth } = await supabase.from("pre_host_subscriptions")
+      .select("host_auth_secret_ref,host_auth_status").eq("host_id", hostId).maybeSingle();
+    if (!hostAuth) return reply({ error: "host_not_registered" }, 404);
+    if (hostAuth.host_auth_status !== "CONFIGURED" || !hostAuth.host_auth_secret_ref) {
+      return reply({ error: "host_auth_not_configured" }, 503);
+    }
+    const hostSecret = Deno.env.get(hostAuth.host_auth_secret_ref);
+    if (!hostSecret || !(await verifyHsoSignature(req, raw, hostSecret))) {
+      return reply({ error: "invalid_host_signature" }, 401);
+    }
+
+    const { data: release } = await supabase.from("pre_kernel_releases")
+      .select("release_version,artifact_sha256").eq("event_id", eventId).maybeSingle();
+    if (!release) return reply({ error: "release_not_found" }, 404);
+
+    const { data: receipt } = await supabase.from("pre_host_adoption_receipts")
+      .select("id").eq("event_id", eventId).eq("host_id", hostId).maybeSingle();
+    if (!receipt) return reply({ error: "host_receipt_not_found" }, 404);
+
+    if (state === "VERIFIED") {
+      if (body.readback_version !== release.release_version || body.readback_digest !== release.artifact_sha256) {
+        return reply({ error: "readback_does_not_match_release" }, 409);
+      }
+      if (!Array.isArray(body.test_results) || body.test_results.length === 0 ||
+          body.test_results.some((t: any) => t?.status !== "PASS")) {
+        return reply({ error: "verified_requires_all_tests_pass" }, 409);
+      }
+    }
+
+    const updates: Record<string, unknown> = {
+      adoption_state: state,
+      adapter_disposition: body.adapter_disposition ?? "NOT_ASSESSED",
+      adapter_version: body.adapter_version ?? null,
+      policy_refs: Array.isArray(body.policy_refs) ? body.policy_refs : [],
+      approval_refs: Array.isArray(body.approval_refs) ? body.approval_refs : [],
+      test_results: Array.isArray(body.test_results) ? body.test_results : [],
+      pull_request_ref: body.pull_request_ref ?? null,
+      commit_ref: body.commit_ref ?? null,
+      deployment_ref: body.deployment_ref ?? null,
+      readback_version: body.readback_version ?? null,
+      readback_digest: body.readback_digest ?? null,
+      rollback_ref: body.rollback_ref ?? null,
+      reason: typeof body.reason === "string" ? body.reason : null,
+      residual_risks: Array.isArray(body.residual_risks) ? body.residual_risks : [],
+      receipt_payload: body,
+      observed_at: new Date().toISOString(),
+    };
+    const { error } = await supabase.from("pre_host_adoption_receipts").update(updates).eq("id", receipt.id);
+    if (error) return reply({ error: "adoption_receipt_update_failed", detail: error.message }, 500);
+    await supabase.from("pre_host_subscriptions").update({
+      sync_state: state,
+      current_kernel_version: state === "VERIFIED" ? release.release_version : undefined,
+      last_adopted_at: state === "VERIFIED" ? new Date().toISOString() : undefined,
+      updated_at: new Date().toISOString(),
+    }).eq("host_id", hostId);
+    return reply({ accepted: true, host_id: hostId, event_id: eventId, adoption_state: state });
+  }
+
+  return reply({ error: "not_found" }, 404);
+});
