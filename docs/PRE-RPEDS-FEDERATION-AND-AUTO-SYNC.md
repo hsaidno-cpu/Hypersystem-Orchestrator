@@ -94,3 +94,12 @@ The source PR and CI do not provision GitHub/Supabase secrets, create a Plugin C
 - Live database read-back still shows zero release events and zero adoption receipts. No host is upgraded by this merge or deployment alone.
 
 **Runtime status:** Edge Function deployed and source read-back verified; event delivery and host adoption remain NOT CONFIGURED / NOT RUN. A direct HTTP health request could not be completed from the current inspection environment, so HTTP endpoint health is not claimed.
+
+
+## A.S.F.R.E.E/RPEDS source amendment — 27 November 2026
+
+- A.S.F.R.E.E PR #13 merged shared PRE–RPEDS identity and routing at commit `de6b0cecea5ce9c3aaf05bc57320b8f0dd2d9b3b`.
+- A.S.F.R.E.E PR #14 merged `rpeds-adaptive-functional-situational-adapter`, eight AFSA acceptance specifications and package-validator registration. Source candidate is now **0.5.0-rc.2**, main commit `f814cff8e800136a6e3a1f664b41085076f19ac8`.
+- RPEDS remains a first-class native A.S.F.R.E.E workstream with four modules; it is not deleted or replaced by PRE. PRE Standalone and RPEDS share roadmap DNA and release lineage.
+- Parent HSO submodule pin and source registries are being advanced to this commit. Plugin Creator package remains **0.3.2**, release `pluginrel_6b00fc6b23bc8191a5930132969e52c2`; deployment read-back and source/platform parity are still pending.
+- PolyForm Noncommercial 1.0.0 terms remain in force. No broader redistribution is implied by the public parent repository.

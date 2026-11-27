@@ -32,7 +32,7 @@ class SourceParityAuditTests(unittest.TestCase):
         self.assertEqual(item["source_instruction_parity_status"], "DRIFT_DETECTED")
         self.assertEqual(item["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
         self.assertIn("5/13", item["source_instruction_parity_note"])
-        self.assertEqual(item["repository_version"], "0.5.0-rc.1")
+        self.assertEqual(item["repository_version"], "0.5.0-rc.2")
         self.assertEqual(item["platform_package_version"], "0.3.2")
 
     def test_sdo_same_version_does_not_hide_four_file_drift(self):

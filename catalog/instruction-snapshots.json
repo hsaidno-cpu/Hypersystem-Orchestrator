@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "capture_date": "2026-11-26",
-  "total_skill_records": 289,
+  "capture_date": "2026-11-27",
+  "total_skill_records": 291,
   "plugins": [
     {
       "plugin_key": "video-explainer-promkes-v4-1-12",
@@ -838,7 +838,7 @@
       "plugin_key": "asfree-canonical",
       "instruction_path": "plugin-instructions/asfree-canonical/README.md",
       "origin": "canonical_submodule",
-      "skill_count": 13,
+      "skill_count": 15,
       "skills": [
         {
           "skill_name": "asfree-master-orchestrator",
@@ -904,8 +904,21 @@
           "skill_name": "o12-evaluation-intelligence",
           "source_uri": "skills://plugins/asfree/o12-evaluation-intelligence",
           "description": "Use when criteria, indicators, measurement, scoring, evaluation validity, impact, trade-offs, acceptance judgments, evaluator bias, or meta-evaluation are required."
+        },
+        {
+          "skill_name": "rpeds-progressive-development",
+          "source_uri": "skills://plugins/asfree/rpeds-progressive-development",
+          "description": "Use when a system, product, plugin, repository, capability, or program needs a phased development roadmap with milestones, iterations, evidence-based progress evaluation, stage gates, or adaptive replanning."
+        },
+        {
+          "skill_name": "rpeds-adaptive-functional-situational-adapter",
+          "source_uri": "skills://plugins/asfree/rpeds-adaptive-functional-situational-adapter",
+          "description": "Use before applying shared PRE–RPEDS roadmap capabilities in A.S.F.R.E.E when an incoming release, method, recommendation, or contribution must be checked against A.S.F.R.E.E SOP, authority, security, privacy, data boundaries, runtime limits, or retained RPEDS-specific behavior."
         }
-      ]
+      ],
+      "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
+      "source_version": "0.5.0-rc.2",
+      "snapshot_freshness": "CANONICAL_SOURCE_METADATA_INDEX_ONLY"
     },
     {
       "plugin_key": "asfree-legacy",

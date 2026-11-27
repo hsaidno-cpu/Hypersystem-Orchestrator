@@ -46,11 +46,11 @@
         "O01–O12 specialist integration",
         "A.S.F.R.E.E SOP and host procedures"
       ],
-      "candidate_source_version": "0.5.0-rc.1",
-      "source_pr": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/pull/13",
+      "candidate_source_version": "0.5.0-rc.2",
+      "source_pr": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/pull/14",
       "source_pr_status": "MERGED",
-      "source_commit": "de6b0cecea5ce9c3aaf05bc57320b8f0dd2d9b3b",
-      "source_version": "0.5.0-rc.1",
+      "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
+      "source_version": "0.5.0-rc.2",
       "platform_last_verified_version": "0.3.2",
       "platform_last_verified_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2",
       "platform_last_verified_at": "2026-11-27",
@@ -95,8 +95,12 @@
       "adapter_status": "SOURCE_MERGED",
       "policy_profile_status": "PENDING_REVIEW",
       "auto_adopt_nonbreaking": false,
-      "candidate_host_version": "0.5.0-rc.1",
-      "adoption_state": "SOURCE_MERGED_PLATFORM_BEHIND"
+      "candidate_host_version": "0.5.0-rc.2",
+      "adoption_state": "SOURCE_MERGED_PLATFORM_BEHIND",
+      "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
+      "source_pr": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/pull/14",
+      "platform_version": "0.3.2",
+      "platform_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2"
     },
     {
       "host_id": "hsar",
@@ -159,11 +163,11 @@
       "PRE_FEDERATION_URL and HSO_SYNC_TOKEN repository settings are not confirmed configured",
       "PRE_RELEASE_VERIFIER_TOKEN and per-host PRE_HOST_TOKEN_* secrets are not configured or independently verified",
       "PRE Standalone, A.S.F.R.E.E/RPEDS, HSAR and HSO host policy profiles remain pending; auto-adoption remains false",
-      "A.S.F.R.E.E source 0.5.0-rc.1 is merged but Plugin Creator package remains v0.3.2",
+      "A.S.F.R.E.E source 0.5.0-rc.2 is merged but Plugin Creator package remains v0.3.2",
       "HSAR adapter package v0.3.1 is updated but host authentication and policy profile remain pending",
       "No PRE release event, adoption receipt or capability contribution is recorded; host test/read-back/rollback acceptance remain NOT_RUN"
     ],
-    "host_adapter_inventory": "PRE_STANDALONE_0.1.6_PROFILE_PENDING; ASFREE_RPEDS_SOURCE_MERGED_PLATFORM_BEHIND; HSAR_ADAPTER_0.3.1_PROFILE_PENDING; HSO_EDGE_V5_ACTIVE_PUBLISHER_NOT_CONFIGURED",
+    "host_adapter_inventory": "PRE_STANDALONE_0.1.6_PROFILE_PENDING; ASFREE_RPEDS_SOURCE_RC2_MERGED_CREATOR_0.3.2_BEHIND; HSAR_ADAPTER_0.3.1_PROFILE_PENDING; HSO_EDGE_V5_ACTIVE_PUBLISHER_NOT_CONFIGURED",
     "release_event_publisher": "NOT_CONFIGURED",
     "database_event_counts": {
       "pre_kernel_releases": 0,

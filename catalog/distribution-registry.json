@@ -255,8 +255,8 @@
       "display_name": "A.S.F.R.E.E",
       "source_state": "integrated_submodule",
       "source_repository_id": "asfree",
-      "source_commit": "a5eb55db0f6c2c6126a7fbcba645caf44c660c93",
-      "source_version": "0.5.0-rc.1",
+      "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
+      "source_version": "0.5.0-rc.2",
       "platform_package_version": "0.3.2",
       "distribution_status": "review_required",
       "license_status": "review_required",
@@ -265,10 +265,12 @@
       "dependency_metadata_status": "not_assessed",
       "blockers": [
         "POLYFORM_NONCOMMERCIAL_TERMS_REQUIRE_DISTRIBUTION_REVIEW",
+        "PLUGIN_CREATOR_PACKAGE_BEHIND_CANONICAL_SOURCE",
         "PACKAGE_ARTIFACT_NOT_PUBLISHED",
-        "PLATFORM_ADAPTER_NOT_HOST_TESTED"
+        "PLATFORM_ADAPTER_NOT_HOST_TESTED",
+        "RPEDS_AFSA_HOST_POLICY_PROFILE_AND_READBACK_PENDING"
       ],
-      "eligibility_note": "No distributable host package is released; clear all blockers before enabling installation."
+      "eligibility_note": "Canonical A.S.F.R.E.E source is pinned at 0.5.0-rc.2 (commit f814cff8e800136a6e3a1f664b41085076f19ac8). Plugin Creator remains USER/PRIVATE v0.3.2. The source is governed by PolyForm Noncommercial 1.0.0; no public redistribution or installable package artifact is authorized by this record. Creator update, exact read-back, host policy and runtime adoption remain pending."
     },
     {
       "plugin_key": "asfree-legacy",

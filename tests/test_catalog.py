@@ -59,6 +59,7 @@ class CatalogValidationTests(unittest.TestCase):
 
     def test_package_version_planes_are_recorded_without_collapsing_source_and_deployment(self):
         catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        repositories = json.loads((ROOT / "catalog" / "repositories.json").read_text(encoding="utf-8"))
         by_key = {p["plugin_key"]: p for p in catalog["plugins"]}
         for item in catalog["plugins"]:
             self.assertTrue(item["platform_package_version"])
@@ -67,8 +68,12 @@ class CatalogValidationTests(unittest.TestCase):
             self.assertEqual(item["platform_discoverability"], "PRIVATE")
         self.assertEqual(by_key["skill-analyzer"]["repository_version"], "1.3.0")
         self.assertEqual(by_key["skill-analyzer"]["platform_package_version"], "1.0.0")
-        self.assertEqual(by_key["asfree-canonical"]["repository_version"], "0.5.0-rc.1")
+        self.assertEqual(by_key["asfree-canonical"]["repository_version"], "0.5.0-rc.2")
         self.assertEqual(by_key["asfree-canonical"]["platform_package_version"], "0.3.2")
+        self.assertEqual(by_key["asfree-canonical"]["instruction_skill_count"], 15)
+        asfree_source = next(r for r in repositories["repositories"] if r["repository_id"] == "asfree")
+        self.assertEqual(asfree_source["pinned_commit"], "f814cff8e800136a6e3a1f664b41085076f19ac8")
+        self.assertEqual(asfree_source["package_version"], "0.5.0-rc.2")
         self.assertEqual(by_key["video-explainer-promkes-v4-1-12"]["repository_version"], "4.1.9")
         self.assertEqual(by_key["video-explainer-promkes-v4-1-12"]["platform_package_version"], "4.1.12")
         self.assertEqual(by_key["anatomi-prompt-v3-octa-prompt"]["repository_version"], "3.0.0")
@@ -286,7 +291,7 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(source["license_status"], "NOT_ASSESSED")
         self.assertEqual(indexed["skill_count"], 10)
         self.assertEqual(indexed["source_commit"], source["pinned_commit"])
-        self.assertEqual(snapshots["total_skill_records"], 289)
+        self.assertEqual(snapshots["total_skill_records"], 291)
         self.assertTrue((ROOT / item["instruction_snapshot_path"]).is_file())
 
 if __name__ == "__main__":
