@@ -429,7 +429,7 @@
       "source_repository_id": null,
       "source_commit": null,
       "source_version": null,
-      "platform_package_version": "0.1.5",
+      "platform_package_version": "0.1.6",
       "distribution_status": "snapshot_only",
       "license_status": "not_assessed",
       "package_artifact": null,
@@ -441,7 +441,7 @@
         "LICENSE_AND_REUSE_BASIS_NOT_ASSESSED_FOR_PARENT_REPUBLICATION",
         "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE"
       ],
-      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.5 is verified, release pluginrel_6b095bf2f4308191bf7d46ce98da36f7. The parent contains a historical nine-skill instruction snapshot, not a current complete release package. No canonical PRE source repository, complete public artifact or independently cleared publication rights are registered."
+      "eligibility_note": "Plugin Creator USER/PRIVATE package v0.1.6 is verified, release pluginrel_6b0961f9dca08191a8af34dbb2e02881. Public HSO snapshot is historical nine-skill v0.1.1 coverage; no canonical PRE source repository, public installable artifact or cleared republication rights are registered."
     },
     {
       "plugin_key": "ponytail-engineering-optimizer",
