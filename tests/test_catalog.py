@@ -187,10 +187,6 @@ class CatalogValidationTests(unittest.TestCase):
         snapshot = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
         indexed = next(p for p in snapshot["plugins"] if p["plugin_key"] == "people-business-competency-academy")
         self.assertEqual(indexed["skill_count"], 9)
-        self.assertEqual(indexed["package_version"], "0.1.1")
-        self.assertEqual(indexed["latest_observed_package_version"], "0.1.6")
-        self.assertEqual(indexed["latest_observed_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
-        self.assertEqual(indexed["snapshot_freshness"], "STALE_HISTORICAL_SNAPSHOT")
         self.assertEqual(indexed["plugin_creator_release_id"], "pluginrel_6b039efc6dfc81919fffbe265e8f84c9")
 
         book_catalog = json.loads((ROOT / "plugin-instructions" / "people-business-competency-academy" / "assets" / "competency-and-reading-catalog.json").read_text(encoding="utf-8"))
@@ -217,6 +213,10 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(pre["plugin_creator_current_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
         self.assertEqual(pre["instruction_skill_count"], 9)
         self.assertEqual(indexed["skill_count"], 9)
+        self.assertEqual(indexed["package_version"], "0.1.1")
+        self.assertEqual(indexed["latest_observed_package_version"], "0.1.6")
+        self.assertEqual(indexed["latest_observed_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
+        self.assertEqual(indexed["snapshot_freshness"], "STALE_HISTORICAL_SNAPSHOT")
         self.assertEqual(
             snapshots["total_skill_records"],
             sum(item.get("skill_count", 0) for item in snapshots["plugins"]),
