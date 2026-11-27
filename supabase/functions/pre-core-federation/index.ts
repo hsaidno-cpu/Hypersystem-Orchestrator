@@ -162,6 +162,7 @@ function validateReleaseEvent(value: unknown): string | null {
   if (!isObject(value.issuer) || typeof value.issuer.identity !== "string" || typeof value.issuer.key_id !== "string" || typeof value.issuer.signature !== "string" || value.issuer.signature.length < 16) return "invalid_issuer";
   if (!validIsoDate(value.issued_at)) return "invalid_issued_at";
   if (!Array.isArray(value.capability_classes) || value.capability_classes.length === 0 || value.capability_classes.some((x) => !["SHARED_DNA", "HOST_ADAPTATION"].includes(String(x)))) return "invalid_capability_class";
+  if (!Array.isArray(value.target_host_ids) || value.target_host_ids.length === 0 || value.target_host_ids.some((x) => typeof x !== "string" || !x)) return "invalid_target_host_ids";
   if (typeof value.is_breaking !== "boolean") return "is_breaking_boolean_required";
   return null;
 }
@@ -326,9 +327,15 @@ Deno.serve(async (req: Request) => {
       .select("host_id,host_name,subscribed_channel,enabled")
       .eq("enabled", true);
     if (hostError) return reply({ error: "host_registry_read_failed", detail: hostError.message }, 500);
+    const enabledHostIds = new Set((hosts ?? []).map((host: any) => host.host_id));
+    const targetHostIds = new Set(e.target_host_ids as string[]);
+    if ([...targetHostIds].some((hostId) => !enabledHostIds.has(hostId))) {
+      return reply({ error: "release_target_host_not_registered_or_disabled" }, 422);
+    }
 
     const receipts = [];
     for (const host of hosts ?? []) {
+      if (!targetHostIds.has(host.host_id)) continue;
       const channelMatches = host.subscribed_channel === "all" || host.subscribed_channel === e.release_channel;
       if (!channelMatches) continue;
       const { data: receipt, error: receiptError } = await supabase.from("pre_host_adoption_receipts").insert({
@@ -481,7 +488,9 @@ Deno.serve(async (req: Request) => {
     const isBreaking = release.payload?.is_breaking === true || body.is_breaking === true;
     const sharedDna = capabilityClasses.length > 0 && capabilityClasses.every((value) => value === "SHARED_DNA");
     const receipts = [];
+    const releaseTargets = Array.isArray(release.payload?.target_host_ids) ? new Set(release.payload.target_host_ids) : null;
     for (const host of hosts ?? []) {
+      if (releaseTargets && !releaseTargets.has(host.host_id)) continue;
       if (host.enabled !== true || (host.subscribed_channel !== "all" && host.subscribed_channel !== release.payload?.release_channel)) continue;
       const eligible = host.policy_profile_status === "VERIFIED" &&
         host.auto_adopt_nonbreaking === true &&
