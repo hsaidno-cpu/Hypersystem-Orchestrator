@@ -74,3 +74,10 @@ A direct database read-back found zero rows in `pre_kernel_releases`, `pre_host_
 5. Record each result in a durable per-host adoption receipt. A release being `RELEASED` does not imply any host is `ADOPTED` or `VERIFIED`.
 
 **Readiness remains `PARTIALLY_DEPLOYED`; runtime verification of end-to-end release propagation remains false.**
+
+
+## Source candidate follow-up — HSO PR #50
+
+The open source candidate adds an idempotent `POST /reconcile` recovery route and a 15-minute scheduled GitHub Actions workflow. The reconciliation logic does not overwrite existing receipts and queues a host for testing only when every capability class in the event is `SHARED_DNA`, the event is explicitly non-breaking, the host policy profile is `VERIFIED`, and host auto-adoption is explicitly enabled. Mixed `SHARED_DNA` + `HOST_ADAPTATION` events remain held. `VERIFIED` adoption also requires policy refs, adapter version, rollback ref, exact read-back and all-PASS tests.
+
+The source PR and CI do not provision GitHub/Supabase secrets, create a Plugin Creator release event feed, or deploy the new reconciliation route. Those remain distinct activation steps. The migration file is a source mirror of already-applied live migration `20261127105413`; it must not be replayed against the production database.

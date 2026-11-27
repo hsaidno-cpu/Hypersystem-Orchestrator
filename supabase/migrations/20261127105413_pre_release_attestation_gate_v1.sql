@@ -19,8 +19,3 @@ alter table public.pre_kernel_releases
     'QUARANTINED','REVOKED','SUPERSEDED'
   ]::text[]));
 
-create index if not exists pre_kernel_releases_attested_state_idx
-  on public.pre_kernel_releases (
-    processing_state, artifact_digest_verified, issuer_signature_verified,
-    contract_validated, received_at desc
-  );

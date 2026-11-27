@@ -252,12 +252,13 @@ Deno.serve(async (req: Request) => {
     if (updateError) return reply({ error: "release_attestation_update_failed", detail: updateError.message }, 500);
 
     const { data: hosts } = await supabase.from("pre_host_subscriptions")
-      .select("host_id,policy_profile_status,auto_adopt_nonbreaking");
+      .select("host_id,policy_profile_status,auto_adopt_nonbreaking,enabled,subscribed_channel");
     const capabilityClasses = Array.isArray(release.capability_classes) ? release.capability_classes : [];
     const isBreaking = release.payload?.is_breaking === true || body.is_breaking === true;
-    const sharedDna = capabilityClasses.includes("SHARED_DNA");
+    const sharedDna = capabilityClasses.length > 0 && capabilityClasses.every((value) => value === "SHARED_DNA");
     const receipts = [];
     for (const host of hosts ?? []) {
+      if (host.enabled !== true || (host.subscribed_channel !== "all" && host.subscribed_channel !== release.payload?.release_channel)) continue;
       const eligible = host.policy_profile_status === "VERIFIED" &&
         host.auto_adopt_nonbreaking === true &&
         body.compatibility_verified === true &&
