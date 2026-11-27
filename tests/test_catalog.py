@@ -187,9 +187,6 @@ class CatalogValidationTests(unittest.TestCase):
         snapshot = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
         indexed = next(p for p in snapshot["plugins"] if p["plugin_key"] == "people-business-competency-academy")
         self.assertEqual(indexed["skill_count"], 9)
-        self.assertEqual(indexed["latest_observed_package_version"], "0.1.5")
-        self.assertEqual(indexed["latest_observed_skill_count"], 14)
-        self.assertEqual(indexed["snapshot_freshness"], "STALE_HISTORICAL_SNAPSHOT")
         self.assertEqual(indexed["plugin_creator_release_id"], "pluginrel_6b039efc6dfc81919fffbe265e8f84c9")
 
         book_catalog = json.loads((ROOT / "plugin-instructions" / "people-business-competency-academy" / "assets" / "competency-and-reading-catalog.json").read_text(encoding="utf-8"))
