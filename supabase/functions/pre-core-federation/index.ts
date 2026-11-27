@@ -421,15 +421,26 @@ Deno.serve(async (req: Request) => {
       publisherProof.ref === "refs/heads/main" &&
       publisherProof.workflow_ref === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna/.github/workflows/pre-release-publish.yml@refs/heads/main" &&
       typeof publisherProof.sha === "string" && /^[a-f0-9]{40}$/.test(publisherProof.sha);
-    const provenanceVerified = body.provenance_attestation_verified === true &&
-      body.provenance_attestation_ref && typeof body.provenance_attestation_ref === "string";
-    if (!publisherIdentityValid || !provenanceVerified) {
+    const issuerEnvelopeValid =
+      releaseEvent.issuer?.identity === "https://token.actions.githubusercontent.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna" &&
+      releaseEvent.issuer?.key_id === publisherProof?.sha &&
+      releaseEvent.source_commit === publisherProof?.sha;
+    const independentRebuildVerified = body.independent_rebuild_verified === true &&
+      body.independent_rebuild_commit === publisherProof?.sha &&
+      body.independent_rebuild_sha256 === computedDigest &&
+      typeof body.independent_rebuild_ref === "string" && body.independent_rebuild_ref.length > 0;
+    if (!publisherIdentityValid || !issuerEnvelopeValid || !independentRebuildVerified) {
       await supabase.from("pre_kernel_releases").update({
         processing_state: "QUARANTINED",
-        last_error: "Publisher OIDC identity or independent GitHub artifact provenance attestation is missing.",
-        verification_evidence: { verifier_report: body, publisher_identity_valid: Boolean(publisherIdentityValid), provenance_verified: Boolean(provenanceVerified) }
+        last_error: "Publisher OIDC identity or independent deterministic source rebuild verification is missing.",
+        verification_evidence: {
+          verifier_report: body,
+          publisher_identity_valid: Boolean(publisherIdentityValid),
+          issuer_envelope_valid: Boolean(issuerEnvelopeValid),
+          independent_rebuild_verified: Boolean(independentRebuildVerified)
+        }
       }).eq("event_id", eventId);
-      return reply({ error: "publisher_identity_or_provenance_invalid_quarantined" }, 409);
+      return reply({ error: "publisher_identity_or_independent_rebuild_invalid_quarantined" }, 409);
     }
     if (!Array.isArray(body.evidence_refs) || body.evidence_refs.length === 0) {
       return reply({ error: "verifier_evidence_refs_required" }, 422);
@@ -437,14 +448,17 @@ Deno.serve(async (req: Request) => {
 
     const evidence = {
       artifact_digest: "PASS",
-      issuer_signature: "PASS_GITHUB_OIDC_AND_ARTIFACT_ATTESTATION",
+      issuer_signature: "PASS_GITHUB_OIDC_TOKEN_SIGNATURE_AND_WORKFLOW_IDENTITY",
       compatibility_contract: "PASS",
       compatibility_verified: true,
       evidence_refs: body.evidence_refs,
       verifier_identity: body.verifier_identity ?? "GITHUB_ACTIONS_INDEPENDENT_VERIFIER",
       computed_artifact_sha256: computedDigest,
       publisher_identity: publisherProof,
-      provenance_attestation_ref: body.provenance_attestation_ref,
+      independent_rebuild: "PASS",
+      independent_rebuild_ref: body.independent_rebuild_ref,
+      independent_rebuild_commit: body.independent_rebuild_commit,
+      independent_rebuild_sha256: body.independent_rebuild_sha256,
       verified_at: new Date().toISOString()
     };
     const { error: updateError } = await supabase.from("pre_kernel_releases").update({
