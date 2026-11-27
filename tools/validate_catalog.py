@@ -122,8 +122,8 @@ def validate():
                 fail(f"{key}: private source requires a pinned 40-character commit")
             if repo.get("package_version") != plugin.get("repository_version"):
                 fail(f"{key}: private repository version does not match catalog repository_version")
-            if repo.get("package_parity_status") != "MATCH" or repo.get("package_file_count") != 18:
-                fail(f"{key}: private source requires exact package parity evidence")
+            if repo.get("package_parity_status") != "MATCH" or not isinstance(repo.get("package_file_count"), int) or repo.get("package_file_count") < 1:
+                fail(f"{key}: private source requires a positive package file count and exact package parity evidence")
             if repo.get("license_status") != "NOT_ASSESSED":
                 fail(f"{key}: private source license status must remain explicit")
         if not plugin.get("primary_triggers") or not plugin.get("negative_triggers"):
