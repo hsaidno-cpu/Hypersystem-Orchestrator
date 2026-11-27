@@ -31,9 +31,9 @@ jobs:
           HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
         run: |
           if [ -z "$PRE_FEDERATION_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
-            echo "::warning::NOT_CONFIGURED: PRE_FEDERATION_URL / HSO_SYNC_TOKEN are missing."
-            echo "Release event not delivered; provision the signed publisher bridge." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
+            echo "::error::NOT_CONFIGURED: PRE_FEDERATION_URL / HSO_SYNC_TOKEN are missing."
+            echo "FAILED: release event not delivered; provision the signed publisher bridge." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           fi
       - name: Publish signed release event
         env:
@@ -54,8 +54,8 @@ jobs:
         run: |
           if [ -z "$PRE_FEDERATION_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
             echo "::warning::NOT_CONFIGURED: PRE_FEDERATION_URL / HSO_SYNC_TOKEN are missing."
-            echo "Scheduled reconciliation skipped; provision the publisher credential." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
+            echo "FAILED: scheduled reconciliation skipped; provision the publisher credential." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           fi
       - name: Reconcile missing host receipts
         env:
