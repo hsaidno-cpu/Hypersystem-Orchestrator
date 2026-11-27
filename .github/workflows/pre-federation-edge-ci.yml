@@ -1,9 +1,12 @@
-name: PRE federation Edge Function CI
+name: HSO and PRE federation Edge Function CI
 
 on:
   pull_request:
     paths:
       - "supabase/functions/pre-core-federation/**"
+      - "supabase/functions/hso-github-webhook/**"
+      - "supabase/functions/hso-reconcile/**"
+      - "supabase/functions/_shared/**"
       - "supabase/migrations/*pre_release_private_artifact_bucket*"
       - ".github/workflows/pre-federation-edge-ci.yml"
   push:
@@ -26,5 +29,9 @@ jobs:
         uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
         with:
           deno-version: v2.x
-      - name: Type-check federation Edge Function
-        run: deno check supabase/functions/pre-core-federation/index.ts
+      - name: Type-check PRE federation and HSO Mission Control Edge Functions
+        run: |
+          deno check supabase/functions/_shared/github_oidc.ts
+          deno check supabase/functions/pre-core-federation/index.ts
+          deno check supabase/functions/hso-github-webhook/index.ts
+          deno check supabase/functions/hso-reconcile/index.ts
