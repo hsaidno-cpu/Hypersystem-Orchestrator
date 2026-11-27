@@ -38,8 +38,12 @@ class HsoOidcContractTests(unittest.TestCase):
         reconcile = (ROOT / "supabase/functions/hso-reconcile/index.ts").read_text()
         self.assertIn('rpc("pre_federation_get_secret"', webhook)
         self.assertIn('rpc("pre_federation_get_secret"', reconcile)
+        notion = (ROOT / "supabase/functions/hso-notion-webhook/index.ts").read_text()
+        decision = (ROOT / "supabase/functions/hso-decision-engine/index.ts").read_text()
         self.assertIn('resolveVaultSecret(supabase, "HSO_SYNC_TOKEN")', webhook)
         self.assertIn('resolveVaultSecret(db, "HSO_SYNC_TOKEN")', reconcile)
+        self.assertIn('resolveVaultSecret(supabase, "HSO_SYNC_TOKEN")', notion)
+        self.assertIn('resolveVaultSecret(db, "HSO_SYNC_TOKEN")', decision)
 
 
 if __name__ == "__main__":
