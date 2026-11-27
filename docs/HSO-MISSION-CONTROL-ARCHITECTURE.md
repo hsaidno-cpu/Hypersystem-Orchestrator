@@ -1,7 +1,7 @@
 # HSO Mission Control — Architecture & Integration Contract v1.0
 
-**Status:** Foundation implemented; external credentials and end-to-end acceptance remain pending.  
-**Date:** 2026-11-24  
+**Status:** PARTIALLY DEPLOYED — PRE federation is active; Mission Control OIDC migration and source reconciliation are under implementation.  
+**Date:** 2026-11-28  
 **Repository:** https://github.com/hsaidno-cpu/Hypersystem-Orchestrator
 
 ## Purpose
@@ -55,7 +55,7 @@ Endpoint URLs:
 - https://ehgmtkkppmceaffhwcpc.supabase.co/functions/v1/hso-github-webhook
 - https://ehgmtkkppmceaffhwcpc.supabase.co/functions/v1/hso-reconcile
 
-The webhook functions run with platform JWT verification disabled because Notion/GitHub use signed raw webhook bodies. Each function performs its own signature verification and fails closed if secrets are missing.
+The webhook functions run with platform JWT verification disabled because GitHub Actions OIDC and provider webhook signatures are not Supabase Auth user JWTs. Each handler must authenticate at application level and fail closed. The Mission Control GitHub path is being migrated to short-lived GitHub Actions OIDC with exact repository, main-branch, workflow_ref, event_name and endpoint-audience checks. The Notion path continues to verify Notion's HMAC signature.
 
 ## Data model
 
@@ -78,8 +78,8 @@ All HSO data tables enable and force RLS. Browser clients use only the Supabase 
 ## Synchronization contract
 
 1. A GitHub event or Notion webhook arrives.
-2. The Edge Function verifies HMAC over the exact raw request body.
-3. The event is stored with unique `(provider, delivery_id)`; duplicates are no-ops.
+2. GitHub Actions requests a short-lived OIDC JWT for the exact webhook endpoint audience; the Edge Function verifies the JWT signature against GitHub JWKS and checks issuer, audience, expiry, repository ID/name, main ref, workflow_ref and event_name. Direct provider webhooks use their provider HMAC. Notion continues to use its HMAC signature over the exact raw request body.
+3. The event is stored with unique `(provider, delivery_id)`; duplicate delivery IDs do not create duplicate inbox or change-event rows.
 4. Reconciliation fetches the latest canonical source state rather than trusting event order or user-authored event text.
 5. Records are upserted by `(source_key, external_id)`.
 6. A source snapshot and sync run capture observed time, hash, counts and source outcomes.
@@ -111,15 +111,20 @@ Set from Supabase Dashboard > Edge Functions > Secrets. Never commit values.
 
 Supabase supplies `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to the Edge Function runtime. Never expose the latter in Vercel client variables.
 
-### GitHub repository variables and secrets
+### GitHub Actions — Mission Control event path
 
-Set repository variable:
-- `HSO_GITHUB_WEBHOOK_URL` = `https://ehgmtkkppmceaffhwcpc.supabase.co/functions/v1/hso-github-webhook`
+The canonical workflow is .github/workflows/hso-mission-control-sync.yml. It uses id-token: write and requests a short-lived GitHub Actions OIDC JWT per request. The audience is endpoint-specific:
 
-Set repository secret:
-- `HSO_SYNC_TOKEN` = the same value configured in Supabase.
+- https://ehgmtkkppmceaffhwcpc.supabase.co/functions/v1/hso-github-webhook for event ingestion.
+- https://ehgmtkkppmceaffhwcpc.supabase.co/functions/v1/hso-reconcile for scheduled/manual reconciliation.
 
-The workflow emits signed events for push, pull request and Catalog Validation workflow completion. It schedules reconciliation every 15 minutes and supports manual dispatch. The schedule starts once the workflow is present on the default branch.
+The Edge Functions trust only repository hsaidno-cpu/Hypersystem-Orchestrator, repository ID 1467501661, refs/heads/main, this exact workflow file on main, and their explicit event allowlists. The workflow checks out trusted main with persisted credentials disabled. Pull request observations use pull_request_target; no PR-head code is checked out or executed.
+
+**Do not configure HSO_SYNC_TOKEN as a GitHub Actions repository secret. Do not configure a webhook URL secret.** Endpoint URLs are fixed non-secret integration constants in tools/emit_hso_oidc_event.py. The OIDC token is short-lived and never logged or persisted.
+
+### Internal HSO service-to-service authentication
+
+HSO_SYNC_TOKEN remains a server-side internal credential for function-to-function calls and compatible manual/server routes. Its canonical secret value is stored in Supabase Vault and retrieved at runtime through pre_federation_get_secret, whose execute grant is restricted to service_role and postgres. Do not copy the value into repository settings, logs, Notion or client-side configuration. During migration, Edge Functions may retain environment fallback for compatibility; Vault is the primary source. GITHUB_WEBHOOK_SECRET remains optional for a separately configured direct GitHub webhook. It is not used by the GitHub Actions OIDC workflow.
 
 ### Notion connection
 
