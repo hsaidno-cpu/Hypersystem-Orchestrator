@@ -27,7 +27,7 @@ Host auth references store environment variable names, not credential values. Th
 
 Deployed: four registry tables, RLS/service-role permissions, explicit service-role policies, four initial host records, host auth references and Edge Function v2.
 
-Not yet accepted end-to-end: Plugin Creator release publisher, signed event delivery, per-host secret provisioning, A.S.F.R.E.E PR merge/install/read-back, HSAR adapter/policy profile, host regression receipts and rollback drill.
+Not yet accepted end-to-end: Plugin Creator release publisher, signed event delivery, per-host secret provisioning, A.S.F.R.E.E Plugin Creator update/read-back, HSAR adapter/policy profile, host regression receipts and rollback drill.
 
 Plugin Creator package updates do not automatically update other Plugin Creator packages. An authenticated publisher or scheduled exact-ID polling bridge must issue release events. Do not mark a host adopted on event acceptance alone.
 
@@ -42,7 +42,7 @@ Automatic adoption is disabled by default. It may be enabled for additive, non-b
 | Host | State | Auto-adopt |
 |---|---|---:|
 | PRE Standalone | 0.1.5 current; host policy profile pending | No |
-| A.S.F.R.E.E / RPEDS | PR #13 candidate; not yet merged | No |
+| A.S.F.R.E.E / RPEDS | Source merged at `de6b0ce`; Plugin Creator 0.3.2 remains behind source 0.5.0-rc.1; host read-back pending | No |
 | HSAR | Conditional routing only; no dedicated adapter/profile | No |
 | HSO | Registry and Edge Function v2 deployed; event publisher and credentials pending | No |
 
