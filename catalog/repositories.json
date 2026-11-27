@@ -184,19 +184,38 @@
       "validation_workflow_run_id": 45701037593,
       "validation_commit_sha": "84214752bb298002b96f9ff1c60e16b7a09e99d7",
       "notes": "Canonical private source for Vibe Coding Mentor. Source package CI passed static package validator and 4 unit tests on this exact commit. This is source verification, not host invocation, Cursor/Bolt/Lovable execution, public distribution clearance or production readiness."
+    },
+    {
+      "repository_id": "pre-rpeds-shared-roadmap-dna",
+      "full_name": "hsaidno-cpu/pre-rpeds-shared-roadmap-dna",
+      "url": "https://github.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna",
+      "visibility": "private",
+      "default_branch": "main",
+      "role": "plugin_source",
+      "status": "private_source_verified",
+      "pinned_commit": "98008cdf3e082fd4cc8de03e51b2863fbae8cf11",
+      "verified_artifact": "PRE Plugin Creator v0.1.6 source snapshot imported with 37 text files: manifests, master and 13 specialist skill definitions, schemas, contracts, tests and documentation. Binary bytecode cache excluded. This is source-snapshot parity, not an independently attested release archive.",
+      "source_classification": "OFFICIAL_PRIVATE_REPOSITORY_LICENSE_UNASSESSED",
+      "license_status": "NOT_ASSESSED",
+      "license_note": "No separate license grant or redistribution scope has been assessed. Repository remains private.",
+      "package_version": "0.1.6",
+      "package_file_count": 37,
+      "package_parity_status": "MATCH",
+      "package_parity_evidence": "37/37 text files were transferred from the exact Plugin Creator v0.1.6 file read-back into Git blobs. Independent archive digest and signed release attestation remain pending."
     }
   ],
   "search_scope": {
     "inventory_date": "2026-11-22",
     "owner": "hsaidno-cpu",
-    "visible_owned_repositories": 6,
+    "visible_owned_repositories": 7,
     "visible_repository_names": [
       "Hypersystem-Orchestrator",
       "HSMART",
       "skill-analyzer",
       "A.S.F.R.E.E",
       "Photo-Fixer",
-      "anatomi-prompt-strategis"
+      "anatomi-prompt-strategis",
+      "pre-rpeds-shared-roadmap-dna"
     ],
     "result": "Five official plugin source repositories are now verified and pinned. Twelve plugin identities remain NOT_IDENTIFIED at GitHub-source level. Two explicitly referenced repositories remain CANDIDATE_INCOMPLETE: Photo-Fixer (minimal README/LICENSE only) and PVEE's CL-VAEPPC pointer (legacy README/LICENSE/empty marker only). A.S.F.R.E.E Legacy is redirect-only. Similar-name repositories and upstream datasets are not promoted to canonical source without matching provenance and a complete source tree.",
     "classification_rule": "A name-similar repository, search result owned by another account, prototype or mirror is not accepted as canonical without identity, provenance, manifest, license and source-history evidence.",
@@ -220,8 +239,8 @@
         "commit_signature_verified": true
       }
     ],
-    "verified_plugin_source_repositories": 5,
-    "not_identified_plugin_sources": 12,
+    "verified_plugin_source_repositories": 6,
+    "not_identified_plugin_sources": 11,
     "candidate_incomplete_plugin_sources": 2,
     "external_source_candidates": [
       {
