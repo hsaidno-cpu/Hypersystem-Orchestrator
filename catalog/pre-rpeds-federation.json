@@ -5,8 +5,8 @@
   "canonical_package": {
     "plugin_key": "progressive-roadmap-evaluator",
     "plugin_creator_id": "plugins_6b038580bc488191ac56d9e586071bfc",
-    "version": "0.1.5",
-    "release_id": "pluginrel_6b095bf2f4308191bf7d46ce98da36f7",
+    "version": "0.1.6",
+    "release_id": "pluginrel_6b0961f9dca08191a8af34dbb2e02881",
     "scope": "USER",
     "discoverability": "PRIVATE",
     "source_repository_id": null,
@@ -20,8 +20,8 @@
       "host_id": "pre-standalone",
       "role": "independent roadmap competency",
       "owns_independent_case_coordination": true,
-      "current_version": "0.1.5",
-      "current_release_id": "pluginrel_6b095bf2f4308191bf7d46ce98da36f7",
+      "current_version": "0.1.6",
+      "current_release_id": "pluginrel_6b0961f9dca08191a8af34dbb2e02881",
       "retained_extensions": [
         "standalone roadmap intake and orchestration",
         "next-action intelligence",
@@ -83,10 +83,10 @@
     {
       "host_id": "pre-standalone",
       "host_name": "PRE Standalone",
-      "adapter_status": "SPECIFIED",
+      "adapter_status": "PLUGIN_CREATOR_CURRENT",
       "policy_profile_status": "PENDING_PROFILE",
       "auto_adopt_nonbreaking": false,
-      "current_kernel_version": "0.1.5",
+      "current_kernel_version": "0.1.6",
       "adoption_state": "SOURCE_CURRENT"
     },
     {
@@ -101,20 +101,22 @@
     {
       "host_id": "hsar",
       "host_name": "HSAR",
-      "adapter_status": "CONDITIONAL_ROUTING_ONLY",
+      "adapter_status": "PLUGIN_CREATOR_PACKAGE_UPDATED",
       "policy_profile_status": "PENDING_PROFILE",
       "auto_adopt_nonbreaking": false,
-      "adoption_state": "NOT_ACTIVATED"
+      "adoption_state": "ADAPTER_UPDATED_AUTH_PENDING",
+      "adapter_version": "0.3.1",
+      "adapter_plugin_release_id": "pluginrel_6b09690c83488191bd950eb9df69d90a"
     },
     {
       "host_id": "hso",
       "host_name": "HSO Control Plane",
-      "adapter_status": "FEDERATION_REGISTRY_DEPLOYED",
+      "adapter_status": "FEDERATION_RUNTIME_DEPLOYED",
       "policy_profile_status": "PENDING_REVIEW",
       "auto_adopt_nonbreaking": false,
       "edge_function": "pre-core-federation",
-      "edge_function_version": 2,
-      "adoption_state": "EVENT_PUBLISHER_NOT_CONFIGURED"
+      "edge_function_version": 4,
+      "adoption_state": "PUBLISHER_AND_HOST_AUTH_PENDING"
     }
   ],
   "adoption_policy": {
@@ -143,8 +145,8 @@
     "status": "PARTIALLY_DEPLOYED",
     "database_registry": "DEPLOYED",
     "service_role_policies": "DEPLOYED",
-    "edge_function": "DEPLOYED",
-    "edge_function_version": 2,
+    "edge_function": "ACTIVE_DEPLOYED",
+    "edge_function_version": 4,
     "event_publisher": "NOT_CONFIGURED",
     "release_event_test": "NOT_RUN",
     "host_secret_provisioning": "NOT_CONFIGURED",
@@ -152,12 +154,20 @@
     "host_readback": "NOT_RUN",
     "runtime_verified": false,
     "blockers": [
-      "PRE canonical source repository not registered",
+      "PRE canonical source repository not registered; current USER/PRIVATE release is tracked by Plugin Creator metadata only",
       "Plugin Creator release-event publisher or authenticated polling bridge not configured",
-      "per-host environment secrets not provisioned",
-      "A.S.F.R.E.E source merged, but Plugin Creator package remains at 0.3.2 and host read-back of the new source is pending",
-      "HSAR adapter and policy profile not registered",
-      "host regression and read-back acceptance not run"
-    ]
+      "per-host environment secrets not provisioned; all host auth states remain NOT_CONFIGURED",
+      "A.S.F.R.E.E source is merged at 0.5.0-rc.1, but its Plugin Creator package remains 0.3.2 and host read-back is pending",
+      "HSAR package adapter 0.3.1 is updated, but its HSO policy profile remains PENDING_PROFILE and host authentication is not configured",
+      "host regression, exact package/digest read-back and rollback acceptance are not run",
+      "no PRE release event, host adoption receipt or capability contribution has yet been recorded"
+    ],
+    "host_adapter_inventory": "PRE_STANDALONE_0.1.6; ASFREE_RPEDS_SOURCE_MERGED_PLATFORM_BEHIND; HSAR_ADAPTER_0.3.1_PROFILE_PENDING; HSO_FEDERATION_RUNTIME_V4",
+    "release_event_publisher": "NOT_CONFIGURED",
+    "database_event_counts": {
+      "pre_kernel_releases": 0,
+      "pre_host_adoption_receipts": 0,
+      "pre_capability_contributions": 0
+    }
   }
 }
