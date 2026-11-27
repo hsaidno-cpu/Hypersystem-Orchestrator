@@ -1,0 +1,12 @@
+revoke all on table public.pre_kernel_releases from anon, authenticated;
+revoke all on table public.pre_host_subscriptions from anon, authenticated;
+revoke all on table public.pre_host_adoption_receipts from anon, authenticated;
+revoke all on table public.pre_capability_contributions from anon, authenticated;
+grant all on table public.pre_kernel_releases to service_role;
+grant all on table public.pre_host_subscriptions to service_role;
+grant all on table public.pre_host_adoption_receipts to service_role;
+grant all on table public.pre_capability_contributions to service_role;
+create policy pre_kernel_releases_service_role_all on public.pre_kernel_releases for all to service_role using (true) with check (true);
+create policy pre_host_subscriptions_service_role_all on public.pre_host_subscriptions for all to service_role using (true) with check (true);
+create policy pre_host_adoption_receipts_service_role_all on public.pre_host_adoption_receipts for all to service_role using (true) with check (true);
+create policy pre_capability_contributions_service_role_all on public.pre_capability_contributions for all to service_role using (true) with check (true);
