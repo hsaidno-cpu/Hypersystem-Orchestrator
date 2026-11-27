@@ -270,6 +270,10 @@
           }
         }
       }
+    },
+    "current_installed_skill_count": {
+      "type": "integer",
+      "minimum": 1
     }
   }
 }
