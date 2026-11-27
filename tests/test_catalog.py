@@ -69,7 +69,10 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(by_key["skill-analyzer"]["repository_version"], "1.3.0")
         self.assertEqual(by_key["skill-analyzer"]["platform_package_version"], "1.0.0")
         self.assertEqual(by_key["asfree-canonical"]["repository_version"], "0.5.0-rc.2")
-        self.assertEqual(by_key["asfree-canonical"]["platform_package_version"], "0.3.2")
+        self.assertEqual(by_key["asfree-canonical"]["platform_package_version"], "0.5.0-rc.2")
+        self.assertEqual(by_key["asfree-canonical"]["platform_current_release_id"], "pluginrel_6b097130b520819197895298a0a0f73c")
+        self.assertEqual(by_key["asfree-canonical"]["version_alignment_state"], "SOURCE_AND_PLATFORM_MATCH")
+        self.assertEqual(by_key["asfree-canonical"]["source_instruction_parity_status"], "DRIFT_DETECTED")
         self.assertEqual(by_key["asfree-canonical"]["instruction_skill_count"], 15)
         asfree_source = next(r for r in repositories["repositories"] if r["repository_id"] == "asfree")
         self.assertEqual(asfree_source["pinned_commit"], "f814cff8e800136a6e3a1f664b41085076f19ac8")
@@ -141,6 +144,21 @@ class CatalogValidationTests(unittest.TestCase):
         self.assertEqual(by_id["INT-GODEX-MOTION-001"]["canonical_truth_owner"], "godex-motion-audio")
         self.assertEqual(by_id["INT-PONYTAIL-SDO-001"]["canonical_truth_owner"], "skill-developer-orchestrator")
 
+
+    def test_asfree_creator_rc2_readback_does_not_overclaim_content_parity(self):
+        catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
+        snapshots = json.loads((ROOT / "catalog" / "instruction-snapshots.json").read_text(encoding="utf-8"))
+        item = next(p for p in catalog["plugins"] if p["plugin_key"] == "asfree-canonical")
+        snapshot = next(p for p in snapshots["plugins"] if p["plugin_key"] == "asfree-canonical")
+        self.assertEqual(item["repository_version"], "0.5.0-rc.2")
+        self.assertEqual(item["platform_package_version"], "0.5.0-rc.2")
+        self.assertEqual(item["platform_current_release_id"], "pluginrel_6b097130b520819197895298a0a0f73c")
+        self.assertEqual(item["instruction_skill_count"], 15)
+        self.assertEqual(item["source_instruction_parity_status"], "DRIFT_DETECTED")
+        self.assertEqual(snapshot["skill_count"], 15)
+        self.assertEqual(snapshot["plugin_creator_release_id"], "pluginrel_6b097130b520819197895298a0a0f73c")
+        self.assertEqual(snapshot["package_version"], "0.5.0-rc.2")
+        self.assertEqual(snapshot["snapshot_freshness"], "CREATOR_READBACK_PARTIAL_OVERLAY_SOURCE_CONTENT_DRIFT")
 
     def test_sdo_official_source_submodule_and_version_are_reconciled(self):
         catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text(encoding="utf-8"))
