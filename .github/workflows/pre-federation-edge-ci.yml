@@ -1,0 +1,30 @@
+name: PRE federation Edge Function CI
+
+on:
+  pull_request:
+    paths:
+      - "supabase/functions/pre-core-federation/**"
+      - "supabase/migrations/*pre_release_private_artifact_bucket*"
+      - ".github/workflows/pre-federation-edge-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "supabase/functions/pre-core-federation/**"
+      - "supabase/migrations/*pre_release_private_artifact_bucket*"
+      - ".github/workflows/pre-federation-edge-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deno-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out HSO
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Set up Deno
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
+        with:
+          deno-version: v2.x
+      - name: Type-check federation Edge Function
+        run: deno check supabase/functions/pre-core-federation/index.ts
