@@ -101,8 +101,8 @@ def event_delivery_id(run_id: str, event_name: str) -> str:
 
 def run(mode: str, environ: Mapping[str, str] | None = None) -> int:
     env = os.environ if environ is None else environ
-    webhook_url = env.get("HSO_GITHUB_WEBHOOK_URL", DEFAULT_WEBHOOK_URL).strip()
-    reconcile_url = env.get("HSO_RECONCILE_URL", DEFAULT_RECONCILE_URL).strip()
+    webhook_url = DEFAULT_WEBHOOK_URL
+    reconcile_url = DEFAULT_RECONCILE_URL
     event_name = env.get("GITHUB_EVENT_NAME", "").strip()
     run_id = env.get("GITHUB_RUN_ID", "").strip()
 
