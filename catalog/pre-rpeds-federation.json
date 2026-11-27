@@ -51,10 +51,12 @@
       "source_pr_status": "MERGED",
       "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "source_version": "0.5.0-rc.2",
-      "platform_last_verified_version": "0.3.2",
-      "platform_last_verified_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2",
+      "platform_last_verified_version": "0.5.0-rc.2",
+      "platform_last_verified_release_id": "pluginrel_6b097130b520819197895298a0a0f73c",
       "platform_last_verified_at": "2026-11-27",
-      "runtime_package_state": "PLATFORM_BEHIND_SOURCE"
+      "runtime_package_state": "PACKAGE_UPDATED_POLICY_PROFILE_PENDING",
+      "creator_skill_count": 15,
+      "creator_content_parity": "DRIFT_DETECTED"
     }
   ],
   "shared_dna_kernel": [
@@ -92,15 +94,17 @@
     {
       "host_id": "asfree-rpeds",
       "host_name": "A.S.F.R.E.E / RPEDS",
-      "adapter_status": "SOURCE_MERGED",
+      "adapter_status": "PACKAGE_UPDATED",
       "policy_profile_status": "PENDING_REVIEW",
       "auto_adopt_nonbreaking": false,
       "candidate_host_version": "0.5.0-rc.2",
-      "adoption_state": "SOURCE_MERGED_PLATFORM_BEHIND",
+      "adoption_state": "PACKAGE_UPDATED_POLICY_PROFILE_PENDING",
       "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "source_pr": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/pull/14",
-      "platform_version": "0.3.2",
-      "platform_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2"
+      "platform_version": "0.5.0-rc.2",
+      "platform_release_id": "pluginrel_6b097130b520819197895298a0a0f73c",
+      "installed_skill_count": 15,
+      "content_parity": "DRIFT_DETECTED"
     },
     {
       "host_id": "hsar",
@@ -163,11 +167,12 @@
       "PRE_FEDERATION_URL and HSO_SYNC_TOKEN repository settings are not confirmed configured",
       "PRE_RELEASE_VERIFIER_TOKEN and per-host PRE_HOST_TOKEN_* secrets are not configured or independently verified",
       "PRE Standalone, A.S.F.R.E.E/RPEDS, HSAR and HSO host policy profiles remain pending; auto-adoption remains false",
-      "A.S.F.R.E.E source 0.5.0-rc.2 is merged but Plugin Creator package remains v0.3.2",
       "HSAR adapter package v0.3.1 is updated but host authentication and policy profile remain pending",
-      "No PRE release event, adoption receipt or capability contribution is recorded; host test/read-back/rollback acceptance remain NOT_RUN"
+      "No PRE release event, adoption receipt or capability contribution is recorded; host test/read-back/rollback acceptance remain NOT_RUN",
+      "A.S.F.R.E.E Creator package v0.5.0-rc.2 is installed with 15 skill documents, but full content parity of the 13 preserved legacy skills remains DRIFT_DETECTED",
+      "A.S.F.R.E.E/RPEDS AFSA policy profile and host auth token remain pending; no host adoption receipt is recorded"
     ],
-    "host_adapter_inventory": "PRE_STANDALONE_0.1.6_PROFILE_PENDING; ASFREE_RPEDS_SOURCE_RC2_MERGED_CREATOR_0.3.2_BEHIND; HSAR_ADAPTER_0.3.1_PROFILE_PENDING; HSO_EDGE_V5_ACTIVE_PUBLISHER_NOT_CONFIGURED",
+    "host_adapter_inventory": "PRE_STANDALONE_0.1.6_PROFILE_PENDING; ASFREE_RPEDS_CREATOR_RC2_15_SKILLS_CONTENT_PARITY_DRIFT_POLICY_PENDING; HSAR_ADAPTER_0.3.1_PROFILE_PENDING; HSO_EDGE_V5_ACTIVE_PUBLISHER_NOT_CONFIGURED",
     "release_event_publisher": "NOT_CONFIGURED",
     "database_event_counts": {
       "pre_kernel_releases": 0,
@@ -177,6 +182,10 @@
     "reconciliation_endpoint": "DEPLOYED",
     "reconciliation_workflow": "MERGED_NOT_CONFIGURED",
     "publisher_bridge_source": "MERGED_NOT_CONFIGURED",
-    "edge_function_sha256": "195b8ff3cc611a3caea38c786146012ddd3212760b7849e52225a812a102079a"
+    "edge_function_sha256": "195b8ff3cc611a3caea38c786146012ddd3212760b7849e52225a812a102079a",
+    "asfree_creator_release_id": "pluginrel_6b097130b520819197895298a0a0f73c",
+    "asfree_creator_version": "0.5.0-rc.2",
+    "asfree_creator_skill_count": 15,
+    "asfree_source_content_parity": "DRIFT_DETECTED"
   }
 }
