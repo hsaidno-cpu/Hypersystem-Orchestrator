@@ -67,7 +67,7 @@ def validate() -> None:
             required_blockers = {
                 "LICENSE_RIGHTS_NOT_ASSESSED",
                 "PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE",
-                "VCM_HSO_HOST_ADAPTER_NOT_CONFIGURED",
+                "HOST_ADAPTER_NOT_CONFIGURED",
             }
             if not required_blockers.issubset(set(item.get("blockers", []))):
                 raise ValueError(f"{key}: private source must disclose license, visibility and runtime blockers")
