@@ -101,16 +101,33 @@ class DistributionValidationTests(unittest.TestCase):
             self.assertEqual(adapter["runtime_execution_test"],"NOT_RUN")
 
 
-    def test_pre_remains_snapshot_only_until_source_and_rights_are_cleared(self):
+    def test_pre_source_is_registered_but_distribution_remains_restricted(self):
         registry = self.load(REGISTRY)
+        repositories = self.load(ROOT / "catalog" / "repositories.json")
         item = next(p for p in registry["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
-        self.assertEqual(item["distribution_status"], "snapshot_only")
-        self.assertEqual(item["source_state"], "pending_repository")
+        source = next(r for r in repositories["repositories"] if r["repository_id"] == "pre-rpeds-shared-roadmap-dna")
+        self.assertEqual(item["distribution_status"], "private_source_restricted")
+        self.assertEqual(item["source_state"], "private_repository_source")
+        self.assertEqual(item["source_repository_id"], "pre-rpeds-shared-roadmap-dna")
+        self.assertEqual(item["source_commit"], source["pinned_commit"])
+        self.assertEqual(item["source_version"], "0.1.6")
         self.assertEqual(item["license_status"], "not_assessed")
-        self.assertIsNone(item["source_commit"])
         self.assertIsNone(item["package_artifact"])
-        self.assertIn("CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED", item["blockers"])
-        self.assertIn("PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE", item["blockers"])
+        self.assertIn("LICENSE_RIGHTS_NOT_ASSESSED", item["blockers"])
+        self.assertIn("PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE", item["blockers"])
+        self.assertIn("HOST_ADAPTER_NOT_CONFIGURED", item["blockers"])
+        self.assertIn("INDEPENDENT_RELEASE_ATTESTATION_NOT_COMPLETED", item["blockers"])
+        self.assertEqual(source["package_file_count"], 37)
+        self.assertEqual(source["package_parity_status"], "MATCH")
+
+    def test_asfree_platform_package_matches_source_version_but_remains_review_required(self):
+        registry = self.load(REGISTRY)
+        item = next(p for p in registry["plugins"] if p["plugin_key"] == "asfree-canonical")
+        self.assertEqual(item["source_version"], "0.5.0-rc.2")
+        self.assertEqual(item["platform_package_version"], "0.5.0-rc.2")
+        self.assertEqual(item["distribution_status"], "review_required")
+        self.assertIn("SOURCE_PACKAGE_BYTE_PARITY_NOT_VERIFIED", item["blockers"])
+        self.assertIsNone(item["package_artifact"])
 
 
     def test_ponytail_private_package_remains_snapshot_only(self):
@@ -140,7 +157,7 @@ class DistributionValidationTests(unittest.TestCase):
         self.assertIsNone(item["package_artifact"])
         self.assertIn("LICENSE_RIGHTS_NOT_ASSESSED", item["blockers"])
         self.assertIn("PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE", item["blockers"])
-        self.assertIn("VCM_HSO_HOST_ADAPTER_NOT_CONFIGURED", item["blockers"])
+        self.assertIn("HOST_ADAPTER_NOT_CONFIGURED", item["blockers"])
         self.assertEqual(catalog_item["source_state"], "private_repository_source")
         self.assertEqual(source["package_parity_status"], "MATCH")
 

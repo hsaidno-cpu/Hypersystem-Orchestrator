@@ -27,13 +27,13 @@ class SourceParityAuditTests(unittest.TestCase):
         self.assertIn("11/12", item["source_instruction_parity_note"])
         self.assertEqual(item["version_alignment_state"], "SOURCE_AHEAD_OF_PLATFORM")
 
-    def test_asfree_release_candidate_has_partial_parity_only(self):
+    def test_asfree_source_and_creator_version_match_but_byte_parity_is_open(self):
         item = self.plugins["asfree-canonical"]
-        self.assertEqual(item["source_instruction_parity_status"], "DRIFT_DETECTED")
-        self.assertEqual(item["source_sync_status"], "SOURCE_INSTRUCTION_DRIFT_DETECTED")
-        self.assertIn("5/13", item["source_instruction_parity_note"])
+        self.assertEqual(item["source_instruction_parity_status"], "NOT_COMPARED")
+        self.assertEqual(item["source_sync_status"], "SOURCE_PLATFORM_VERSION_MATCH_PARITY_NOT_COMPARED")
         self.assertEqual(item["repository_version"], "0.5.0-rc.2")
-        self.assertEqual(item["platform_package_version"], "0.3.2")
+        self.assertEqual(item["platform_package_version"], "0.5.0-rc.2")
+        self.assertIn("byte-for-byte", item["source_instruction_parity_note"].lower())
 
     def test_sdo_same_version_does_not_hide_four_file_drift(self):
         item = self.plugins["skill-developer-orchestrator"]
@@ -49,15 +49,18 @@ class SourceParityAuditTests(unittest.TestCase):
         self.assertEqual(item["platform_package_version"], "4.1.12")
         self.assertIn("no SKILL.md", item["source_instruction_parity_note"])
 
-    def test_pre_has_no_git_source_or_instruction_parity_baseline(self):
+    def test_pre_private_canonical_source_is_registered_and_pinned(self):
         item = self.plugins["progressive-roadmap-evaluator"]
-        self.assertEqual(item["source_state"], "pending_repository")
-        self.assertIsNone(item["source_repository_id"])
-        self.assertEqual(item["source_instruction_parity_status"], "NOT_COMPARED")
+        self.assertEqual(item["source_state"], "private_repository_source")
+        self.assertEqual(item["source_repository_id"], "pre-rpeds-shared-roadmap-dna")
+        self.assertEqual(item["repository_version"], "0.1.6")
+        self.assertEqual(item["source_instruction_parity_status"], "MATCH")
+        self.assertEqual(item["source_sync_status"], "SOURCE_PACKAGE_PARITY_VERIFIED")
         self.assertEqual(item["platform_package_version"], "0.1.6")
         self.assertEqual(item["platform_current_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
         self.assertEqual(item["current_installed_skill_count"], 14)
-        self.assertIn("no independent canonical git source repository", item["version_evidence"].lower())
+        self.assertIn("98008cdf3e082fd4cc8de03e51b2863fbae8cf11", item["version_evidence"])
+        self.assertIn("artifact", item["version_evidence"].lower())
 
 if __name__ == "__main__":
     unittest.main()

@@ -9,8 +9,12 @@
     "release_id": "pluginrel_6b0961f9dca08191a8af34dbb2e02881",
     "scope": "USER",
     "discoverability": "PRIVATE",
-    "source_repository_id": null,
-    "source_state": "pending_repository"
+    "source_repository_id": "pre-rpeds-shared-roadmap-dna",
+    "source_state": "private_source_snapshot_registered",
+    "source_repository_url": "https://github.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna",
+    "source_commit": "98008cdf3e082fd4cc8de03e51b2863fbae8cf11",
+    "source_file_count": 37,
+    "source_artifact_sha256": "NOT_COMPUTED"
   },
   "manifestations": [
     {
@@ -51,10 +55,10 @@
       "source_pr_status": "MERGED",
       "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "source_version": "0.5.0-rc.2",
-      "platform_last_verified_version": "0.3.2",
-      "platform_last_verified_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2",
+      "platform_last_verified_version": "0.5.0-rc.2",
+      "platform_last_verified_release_id": "pluginrel_6b097130b520819197895298a0a0f73c",
       "platform_last_verified_at": "2026-11-27",
-      "runtime_package_state": "PLATFORM_BEHIND_SOURCE"
+      "runtime_package_state": "SOURCE_AND_PACKAGE_VERSION_MATCH_ADOPTION_PENDING"
     }
   ],
   "shared_dna_kernel": [
@@ -87,20 +91,22 @@
       "policy_profile_status": "PENDING_PROFILE",
       "auto_adopt_nonbreaking": false,
       "current_kernel_version": "0.1.6",
-      "adoption_state": "SOURCE_CURRENT"
+      "adoption_state": "SOURCE_CURRENT",
+      "source_repository_url": "https://github.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna",
+      "source_commit": "98008cdf3e082fd4cc8de03e51b2863fbae8cf11"
     },
     {
       "host_id": "asfree-rpeds",
       "host_name": "A.S.F.R.E.E / RPEDS",
-      "adapter_status": "SOURCE_MERGED",
+      "adapter_status": "SOURCE_AND_PACKAGE_VERSION_MATCH",
       "policy_profile_status": "PENDING_REVIEW",
       "auto_adopt_nonbreaking": false,
       "candidate_host_version": "0.5.0-rc.2",
-      "adoption_state": "SOURCE_MERGED_PLATFORM_BEHIND",
+      "adoption_state": "VERSION_MATCH_POLICY_AND_RUNTIME_ADOPTION_PENDING",
       "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "source_pr": "https://github.com/hsaidno-cpu/A.S.F.R.E.E/pull/14",
-      "platform_version": "0.3.2",
-      "platform_release_id": "pluginrel_6b00fc6b23bc8191a5930132969e52c2"
+      "platform_version": "0.5.0-rc.2",
+      "platform_release_id": "pluginrel_6b097130b520819197895298a0a0f73c"
     },
     {
       "host_id": "hsar",
@@ -158,12 +164,12 @@
     "host_readback": "NOT_RUN",
     "runtime_verified": false,
     "blockers": [
-      "PRE canonical source repository and source release authority are not registered",
+      "PRE private canonical source repository is registered and 37 text files are imported; release authority, artifact SHA-256 and signed publisher/verifier acceptance are still pending",
       "Plugin Creator release event relay is not connected; publisher workflow has no observed release event",
       "PRE_FEDERATION_URL and HSO_SYNC_TOKEN repository settings are not confirmed configured",
       "PRE_RELEASE_VERIFIER_TOKEN and per-host PRE_HOST_TOKEN_* secrets are not configured or independently verified",
       "PRE Standalone, A.S.F.R.E.E/RPEDS, HSAR and HSO host policy profiles remain pending; auto-adoption remains false",
-      "A.S.F.R.E.E source 0.5.0-rc.2 is merged but Plugin Creator package remains v0.3.2",
+      "A.S.F.R.E.E source and Plugin Creator package both report 0.5.0-rc.2; source/package byte parity, AFSA policy acceptance and host runtime adoption are not verified",
       "HSAR adapter package v0.3.1 is updated but host authentication and policy profile remain pending",
       "No PRE release event, adoption receipt or capability contribution is recorded; host test/read-back/rollback acceptance remain NOT_RUN"
     ],
@@ -177,6 +183,18 @@
     "reconciliation_endpoint": "DEPLOYED",
     "reconciliation_workflow": "MERGED_NOT_CONFIGURED",
     "publisher_bridge_source": "MERGED_NOT_CONFIGURED",
-    "edge_function_sha256": "195b8ff3cc611a3caea38c786146012ddd3212760b7849e52225a812a102079a"
+    "edge_function_sha256": "195b8ff3cc611a3caea38c786146012ddd3212760b7849e52225a812a102079a",
+    "canonical_source_repository": {
+      "url": "https://github.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna",
+      "visibility": "private",
+      "pinned_commit": "98008cdf3e082fd4cc8de03e51b2863fbae8cf11",
+      "imported_text_files": 37,
+      "artifact_sha256": "NOT_COMPUTED",
+      "release_event_state": "NOT_PUBLISHED"
+    },
+    "package_version_reconciliation": {
+      "pre": "0.1.6 source snapshot and Plugin Creator release match; artifact attestation pending",
+      "asfree_rpeds": "0.5.0-rc.2 source/package version match; byte parity and host adoption pending"
+    }
   }
 }
