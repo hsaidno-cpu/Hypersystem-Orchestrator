@@ -2,7 +2,9 @@ name: HSO Mission Control synchronization
 
 on:
   push:
-  pull_request:
+    branches: [main]
+  pull_request_target:
+    branches: [main]
     types: [opened, synchronize, reopened, closed]
   workflow_run:
     workflows: ["Catalog and distribution validation"]
@@ -15,6 +17,7 @@ permissions:
   contents: read
   actions: read
   pull-requests: read
+  id-token: write
 
 concurrency:
   group: hso-mission-control-sync-${{ github.event_name }}-${{ github.ref }}
@@ -24,47 +27,37 @@ jobs:
   event-ingestion:
     if: ${{ github.event_name != 'schedule' && github.event_name != 'workflow_dispatch' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Check out HSO
+      # pull_request_target never checks out or executes the PR head. All code is
+      # taken from trusted main; the event payload is treated as untrusted data.
+      - name: Check out trusted HSO main source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: Emit signed event to HSO
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Emit GitHub event using short-lived OIDC
         env:
-          HSO_SYNC_URL: ${{ vars.HSO_GITHUB_WEBHOOK_URL }}
-          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_RUN_ID: ${{ github.run_id }}
-          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
           GITHUB_SHA: ${{ github.sha }}
-        run: |
-          if [ -z "$HSO_SYNC_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
-            if [ "$GITHUB_REF" != "refs/heads/main" ]; then
-              echo "::notice::HSO publisher not invoked for non-main validation event."
-              echo "PR/feature-branch validation only; no production sync was attempted." >> "$GITHUB_STEP_SUMMARY"
-              exit 0
-            fi
-            echo "::error::HSO integration NOT_CONFIGURED on main. Set HSO_GITHUB_WEBHOOK_URL and HSO_SYNC_TOKEN before production event delivery."
-            echo "FAILED: main-branch event was not delivered because publisher credentials are missing." >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          python tools/emit_hso_sync_event.py --mode event
+        run: python tools/emit_hso_oidc_event.py event
 
   scheduled-reconciliation:
     if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Check out HSO
+      - name: Check out trusted HSO main source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: Reconcile authoritative sources
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Reconcile authoritative sources using short-lived OIDC
         env:
-          HSO_SYNC_URL: ${{ vars.HSO_GITHUB_WEBHOOK_URL }}
-          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_RUN_ID: ${{ github.run_id }}
-        run: |
-          if [ -z "$HSO_SYNC_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
-            echo "::error::HSO reconciliation NOT_CONFIGURED. Set HSO_GITHUB_WEBHOOK_URL and HSO_SYNC_TOKEN before enabling scheduled sync."
-            echo "FAILED: scheduled/manual reconciliation did not run because publisher credentials are missing." >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          python tools/emit_hso_sync_event.py --mode reconcile
+        run: python tools/emit_hso_oidc_event.py reconcile

@@ -21,30 +21,84 @@ function safeEqual(a: string, b: string): boolean {
   return result === 0;
 }
 
+async function resolveVaultSecret(supabase: any, name: string): Promise<string | null> {
+  const { data, error } = await supabase.rpc("pre_federation_get_secret", { secret_name: name });
+  if (error) {
+    console.error("vault_secret_lookup_failed", { name, message: error.message });
+    return null;
+  }
+  return typeof data === "string" && data.length > 0 ? data : null;
+}
+
+function isVerificationChallenge(event: Record<string, unknown>): event is Record<string, unknown> & { verification_token: string } {
+  return typeof event.verification_token === "string"
+    && event.verification_token.length >= 16
+    && event.verification_token.length <= 512
+    && !("id" in event)
+    && !("event_id" in event)
+    && !("type" in event);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return Response.json({ error: "method_not_allowed" }, { status: 405, headers: cors });
 
-  const secret = Deno.env.get("NOTION_WEBHOOK_VERIFICATION_TOKEN");
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!secret || !url || !serviceKey) {
+  if (!url || !serviceKey) {
     return Response.json({ error: "integration_not_configured" }, { status: 503, headers: cors });
   }
 
   const raw = await req.text();
+  let event: Record<string, unknown>;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return Response.json({ error: "invalid_payload" }, { status: 400, headers: cors });
+    }
+    event = parsed as Record<string, unknown>;
+  } catch {
+    return Response.json({ error: "invalid_json" }, { status: 400, headers: cors });
+  }
+
+  const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
+  const envSecret = Deno.env.get("NOTION_WEBHOOK_VERIFICATION_TOKEN");
+
+  // Notion's initial subscription challenge is an unsigned one-time POST containing
+  // only verification_token. Store it once in Vault; do not log or echo the secret.
+  if (isVerificationChallenge(event)) {
+    if (envSecret && !safeEqual(envSecret, event.verification_token)) {
+      return Response.json({ error: "verification_token_conflict" }, { status: 409, headers: cors });
+    }
+    const { error } = await supabase.rpc("hso_register_notion_webhook_verification_token", {
+      p_token: event.verification_token,
+    });
+    if (error) {
+      const conflict = String(error.code ?? "") === "23505";
+      return Response.json(
+        { error: conflict ? "verification_token_already_registered" : "verification_token_store_failed" },
+        { status: conflict ? 409 : 500, headers: cors },
+      );
+    }
+    return Response.json({ verification_token_received: true }, { status: 200, headers: cors });
+  }
+
+  let secret = envSecret ?? "";
+  if (!secret) {
+    const { data, error } = await supabase.rpc("hso_get_notion_webhook_verification_token");
+    if (error) {
+      return Response.json({ error: "verification_token_lookup_failed" }, { status: 500, headers: cors });
+    }
+    secret = typeof data === "string" ? data : "";
+  }
+  if (!secret) {
+    return Response.json({ error: "verification_token_not_configured" }, { status: 503, headers: cors });
+  }
+
   const supplied = (req.headers.get("x-notion-signature") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
   if (!supplied) return Response.json({ error: "signature_required" }, { status: 401, headers: cors });
   const expected = await hmacHex(secret, raw);
   if (!safeEqual(supplied, expected)) return Response.json({ error: "invalid_signature" }, { status: 401, headers: cors });
-
-  let event: Record<string, unknown>;
-  try { event = JSON.parse(raw); } catch { return Response.json({ error: "invalid_json" }, { status: 400, headers: cors }); }
-
-  // Notion sends a one-time signed webhook verification challenge.
-  if (event.verification_token === secret) {
-    return Response.json({ verified: true }, { status: 200, headers: cors });
-  }
 
   const eventId = String(event.id ?? event.event_id ?? "");
   const eventType = String(event.type ?? "unknown");
@@ -52,7 +106,6 @@ Deno.serve(async (req) => {
   const externalSubject = String(entity.id ?? event.page_id ?? event.data_source_id ?? "");
   if (!eventId) return Response.json({ error: "event_id_required" }, { status: 400, headers: cors });
 
-  const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
   const payload = {
     event_id: eventId,
     type: eventType,
@@ -72,6 +125,20 @@ Deno.serve(async (req) => {
   }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
 
   if (error) return Response.json({ error: "event_store_failed", detail: error.message }, { status: 500, headers: cors });
+
+  await supabase.from("hso_change_events").upsert({
+    provider: "notion",
+    delivery_id: eventId,
+    event_type: eventType,
+    external_subject: externalSubject || null,
+    title: "Notion source changed: " + eventType,
+    impact: "UNKNOWN",
+    follow_up: "RECONCILE",
+    before_state: {},
+    after_state: payload,
+    event_at: event.timestamp ? new Date(String(event.timestamp)).toISOString() : new Date().toISOString()
+  }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
+
   await supabase.from("hso_sources").update({
     last_event_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -80,7 +147,7 @@ Deno.serve(async (req) => {
   // Trigger a near-real-time canonical reconciliation. The 15-minute scheduled run
   // remains the recovery path if this request cannot be made.
   let syncTriggered = false;
-  const syncToken = Deno.env.get("HSO_SYNC_TOKEN");
+  const syncToken = await resolveVaultSecret(supabase, "HSO_SYNC_TOKEN") ?? Deno.env.get("HSO_SYNC_TOKEN") ?? null;
   if (syncToken) {
     try {
       const syncResponse = await fetch(url + "/functions/v1/hso-reconcile", {
