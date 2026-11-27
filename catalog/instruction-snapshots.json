@@ -918,7 +918,13 @@
       ],
       "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "source_version": "0.5.0-rc.2",
-      "snapshot_freshness": "CANONICAL_SOURCE_METADATA_INDEX_ONLY"
+      "snapshot_freshness": "CREATOR_READBACK_PARTIAL_OVERLAY_SOURCE_CONTENT_DRIFT",
+      "plugin_creator_release_id": "pluginrel_6b097130b520819197895298a0a0f73c",
+      "package_version": "0.5.0-rc.2",
+      "latest_observed_package_version": "0.5.0-rc.2",
+      "latest_observed_release_id": "pluginrel_6b097130b520819197895298a0a0f73c",
+      "capture_date": "2026-11-27",
+      "parity_note": "Creator read-back verified 15 installed skills (13 preserved + RPEDS + AFSA). The source tree also has 15 canonical skills. The overlay does not prove exact content parity for the 13 preserved pre-existing skill bodies; prior comparison found 5/13 exact matches and 8/13 differing. Maintain DRIFT_DETECTED until each file is compared."
     },
     {
       "plugin_key": "asfree-legacy",
