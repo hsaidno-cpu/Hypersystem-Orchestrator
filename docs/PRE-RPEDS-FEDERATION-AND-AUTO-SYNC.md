@@ -103,3 +103,15 @@ The source PR and CI do not provision GitHub/Supabase secrets, create a Plugin C
 - RPEDS remains a first-class native A.S.F.R.E.E workstream with four modules; it is not deleted or replaced by PRE. PRE Standalone and RPEDS share roadmap DNA and release lineage.
 - Parent HSO submodule pin and source registries are being advanced to this commit. Plugin Creator package remains **0.3.2**, release `pluginrel_6b00fc6b23bc8191a5930132969e52c2`; deployment read-back and source/platform parity are still pending.
 - PolyForm Noncommercial 1.0.0 terms remain in force. No broader redistribution is implied by the public parent repository.
+
+
+## Canonical PRE source snapshot registered — 27 November 2026
+
+- Created private source repository: https://github.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna (main branch).
+- Imported PRE Plugin Creator release 0.1.6 (pluginrel_6b0961f9dca08191a8af34dbb2e02881) at commit 98008cdf3e082fd4cc8de03e51b2863fbae8cf11.
+- The import contains 37 text files, including the master skill, 13 specialist skill definitions, references, schemas and tests. The Python bytecode cache was excluded. Package artifact SHA-256 and independent signed attestation have not yet been computed.
+- Exact Plugin Creator metadata read-back now identifies A.S.F.R.E.E package 0.5.0-rc.2, release pluginrel_6b097130b520819197895298a0a0f73c. Source and package versions match; byte-level package parity and runtime adoption remain unverified.
+- The HSO federation workflow is being hardened to fail closed when publisher URL/token are missing. Live pre-core-federation/health returned HTTP 200 with application body federation_not_configured and missing HSO_SYNC_TOKEN.
+- PRE registry still has no release event, adoption receipt or capability contribution. Host policy profiles remain pending and automatic adoption remains disabled.
+
+**Status remains PARTIALLY_DEPLOYED.** Repository registration and source snapshot import do not constitute a signed release, host adoption or runtime verification.
