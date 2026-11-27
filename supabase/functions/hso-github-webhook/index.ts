@@ -1,8 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
+import { verifyGitHubActionsOidc } from "../_shared/github_oidc.ts";
 
 const cors = {
   "access-control-allow-origin": "*",
-  "access-control-allow-headers": "content-type, x-hso-signature, x-hso-delivery, x-hso-event, x-hub-signature-256, x-github-delivery, x-github-event",
+  "access-control-allow-headers": "content-type, authorization, x-hso-signature, x-hso-delivery, x-hso-event, x-hub-signature-256, x-github-delivery, x-github-event",
   "access-control-allow-methods": "POST, OPTIONS",
 };
 
@@ -19,6 +20,23 @@ function safeEqual(a: string, b: string): boolean {
   for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return result === 0;
 }
+async function sha256Hex(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value);
+  const copy = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(copy).set(bytes);
+  const digest = await crypto.subtle.digest("SHA-256", copy);
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function resolveVaultSecret(supabase: any, name: string): Promise<string | null> {
+  const { data, error } = await supabase.rpc("pre_federation_get_secret", { secret_name: name });
+  if (error) {
+    console.error("vault_secret_lookup_failed", { name, message: error.message });
+    return null;
+  }
+  return typeof data === "string" && data.length > 0 ? data : null;
+}
+
 function compactPayload(event: Record<string, any>) {
   const repo = event.repository ?? {};
   const pr = event.pull_request ?? {};
@@ -51,27 +69,36 @@ Deno.serve(async (req) => {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return Response.json({ error: "integration_not_configured" }, { status: 503, headers: cors });
 
-  const raw = await req.text();
-  const hsoSecret = Deno.env.get("HSO_SYNC_TOKEN");
+  const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
+  const hsoSecret = await resolveVaultSecret(supabase, "HSO_SYNC_TOKEN") ?? Deno.env.get("HSO_SYNC_TOKEN") ?? null;
   const githubSecret = Deno.env.get("GITHUB_WEBHOOK_SECRET");
+  const raw = await req.text();
+  const eventType = req.headers.get("x-github-event") ?? req.headers.get("x-hso-event") ?? "repository_event";
+  const delivery = req.headers.get("x-github-delivery") ?? req.headers.get("x-hso-delivery");
+  if (!delivery || delivery.length > 200) return Response.json({ error: "delivery_id_required_or_invalid" }, { status: 400, headers: cors });
+
+  const oidcClaims = await verifyGitHubActionsOidc(req, {
+    audience: url + "/functions/v1/hso-github-webhook",
+    repository: "hsaidno-cpu/Hypersystem-Orchestrator",
+    repositoryId: "1467501661",
+    workflowRef: "hsaidno-cpu/Hypersystem-Orchestrator/.github/workflows/hso-mission-control-sync.yml@refs/heads/main",
+    allowedEvents: ["push", "pull_request_target", "workflow_run"],
+  });
+  const oidcAuthenticated = Boolean(oidcClaims && oidcClaims.event_name === eventType);
   const hsoSig = (req.headers.get("x-hso-signature") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
   const githubSig = (req.headers.get("x-hub-signature-256") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
-  let valid = false;
-  if (hsoSecret && hsoSig) valid = safeEqual(hsoSig, await hmacHex(hsoSecret, raw));
-  if (!valid && githubSecret && githubSig) valid = safeEqual(githubSig, await hmacHex(githubSecret, raw));
-  if (!valid) return Response.json({ error: "invalid_signature" }, { status: 401, headers: cors });
+  const hsoHmacAuthenticated = Boolean(hsoSecret && hsoSig && safeEqual(hsoSig, await hmacHex(hsoSecret, raw)));
+  const githubHmacAuthenticated = Boolean(githubSecret && githubSig && safeEqual(githubSig, await hmacHex(githubSecret, raw)));
+  if (!oidcAuthenticated && !hsoHmacAuthenticated && !githubHmacAuthenticated) {
+    return Response.json({ error: "authentication_failed" }, { status: 401, headers: cors });
+  }
 
   let event: Record<string, any>;
   try { event = JSON.parse(raw); } catch { return Response.json({ error: "invalid_json" }, { status: 400, headers: cors }); }
 
-  const delivery = req.headers.get("x-github-delivery") ?? req.headers.get("x-hso-delivery");
-  const eventType = req.headers.get("x-github-event") ?? req.headers.get("x-hso-event") ?? "repository_event";
-  if (!delivery) return Response.json({ error: "delivery_id_required" }, { status: 400, headers: cors });
-
   const compact = compactPayload(event);
-  const payloadHash = await hmacHex(hsoSecret ?? githubSecret ?? "", JSON.stringify(compact));
-  const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
-  const { error } = await supabase.from("hso_integration_events").upsert({
+  const payloadHash = await sha256Hex(JSON.stringify(compact));
+  const { data: insertedEvents, error } = await supabase.from("hso_integration_events").upsert({
     provider: "github",
     delivery_id: delivery,
     event_type: eventType,
@@ -79,15 +106,41 @@ Deno.serve(async (req) => {
     payload_hash: payloadHash,
     payload: compact,
     processing_state: "received",
-  }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
+  }, { onConflict: "provider,delivery_id", ignoreDuplicates: true }).select("id");
   if (error) return Response.json({ error: "event_store_failed", detail: error.message }, { status: 500, headers: cors });
+  const duplicateDelivery = !insertedEvents || insertedEvents.length === 0;
 
-  await supabase.from("hso_sources").update({
+  const failedCi = eventType === "workflow_run" && compact.workflow_run?.conclusion === "failure";
+  const pullRequestChanged = eventType === "pull_request";
+  const changeTitle = failedCi
+    ? "CI failed: " + (compact.workflow_run?.name ?? "workflow")
+    : pullRequestChanged
+      ? "Pull request changed: " + (compact.pull_request?.title ?? ("#" + compact.number))
+      : "GitHub event: " + eventType;
+  const changeImpact = failedCi ? "HIGH" : pullRequestChanged ? "MEDIUM" : "UNKNOWN";
+  const changeFollowUp = failedCi ? "INVESTIGATE_AND_RECOMPUTE" : pullRequestChanged ? "REVALIDATE_EXACT_HEAD" : "RECONCILE";
+  const { error: changeError } = await supabase.from("hso_change_events").upsert({
+    provider: "github",
+    delivery_id: delivery,
+    event_type: eventType,
+    external_subject: compact.repository.full_name ?? null,
+    title: changeTitle,
+    impact: changeImpact,
+    follow_up: changeFollowUp,
+    before_state: {},
+    after_state: compact,
+    source_url: compact.pull_request?.html_url ?? compact.workflow_run?.html_url ?? compact.repository.html_url,
+    event_at: new Date().toISOString()
+  }, { onConflict: "provider,delivery_id", ignoreDuplicates: true });
+  if (changeError) return Response.json({ error: "change_event_store_failed", detail: changeError.message }, { status: 500, headers: cors });
+
+  const { error: sourceError } = await supabase.from("hso_sources").update({
     last_event_at: new Date().toISOString(), updated_at: new Date().toISOString(),
   }).eq("source_key", "github-hso-parent");
+  if (sourceError) return Response.json({ error: "source_event_update_failed", detail: sourceError.message }, { status: 500, headers: cors });
   // Trigger near-real-time source reconciliation after event intake.
   let syncTriggered = false;
-  const syncToken = Deno.env.get("HSO_SYNC_TOKEN");
+  const syncToken = hsoSecret;
   if (syncToken) {
     try {
       const syncResponse = await fetch(url + "/functions/v1/hso-reconcile", {
@@ -100,5 +153,5 @@ Deno.serve(async (req) => {
     } catch { /* Event is persisted; scheduled reconciliation is the recovery path. */ }
   }
 
-  return Response.json({ accepted: true, provider: "github", delivery_id: delivery, sync_triggered: syncTriggered }, { status: 202, headers: cors });
+  return Response.json({ accepted: true, provider: "github", delivery_id: delivery, duplicate: duplicateDelivery, oidc_authenticated: oidcAuthenticated, sync_triggered: syncTriggered }, { status: 202, headers: cors });
 });
