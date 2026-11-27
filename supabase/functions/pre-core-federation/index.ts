@@ -159,7 +159,7 @@ function validateReleaseEvent(value: unknown): string | null {
   if (typeof value.contract_version !== "string" || !value.contract_version) return "invalid_contract_version";
   if (typeof value.compatibility_range !== "string" || !value.compatibility_range) return "invalid_compatibility_range";
   if (!["stable", "candidate", "preview"].includes(String(value.release_channel))) return "invalid_release_channel";
-  if (!isObject(value.issuer) || typeof value.issuer.identity !== "string" || typeof value.issuer.key_id !== "string" || typeof value.issuer.signature !== "string" || value.issuer.signature.length < 16) return "invalid_issuer";
+  if (!isObject(value.issuer) || typeof value.issuer.identity !== "string" || typeof value.issuer.key_id !== "string" || typeof value.issuer.identity_ref !== "string" || value.issuer.identity_ref.length < 16) return "invalid_issuer";
   if (!validIsoDate(value.issued_at)) return "invalid_issued_at";
   if (!Array.isArray(value.capability_classes) || value.capability_classes.length === 0 || value.capability_classes.some((x) => !["SHARED_DNA", "HOST_ADAPTATION"].includes(String(x)))) return "invalid_capability_class";
   if (!Array.isArray(value.target_host_ids) || value.target_host_ids.length === 0 || value.target_host_ids.some((x) => typeof x !== "string" || !x)) return "invalid_target_host_ids";
@@ -286,7 +286,7 @@ Deno.serve(async (req: Request) => {
       issuer_identity: e.issuer.identity,
       issuer_key_id: e.issuer.key_id,
       signature_verified: false,
-      publisher_hmac_verified: Boolean(oidcPublisher || syncToken),
+      publisher_hmac_verified: !oidcPublisher,
       artifact_digest_verified: false,
       issuer_signature_verified: false,
       contract_validated: false,
@@ -431,6 +431,7 @@ Deno.serve(async (req: Request) => {
     const issuerEnvelopeValid =
       releaseEvent.issuer?.identity === "https://token.actions.githubusercontent.com/hsaidno-cpu/pre-rpeds-shared-roadmap-dna" &&
       releaseEvent.issuer?.key_id === publisherProof?.sha &&
+      releaseEvent.issuer?.identity_ref === releaseEvent.publisher_run_ref &&
       releaseEvent.source_commit === publisherProof?.sha;
     const independentRebuildVerified = body.independent_rebuild_verified === true &&
       body.independent_rebuild_commit === publisherProof?.sha &&
