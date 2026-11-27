@@ -292,8 +292,8 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "sync_authentication_failed" }, 401);
   }
 
-  const notionToken = Deno.env.get("NOTION_API_TOKEN");
-  const githubToken = Deno.env.get("GITHUB_TOKEN");
+  const notionToken = await resolveVaultSecret(db, "NOTION_API_TOKEN") ?? Deno.env.get("NOTION_API_TOKEN") ?? null;
+  const githubToken = await resolveVaultSecret(db, "GITHUB_TOKEN") ?? Deno.env.get("GITHUB_TOKEN") ?? null;
   const oidcTriggerKind = oidcClaims?.event_name === "schedule" ? "scheduled" : "manual";
   let triggerKind = oidcAuthenticated ? oidcTriggerKind : "manual";
   try {
