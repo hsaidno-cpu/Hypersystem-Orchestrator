@@ -185,3 +185,10 @@ Read [docs/NOTION-DOCUMENTATION.md](docs/NOTION-DOCUMENTATION.md) for the Notion
 ## License and source rights
 
 The parent repository's license governs only material authored in this repository. It does not relicense submodules, plugins or third-party assets. Each child repository's own license and usage terms continue to apply.
+
+
+## PRE–RPEDS shared roadmap DNA federation
+
+PRE Standalone and RPEDS are two first-class manifestations of one jointly evolved roadmap competency. PRE remains independently usable. RPEDS remains the native A.S.F.R.E.E roadmap workstream with its four original modules. They share R0–R9 semantics, roadmap objects, evidence, progress, gate, adaptive decision, audit, closure, learning and release contracts while keeping host-specific extensions. AFSA adapts shared capabilities to each host's SOP, authority, security, privacy and data boundaries without deleting host behavior.
+
+The HSO federation registry is catalog/pre-rpeds-federation.json. Its runtime source and operating contract are documented in docs/PRE-RPEDS-FEDERATION-AND-AUTO-SYNC.md. The Supabase registry and pre-core-federation Edge Function are deployed, but end-to-end release event delivery remains unaccepted. Plugin Creator USER/PRIVATE releases still need an authenticated publisher or scheduled polling bridge; no canonical PRE source repository or event publisher is registered. Auto-adoption remains disabled until host adapters, scoped credentials, CI, rollback and read-back are verified.
