@@ -204,13 +204,19 @@ class CatalogValidationTests(unittest.TestCase):
         indexed = next(p for p in snapshots["plugins"] if p["plugin_key"] == "progressive-roadmap-evaluator")
         self.assertEqual(catalog["expected_plugin_count"], len(catalog["plugins"]))
         self.assertEqual(pre["plugin_creator_id"], "plugins_6b038580bc488191ac56d9e586071bfc")
-        self.assertEqual(pre["platform_package_version"], "0.1.5")
-        self.assertEqual(pre["platform_current_release_id"], "pluginrel_6b095bf2f4308191bf7d46ce98da36f7")
+        self.assertEqual(pre["platform_package_version"], "0.1.6")
+        self.assertEqual(pre["platform_current_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
         self.assertEqual(pre["source_state"], "pending_repository")
         self.assertIsNone(pre["source_repository_id"])
         self.assertEqual(pre["current_installed_skill_count"], 14)
+        self.assertEqual(pre["deployed_plugin_version"], "0.1.6")
+        self.assertEqual(pre["plugin_creator_current_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
         self.assertEqual(pre["instruction_skill_count"], 9)
         self.assertEqual(indexed["skill_count"], 9)
+        self.assertEqual(indexed["package_version"], "0.1.1")
+        self.assertEqual(indexed["latest_observed_package_version"], "0.1.6")
+        self.assertEqual(indexed["latest_observed_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
+        self.assertEqual(indexed["snapshot_freshness"], "STALE_HISTORICAL_SNAPSHOT")
         self.assertEqual(
             snapshots["total_skill_records"],
             sum(item.get("skill_count", 0) for item in snapshots["plugins"]),

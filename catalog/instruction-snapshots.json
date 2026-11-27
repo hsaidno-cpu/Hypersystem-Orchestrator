@@ -1485,11 +1485,11 @@
       "plugin_creator_release_id": "pluginrel_6b0385d7a4488191a681997c0d9ae531",
       "package_version": "0.1.1",
       "git_source_version": null,
-      "latest_observed_package_version": "0.1.5",
-      "latest_observed_release_id": "pluginrel_6b095bf2f4308191bf7d46ce98da36f7",
+      "latest_observed_package_version": "0.1.6",
+      "latest_observed_release_id": "pluginrel_6b0961f9dca08191a8af34dbb2e02881",
       "latest_observed_skill_count": 14,
       "snapshot_freshness": "STALE_HISTORICAL_SNAPSHOT",
-      "snapshot_note": "Stored bundle has nine v0.1.1 skill bodies from 2026-11-23. Installed v0.1.5 has 14 skill definitions. The USER/PRIVATE package is not mirrored here; do not publish additional private skill bodies until canonical source and rights are established."
+      "snapshot_note": "Stored bundle remains nine skill bodies captured from v0.1.1 on 2026-11-23. Latest Plugin Creator read-back is v0.1.6 with 14 skill definitions. The USER/PRIVATE package is not mirrored here; do not copy private bodies until canonical source, rights and publication scope are established."
     },
     {
       "plugin_key": "ponytail-engineering-optimizer",

@@ -54,7 +54,9 @@ class SourceParityAuditTests(unittest.TestCase):
         self.assertEqual(item["source_state"], "pending_repository")
         self.assertIsNone(item["source_repository_id"])
         self.assertEqual(item["source_instruction_parity_status"], "NOT_COMPARED")
-        self.assertEqual(item["platform_package_version"], "0.1.5")
+        self.assertEqual(item["platform_package_version"], "0.1.6")
+        self.assertEqual(item["platform_current_release_id"], "pluginrel_6b0961f9dca08191a8af34dbb2e02881")
+        self.assertEqual(item["current_installed_skill_count"], 14)
         self.assertIn("no independent canonical git source repository", item["version_evidence"].lower())
 
 if __name__ == "__main__":
