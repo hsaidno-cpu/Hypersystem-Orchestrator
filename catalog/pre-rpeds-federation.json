@@ -5,8 +5,8 @@
   "canonical_package": {
     "plugin_key": "progressive-roadmap-evaluator",
     "plugin_creator_id": "plugins_6b038580bc488191ac56d9e586071bfc",
-    "version": "0.1.5",
-    "release_id": "pluginrel_6b095bf2f4308191bf7d46ce98da36f7",
+    "version": "0.1.6",
+    "release_id": "pluginrel_6b0961f9dca08191a8af34dbb2e02881",
     "scope": "USER",
     "discoverability": "PRIVATE",
     "source_repository_id": null,
@@ -86,7 +86,7 @@
       "adapter_status": "SPECIFIED",
       "policy_profile_status": "PENDING_PROFILE",
       "auto_adopt_nonbreaking": false,
-      "current_kernel_version": "0.1.5",
+      "current_kernel_version": "0.1.6",
       "adoption_state": "SOURCE_CURRENT"
     },
     {
@@ -113,8 +113,8 @@
       "policy_profile_status": "PENDING_REVIEW",
       "auto_adopt_nonbreaking": false,
       "edge_function": "pre-core-federation",
-      "edge_function_version": 2,
-      "adoption_state": "EVENT_PUBLISHER_NOT_CONFIGURED"
+      "edge_function_version": 4,
+      "adoption_state": "ATTESTATION_GATE_DEPLOYED_VERIFIER_PENDING"
     }
   ],
   "adoption_policy": {
@@ -144,7 +144,7 @@
     "database_registry": "DEPLOYED",
     "service_role_policies": "DEPLOYED",
     "edge_function": "DEPLOYED",
-    "edge_function_version": 2,
+    "edge_function_version": 4,
     "event_publisher": "NOT_CONFIGURED",
     "release_event_test": "NOT_RUN",
     "host_secret_provisioning": "NOT_CONFIGURED",
@@ -157,7 +157,11 @@
       "per-host environment secrets not provisioned",
       "A.S.F.R.E.E source merged, but Plugin Creator package remains at 0.3.2 and host read-back of the new source is pending",
       "HSAR adapter and policy profile not registered",
-      "host regression and read-back acceptance not run"
-    ]
+      "host regression and read-back acceptance not run",
+      "PRE_RELEASE_VERIFIER_TOKEN not provisioned",
+      "PRE event schema and HSO contract alignment must pass end-to-end test"
+    ],
+    "release_verifier": "NOT_CONFIGURED",
+    "release_attestation_gate": "DEPLOYED"
   }
 }
