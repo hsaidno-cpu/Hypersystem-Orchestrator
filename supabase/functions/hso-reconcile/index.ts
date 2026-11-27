@@ -280,23 +280,31 @@ Deno.serve(async (req) => {
   const syncToken = await resolveVaultSecret(db, "HSO_SYNC_TOKEN") ?? Deno.env.get("HSO_SYNC_TOKEN") ?? null;
   const supplied = req.headers.get("x-hso-sync-token") ?? "";
   const internalTokenAuthenticated = Boolean(syncToken && supplied && safeEqual(supplied, syncToken));
-  const oidcAuthenticated = Boolean(await verifyGitHubActionsOidc(req, {
+  const oidcClaims = await verifyGitHubActionsOidc(req, {
     audience: supabaseUrl + "/functions/v1/hso-reconcile",
     repository: "hsaidno-cpu/Hypersystem-Orchestrator",
     repositoryId: "1467501661",
     workflowRef: "hsaidno-cpu/Hypersystem-Orchestrator/.github/workflows/hso-mission-control-sync.yml@refs/heads/main",
     allowedEvents: ["schedule", "workflow_dispatch"],
-  }));
+  });
+  const oidcAuthenticated = Boolean(oidcClaims);
   if (!internalTokenAuthenticated && !oidcAuthenticated) {
     return jsonResponse({ error: "sync_authentication_failed" }, 401);
   }
 
   const notionToken = Deno.env.get("NOTION_API_TOKEN");
   const githubToken = Deno.env.get("GITHUB_TOKEN");
-  let triggerKind = oidcAuthenticated ? "scheduled" : "manual";
+  const oidcTriggerKind = oidcClaims?.event_name === "schedule" ? "scheduled" : "manual";
+  let triggerKind = oidcAuthenticated ? oidcTriggerKind : "manual";
   try {
     const body = await req.json();
-    if (["manual", "scheduled", "initial", "recovery", "webhook"].includes(body?.trigger_kind)) triggerKind = body.trigger_kind;
+    if (oidcAuthenticated) {
+      if (body?.trigger_kind && body.trigger_kind !== oidcTriggerKind) {
+        return jsonResponse({ error: "oidc_trigger_kind_mismatch" }, 403);
+      }
+    } else if (["manual", "scheduled", "initial", "recovery", "webhook"].includes(body?.trigger_kind)) {
+      triggerKind = body.trigger_kind;
+    }
   } catch { /* no body is permitted for scheduler calls */ }
   const startedAt = new Date().toISOString();
   const { data: run, error: runError } = await db.from("hso_sync_runs").insert({
