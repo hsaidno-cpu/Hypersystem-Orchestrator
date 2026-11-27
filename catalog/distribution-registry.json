@@ -257,7 +257,7 @@
       "source_repository_id": "asfree",
       "source_commit": "f814cff8e800136a6e3a1f664b41085076f19ac8",
       "source_version": "0.5.0-rc.2",
-      "platform_package_version": "0.3.2",
+      "platform_package_version": "0.5.0-rc.2",
       "distribution_status": "review_required",
       "license_status": "review_required",
       "package_artifact": null,
@@ -265,12 +265,12 @@
       "dependency_metadata_status": "not_assessed",
       "blockers": [
         "POLYFORM_NONCOMMERCIAL_TERMS_REQUIRE_DISTRIBUTION_REVIEW",
-        "PLUGIN_CREATOR_PACKAGE_BEHIND_CANONICAL_SOURCE",
         "PACKAGE_ARTIFACT_NOT_PUBLISHED",
         "PLATFORM_ADAPTER_NOT_HOST_TESTED",
-        "RPEDS_AFSA_HOST_POLICY_PROFILE_AND_READBACK_PENDING"
+        "RPEDS_AFSA_HOST_POLICY_PROFILE_AND_READBACK_PENDING",
+        "SOURCE_PACKAGE_BYTE_PARITY_NOT_VERIFIED"
       ],
-      "eligibility_note": "Canonical A.S.F.R.E.E source is pinned at 0.5.0-rc.2 (commit f814cff8e800136a6e3a1f664b41085076f19ac8). Plugin Creator remains USER/PRIVATE v0.3.2. The source is governed by PolyForm Noncommercial 1.0.0; no public redistribution or installable package artifact is authorized by this record. Creator update, exact read-back, host policy and runtime adoption remain pending."
+      "eligibility_note": "Canonical A.S.F.R.E.E source is pinned at 0.5.0-rc.2 (commit f814cff8e800136a6e3a1f664b41085076f19ac8). The latest Plugin Creator USER/PRIVATE package is also 0.5.0-rc.2 (release pluginrel_6b097130b520819197895298a0a0f73c). Version labels match, but byte-level source/package parity, independent release artifact attestation, host policy acceptance and runtime adoption remain unverified. The source is governed by PolyForm Noncommercial 1.0.0; no public redistribution or installable package artifact is authorized by this record."
     },
     {
       "plugin_key": "asfree-legacy",
@@ -427,23 +427,26 @@
     {
       "plugin_key": "progressive-roadmap-evaluator",
       "display_name": "PRE–RPEDS Shared Roadmap DNA",
-      "source_state": "pending_repository",
-      "source_repository_id": null,
-      "source_commit": null,
-      "source_version": null,
+      "source_state": "private_repository_source",
+      "source_repository_id": "pre-rpeds-shared-roadmap-dna",
+      "source_commit": "98008cdf3e082fd4cc8de03e51b2863fbae8cf11",
+      "source_version": "0.1.6",
       "platform_package_version": "0.1.6",
-      "distribution_status": "snapshot_only",
+      "distribution_status": "private_source_restricted",
       "license_status": "not_assessed",
       "package_artifact": null,
       "hard_dependencies": [],
       "dependency_metadata_status": "not_assessed",
       "blockers": [
-        "CANONICAL_SOURCE_REPOSITORY_NOT_IDENTIFIED",
+        "LICENSE_RIGHTS_NOT_ASSESSED",
+        "PRIVATE_SOURCE_NOT_PUBLICLY_DISTRIBUTABLE",
+        "PACKAGE_ARTIFACT_NOT_PUBLISHED",
+        "HOST_ADAPTER_NOT_CONFIGURED",
+        "INDEPENDENT_RELEASE_ATTESTATION_NOT_COMPLETED",
         "INSTRUCTION_SNAPSHOT_COVERS_9_OF_14_SKILL_DEFINITIONS",
-        "LICENSE_AND_REUSE_BASIS_NOT_ASSESSED_FOR_PARENT_REPUBLICATION",
         "PRIVATE_PLUGIN_CREATOR_SCOPE_NOT_PUBLICLY_INSTALLABLE"
       ],
-      "eligibility_note": "Plugin Creator USER/PRIVATE package 0.1.6 is verified, release pluginrel_6b0961f9dca08191a8af34dbb2e02881. The parent contains a historical nine-skill v0.1.1 instruction snapshot, not a current complete release package. No canonical PRE source repository, complete redistributable artifact or independently cleared publication rights are registered."
+      "eligibility_note": "PRE 0.1.6 canonical source snapshot is privately registered at commit 98008cdf3e082fd4cc8de03e51b2863fbae8cf11, with 37 text package files transferred from the exact Plugin Creator release read-back. The source is still restricted: rights/redistribution have not been assessed, package artifact and independent signed release attestation are not published, host adapter acceptance is pending, and the public HSO parent deliberately retains only its historical nine-skill pointer rather than mirroring private skill content. Not installable or publicly distributable."
     },
     {
       "plugin_key": "ponytail-engineering-optimizer",
