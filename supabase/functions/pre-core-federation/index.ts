@@ -643,13 +643,19 @@ Deno.serve(async (req: Request) => {
 
   if (req.method === "POST" && path === "reconcile") {
     const raw = await req.text();
-    const oidcReconciler = await verifyGitHubOidc(req, "reconciler");
-    if (!oidcReconciler && !(await verifyHsoSignature(req, raw, syncToken))) return reply({ error: "invalid_signature" }, 401);
     let body: unknown = {};
     if (raw.trim()) { try { body = JSON.parse(raw); } catch { return reply({ error: "invalid_json" }, 400); } }
     if (!isObject(body)) return reply({ error: "body_must_be_object" }, 422);
     const eventId = typeof body.event_id === "string" ? body.event_id : null;
     const hostId = typeof body.host_id === "string" ? body.host_id : null;
+    const oidcReconciler = await verifyGitHubOidc(req, "reconciler");
+    const oidcHostReconciler = await verifyGitHubOidc(req, "asfree-rpeds");
+    if (!oidcReconciler && !oidcHostReconciler && !(await verifyHsoSignature(req, raw, syncToken))) {
+      return reply({ error: "invalid_signature" }, 401);
+    }
+    if (oidcHostReconciler && (hostId !== "asfree-rpeds" || !eventId)) {
+      return reply({ error: "host_reconciler_scope_violation" }, 403);
+    }
     let releaseQuery = supabase.from("pre_kernel_releases")
       .select("event_id,release_version,release_id,artifact_sha256,release_channel,capability_classes,payload")
       .eq("processing_state", "RELEASED").eq("artifact_digest_verified", true)
