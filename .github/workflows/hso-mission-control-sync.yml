@@ -9,7 +9,6 @@ on:
   workflow_run:
     workflows: ["Catalog and distribution validation"]
     types: [completed]
-    branches: [main]
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
