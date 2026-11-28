@@ -39,3 +39,6 @@ The HSO Ecosystem Development board is initialized with these eight columns in t
 The visible Archive column is a workflow destination. It is not the same as the backend's technical soft-archive flag or the `kanban.card.archive` tool.
 
 A production Done transition must remain blocked until the independent completion-evidence gate described in Issue #64 is implemented, tested and deployed. Do not infer acceptance from a card description or AI comment.
+
+
+Every new card must include non-empty acceptance criteria. The frontend, MCP card/create and synchronization contracts require the field, and the initial database migration defines a NOT NULL/non-empty constraint. Cards without testable completion criteria are rejected.
