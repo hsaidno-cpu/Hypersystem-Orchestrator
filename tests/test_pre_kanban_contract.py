@@ -139,6 +139,13 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertNotIn('from("kanban_sync_events").insert', self.edge)
         self.assertNotIn('from("kanban_sync_outbox").update', self.edge)
 
+    def test_every_card_requires_acceptance_criteria(self):
+        self.assertIn("acceptance_criteria text not null", self.sql.lower())
+        self.assertIn("card_acceptance_criteria_required", self.sql)
+        self.assertGreaterEqual(self.edge.count("acceptance_criteria: z.string().trim().min(1).max(8000)"), 2)
+        self.assertIn("cardAcceptanceCriteria", self.ui)
+        self.assertIn("p_acceptance_criteria: cardAcceptanceCriteria.trim()", self.ui)
+
     def test_done_is_fail_closed_until_independent_evidence_gate_exists(self):
         self.assertIn('targetColumn.semantic_key === "done"', self.ui)
         self.assertIn("done_completion_evidence_gate_not_implemented", self.edge)
