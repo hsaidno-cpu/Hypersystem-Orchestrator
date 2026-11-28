@@ -160,6 +160,16 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertIn('from("kanban_cards")', self.ui)
         self.assertIn('rpc("kanban_create_board"', self.ui)
 
+    def test_ui_defaults_to_hso_workspace_and_canonical_board(self):
+        self.assertIn('useState("HSMART-HSO Ecosystem")', self.ui)
+        self.assertIn('useState("HSO Ecosystem Development")', self.ui)
+
+    def test_board_layout_renders_eight_columns(self):
+        css = (ROOT / "apps/pre-kanban/src/styles.css").read_text(encoding="utf-8")
+        self.assertIn("grid-template-columns: repeat(8, minmax(210px, 1fr))", css)
+        self.assertIn(".column-dot.intake", css)
+        self.assertIn(".column-dot.archive", css)
+
     def test_hso_seed_manifest_is_source_backed_and_never_seeds_done(self):
         columns = self.seed["board"]["columns"]
         self.assertEqual(
