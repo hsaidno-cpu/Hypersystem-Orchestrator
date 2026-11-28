@@ -8,6 +8,7 @@ on:
       - "supabase/migrations/*_pre_kanban_*.sql"
       - "apps/pre-kanban/**"
       - "tests/test_pre_kanban_contract.py"
+      - "tests/pre-kanban-postgres-smoke.sql"
       - ".github/workflows/pre-kanban-validation.yml"
   push:
     branches: [main, "feat/pre-kanban-mcp-backend-20261128"]
@@ -16,6 +17,7 @@ on:
       - "supabase/migrations/*_pre_kanban_*.sql"
       - "apps/pre-kanban/**"
       - "tests/test_pre_kanban_contract.py"
+      - "tests/pre-kanban-postgres-smoke.sql"
       - ".github/workflows/pre-kanban-validation.yml"
 
 permissions:
@@ -92,3 +94,61 @@ jobs:
 
       - name: Run PRE Kanban contract tests
         run: python -m unittest discover -s tests -p "test_pre_kanban_contract.py" -v
+
+
+  postgres-migrations:
+    name: Apply Kanban migrations to disposable PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: kanban-ci-password
+          POSTGRES_DB: kanban_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d kanban_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgres://postgres:kanban-ci-password@localhost:5432/kanban_ci
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Bootstrap minimal Supabase Auth roles
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon nologin;
+          create role authenticated nologin;
+          create schema auth;
+          create table auth.users (id uuid primary key);
+          create or replace function auth.uid()
+          returns uuid
+          language sql
+          stable
+          as $$
+            select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+          $$;
+          grant usage on schema auth to authenticated;
+          grant execute on function auth.uid() to anon, authenticated;
+          SQL
+
+      - name: Apply all six PRE Kanban migrations in order
+        run: |
+          mapfile -t migrations < <(find supabase/migrations -maxdepth 1 -type f -name '20261128*_pre_kanban_*.sql' | sort)
+          test "\${#migrations[@]}" -eq 6
+          for migration in "\${migrations[@]}"; do
+            echo "Applying \${migration}"
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "\${migration}"
+          done
+
+      - name: Verify schema, RLS, RPC signatures and restricted grants
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/pre-kanban-postgres-smoke.sql
