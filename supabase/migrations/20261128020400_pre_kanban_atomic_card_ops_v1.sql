@@ -22,6 +22,11 @@ declare
   v_count integer;
   v_card public.kanban_cards;
 begin
+  if nullif(btrim(p_acceptance_criteria), '') is null
+     or length(p_acceptance_criteria) > 8000 then
+    raise exception 'card_acceptance_criteria_required' using errcode = '22023';
+  end if;
+
   select workspace_id into v_workspace_id
   from public.kanban_boards
   where id=p_board_id and workspace_id=p_workspace_id
