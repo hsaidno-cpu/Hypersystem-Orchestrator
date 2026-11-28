@@ -2,7 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import { pipeline } from "npm:@supabase/middleware@1";
 import { withOAuthProtectedResource, withSupabase } from "npm:@supabase/server@1";
-import { McpServer, createMcpHandler } from "npm:@modelcontextprotocol/server@2.1.2";
+import { McpServer, createMcpHandler } from "npm:@modelcontextprotocol/server@2.4.0";
 import * as z from "npm:zod@4.1.13";
 
 const SERVICE_NAME = "pre-kanban-mcp";
