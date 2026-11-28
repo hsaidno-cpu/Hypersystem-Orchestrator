@@ -55,6 +55,4 @@ jobs:
           ref: main
           persist-credentials: false
       - name: Reconcile missing host receipts using short-lived GitHub Actions OIDC
-        env:
-          PRE_FEDERATION_URL: ${{ vars.PRE_FEDERATION_URL || 'https://ehgmtkkppmceaffhwcpc.supabase.co/functions/v1/pre-core-federation' }}
         run: python tools/pre_rpeds_federation_sync.py reconcile
