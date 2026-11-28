@@ -416,12 +416,14 @@ revoke update,delete on public.kanban_audit_events from authenticated;
 create or replace function public.kanban_create_board(
   p_workspace_id uuid,p_name text,p_slug text,p_description text default null,
   p_columns jsonb default '[
+    {"name":"Intake","semantic_key":"intake","color":"gray"},
     {"name":"Backlog","semantic_key":"backlog","color":"gray"},
     {"name":"Ready","semantic_key":"ready","color":"blue"},
     {"name":"In Progress","semantic_key":"in_progress","color":"yellow"},
     {"name":"Blocked","semantic_key":"blocked","color":"red"},
     {"name":"Review & Verification","semantic_key":"review","color":"purple"},
-    {"name":"Done","semantic_key":"done","color":"green"}
+    {"name":"Done","semantic_key":"done","color":"green"},
+    {"name":"Archive","semantic_key":"archive","color":"gray"}
   ]'::jsonb
 )
 returns jsonb language plpgsql security invoker
