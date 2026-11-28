@@ -635,7 +635,7 @@ const mcpHandler = pipeline(
   [withOAuthProtectedResource(), withSupabase({ auth: "user" })],
   async (request: Request, context: any) => {
     const url = new URL(request.url);
-    const path = url.pathname.replace(/\\/+$/, "");
+    const path = url.pathname.endsWith("/") ? url.pathname.slice(0, -1) : url.pathname;
     if (!path.endsWith("/mcp")) return json({ error: "not_found" }, 404);
 
     const userId = String(context.userClaims?.id ?? context.userClaims?.sub ?? "");
@@ -655,7 +655,8 @@ Deno.serve(async (request: Request) => {
   if (!originAllowed(origin)) return json({ error: "origin_not_allowed" }, 403, cors);
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
-  const path = new URL(request.url).pathname.replace(/\\/+$/, "");
+  const requestPath = new URL(request.url).pathname;
+  const path = requestPath.endsWith("/") ? requestPath.slice(0, -1) : requestPath;
   if (request.method === "GET" && path.endsWith("/health")) {
     return json({
       service: SERVICE_NAME,
@@ -664,7 +665,7 @@ Deno.serve(async (request: Request) => {
       authentication: "SUPABASE_AUTH_OAUTH_USER_JWT",
       authorization: "ROW_LEVEL_SECURITY",
       persistence: "SUPABASE_POSTGRES",
-      mcp_path: path.replace(/\\/health$/, "") + "/mcp",
+      mcp_path: path.slice(0, path.length - "/health".length) + "/mcp",
     }, 200, cors);
   }
 
