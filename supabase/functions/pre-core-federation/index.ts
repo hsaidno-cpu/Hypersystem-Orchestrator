@@ -277,6 +277,19 @@ Deno.serve(async (req: Request) => {
     if (invalid) return reply({ error: invalid }, 422);
 
     const e = event as Record<string, any>;
+    const targetHostIds = parseTargetHostIds(e.target_host_ids);
+    if (!targetHostIds) return reply({ error: "invalid_target_host_ids" }, 422);
+    // Persist the canonicalized list so downstream authorization never relies on raw whitespace.
+    e.target_host_ids = targetHostIds;
+    const { data: hosts, error: hostError } = await supabase.from("pre_host_subscriptions")
+      .select("host_id,host_name,subscribed_channel,enabled")
+      .eq("enabled", true);
+    if (hostError) return reply({ error: "host_registry_read_failed", detail: hostError.message }, 500);
+    const enabledHostIds = new Set((hosts ?? []).map((host: any) => host.host_id));
+    if (targetHostIds.some((hostId) => !enabledHostIds.has(hostId))) {
+      return reply({ error: "release_target_host_not_registered_or_disabled" }, 422);
+    }
+    const targetHostSet = new Set(targetHostIds);
     const expectedLocator = `${url}/functions/v1/pre-core-federation/artifact?sha256=${e.artifact_sha256}`;
     if (e.source_locator !== expectedLocator) return reply({ error: "source_locator_must_reference_registered_private_artifact" }, 422);
     const { data: storedArtifact, error: artifactReadError } = await supabase.storage
@@ -335,19 +348,9 @@ Deno.serve(async (req: Request) => {
       return reply({ error: "release_persistence_failed", detail: error.message }, 500);
     }
 
-    const { data: hosts, error: hostError } = await supabase.from("pre_host_subscriptions")
-      .select("host_id,host_name,subscribed_channel,enabled")
-      .eq("enabled", true);
-    if (hostError) return reply({ error: "host_registry_read_failed", detail: hostError.message }, 500);
-    const enabledHostIds = new Set((hosts ?? []).map((host: any) => host.host_id));
-    const targetHostIds = new Set(e.target_host_ids as string[]);
-    if ([...targetHostIds].some((hostId) => !enabledHostIds.has(hostId))) {
-      return reply({ error: "release_target_host_not_registered_or_disabled" }, 422);
-    }
-
     const receipts = [];
     for (const host of hosts ?? []) {
-      if (!targetHostIds.has(host.host_id)) continue;
+      if (!targetHostSet.has(host.host_id)) continue;
       const channelMatches = host.subscribed_channel === "all" || host.subscribed_channel === e.release_channel;
       if (!channelMatches) continue;
       const { data: receipt, error: receiptError } = await supabase.from("pre_host_adoption_receipts").insert({
