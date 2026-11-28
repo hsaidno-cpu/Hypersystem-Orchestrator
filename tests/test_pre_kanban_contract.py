@@ -99,10 +99,29 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertIn("kanban.suppress_outbox", self.sql)
         self.assertIn("on conflict (idempotency_key) do nothing", self.sql.lower())
 
-    def test_default_board_has_six_columns(self):
-        for semantic_key in ("backlog", "ready", "in_progress", "blocked", "review", "done"):
+    def test_default_board_has_eight_columns_in_hso_order(self):
+        expected = [
+            ("Intake", "intake"), ("Backlog", "backlog"), ("Ready", "ready"),
+            ("In Progress", "in_progress"), ("Blocked", "blocked"),
+            ("Review & Verification", "review"), ("Done", "done"), ("Archive", "archive"),
+        ]
+        for name, semantic_key in expected:
             with self.subTest(column=semantic_key):
-                self.assertIn(f'"semantic_key":"{semantic_key}"', self.sql)
+                self.assertIn(f'"name":"{name}","semantic_key":"{semantic_key}"', self.sql)
+                self.assertIn(f'name: "{name}", semantic_key: "{semantic_key}"', self.ui)
+                self.assertIn(f'name: "{name}", semantic_key: "{semantic_key}"', self.edge)
+        sql_positions = [self.sql.index(f'"semantic_key":"{key}"') for _, key in expected]
+        self.assertEqual(sql_positions, sorted(sql_positions))
+        self.assertIn("eight workflow columns", self.ui.lower())
+
+    def test_sync_source_digest_covers_extra_metadata(self):
+        digest_start = self.edge.index("const sourceDigest = await sha256")
+        digest_end = self.edge.index("});", digest_start)
+        self.assertIn("extra: item.extra ?? {}", self.edge[digest_start:digest_end])
+
+    def test_visible_archive_is_not_technical_soft_archive(self):
+        self.assertIn('"semantic_key":"archive"', self.sql)
+        self.assertIn('register("kanban.card.archive"', self.edge)
 
     def test_sync_writes_use_scoped_rpc_contracts_not_direct_table_mutations(self):
         self.assertIn('rpc("kanban_create_sync_preview"', self.edge)
