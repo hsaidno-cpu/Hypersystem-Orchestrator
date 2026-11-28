@@ -215,3 +215,8 @@ Track the gate in [Issue #64](https://github.com/hsaidno-cpu/Hypersystem-Orchest
 ### Initial HSO seed manifest
 
 `examples/hso-ecosystem-development-board-seed.v1.json` is a source-backed seed proposal. It is not a live board export and contains no workspace/board UUIDs. Import it only after the backend is deployed, OAuth/RLS roles are verified, the eight-column board exists and the Done gate is accepted. Apply through digest-bound `kanban.sync.preview` → inspect plan → `kanban.sync.apply` with explicit confirmation → `kanban.sync.read_back`.
+
+
+### Mandatory acceptance criteria for every card
+
+New cards cannot be created without non-empty acceptance criteria (1–8,000 characters). The requirement is enforced by the UI form, MCP card creation and source-sync schema, the create/sync RPCs, and the initial Postgres table constraint. Updates cannot clear the field because the database column is NOT NULL. A card without testable acceptance criteria is invalid and must remain in Intake/Backlog until its outcome can be verified.
