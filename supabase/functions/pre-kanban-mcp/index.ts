@@ -46,16 +46,6 @@ function originAllowed(origin: string | null): boolean {
   return configuredOrigins().has(origin);
 }
 
-function configuredOrigins(): Set<string> {
-  return new Set((Deno.env.get("PRE_KANBAN_ALLOWED_ORIGINS") ?? "")
-    .split(",").map((value) => value.trim()).filter(Boolean));
-}
-
-function originAllowed(origin: string | null): boolean {
-  if (!origin) return true;
-  return configuredOrigins().has(origin);
-}
-
 function stableJson(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
   if (Array.isArray(value)) return "[" + value.map(stableJson).join(",") + "]";
