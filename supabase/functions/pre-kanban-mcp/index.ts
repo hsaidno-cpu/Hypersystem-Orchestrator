@@ -268,6 +268,13 @@ function makeServer(db: any, userId: string) {
     due_date: z.string().date().optional(),
     metadata: objectSchema.optional(),
   }), async (args) => {
+    const { data: targetColumn, error: columnError } = await db.from("kanban_columns")
+      .select("semantic_key").eq("id", args.column_id).eq("board_id", args.board_id).maybeSingle();
+    if (columnError) throw new Error("card_create_column_lookup_failed: " + columnError.message);
+    if (!targetColumn) throw new Error("target_column_not_found");
+    if (targetColumn.semantic_key === "done") {
+      throw new Error("done_completion_evidence_gate_not_implemented: see HSO Issue #64");
+    }
     const { data, error } = await db.rpc("kanban_create_card", {
       p_workspace_id: args.workspace_id,
       p_board_id: args.board_id,
@@ -305,6 +312,13 @@ function makeServer(db: any, userId: string) {
   register("kanban.card.move", "Move a card atomically with expected-revision and WIP-limit checks.", z.object({
     card_id: uuid, target_column_id: uuid, expected_revision: z.number().int().positive(),
   }), async (args) => {
+    const { data: targetColumn, error: columnError } = await db.from("kanban_columns")
+      .select("semantic_key").eq("id", args.target_column_id).maybeSingle();
+    if (columnError) throw new Error("card_move_column_lookup_failed: " + columnError.message);
+    if (!targetColumn) throw new Error("target_column_not_found");
+    if (targetColumn.semantic_key === "done") {
+      throw new Error("done_completion_evidence_gate_not_implemented: see HSO Issue #64");
+    }
     const { data, error } = await db.rpc("kanban_move_card", {
       p_card_id: args.card_id,
       p_target_column_id: args.target_column_id,
@@ -402,6 +416,10 @@ function makeServer(db: any, userId: string) {
       if (columnError) throw new Error("sync_column_lookup_failed: " + columnError.message);
       if (!column) {
         planItems.push({ action: "CONFLICT", reason: "target_column_not_found", ...item, source_digest: sourceDigest });
+        continue;
+      }
+      if (column.semantic_key === "done") {
+        planItems.push({ action: "CONFLICT", reason: "done_completion_evidence_gate_not_implemented", ...item, source_digest: sourceDigest });
         continue;
       }
       const binding = bindingMap.get(item.source_work_item_id) as any;
