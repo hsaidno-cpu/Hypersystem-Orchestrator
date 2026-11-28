@@ -136,6 +136,12 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertNotIn('from("kanban_sync_events").insert', self.edge)
         self.assertNotIn('from("kanban_sync_outbox").update', self.edge)
 
+    def test_done_is_fail_closed_until_independent_evidence_gate_exists(self):
+        self.assertIn('targetColumn.semantic_key === "done"', self.ui)
+        self.assertIn("done_completion_evidence_gate_not_implemented", self.edge)
+        self.assertIn("HSO Issue #64", self.ui)
+        self.assertIn("independent evidence gate", self.sql.lower() + self.edge.lower() + self.ui.lower() + Path(ROOT / "docs/PRE-KANBAN-MCP-ARCHITECTURE.md").read_text(encoding="utf-8").lower())
+
     def test_kanban_ui_uses_authenticated_persistent_backend(self):
         self.assertIn("VITE_SUPABASE_URL", self.ui)
         self.assertIn("VITE_SUPABASE_PUBLISHABLE_KEY", (ROOT / "apps/pre-kanban/src/vite-env.d.ts").read_text())
