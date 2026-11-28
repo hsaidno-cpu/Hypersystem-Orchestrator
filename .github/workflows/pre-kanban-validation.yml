@@ -10,7 +10,7 @@ on:
       - "tests/test_pre_kanban_contract.py"
       - ".github/workflows/pre-kanban-validation.yml"
   push:
-    branches: [main]
+    branches: [main, "feat/pre-kanban-mcp-backend-20261128"]
     paths:
       - "supabase/functions/pre-kanban-mcp/**"
       - "supabase/migrations/*_pre_kanban_*.sql"
