@@ -371,6 +371,10 @@ export default function App() {
 
   async function moveCard(card: Card, targetColumn: Column) {
     if (!supabase || card.column_id === targetColumn.id || !user) return;
+    if (targetColumn.semantic_key === "done") {
+      setMessage("Done is locked until independent completion evidence is verified. See HSO Issue #64.");
+      return;
+    }
     setMessage("");
     const { data, error } = await supabase.rpc("kanban_move_card", {
       p_card_id: card.id,
