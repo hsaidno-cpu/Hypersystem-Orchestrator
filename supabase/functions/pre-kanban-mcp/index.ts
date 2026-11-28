@@ -264,7 +264,7 @@ function makeServer(db: any, userId: string) {
     workspace_id: uuid, board_id: uuid, column_id: uuid, title: shortText(240),
     description: z.string().max(12000).optional(),
     priority: z.enum(["critical", "high", "medium", "low"]).default("medium"),
-    acceptance_criteria: z.string().max(8000).optional(),
+    acceptance_criteria: z.string().trim().min(1).max(8000),
     due_date: z.string().date().optional(),
     metadata: objectSchema.optional(),
   }), async (args) => {
@@ -282,7 +282,7 @@ function makeServer(db: any, userId: string) {
       p_title: args.title,
       p_description: args.description ?? null,
       p_priority: args.priority,
-      p_acceptance_criteria: args.acceptance_criteria ?? null,
+      p_acceptance_criteria: args.acceptance_criteria,
       p_due_date: args.due_date ?? null,
       p_metadata: args.metadata ?? {},
     });
@@ -376,7 +376,7 @@ function makeServer(db: any, userId: string) {
     source_revision: z.string().max(200).optional(),
     title: shortText(240),
     description: z.string().max(12000).optional(),
-    acceptance_criteria: z.string().max(8000).optional(),
+    acceptance_criteria: z.string().trim().min(1).max(8000),
     priority: z.enum(["critical", "high", "medium", "low"]).default("medium"),
     column_semantic_key: z.string().regex(/^[a-z][a-z0-9_-]{1,47}$/),
     evidence_refs: z.array(z.string().url()).max(30).default([]),
