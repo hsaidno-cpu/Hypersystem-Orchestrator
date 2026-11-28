@@ -1,4 +1,4 @@
-# PRE Kanban Backend, MCP Server & Board UI
+# HSO Workboard — Persistent Kanban Backend, MCP Server & Board UI
 
 ## Decision and ownership
 
@@ -136,7 +136,7 @@ The UI source lives under `apps/pre-kanban/`. Set:
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
 
-The UI uses Supabase Auth email OTP and RLS. It provides workspace/board selection, board creation, six default columns, card creation, drag-and-drop movement, and sign-out. No user identity or board ID is hardcoded.
+The UI uses Supabase Auth email OTP and RLS. It provides workspace/board selection, board creation, eight default columns, card creation, drag-and-drop movement, and sign-out. No user identity or board ID is hardcoded.
 
 ## Migrations
 
@@ -175,3 +175,43 @@ Run SQL validation, RLS role tests (viewer/member/editor/admin/owner), Supabase 
 ## Release boundary
 
 Keep this feature behind a separate deployment. Do not change or redeploy `pre-core-federation`, do not activate the PRE R0–R9 enforcement worker, and do not mutate canonical PRE stages as part of Kanban CRUD.
+
+
+## HSO Ecosystem Development operating contract
+
+The canonical board is **HSO Ecosystem Development**. Its eight visible workflow columns are ordered:
+
+1. **Intake** — verified incoming work that has not yet been prioritized.
+2. **Backlog** — accepted work awaiting a clear execution slot.
+3. **Ready** — requirements, owner, dependencies and acceptance criteria are clear enough to start.
+4. **In Progress** — implementation or investigation is actively underway.
+5. **Blocked** — an explicit dependency, credential, review, environment or policy gate prevents forward progress.
+6. **Review & Verification** — implementation exists and awaits independent review, CI, runtime read-back or acceptance evidence.
+7. **Done** — acceptance criteria are met and the independent completion-evidence gate has passed.
+8. **Archive** — visible terminal parking for superseded, cancelled or intentionally retained work.
+
+**Visible Archive is not the same as technical soft-archive.** The `Archive` column is an ordinary workflow column with semantic key `archive`. The `kanban.card.archive` tool and database `is_archived` flag hide a card from active-board queries while preserving its record. Do not use technical soft-archive merely to move a card into the visible Archive column.
+
+### Source and authority boundaries
+
+- GitHub is canonical for source code, Issue/PR state, commits, workflows, tests, schemas, governance and release state.
+- PRE remains canonical for R0–R9, roadmap progress, gates, milestone acceptance and evidence disposition.
+- HSAR owns component/anatomy knowledge and evidence-backed architecture records; Notion is its documentation/read surface, not a replacement for GitHub source state.
+- Universal Ecosystem Atlas is the structured inventory/relationship layer; completeness and freshness must be demonstrated through pagination and read-back, not inferred from table presence.
+- Kanban owns coordination state, board columns, labels and card presentation. A Kanban card cannot mutate PRE lifecycle authority.
+- Every seed card contains a canonical GitHub Issue/PR URL in its source locator and concrete acceptance criteria. Additional source links are listed as evidence references.
+- Dependencies and observed status rationale are retained in card metadata. The source digest must include the `extra` metadata object.
+
+### Completion and Done gate — P0 acceptance blocker
+
+**The current source branch does not yet enforce an independent evidence gate for transitions into semantic `done`.** Issue #64 tracks this P0 requirement; the current backend must not be described as production-accepted until the gate is implemented and tested.
+
+The required enforcement is database-level and must cover MCP, frontend, synchronization RPCs and direct Data API changes. A card may enter `Done` only after an independently authorized verifier has recorded PASS evidence bound to the exact card revision and source revision. An AI agent must not be able to mint its own verified completion evidence. The evidence envelope must contain a canonical HTTPS locator, exact commit/release/workflow reference, SHA-256 digest, observed outcome, verifier identity, verification timestamp and audit link. Missing, stale, mismatched or non-PASS evidence must reject the transition.
+
+Do not equate a green static test with a live deployment, a merged PR with a deployed runtime, or a Kanban Done state with PRE milestone acceptance. No production migration for this gate has been applied.
+
+Track the gate in [Issue #64](https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/64).
+
+### Initial HSO seed manifest
+
+`examples/hso-ecosystem-development-board-seed.v1.json` is a source-backed seed proposal. It is not a live board export and contains no workspace/board UUIDs. Import it only after the backend is deployed, OAuth/RLS roles are verified, the eight-column board exists and the Done gate is accepted. Apply through digest-bound `kanban.sync.preview` → inspect plan → `kanban.sync.apply` with explicit confirmation → `kanban.sync.read_back`.
