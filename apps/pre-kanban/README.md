@@ -1,6 +1,6 @@
-# PRE Kanban UI
+# HSO Workboard UI
 
-Original HSO-owned Kanban interface built with React, Vite and Supabase Auth/Postgres.
+Original HSO-owned Kanban interface built with React, Vite and Supabase Auth/Postgres. The canonical board is **HSO Ecosystem Development**.
 
 ## Local development
 
@@ -28,3 +28,14 @@ npm run preview
 The UI uses the signed-in user's JWT and RLS. Do not add a service-role key to `VITE_*` variables: browser variables are public by design.
 
 The board is an original implementation. No Safrow source, brand assets or proprietary styles are included.
+
+
+## Canonical workflow columns
+
+The HSO Ecosystem Development board is initialized with these eight columns in this order:
+
+`Intake` → `Backlog` → `Ready` → `In Progress` → `Blocked` → `Review & Verification` → `Done` → `Archive`.
+
+The visible Archive column is a workflow destination. It is not the same as the backend's technical soft-archive flag or the `kanban.card.archive` tool.
+
+A production Done transition must remain blocked until the independent completion-evidence gate described in Issue #64 is implemented, tested and deployed. Do not infer acceptance from a card description or AI comment.
