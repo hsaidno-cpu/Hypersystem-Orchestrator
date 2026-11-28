@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
+import { hasLiveRuntimeEvidence, parseTargetHostIds } from "./contract.ts";
 
 const corsHeaders = {
   "access-control-allow-origin": "*",
@@ -117,6 +118,8 @@ async function verifyGitHubOidc(req: Request, role: "publisher" | "verifier" | "
         ref === "refs/heads/main" &&
         workflowRef === "hsaidno-cpu/pre-rpeds-shared-roadmap-dna/.github/workflows/pre-release-verify.yml@refs/heads/main",
       reconciler: repo === "hsaidno-cpu/Hypersystem-Orchestrator" &&
+        String(claims.repository_id ?? "") === "1467501661" &&
+        ["schedule", "workflow_dispatch"].includes(String(claims.event_name ?? "")) &&
         ref === "refs/heads/main" &&
         workflowRef === "hsaidno-cpu/Hypersystem-Orchestrator/.github/workflows/pre-rpeds-federation.yml@refs/heads/main",
       "asfree-rpeds": repo === "hsaidno-cpu/A.S.F.R.E.E" &&
@@ -169,7 +172,7 @@ function validateReleaseEvent(value: unknown): string | null {
   if (!isObject(value.issuer) || typeof value.issuer.identity !== "string" || typeof value.issuer.key_id !== "string" || typeof value.issuer.identity_ref !== "string" || value.issuer.identity_ref.length < 16) return "invalid_issuer";
   if (!validIsoDate(value.issued_at)) return "invalid_issued_at";
   if (!Array.isArray(value.capability_classes) || value.capability_classes.length === 0 || value.capability_classes.some((x) => !["SHARED_DNA", "HOST_ADAPTATION"].includes(String(x)))) return "invalid_capability_class";
-  if (!Array.isArray(value.target_host_ids) || value.target_host_ids.length === 0 || value.target_host_ids.some((x) => typeof x !== "string" || !x)) return "invalid_target_host_ids";
+  if (!parseTargetHostIds(value.target_host_ids)) return "invalid_target_host_ids";
   if (typeof value.is_breaking !== "boolean") return "is_breaking_boolean_required";
   return null;
 }
@@ -194,8 +197,9 @@ Deno.serve(async (req: Request) => {
   }
 
   const supabase = createClient(url, serviceKey, { auth: { persistSession: false } });
-  const syncToken = await resolveSecret(supabase, "HSO_SYNC_TOKEN");
-  if (!syncToken) return reply({ error: "federation_not_configured", missing: ["HSO_SYNC_TOKEN"] }, 503);
+  // OIDC-authenticated routes remain available without a long-lived HSO_SYNC_TOKEN.
+  // HMAC stays as a guarded compatibility path for publisher traffic.
+  const syncToken = (await resolveSecret(supabase, "HSO_SYNC_TOKEN")) ?? "";
   const path = new URL(req.url).pathname.replace(/\/+$/, "").split("/").pop() ?? "";
 
   if (req.method === "GET" && path === "health") {
@@ -219,7 +223,7 @@ Deno.serve(async (req: Request) => {
 
     const supplied = (req.headers.get("x-hso-signature") ?? "").replace(/^sha256=/i, "").trim().toLowerCase();
     const expected = await hmacHex(syncToken, `${actualDigest}\\n${bytes.length}`);
-    const hmacAuthenticated = Boolean(supplied && safeEqual(supplied, expected));
+    const hmacAuthenticated = Boolean(syncToken && supplied && safeEqual(supplied, expected));
     const oidcAuthenticated = Boolean(await verifyGitHubOidc(req, "publisher"));
     if (!hmacAuthenticated && !oidcAuthenticated) return reply({ error: "publisher_authentication_required" }, 401);
 
@@ -265,13 +269,27 @@ Deno.serve(async (req: Request) => {
   if (req.method === "POST" && path === "release") {
     const raw = await req.text();
     const oidcPublisher = await verifyGitHubOidc(req, "publisher");
-    if (!oidcPublisher && !(await verifyHsoSignature(req, raw, syncToken))) return reply({ error: "invalid_signature" }, 401);
+    const hmacPublisher = syncToken ? await verifyHsoSignature(req, raw, syncToken) : false;
+    if (!oidcPublisher && !hmacPublisher) return reply({ error: "invalid_signature" }, 401);
     let event: unknown;
     try { event = JSON.parse(raw); } catch { return reply({ error: "invalid_json" }, 400); }
     const invalid = validateReleaseEvent(event);
     if (invalid) return reply({ error: invalid }, 422);
 
     const e = event as Record<string, any>;
+    const targetHostIds = parseTargetHostIds(e.target_host_ids);
+    if (!targetHostIds) return reply({ error: "invalid_target_host_ids" }, 422);
+    // Persist the canonicalized list so downstream authorization never relies on raw whitespace.
+    e.target_host_ids = targetHostIds;
+    const { data: hosts, error: hostError } = await supabase.from("pre_host_subscriptions")
+      .select("host_id,host_name,subscribed_channel,enabled")
+      .eq("enabled", true);
+    if (hostError) return reply({ error: "host_registry_read_failed", detail: hostError.message }, 500);
+    const enabledHostIds = new Set((hosts ?? []).map((host: any) => host.host_id));
+    if (targetHostIds.some((hostId) => !enabledHostIds.has(hostId))) {
+      return reply({ error: "release_target_host_not_registered_or_disabled" }, 422);
+    }
+    const targetHostSet = new Set(targetHostIds);
     const expectedLocator = `${url}/functions/v1/pre-core-federation/artifact?sha256=${e.artifact_sha256}`;
     if (e.source_locator !== expectedLocator) return reply({ error: "source_locator_must_reference_registered_private_artifact" }, 422);
     const { data: storedArtifact, error: artifactReadError } = await supabase.storage
@@ -293,7 +311,7 @@ Deno.serve(async (req: Request) => {
       issuer_identity: e.issuer.identity,
       issuer_key_id: e.issuer.key_id,
       signature_verified: false,
-      publisher_hmac_verified: !oidcPublisher,
+      publisher_hmac_verified: hmacPublisher,
       artifact_digest_verified: false,
       issuer_signature_verified: false,
       contract_validated: false,
@@ -330,19 +348,9 @@ Deno.serve(async (req: Request) => {
       return reply({ error: "release_persistence_failed", detail: error.message }, 500);
     }
 
-    const { data: hosts, error: hostError } = await supabase.from("pre_host_subscriptions")
-      .select("host_id,host_name,subscribed_channel,enabled")
-      .eq("enabled", true);
-    if (hostError) return reply({ error: "host_registry_read_failed", detail: hostError.message }, 500);
-    const enabledHostIds = new Set((hosts ?? []).map((host: any) => host.host_id));
-    const targetHostIds = new Set(e.target_host_ids as string[]);
-    if ([...targetHostIds].some((hostId) => !enabledHostIds.has(hostId))) {
-      return reply({ error: "release_target_host_not_registered_or_disabled" }, 422);
-    }
-
     const receipts = [];
     for (const host of hosts ?? []) {
-      if (!targetHostIds.has(host.host_id)) continue;
+      if (!targetHostSet.has(host.host_id)) continue;
       const channelMatches = host.subscribed_channel === "all" || host.subscribed_channel === e.release_channel;
       if (!channelMatches) continue;
       const { data: receipt, error: receiptError } = await supabase.from("pre_host_adoption_receipts").insert({
@@ -496,9 +504,10 @@ Deno.serve(async (req: Request) => {
     const isBreaking = release.payload?.is_breaking === true || body.is_breaking === true;
     const sharedDna = capabilityClasses.length > 0 && capabilityClasses.every((value) => value === "SHARED_DNA");
     const receipts = [];
-    const releaseTargets = Array.isArray(release.payload?.target_host_ids) ? new Set(release.payload.target_host_ids) : null;
+    const releaseTargets = parseTargetHostIds(release.payload?.target_host_ids);
+    if (!releaseTargets) return reply({ error: "release_target_host_ids_missing_or_invalid" }, 409);
     for (const host of hosts ?? []) {
-      if (releaseTargets && !releaseTargets.has(host.host_id)) continue;
+      if (!releaseTargets.includes(host.host_id)) continue;
       if (host.enabled !== true || (host.subscribed_channel !== "all" && host.subscribed_channel !== release.payload?.release_channel)) continue;
       const eligible = host.policy_profile_status === "VERIFIED" &&
         host.auto_adopt_nonbreaking === true &&
@@ -578,8 +587,12 @@ Deno.serve(async (req: Request) => {
     }
 
     const { data: release } = await supabase.from("pre_kernel_releases")
-      .select("release_id,release_version,artifact_sha256,processing_state,artifact_digest_verified,issuer_signature_verified,contract_validated").eq("event_id", eventId).maybeSingle();
+      .select("release_id,release_version,artifact_sha256,processing_state,artifact_digest_verified,issuer_signature_verified,contract_validated,payload").eq("event_id", eventId).maybeSingle();
     if (!release) return reply({ error: "release_not_found" }, 404);
+    const releaseTargets = parseTargetHostIds(release.payload?.target_host_ids);
+    if (!releaseTargets || !releaseTargets.includes(hostId)) {
+      return reply({ error: "host_not_in_release_target_set" }, 403);
+    }
 
     const { data: receipt } = await supabase.from("pre_host_adoption_receipts")
       .select("id").eq("event_id", eventId).eq("host_id", hostId).maybeSingle();
@@ -608,6 +621,9 @@ Deno.serve(async (req: Request) => {
       if (!Array.isArray(body.test_results) || body.test_results.length === 0 ||
           body.test_results.some((t: any) => t?.status !== "PASS")) {
         return reply({ error: "verified_requires_all_tests_pass" }, 409);
+      }
+      if (!hasLiveRuntimeEvidence(body)) {
+        return reply({ error: "verified_requires_deployment_and_live_runtime_evidence" }, 409);
       }
     }
 
@@ -650,7 +666,8 @@ Deno.serve(async (req: Request) => {
     const hostId = typeof body.host_id === "string" ? body.host_id : null;
     const oidcReconciler = await verifyGitHubOidc(req, "reconciler");
     const oidcHostReconciler = await verifyGitHubOidc(req, "asfree-rpeds");
-    if (!oidcReconciler && !oidcHostReconciler && !(await verifyHsoSignature(req, raw, syncToken))) {
+    const hmacReconciler = syncToken ? await verifyHsoSignature(req, raw, syncToken) : false;
+    if (!oidcReconciler && !oidcHostReconciler && !hmacReconciler) {
       return reply({ error: "invalid_signature" }, 401);
     }
     if (oidcHostReconciler && (hostId !== "asfree-rpeds" || !eventId)) {
@@ -672,8 +689,16 @@ Deno.serve(async (req: Request) => {
     if (hostError) return reply({ error: "reconcile_host_lookup_failed", detail: hostError.message }, 500);
     const outcomes = [];
     let created = 0, alreadyRecorded = 0, held = 0;
+    let releasesSkippedInvalidTargets = 0, hostsSkippedNotTargeted = 0;
     for (const release of releases ?? []) {
+      const releaseTargets = parseTargetHostIds(release.payload?.target_host_ids);
+      if (!releaseTargets) {
+        releasesSkippedInvalidTargets++;
+        outcomes.push({ event_id: release.event_id, state: "SKIPPED_INVALID_TARGET_HOSTS" });
+        continue;
+      }
       for (const host of hosts ?? []) {
+        if (!releaseTargets.includes(host.host_id)) { hostsSkippedNotTargeted++; continue; }
         if (host.subscribed_channel !== "all" && host.subscribed_channel !== release.release_channel) continue;
         const { data: existing, error: existingError } = await supabase.from("pre_host_adoption_receipts")
           .select("id,adoption_state").eq("event_id", release.event_id).eq("host_id", host.host_id).maybeSingle();
@@ -707,7 +732,7 @@ Deno.serve(async (req: Request) => {
         outcomes.push({ event_id: release.event_id, host_id: host.host_id, state });
       }
     }
-    return reply({ accepted: true, releases_seen: (releases ?? []).length, hosts_seen: (hosts ?? []).length, receipts_created: created, receipts_unchanged: alreadyRecorded, receipts_held: held, outcomes }, 200);
+    return reply({ accepted: true, releases_seen: (releases ?? []).length, hosts_seen: (hosts ?? []).length, receipts_created: created, receipts_unchanged: alreadyRecorded, receipts_held: held, releases_skipped_invalid_targets: releasesSkippedInvalidTargets, hosts_skipped_not_targeted: hostsSkippedNotTargeted, outcomes }, 200);
   }
 
   return reply({ error: "not_found" }, 404);

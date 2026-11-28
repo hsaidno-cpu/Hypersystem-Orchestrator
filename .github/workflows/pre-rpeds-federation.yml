@@ -45,20 +45,14 @@ jobs:
   scheduled-reconciliation:
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.release_event_json == '') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: Check reconciliation configuration
-        env:
-          PRE_FEDERATION_URL: ${{ vars.PRE_FEDERATION_URL }}
-          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
-        run: |
-          if [ -z "$PRE_FEDERATION_URL" ] || [ -z "$HSO_SYNC_TOKEN" ]; then
-            echo "::warning::NOT_CONFIGURED: PRE_FEDERATION_URL / HSO_SYNC_TOKEN are missing."
-            echo "FAILED: scheduled reconciliation skipped; provision the publisher credential." >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-      - name: Reconcile missing host receipts
-        env:
-          PRE_FEDERATION_URL: ${{ vars.PRE_FEDERATION_URL }}
-          HSO_SYNC_TOKEN: ${{ secrets.HSO_SYNC_TOKEN }}
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Reconcile missing host receipts using short-lived GitHub Actions OIDC
         run: python tools/pre_rpeds_federation_sync.py reconcile

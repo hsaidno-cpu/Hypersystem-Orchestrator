@@ -27,4 +27,8 @@ jobs:
         with:
           deno-version: v2.x
       - name: Type-check federation Edge Function
-        run: deno check supabase/functions/pre-core-federation/index.ts
+        run: deno check supabase/functions/pre-core-federation/index.ts supabase/functions/pre-core-federation/contract.ts
+      - name: Run federation contract and Python client tests
+        run: |
+          deno test supabase/functions/pre-core-federation/contract.test.ts
+          python -m unittest discover -s tests -p "test_pre_rpeds_federation_sync.py"
