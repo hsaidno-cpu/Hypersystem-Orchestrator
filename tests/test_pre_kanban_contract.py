@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import unittest
 
@@ -5,6 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EDGE = ROOT / "supabase" / "functions" / "pre-kanban-mcp" / "index.ts"
 MIGRATIONS = ROOT / "supabase" / "migrations"
 UI = ROOT / "apps" / "pre-kanban" / "src" / "App.tsx"
+SEED = ROOT / "examples" / "hso-ecosystem-development-board-seed.v1.json"
 
 
 class PreKanbanContractTests(unittest.TestCase):
@@ -16,6 +18,7 @@ class PreKanbanContractTests(unittest.TestCase):
             for path in sorted(MIGRATIONS.glob("*_pre_kanban_*.sql"))
         )
         cls.ui = UI.read_text(encoding="utf-8")
+        cls.seed = json.loads(SEED.read_text(encoding="utf-8"))
 
     def test_all_requested_mcp_tool_names_are_registered(self):
         expected = [
@@ -149,6 +152,28 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertIn("createClient(", self.ui)
         self.assertIn('from("kanban_cards")', self.ui)
         self.assertIn('rpc("kanban_create_board"', self.ui)
+
+    def test_hso_seed_manifest_is_source_backed_and_never_seeds_done(self):
+        columns = self.seed["board"]["columns"]
+        self.assertEqual(
+            [column["semantic_key"] for column in columns],
+            ["intake", "backlog", "ready", "in_progress", "blocked", "review", "done", "archive"],
+        )
+        items = self.seed["items"]
+        self.assertEqual(len(items), 12)
+        source_ids = [item["source_work_item_id"] for item in items]
+        self.assertEqual(len(source_ids), len(set(source_ids)))
+        for item in items:
+            with self.subTest(source=item["source_work_item_id"]):
+                self.assertTrue(item["source_work_item_id"].startswith("https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/"))
+                self.assertTrue(item["source_work_item_id"].endswith(tuple(["/issues/" + item["source_work_item_id"].rsplit("/", 1)[-1], "/pull/" + item["source_work_item_id"].rsplit("/", 1)[-1]])))
+                self.assertTrue(item["source_revision"])
+                self.assertTrue(item["title"].strip())
+                self.assertTrue(item["description"].strip())
+                self.assertTrue(item["acceptance_criteria"].strip())
+                self.assertTrue(item["evidence_refs"])
+                self.assertNotEqual(item["column_semantic_key"], "done")
+                self.assertIsInstance(item.get("extra"), dict)
 
     def test_ui_does_not_mutate_pre_lifecycle_stages(self):
         forbidden = ("PRE Stage", "kanban_set_pre_stage", "milestone_acceptance =")
