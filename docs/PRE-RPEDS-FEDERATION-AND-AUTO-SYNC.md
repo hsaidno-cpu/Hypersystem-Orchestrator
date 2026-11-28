@@ -115,3 +115,15 @@ The source PR and CI do not provision GitHub/Supabase secrets, create a Plugin C
 - PRE registry still has no release event, adoption receipt or capability contribution. Host policy profiles remain pending and automatic adoption remains disabled.
 
 **Status remains PARTIALLY_DEPLOYED.** Repository registration and source snapshot import do not constitute a signed release, host adoption or runtime verification.
+
+
+## Federation target isolation, runtime acceptance and OIDC scheduler — 28 November 2026
+
+- Every release must carry a non-empty, unique `target_host_ids` array. The initial release receipt creation, independent attestation, adoption update and reconciliation paths all fail closed when this target set is absent or invalid.
+- Reconciliation may create or update a receipt only for a host explicitly listed in that release's `target_host_ids`. A host subscription or matching release channel is not sufficient authorization to receive a release.
+- A host can submit an adoption receipt only for an event that names that host in its target set.
+- `VERIFIED` is reserved for live host runtime acceptance. In addition to release attestation, policy, adapter, rollback and successful test requirements, the envelope must include HTTPS `deployment_ref`, HTTPS `runtime_invocation_ref`, and at least one passing `LIVE_HOST_RUNTIME` test with an HTTPS evidence reference. CI-only test receipts cannot satisfy this gate.
+- The scheduled HSO reconciliation job requests a short-lived GitHub Actions OIDC JWT for the exact Supabase Edge Function audience. The job is constrained to the canonical repository ID, main ref, exact workflow_ref, and schedule/workflow_dispatch events. It does not require or expose `HSO_SYNC_TOKEN`.
+- The existing HMAC publisher relay remains separate and requires its existing secret. OIDC reconciliation is not permission to publish releases or impersonate host identities.
+- `HSO_SYNC_TOKEN` remains resolved server-side for the compatibility publisher path, but its absence no longer blocks OIDC-only routes such as scheduled reconciliation.
+- These changes are source/PR changes only. They do not deploy Edge Functions, run a production reconciliation, provision host credentials, or promote any host state.
