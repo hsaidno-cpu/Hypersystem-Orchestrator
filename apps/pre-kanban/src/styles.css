@@ -79,8 +79,9 @@ input:focus, select:focus, textarea:focus { border-color: #76bda0; box-shadow: 0
 .quick-add input:focus { box-shadow: none; }
 .quick-add select { padding: 9px; font-size: 10px; }
 .quick-add .description-input { max-width: 240px; }
+.quick-add .acceptance-input { min-height: 42px; resize: vertical; }
 .quick-add .primary-button { font-size: 11px; padding: 9px 13px; }
-.kanban-board { display: grid; grid-template-columns: repeat(6, minmax(210px, 1fr)); gap: 11px; overflow-x: auto; padding-bottom: 13px; align-items: start; }
+.kanban-board { display: grid; grid-template-columns: repeat(8, minmax(210px, 1fr)); gap: 11px; overflow-x: auto; padding-bottom: 13px; align-items: start; }
 .kanban-column { min-height: 370px; border: 1px solid #26364a; border-radius: 14px; background: rgba(16,24,35,.88); display: flex; flex-direction: column; }
 .column-header { height: 53px; border-bottom: 1px solid rgba(116,139,166,.13); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; }
 .column-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
