@@ -319,8 +319,8 @@
       "column_semantic_key": "review",
       "evidence_refs": [
         "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/25",
-        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/architecture/UNIFIED-HSMART-HSO-UEDE-CONTRACT.md",
-        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/architecture/UEDE-HSO-CAPABILITY-AUDIT-2026-11-25.md"
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/d78ab36063157e1a13bd89dd93a7eb732007818c/architecture/UNIFIED-HSMART-HSO-UEDE-CONTRACT.md",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/d78ab36063157e1a13bd89dd93a7eb732007818c/architecture/UEDE-HSO-CAPABILITY-AUDIT-2026-11-25.md"
       ],
       "dependencies": [],
       "extra": {
