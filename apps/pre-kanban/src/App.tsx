@@ -189,10 +189,11 @@ export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [workspaceName, setWorkspaceName] = useState("");
-  const [boardName, setBoardName] = useState("");
+  const [workspaceName, setWorkspaceName] = useState("HSMART-HSO Ecosystem");
+  const [boardName, setBoardName] = useState("HSO Ecosystem Development");
   const [cardTitle, setCardTitle] = useState("");
   const [cardDescription, setCardDescription] = useState("");
+  const [cardAcceptanceCriteria, setCardAcceptanceCriteria] = useState("");
   const [cardPriority, setCardPriority] = useState<Card["priority"]>("medium");
 
   const user = session?.user ?? null;
@@ -346,7 +347,7 @@ export default function App() {
 
   async function createCard(event: FormEvent) {
     event.preventDefault();
-    if (!supabase || !user || !board || !cardTitle.trim() || columns.length === 0) return;
+    if (!supabase || !user || !board || !cardTitle.trim() || !cardAcceptanceCriteria.trim() || columns.length === 0) return;
     const backlog = columns.find((column) => column.semantic_key === "backlog") ?? columns[0];
     setLoading(true);
     const { data, error } = await supabase.rpc("kanban_create_card", {
@@ -356,7 +357,7 @@ export default function App() {
       p_title: cardTitle.trim(),
       p_description: cardDescription.trim() || null,
       p_priority: cardPriority,
-      p_acceptance_criteria: null,
+      p_acceptance_criteria: cardAcceptanceCriteria.trim(),
       p_due_date: null,
       p_metadata: {},
     });
@@ -365,6 +366,7 @@ export default function App() {
     setCards((current) => [...current, data as Card]);
     setCardTitle("");
     setCardDescription("");
+    setCardAcceptanceCriteria("");
     setCardPriority("medium");
     setMessage("Card created in Backlog.");
   }
@@ -503,7 +505,7 @@ export default function App() {
           <h2>Create your first workspace</h2>
           <p className="muted">A workspace is the tenant and permission boundary. The creator becomes its owner.</p>
           <form className="empty-form" onSubmit={createWorkspace}>
-            <input value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} placeholder="e.g. HSO Operations" />
+            <input value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} placeholder="HSMART-HSO Ecosystem" />
             <button className="primary-button" type="submit" disabled={loading || !workspaceName.trim()}>Create workspace</button>
           </form>
         </section>
@@ -513,7 +515,7 @@ export default function App() {
           <h2>Start with a board</h2>
           <p className="muted">A new board is created with Intake, Backlog, Ready, In Progress, Blocked, Review & Verification, Done, and Archive.</p>
           <form className="empty-form" onSubmit={createBoard}>
-            <input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="e.g. PRE Development" />
+            <input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="HSO Ecosystem Development" />
             <button className="primary-button" type="submit" disabled={loading || !boardName.trim()}>Create board</button>
           </form>
         </section>
@@ -537,7 +539,8 @@ export default function App() {
               <option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
             </select>
             <input className="description-input" value={cardDescription} onChange={(event) => setCardDescription(event.target.value)} placeholder="Description (optional)" aria-label="Card description" />
-            <button className="primary-button" type="submit" disabled={loading || !cardTitle.trim()}>Add card</button>
+            <textarea className="description-input acceptance-input" value={cardAcceptanceCriteria} onChange={(event) => setCardAcceptanceCriteria(event.target.value)} placeholder="Acceptance criteria (required)" aria-label="Acceptance criteria" required rows={2} />
+            <button className="primary-button" type="submit" disabled={loading || !cardTitle.trim() || !cardAcceptanceCriteria.trim()}>Add card</button>
           </form>
           <section className="kanban-board" aria-label="Kanban board">
             {columns.map((column) => {
