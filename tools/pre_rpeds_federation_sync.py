@@ -98,7 +98,12 @@ def request_oidc_token(
     if not endpoint or not request_token:
         raise RuntimeError("GitHub Actions OIDC request context is unavailable; check id-token: write")
     parts = urllib.parse.urlsplit(endpoint)
-    if parts.scheme != "https" or not parts.netloc:
+    if (
+        parts.scheme != "https"
+        or parts.hostname != "token.actions.githubusercontent.com"
+        or parts.username
+        or parts.password
+    ):
         raise RuntimeError("GitHub Actions OIDC request endpoint is invalid")
     query = [(key, value) for key, value in urllib.parse.parse_qsl(parts.query, keep_blank_values=True) if key != "audience"]
     query.append(("audience", audience))
