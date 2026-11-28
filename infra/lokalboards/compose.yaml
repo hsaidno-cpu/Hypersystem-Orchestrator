@@ -1,0 +1,65 @@
+services:
+  database:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: lokalboards
+      MYSQL_USER: lokalboards
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    # Deliberately no published port: MySQL is reachable only on the
+    # private Compose network.
+    volumes:
+      - database:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
+
+  lokalboards:
+    image: florianstrasser/lokalboards:${LOKALBOARDS_VERSION:-0.43.0}
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NUXT_APP_NAME: "HSO Workboard"
+      NUXT_BOARDS_URL: ${NUXT_BOARDS_URL:?Set NUXT_BOARDS_URL in .env}
+      NUXT_LANGUAGE: en
+      NUXT_MCP: "true"
+      NUXT_PUBLIC_SIGNUP: "false"
+      NUXT_ADMIN_NAME: "HSO Administrator"
+      NUXT_ADMIN_EMAIL: ${NUXT_ADMIN_EMAIL:?Set NUXT_ADMIN_EMAIL in .env}
+      NUXT_ADMIN_PASSWORD: ${NUXT_ADMIN_PASSWORD:?Set NUXT_ADMIN_PASSWORD in .env}
+      NUXT_MYSQL_HOST: database
+      NUXT_MYSQL_PORT: "3306"
+      NUXT_MYSQL_DATABASE: lokalboards
+      NUXT_MYSQL_USER: lokalboards
+      NUXT_MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      NUXT_MYSQL_SSL: "false"
+      NUXT_TRUST_PROXY: ${NUXT_TRUST_PROXY:-auto}
+    ports:
+      # Keep the application behind a TLS reverse proxy. Do not expose
+      # port 3000 directly to the public Internet.
+      - "${LOKALBOARDS_BIND_ADDRESS:-127.0.0.1}:3000:3000"
+    volumes:
+      - uploads:/app/public/uploads
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+    stop_grace_period: 30s
+
+volumes:
+  database:
+  uploads:
