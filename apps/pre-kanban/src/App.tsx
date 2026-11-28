@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { createClient, type Session } from "@supabase/supabase-js";
+import { createClient, type Session, type User } from "@supabase/supabase-js";
 
 type Workspace = { id: string; name: string; slug: string; description?: string | null };
 type Board = { id: string; workspace_id: string; name: string; slug: string; revision: number };
@@ -29,6 +29,149 @@ function slugify(value: string) {
 
 function priorityLabel(priority: Card["priority"]) {
   return priority === "critical" ? "Critical" : priority[0].toUpperCase() + priority.slice(1);
+}
+
+
+
+function OAuthConsentPage({ user }: { user: User | null }) {
+  const [email, setEmail] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [details, setDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const authorizationId = new URLSearchParams(window.location.search).get("authorization_id");
+
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      if (!authorizationId) {
+        setError("Permintaan OAuth tidak memiliki authorization_id.");
+        setLoading(false);
+        return;
+      }
+      if (!supabase) {
+        setError("Supabase client belum dikonfigurasi.");
+        setLoading(false);
+        return;
+      }
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      const { data, error: requestError } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
+      if (!active) return;
+      if (requestError || !data) {
+        setError(requestError?.message ?? "Permintaan otorisasi tidak ditemukan atau sudah kedaluwarsa.");
+        setLoading(false);
+        return;
+      }
+      if (!("authorization_id" in data)) {
+        window.location.assign(data.redirect_url);
+        return;
+      }
+      setDetails(data);
+      setLoading(false);
+    }
+    void load();
+    return () => { active = false; };
+  }, [authorizationId, user?.id]);
+
+  async function sendSignInLink(event: FormEvent) {
+    event.preventDefault();
+    if (!supabase || !authorizationId || !email.trim()) return;
+    setBusy(true);
+    setError("");
+    const redirectTo = window.location.origin + "/oauth/consent?authorization_id=" + encodeURIComponent(authorizationId);
+    const { error: signInError } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: redirectTo, shouldCreateUser: false },
+    });
+    setBusy(false);
+    if (signInError) setError(signInError.message);
+    else setOtpSent(true);
+  }
+
+  async function decide(approved: boolean) {
+    if (!supabase || !authorizationId || busy) return;
+    setBusy(true);
+    setError("");
+    const result = approved
+      ? await supabase.auth.oauth.approveAuthorization(authorizationId)
+      : await supabase.auth.oauth.denyAuthorization(authorizationId);
+    setBusy(false);
+    if (result.error) {
+      setError(result.error.message);
+      return;
+    }
+    if (!result.data?.redirect_url) {
+      setError("Supabase Auth tidak mengembalikan redirect URL.");
+      return;
+    }
+    window.location.assign(result.data.redirect_url);
+  }
+
+  const scopes = String(details?.scope ?? "").split(/\s+/).filter(Boolean);
+
+  return (
+    <main className="center-screen">
+      <section className="auth-panel consent-panel">
+        <div className="brand-mark">P</div>
+        <p className="eyebrow">HSO · AUTHORIZATION GATE</p>
+        <h1>Access <span>request</span></h1>
+        <p className="muted">Aplikasi AI pihak ketiga harus meminta persetujuan sebelum memakai identitas Anda untuk mengakses PRE Kanban.</p>
+
+        {loading ? (
+          <div className="consent-loading"><div className="loading-orbit" /><span className="muted">Memeriksa permintaan otorisasi…</span></div>
+        ) : !authorizationId ? (
+          <p className="notice">Permintaan OAuth tidak valid: authorization_id tidak ditemukan.</p>
+        ) : !user ? (
+          <>
+            <div className="consent-boundary">
+              <strong>Autentikasi diperlukan</strong>
+              <p className="muted">Masuk menggunakan akun HSO yang memiliki akses workspace. Tautan masuk akan kembali ke permintaan consent yang sama.</p>
+            </div>
+            <form className="stack-form" onSubmit={sendSignInLink}>
+              <label htmlFor="consent-email">Email akun HSO</label>
+              <input id="consent-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" />
+              <button className="primary-button" type="submit" disabled={busy}>{busy ? "Mengirim…" : otpSent ? "Kirim ulang tautan masuk" : "Kirim tautan masuk"}</button>
+            </form>
+            {otpSent && <p className="notice">Tautan masuk dikirim. Setelah login, Anda akan kembali ke halaman persetujuan ini.</p>}
+          </>
+        ) : details ? (
+          <>
+            <div className="consent-client">
+              <span className="meta-label">APPLICATION REQUESTING ACCESS</span>
+              <strong>{details.client?.name ?? "Unregistered MCP client"}</strong>
+              <span className="consent-client-id">{details.client?.client_id ?? ""}</span>
+            </div>
+            <div className="consent-details">
+              <div>
+                <span className="meta-label">REDIRECT URI</span>
+                <code>{details.redirect_uri}</code>
+              </div>
+              <div>
+                <span className="meta-label">REQUESTED OAUTH SCOPES</span>
+                {scopes.length ? (
+                  <ul className="scope-list">{scopes.map((scope: string) => <li key={scope}>{scope}</li>)}</ul>
+                ) : <p className="muted">Tidak ada scope tambahan yang diminta.</p>}
+              </div>
+            </div>
+            <div className="consent-boundary">
+              <strong>Access boundary</strong>
+              <p className="muted">MCP client menggunakan level role akun Anda di workspace. Saat ini belum ada profil izin yang berbeda untuk setiap client. Data tetap dibatasi oleh workspace membership dan Row Level Security; persetujuan OAuth tidak memberi hak melewati RLS.</p>
+            </div>
+            <div className="consent-actions">
+              <button className="primary-button" type="button" disabled={busy} onClick={() => void decide(true)}>{busy ? "Memproses…" : "Izinkan akses"}</button>
+              <button className="quiet-button" type="button" disabled={busy} onClick={() => void decide(false)}>Tolak</button>
+            </div>
+            <p className="muted consent-footnote">Anda dapat mencabut akses OAuth aplikasi di pengaturan akun. Jangan setujui client yang nama atau redirect URI-nya tidak Anda kenali.</p>
+          </>
+        ) : null}
+        {error && <p className="notice notice-error">{error}</p>}
+      </section>
+    </main>
+  );
 }
 
 export default function App() {
@@ -269,6 +412,10 @@ export default function App() {
 
   if (authLoading) {
     return <main className="center-screen"><div className="loading-orbit" /><span className="muted">Connecting to PRE workspace…</span></main>;
+  }
+
+  if (window.location.pathname === "/oauth/consent") {
+    return <OAuthConsentPage user={user} />;
   }
 
   if (!user) {

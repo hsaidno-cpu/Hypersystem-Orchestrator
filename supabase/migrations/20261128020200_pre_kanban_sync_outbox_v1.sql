@@ -32,20 +32,14 @@ create policy kanban_sync_outbox_select on public.kanban_sync_outbox
 for select to authenticated using (
   kanban_private.has_workspace_role(workspace_id,array['owner','admin','editor'])
 );
-create policy kanban_sync_outbox_update on public.kanban_sync_outbox
-for update to authenticated using (
-  kanban_private.has_workspace_role(workspace_id,array['owner','admin','editor'])
-) with check (
-  kanban_private.has_workspace_role(workspace_id,array['owner','admin','editor'])
-);
-grant select,update on public.kanban_sync_outbox to authenticated;
+grant select on public.kanban_sync_outbox to authenticated;
 revoke all on public.kanban_sync_outbox from anon;
 
 create or replace function kanban_private.capture_card_change_outbox()
 returns trigger
 language plpgsql
 security definer
-set search_path = pg_catalog,public,kanban_private,auth
+set search_path = pg_catalog
 as $$
 declare
   v_binding record;

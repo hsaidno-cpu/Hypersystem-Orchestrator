@@ -46,6 +46,7 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertIn("pipeline(", self.edge)
         self.assertNotIn("service_role", self.edge.lower())
         self.assertNotIn("SUPABASE_SECRET_KEY", self.edge)
+        self.assertIn("withOAuthProtectedResource()", self.edge)
 
     def test_persistent_tables_and_rls_are_defined(self):
         tables = [
@@ -64,9 +65,34 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertIn("for update", self.sql.lower())
         self.assertIn("kanban_apply_sync_item", self.sql)
         self.assertIn("kanban_ack_sync_outbox", self.sql)
+        self.assertIn("kanban_finalize_sync_run", self.sql)
+        self.assertIn("kanban_mark_sync_outbox_conflict", self.sql)
+        self.assertIn("kanban_create_sync_preview", self.sql)
+        self.assertIn("kanban_record_sync_readback", self.sql)
+        self.assertIn("sync_item_not_part_of_approved_preview", self.sql)
+        self.assertIn("claim_token", self.sql)
+        self.assertIn("kanban_create_sync_preview", self.sql)
+        self.assertIn("kanban_create_sync_preview(uuid,uuid,text,text,text,jsonb)", self.sql)
         self.assertIn("kanban_create_card", self.sql)
         self.assertIn("kanban_move_card", self.sql)
         self.assertIn("column_wip_limit_exceeded", self.sql)
+
+    def test_sync_state_is_not_directly_writable_by_authenticated_clients(self):
+        self.assertIn("revoke update on public.kanban_sync_runs from authenticated", self.sql.lower())
+        self.assertIn("revoke insert,update,delete on public.kanban_sync_bindings from authenticated", self.sql.lower())
+        self.assertIn("grant select on public.kanban_sync_outbox to authenticated", self.sql.lower())
+        self.assertNotIn("grant select,update on public.kanban_sync_outbox", self.sql.lower())
+        self.assertIn("revoke insert,update,delete on public.kanban_sync_events from authenticated", self.sql.lower())
+        self.assertIn("revoke insert,update,delete on public.kanban_sync_runs from authenticated", self.sql.lower())
+
+    def test_oauth_consent_ui_preserves_request_and_shows_permissions(self):
+        self.assertIn('window.location.pathname === "/oauth/consent"', self.ui)
+        self.assertIn("getAuthorizationDetails", self.ui)
+        self.assertIn("approveAuthorization", self.ui)
+        self.assertIn("denyAuthorization", self.ui)
+        self.assertIn("authorization_id=", self.ui)
+        self.assertIn("details.redirect_uri", self.ui)
+        self.assertIn("details?.scope", self.ui)
 
     def test_card_changes_create_outbox_and_source_updates_suppress_echo(self):
         self.assertIn("capture_card_change_outbox", self.sql)
@@ -77,6 +103,19 @@ class PreKanbanContractTests(unittest.TestCase):
         for semantic_key in ("backlog", "ready", "in_progress", "blocked", "review", "done"):
             with self.subTest(column=semantic_key):
                 self.assertIn(f'"semantic_key":"{semantic_key}"', self.sql)
+
+    def test_sync_writes_use_scoped_rpc_contracts_not_direct_table_mutations(self):
+        self.assertIn('rpc("kanban_create_sync_preview"', self.edge)
+        self.assertIn('rpc("kanban_claim_sync_run"', self.edge)
+        self.assertIn('rpc("kanban_apply_sync_item"', self.edge)
+        self.assertIn('rpc("kanban_finalize_sync_run"', self.edge)
+        self.assertIn('rpc("kanban_record_sync_readback"', self.edge)
+        self.assertIn('rpc("kanban_ack_sync_outbox"', self.edge)
+        self.assertIn('rpc("kanban_mark_sync_outbox_conflict"', self.edge)
+        self.assertNotIn('from("kanban_sync_runs").insert', self.edge)
+        self.assertNotIn('from("kanban_sync_runs").update', self.edge)
+        self.assertNotIn('from("kanban_sync_events").insert', self.edge)
+        self.assertNotIn('from("kanban_sync_outbox").update', self.edge)
 
     def test_kanban_ui_uses_authenticated_persistent_backend(self):
         self.assertIn("VITE_SUPABASE_URL", self.ui)

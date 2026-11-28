@@ -11,7 +11,8 @@ Original HSO-owned Kanban interface built with React, Vite and Supabase Auth/Pos
    ```
 2. Apply the migrations to a development Supabase branch/project.
 3. Enable the intended Supabase Auth email OTP provider and configure allowed redirect URLs.
-4. Install and run:
+4. For OAuth/MCP authorization, configure the Supabase OAuth Server with Authorization Path `/oauth/consent`, set the Site URL to this frontend origin, and use an asymmetric JWT signing key (ES256 or RS256). Keep dynamic client registration off until the client allow-list/governance policy is ready.
+5. Install and run:
    ```bash
    npm install
    npm run dev

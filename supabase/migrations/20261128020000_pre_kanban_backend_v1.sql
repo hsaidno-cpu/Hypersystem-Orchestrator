@@ -188,7 +188,7 @@ create index if not exists kanban_audit_events_workspace_created_idx on public.k
 
 create or replace function kanban_private.has_workspace_role(p_workspace_id uuid,p_roles text[] default array['owner','admin'])
 returns boolean language sql stable security definer
-set search_path = pg_catalog,public,auth
+set search_path = pg_catalog
 as $$
   select exists (
     select 1 from public.kanban_workspace_members m
@@ -201,7 +201,7 @@ grant execute on function kanban_private.has_workspace_role(uuid,text[]) to auth
 
 create or replace function kanban_private.add_workspace_owner()
 returns trigger language plpgsql security definer
-set search_path = pg_catalog,public,auth
+set search_path = pg_catalog
 as $$
 begin
   insert into public.kanban_workspace_members(workspace_id,user_id,role,status,added_by)
@@ -237,7 +237,7 @@ end $$;
 
 create or replace function kanban_private.audit_change()
 returns trigger language plpgsql security definer
-set search_path = pg_catalog,public,auth
+set search_path = pg_catalog
 as $$
 declare
   v_row jsonb;
@@ -252,7 +252,7 @@ begin
   else
     v_workspace_id=(v_row->>'workspace_id')::uuid;
   end if;
-  v_entity_id=(v_row->>'id')::uuid;
+  v_entity_id=coalesce(v_row->>'id',v_row->>'card_id')::uuid;
   if tg_op<>'INSERT' then v_previous_revision=nullif(to_jsonb(old)->>'revision','')::integer; end if;
   if tg_op<>'DELETE' then v_new_revision=nullif(to_jsonb(new)->>'revision','')::integer; end if;
   insert into public.kanban_audit_events(
@@ -280,7 +280,7 @@ declare t text;
 begin
   foreach t in array array[
     'kanban_workspaces','kanban_workspace_members','kanban_boards','kanban_columns','kanban_cards',
-    'kanban_labels','kanban_sync_runs','kanban_sync_bindings'
+    'kanban_labels','kanban_card_labels','kanban_sync_runs','kanban_sync_bindings'
   ] loop
     execute format('drop trigger if exists %I_audit_change on public.%I',t,t);
     execute format('create trigger %I_audit_change after insert or update or delete on public.%I for each row execute function kanban_private.audit_change()',t,t);
@@ -310,10 +310,30 @@ with check (kanban_private.has_workspace_role(id,array['owner','admin']));
 create policy kanban_members_select on public.kanban_workspace_members
 for select to authenticated using (user_id=auth.uid() or kanban_private.has_workspace_role(workspace_id,array['owner','admin']));
 create policy kanban_members_insert on public.kanban_workspace_members
-for insert to authenticated with check (kanban_private.has_workspace_role(workspace_id,array['owner','admin']));
+for insert to authenticated with check (
+  kanban_private.has_workspace_role(workspace_id,array['owner'])
+  or (
+    role in ('editor','member','viewer')
+    and kanban_private.has_workspace_role(workspace_id,array['admin'])
+  )
+);
 create policy kanban_members_update on public.kanban_workspace_members
-for update to authenticated using (kanban_private.has_workspace_role(workspace_id,array['owner','admin']))
-with check (kanban_private.has_workspace_role(workspace_id,array['owner','admin']));
+for update to authenticated using (
+  kanban_private.has_workspace_role(workspace_id,array['owner'])
+  or (
+    kanban_private.has_workspace_role(workspace_id,array['admin'])
+    and role in ('editor','member','viewer')
+    and user_id <> auth.uid()
+  )
+)
+with check (
+  kanban_private.has_workspace_role(workspace_id,array['owner'])
+  or (
+    kanban_private.has_workspace_role(workspace_id,array['admin'])
+    and role in ('editor','member','viewer')
+    and user_id <> auth.uid()
+  )
+);
 
 create policy kanban_boards_select on public.kanban_boards
 for select to authenticated using (kanban_private.has_workspace_role(workspace_id,array['owner','admin','editor','member','viewer']));
@@ -405,7 +425,7 @@ create or replace function public.kanban_create_board(
   ]'::jsonb
 )
 returns jsonb language plpgsql security invoker
-set search_path = pg_catalog,public,kanban_private,auth
+set search_path = pg_catalog
 as $$
 declare
   v_board public.kanban_boards;

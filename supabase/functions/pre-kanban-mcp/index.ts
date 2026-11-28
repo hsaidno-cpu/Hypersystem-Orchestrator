@@ -392,6 +392,7 @@ function makeServer(db: any, userId: string) {
         acceptance_criteria: item.acceptance_criteria ?? null, priority: item.priority,
         column_semantic_key: item.column_semantic_key, evidence_refs: item.evidence_refs,
         dependencies: item.dependencies,
+        extra: item.extra ?? {},
       });
       const { data: column, error: columnError } = await db.from("kanban_columns")
         .select("id,semantic_key").eq("board_id", args.board_id)
@@ -411,10 +412,10 @@ function makeServer(db: any, userId: string) {
       if (cardError) throw new Error("sync_card_lookup_failed: " + cardError.message);
       if (!card || card.is_archived) {
         planItems.push({ action: "CONFLICT", reason: "bound_card_missing_or_archived", ...item, source_digest: sourceDigest });
-      } else if (binding.last_source_digest === sourceDigest) {
-        planItems.push({ action: "NOOP", reason: "source_digest_unchanged", ...item, source_digest: sourceDigest, card_id: card.id });
       } else if (card.revision !== binding.last_board_revision) {
         planItems.push({ action: "CONFLICT", reason: "board_card_changed_since_last_sync", ...item, source_digest: sourceDigest, card_id: card.id, current_revision: card.revision });
+      } else if (binding.last_source_digest === sourceDigest) {
+        planItems.push({ action: "NOOP", reason: "source_digest_unchanged", ...item, source_digest: sourceDigest, card_id: card.id });
       } else {
         planItems.push({ action: "UPDATE", reason: "source_changed_board_unchanged", ...item, source_digest: sourceDigest, card_id: card.id, expected_revision: card.revision, column_id: column.id, binding_id: binding.id });
       }
@@ -428,12 +429,14 @@ function makeServer(db: any, userId: string) {
       acc[item.action] = (acc[item.action] ?? 0) + 1;
       return acc;
     }, {});
-    const { data: run, error: runError } = await db.from("kanban_sync_runs").insert({
-      workspace_id: args.workspace_id, board_id: args.board_id, source_system: args.source_system,
-      direction: args.direction, status: "PREVIEWED", payload_digest: digest,
-      preview_plan: preview, source_count: planItems.length, initiated_by: userId,
-      expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-    }).select("id,status,payload_digest,source_count,expires_at,created_at").single();
+    const { data: run, error: runError } = await db.rpc("kanban_create_sync_preview", {
+      p_workspace_id: args.workspace_id,
+      p_board_id: args.board_id,
+      p_source_system: args.source_system,
+      p_direction: args.direction,
+      p_payload_digest: digest,
+      p_preview_plan: preview,
+    });
     requireData(run, runError, "sync_preview_persist_failed");
     return { run, counts, plan: planItems };
   });
@@ -450,20 +453,22 @@ function makeServer(db: any, userId: string) {
     if (run.status === "APPLIED" || (run.status === "PARTIAL" && previousFailures === 0)) {
       return { run_id: run.id, status: run.status, idempotent_replay: true, result: run.result_summary };
     }
-    if (run.status !== "PREVIEWED") throw new Error("sync_run_not_applicable:" + run.status);
+    const retryingPartial = run.status === "PARTIAL" && previousFailures > 0;
+    if (run.status !== "PREVIEWED" && !retryingPartial) throw new Error("sync_run_not_applicable:" + run.status);
     if (run.payload_digest !== args.expected_preview_digest) throw new Error("preview_digest_mismatch");
-    if (Date.parse(run.expires_at) <= Date.now()) {
-      await db.from("kanban_sync_runs").update({ status: "EXPIRED" }).eq("id", run.id);
-      throw new Error("sync_preview_expired");
-    }
     const planItems = run.preview_plan?.items;
     if (!Array.isArray(planItems)) throw new Error("stored_sync_plan_invalid");
+    const claimToken = crypto.randomUUID();
     const { data: claimed, error: beginError } = await db.rpc("kanban_claim_sync_run", {
       p_sync_run_id: run.id,
       p_expected_digest: args.expected_preview_digest,
+      p_claim_token: claimToken,
     });
     if (beginError) throw new Error("sync_run_claim_failed: " + beginError.message);
-    if (!claimed || claimed.status !== "APPLYING") throw new Error("sync_run_claim_not_acquired");
+    if (claimed?.status === "EXPIRED") throw new Error("sync_preview_expired");
+    if (!claimed || claimed.status !== "APPLYING" || claimed.claim_token !== claimToken) {
+      throw new Error("sync_run_claim_not_acquired");
+    }
     // The database claim uses SELECT FOR UPDATE to prevent concurrent duplicate applies.
 
     let created = 0, updated = 0, noop = 0, conflicts = 0, failed = 0;
@@ -474,6 +479,7 @@ function makeServer(db: any, userId: string) {
         if (item.action === "CONFLICT") { conflicts++; outcomes.push({ source_work_item_id: item.source_work_item_id, disposition: "CONFLICT", reason: item.reason }); continue; }
         const { data: applied, error: applyError } = await db.rpc("kanban_apply_sync_item", {
           p_sync_run_id: run.id,
+          p_claim_token: claimToken,
           p_item_payload: item,
         });
         if (applyError) throw new Error("sync_item_apply_failed: " + applyError.message);
@@ -489,14 +495,17 @@ function makeServer(db: any, userId: string) {
         outcomes.push({ source_work_item_id: item.source_work_item_id, disposition: "FAILED", reason: String(error).slice(0, 300) });
       }
     }
-    const status = conflicts || failed ? "PARTIAL" : "APPLIED";
     const summary = { created, updated, noop, conflicts, failed, outcomes };
-    const { error: finishError } = await db.from("kanban_sync_runs").update({
-      status, applied_count: created + updated, conflict_count: conflicts,
-      result_summary: summary, applied_at: new Date().toISOString(),
-    }).eq("id", run.id);
+    const { data: finalized, error: finishError } = await db.rpc("kanban_finalize_sync_run", {
+      p_sync_run_id: run.id,
+      p_claim_token: claimToken,
+      p_applied_count: created + updated,
+      p_conflict_count: conflicts,
+      p_result_summary: summary,
+    });
     if (finishError) throw new Error("sync_run_finalize_failed: " + finishError.message);
-    return { run_id: run.id, status, ...summary };
+    if (!finalized) throw new Error("sync_run_finalize_returned_empty_result");
+    return { run_id: run.id, status: finalized.status, ...summary };
   });
 
   register("kanban.sync.read_back", "Read back persisted cards and bindings for a sync run and compare source digest and recorded board revision.", z.object({
@@ -531,10 +540,10 @@ function makeServer(db: any, userId: string) {
       }
     }
     const verified = issues.length === 0;
-    const { error: eventError } = await db.from("kanban_sync_events").insert({
-      workspace_id: run.workspace_id, sync_run_id: run.id, source_system: run.source_system,
-      event_type: "READ_BACK", disposition: verified ? "READ_BACK_PASS" : "READ_BACK_FAIL",
-      details: { checked: ids.length, issue_count: issues.length }, actor_user_id: userId,
+    const { error: eventError } = await db.rpc("kanban_record_sync_readback", {
+      p_sync_run_id: run.id,
+      p_checked_count: ids.length,
+      p_issue_count: issues.length,
     });
     if (eventError) throw new Error("sync_read_back_event_failed: " + eventError.message);
     return { run_id: run.id, verified, checked: ids.length, issues };
@@ -577,14 +586,11 @@ function makeServer(db: any, userId: string) {
     outbox_id: uuid,
     reason: shortText(500),
   }), async (args) => {
-    const { data, error } = await db.from("kanban_sync_outbox").update({
-      status: "CONFLICT",
-      last_error: args.reason,
-    }).eq("id", args.outbox_id).eq("status", "PENDING")
-      .select("id,status,last_error").maybeSingle();
-    if (error) throw new Error("sync_outbox_conflict_update_failed: " + error.message);
-    if (!data) throw new Error("outbox_item_not_pending_or_missing");
-    return data;
+    const { data, error } = await db.rpc("kanban_mark_sync_outbox_conflict", {
+      p_outbox_id: args.outbox_id,
+      p_reason: args.reason,
+    });
+    return requireData(data, error, "sync_outbox_conflict_update_failed");
   });
 
   // Audit Manager.

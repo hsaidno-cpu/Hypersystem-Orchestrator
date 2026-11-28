@@ -16,14 +16,14 @@ This change introduces source artifacts on branch `feat/pre-kanban-mcp-backend-2
 - create a production workspace or PRE board;
 - enable automatic PRE source writes.
 
-The service must be tested in a development Supabase branch/project first. A source merge is not a deployment or runtime acceptance.
+The service must be tested in a development Supabase branch/project first. A source merge is not a deployment or runtime acceptance. Creating a Supabase development branch may incur hourly compute charges; verify the current quote and obtain cost approval before provisioning.
 
 ## Architecture
 
 - **Database:** Supabase Postgres stores workspaces, members, boards, columns, cards, labels, sync bindings, sync runs, sync events, outbox events and append-only audit metadata.
 - **MCP endpoint:** Supabase Edge Function `pre-kanban-mcp`, using MCP TypeScript SDK v2 and Streamable HTTP.
 - **Identity:** Supabase Auth OAuth 2.1 / PKCE with the MCP Protected Resource metadata middleware. Every MCP request passes through `withSupabase({ auth: "user" })`; each tool receives a caller-scoped Supabase client.
-- **Authorization:** workspace membership roles and Postgres RLS. The MCP request path does not use a service-role key.
+- **Authorization:** workspace membership roles and Postgres RLS. The MCP request path does not use a service-role key. Clients cannot directly change synchronization run state, source bindings, or sync events; controlled RPCs own those transitions.
 - **UI:** React/Vite frontend uses the same Auth and RLS-protected Postgres tables as MCP clients. A human and an AI client therefore see the same records and revisions.
 - **PRE adapter:** the adapter is the controlled bridge that translates canonical PRE work items to Kanban bindings and consumes board-originated outbox events.
 
@@ -35,7 +35,7 @@ After deployment, the endpoint will be:
 
 Protocol package: `@modelcontextprotocol/server@2.4.0`, which supports the 2026-07-28 MCP protocol revision through `createMcpHandler`. The handler is stateless per HTTP request; durable state is in Postgres, not an Edge Function isolate.
 
-Supabase Auth OAuth must be explicitly enabled and configured before clients can connect. Configure the authorization UI/consent flow, PKCE, trusted redirect URIs, client registration policy, and user approval. Do not enable open dynamic registration without monitoring and consent controls.
+Supabase Auth OAuth must be explicitly enabled and configured before clients can connect. In Authentication > OAuth Server, enable OAuth 2.1 and set the Authorization Path to `/oauth/consent`. In Authentication > URL Configuration, set the Site URL to the deployed UI origin. Configure asymmetric JWT signing (ES256 or RS256) before onboarding OAuth clients; the middleware-backed MCP authentication requires asymmetric signing keys. Keep PKCE mandatory, register trusted full redirect URIs, and require user approval on the consent page. Dynamic client registration remains disabled by default until its governance and monitoring controls are accepted.
 
 The function has `verify_jwt = false` only because OAuth protected-resource discovery must be reachable before a bearer token exists. The function itself is protected by `withSupabase({ auth: "user" })`; tool calls are not anonymous. Do not remove that middleware or change its mode to `none`.
 
@@ -125,6 +125,8 @@ The PRE/HSO adapter consumes `kanban.sync.outbox.list`, applies the change to th
 - Sync preview has a digest and expiry. Apply has an explicit confirmation flag and atomic claim.
 - Audit records store entity/action/actor/revision/request metadata, not complete card descriptions or secrets.
 - Audit rows reject UPDATE/DELETE through a trigger.
+- Sync run state, source bindings, and outbox status are not directly writable by authenticated clients. Controlled RPCs perform claim/apply/finalize/ack/conflict transitions after membership checks.
+- Membership policy prevents admin self-promotion or granting owner/admin role; only an owner can assign owner/admin.
 - PostgreSQL append-only metadata is not equivalent to cryptographic immutability or external WORM storage. External signed audit anchoring remains a later assurance control.
 - Never put Supabase secret/service-role keys, OAuth client secrets, issuer private keys or API credentials in browser code, Git, audit payloads, or MCP tool arguments.
 
@@ -145,22 +147,27 @@ Apply the migrations in order to a disposable/development Supabase branch first:
 3. `20261128020200_pre_kanban_sync_outbox_v1.sql`
 4. `20261128020300_pre_kanban_outbox_ack_v1.sql`
 5. `20261128020400_pre_kanban_atomic_card_ops_v1.sql`
+6. `20261128020500_pre_kanban_sync_write_hardening_v1.sql`
 
 Run SQL validation, RLS role tests (viewer/member/editor/admin/owner), Supabase Security Advisors, Edge Function type checks, MCP Inspector tests and browser UI tests before any production application.
 
 ## Required acceptance tests
 
-- OAuth discovery and user-consented login work for each intended MCP client.
+- OAuth discovery and user-consented login work for each intended MCP client, including first-time consent and previously approved-client redirect.
+- Consent explains that OAuth clients inherit the user's workspace role; no custom per-tool OAuth scope is claimed.
+- The OAuth authorization path `/oauth/consent` preserves `authorization_id` through email OTP sign-in and displays the client name, redirect URI, and scopes.
 - Unauthenticated tool calls are rejected; no anonymous or service-role bypass exists.
 - A viewer cannot create/update/move cards or mutate workspace membership.
 - A member can create/move cards but cannot manage board configuration or audit.
 - An editor can manage board/card/sync and read operational audit, but cannot change PRE lifecycle authority.
+- An admin cannot grant owner/admin role or promote their own membership; only an owner can assign or change owner/admin roles.
+- An editor cannot directly update sync-run state, source bindings, or outbox acknowledgment fields outside the controlled RPCs.
 - A duplicate source event produces no duplicate card.
 - Simultaneous apply requests cannot claim one sync run twice.
 - A crashed worker can reclaim a stale run; replayed items are idempotent.
 - Source updates cannot overwrite a card changed since the last binding revision.
 - A bidirectional card edit creates one outbox item; source-originated updates do not create echo events.
-- The outbox is acknowledged only after source-side application and read-back evidence exists.
+- The outbox is acknowledged only after source-side application and read-back evidence exists; the external adapter verifies receipt authenticity before submitting the acknowledgment.
 - Audit rows are readable only by owner/admin and cannot be changed by authenticated workspace members.
 - MCP Inspector confirms tool discovery and schemas.
 - Frontend and MCP operations read/write the same persisted database records.

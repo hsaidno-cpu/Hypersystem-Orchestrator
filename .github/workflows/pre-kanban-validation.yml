@@ -65,6 +65,19 @@ jobs:
       - name: Type-check and build
         run: npm run build
 
+      - name: Record exact resolved frontend dependencies
+        run: npm ls --depth=0 --json > dependency-tree.json
+
+      - name: Preserve generated npm lockfile for repository review
+        uses: actions/upload-artifact@v4
+        with:
+          name: pre-kanban-ui-dependency-lock
+          path: |
+            apps/pre-kanban/package-lock.json
+            apps/pre-kanban/dependency-tree.json
+          if-no-files-found: error
+          retention-days: 7
+
   contract-tests:
     name: Verify PRE Kanban contracts
     runs-on: ubuntu-latest
