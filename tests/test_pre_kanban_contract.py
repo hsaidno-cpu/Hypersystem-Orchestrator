@@ -139,6 +139,7 @@ class PreKanbanContractTests(unittest.TestCase):
     def test_done_is_fail_closed_until_independent_evidence_gate_exists(self):
         self.assertIn('targetColumn.semantic_key === "done"', self.ui)
         self.assertIn("done_completion_evidence_gate_not_implemented", self.edge)
+        self.assertIn('column.semantic_key === "done"', self.edge)
         self.assertIn("HSO Issue #64", self.ui)
         self.assertIn("independent evidence gate", self.sql.lower() + self.edge.lower() + self.ui.lower() + Path(ROOT / "docs/PRE-KANBAN-MCP-ARCHITECTURE.md").read_text(encoding="utf-8").lower())
 
