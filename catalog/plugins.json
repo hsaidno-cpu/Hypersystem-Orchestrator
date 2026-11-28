@@ -105,7 +105,7 @@
       "version_reconciliation_status": "SOURCE_VERIFIED_IN_SYNC",
       "source_sync_status": "SOURCE_INSTRUCTION_DRIFT_DETECTED",
       "source_instruction_parity_status": "DRIFT_DETECTED",
-      "source_instruction_parity_note": "Full 4-file instruction/reference comparison against Plugin Creator USER/PRIVATE v0.1.0 and pinned Git source v0.1.0: 0/4 files match exactly. Master SKILL.md is 23,651 vs 10,573 chars; audit-matrix.md 4,874 vs 3,111; github-change-protocol.md 4,596 vs 2,497; regression-and-release-gates.md 4,500 vs 3,030. Plugin Creator bodies are longer; package and source versions match but content does not. Preserve both until the source owner selects the canonical body and updates/tests the other side."
+      "source_instruction_parity_note": "Full package-source comparison of the seven shared UTF-8 files after line-ending normalization: 0/7 exact matches. Shared paths: README.md (849 vs 990 characters), plugin.json (2,020 vs 1,720), master SKILL.md (23,651 vs 10,573), audit-matrix.md (4,874 vs 3,111), github-change-protocol.md (4,596 vs 2,497), regression-and-release-gates.md (4,500 vs 3,030), and tests/acceptance-cases.json (3,937 vs 1,882). Plugin Creator only: .codex-plugin/plugin.json. Git source only: LICENSE. Both sides identify 0.1.0, but content differs materially. Do not replace the richer runtime procedures with the shorter Git source copy; reconcile the seven shared files and preserve both unique paths before rebuilding the package."
     },
     {
       "plugin_key": "evaluator-team",
