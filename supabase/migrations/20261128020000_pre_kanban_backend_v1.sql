@@ -71,7 +71,7 @@ create table if not exists public.kanban_cards (
   title text not null check (length(trim(title)) between 1 and 240),
   description text,
   priority text not null default 'medium' check (priority in ('critical','high','medium','low')),
-  acceptance_criteria text,
+  acceptance_criteria text not null check (length(trim(acceptance_criteria)) between 1 and 8000),
   due_date date,
   position numeric(18,3) not null default 1000,
   is_archived boolean not null default false,
