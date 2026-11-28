@@ -78,7 +78,7 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertIn("column_wip_limit_exceeded", self.sql)
 
     def test_sync_state_is_not_directly_writable_by_authenticated_clients(self):
-        self.assertIn("revoke update on public.kanban_sync_runs from authenticated", self.sql.lower())
+        self.assertIn("revoke insert,update,delete on public.kanban_sync_runs from authenticated", self.sql.lower())
         self.assertIn("revoke insert,update,delete on public.kanban_sync_bindings from authenticated", self.sql.lower())
         self.assertIn("grant select on public.kanban_sync_outbox to authenticated", self.sql.lower())
         self.assertNotIn("grant select,update on public.kanban_sync_outbox", self.sql.lower())
