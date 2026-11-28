@@ -8,3 +8,8 @@ verify_jwt = false
 
 [functions.hso-reconcile]
 verify_jwt = false
+
+[functions.pre-kanban-mcp]
+# OAuth protected-resource discovery must reach the function unauthenticated.
+# The function's withSupabase({ auth: "user" }) middleware validates every MCP request.
+verify_jwt = false

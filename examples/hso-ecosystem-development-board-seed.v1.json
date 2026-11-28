@@ -1,0 +1,361 @@
+{
+  "schema_version": "1.0.0",
+  "manifest_id": "hso-ecosystem-development-board-seed-v1",
+  "generated_at": "2026-11-28",
+  "board": {
+    "name": "HSO Ecosystem Development",
+    "slug": "hso-ecosystem-development",
+    "description": "Canonical HSMART-HSO ecosystem work coordination. GitHub remains authoritative for implementation; PRE remains authoritative for roadmap and milestone acceptance; Done requires independent evidence.",
+    "columns": [
+      {
+        "name": "Intake",
+        "semantic_key": "intake",
+        "color": "gray"
+      },
+      {
+        "name": "Backlog",
+        "semantic_key": "backlog",
+        "color": "gray"
+      },
+      {
+        "name": "Ready",
+        "semantic_key": "ready",
+        "color": "blue"
+      },
+      {
+        "name": "In Progress",
+        "semantic_key": "in_progress",
+        "color": "yellow"
+      },
+      {
+        "name": "Blocked",
+        "semantic_key": "blocked",
+        "color": "red"
+      },
+      {
+        "name": "Review & Verification",
+        "semantic_key": "review",
+        "color": "purple"
+      },
+      {
+        "name": "Done",
+        "semantic_key": "done",
+        "color": "green"
+      },
+      {
+        "name": "Archive",
+        "semantic_key": "archive",
+        "color": "gray"
+      }
+    ]
+  },
+  "source_policy": {
+    "source_system": "github",
+    "sync_direction": "source_to_board",
+    "stable_identity": "canonical GitHub Issue or Pull Request URL",
+    "github_authority": "Repository code, schemas, tests, workflows, Issue/PR state, commits and release history.",
+    "pre_authority": "R0-R9 roadmap stages, gates, milestone acceptance and evidence disposition.",
+    "hsar_authority": "Component anatomy and evidence-backed architecture knowledge; Notion is a documentation projection.",
+    "status_policy": "Initial columns are conservative observations on 2026-11-28. They are not independent runtime verification.",
+    "completion_policy": "No seed item is initially Done. Done is fail-closed until Issue #64 is implemented at database level and independently verified."
+  },
+  "items": [
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/59",
+      "source_revision": "e522b8f5631e7b29ca00305d1ebcd2790054cb41",
+      "title": "P0 · HSO Workboard: deliver the native Kanban backend, MCP server and eight-column board",
+      "description": "PR #59 contains the HSO-owned Supabase/Postgres Kanban service, OAuth/RLS boundary, Streamable HTTP MCP server, frontend and source-sync/outbox foundation. Exact branch CI passed earlier, but current source is still a draft PR; the production Supabase project has no kanban_* tables, no PRE Kanban migrations in its migration history, and no deployed MCP function or frontend. This is implementation work, not a live board yet.",
+      "acceptance_criteria": "1. Eight columns exist in exact order: Intake, Backlog, Ready, In Progress, Blocked, Review & Verification, Done, Archive.\n2. All PR #59 source changes pass exact-head CI and independent code/security review.\n3. Migrations are created with Supabase CLI, applied to a disposable development project and verified through schema/RLS read-back and Security Advisors.\n4. OAuth/PKCE, consent, redirect allowlist and MCP endpoint are deployed and tested with authenticated user-scoped requests.\n5. Human UI and MCP clients see the same persisted board, card revisions and audit records.\n6. The independent Done evidence gate in Issue #64 is implemented before production acceptance.\n7. A controlled source-to-board preview/apply/read-back test passes without duplicate cards or lost updates.",
+      "priority": "critical",
+      "column_semantic_key": "in_progress",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/59",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/46090983350",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/actions/runs/46090983325",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/64"
+      ],
+      "dependencies": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/64"
+      ],
+      "extra": {
+        "workstream": "HSO_NATIVE_KANBAN",
+        "observed_state": "SOURCE_BRANCH_AND_CI_PRESENT; DRAFT_PR; NOT_DEPLOYED",
+        "observed_on": "2026-11-28",
+        "status_basis": "Implementation work remains active; production database has no kanban tables and no live MCP/UI acceptance receipt.",
+        "authority": "HSO repository + Supabase project",
+        "must_not_claim": [
+          "production board exists",
+          "MCP endpoint is live",
+          "migrations are applied",
+          "Done gate is enforced"
+        ],
+        "next_action": "Finish exact-head review and tests; deploy first to a disposable/development Supabase project only after separate approval."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/55",
+      "source_revision": "2026-11-27T18:36:18Z",
+      "title": "P0 · PRE–RPEDS federation: prove signed release delivery and per-host adoption",
+      "description": "PRE Standalone and RPEDS remain first-class host implementations with shared roadmap DNA. The deployed pre-core-federation Edge Function v5 exists, but the current recorded baseline has zero release events, zero host adoption receipts and zero capability contributions. Publisher/host credentials and verified policy profiles remain incomplete; auto-adoption is disabled.",
+      "acceptance_criteria": "1. Authenticated publisher or polling bridge emits a signed release event with exact source revision and digest.\n2. Replay and idempotency tests prove one event produces no duplicate adoption.\n3. PRE, A.S.F.R.E.E/RPEDS, HSAR and HSO each have verified host policy profiles and scoped credentials.\n4. Host regression runs, rollback reference and independent target read-back are recorded per host.\n5. Only eligible non-breaking SHARED_DNA events can be queued; HOST_ADAPTATION or authority/security/privacy changes remain held.\n6. Each adoption receipt matches exact version/digest and all required tests PASS.\n7. No host is called ADOPTED/VERIFIED merely because an event was accepted.",
+      "priority": "critical",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/55",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/docs/PRE-RPEDS-FEDERATION-AND-AUTO-SYNC.md"
+      ],
+      "dependencies": [],
+      "extra": {
+        "workstream": "PRE_RPEDS_FEDERATION",
+        "observed_state": "PARTIALLY_DEPLOYED; NO_RELEASE_EVENTS_OR_ADOPTION_RECEIPTS",
+        "observed_on": "2026-11-28",
+        "status_basis": "Issue #55 records 0 release events, 0 adoption receipts, 0 capability contributions; host auth and policy profiles remain pending.",
+        "authority": "PRE shared-DNA kernel + host-specific AFSA policies",
+        "next_action": "Provision the separate publisher/verifier/host credentials and run signed event plus host read-back acceptance."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/20",
+      "source_revision": "09141cbf06b16a3643d0d467385cbdb571d7e0b8",
+      "title": "P0 · Super-Orchestrator runtime: close remote invocation identity, transport and WORM proof",
+      "description": "The P0 remote MCP invocation security PR adds authenticated reviewer binding, DNS-pinned HTTPS transport, Ed25519 receipt signing and S3 Object Lock COMPLIANCE anchoring. The PR body explicitly says no live host call or WORM anchor is claimed; OAuth endpoint/client, public MCP endpoint, OpenAI key, HMAC and Ed25519 keypair still require protected provisioning.",
+      "acceptance_criteria": "1. Independent security review approves exact PR head and all protected-workflow constraints.\n2. Exact reviewer identity, anti-self-review, allowlist and run-attempt binding pass.\n3. Outbound MCP/OIDC/API transport pins a public resolved IP while retaining TLS SNI/hostname validation and rejects redirects.\n4. A live invocation is manually approved in the protected environment and returns actual host response/MCP call identifiers.\n5. The complete receipt is Ed25519 signed, independently verified and anchored in S3 Object Lock COMPLIANCE mode with versioned read-back and digest validation.\n6. Ambiguous non-idempotent outcomes remain OUTCOME_UNKNOWN and are not retried automatically.",
+      "priority": "critical",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/20",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/docs/HSO-P0-REMOTE-MCP-SKILL-INVOCATION-PILOT.md"
+      ],
+      "dependencies": [],
+      "extra": {
+        "workstream": "HSO_SUPER_ORCHESTRATOR_RUNTIME",
+        "observed_state": "SECURITY_CODE_PRESENT; LIVE_INVOCATION_NOT_RUN; WORM_NOT_PROVISIONED",
+        "observed_on": "2026-11-28",
+        "status_basis": "PR #20 explicitly records required credentials, environment and WORM provisioning; no live call or receipt exists.",
+        "authority": "HSO runtime policy + independent reviewer",
+        "next_action": "Complete exact-head review and protected infrastructure provisioning; run one approved sandbox invocation only."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/62",
+      "source_revision": "2026-11-28T04:00:00Z",
+      "title": "P1 · HSAR: activate the scoped GitHub-to-Notion evidence sync pilot",
+      "description": "HSAR v0.3.0 has an accepted operating contract and a static GitHub-to-Notion sync scaffold. The pilot is deliberately restricted to the HSO Change & Evidence Ledger. Its write gate is disabled by default, and no live create/update/no-op/read-back receipt is recorded. Notion must remain a projection for navigation/evidence, not a competing source of truth.",
+      "acceptance_criteria": "1. Reconfirm the canonical Notion data source schema and integration share; the integration is shared only with HSAR Change & Evidence Ledger.\n2. Provision the Notion API token and data-source ID in protected GitHub settings; no credentials enter Git, Issue text or Kanban metadata.\n3. Run dry_run=true and inspect the normalized PR/source manifest.\n4. Perform one live create, update, replay/no-op and independent Notion read-back hash verification.\n5. Duplicate stable keys fail closed; human decision, approval and risk fields are never overwritten.\n6. Workflow logs and receipts contain no credential values or private source content.\n7. Keep Component Registry and Scan & Coverage Ledger outside the pilot until separate authorization and acceptance.",
+      "priority": "high",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/62",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/docs/hsar/HSAR-REGISTRY-AND-OPERATING-CONTRACT.md",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/docs/hsar/NOTION-SYNC-PILOT.md",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/docs/hsar/ACCEPTANCE-AND-BACKUP-RECOVERY-SUITE.md"
+      ],
+      "dependencies": [],
+      "extra": {
+        "workstream": "HSAR",
+        "observed_state": "OPERATING_CONTRACT_ACCEPTED; STATIC_TESTS_PASS; NOTION_WRITE_GATE_DISABLED; LIVE_SYNC_NOT_RUN",
+        "observed_on": "2026-11-28",
+        "status_basis": "Canonical pilot documentation requires scoped Notion integration share, protected token, dry-run and live read-back; those are not verified.",
+        "authority": "HSAR registry + GitHub source",
+        "next_action": "Provision narrow Notion access and execute dry-run then controlled live read-back."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/63",
+      "source_revision": "2026-11-28T04:00:02Z",
+      "title": "P1 · Universal Ecosystem Atlas: prove source completeness, freshness and graph integrity",
+      "description": "Atlas schema, security/index and graph-navigation migrations are present in main and their versions appear in the active Supabase migration history. That proves schema history, not source coverage. This card establishes per-source pagination completeness, freshness, provenance and relationship integrity.",
+      "acceptance_criteria": "1. Inventory live Atlas resource, relationship, capture, conflict and source-cursor tables with their RLS policies.\n2. Define a canonical source boundary, stable identity, pagination strategy, exclusion rules and expected denominator for every enabled source.\n3. Exhaust every page/cursor and record requested pages, observed source totals, rows read, errors and pagination_complete.\n4. Calculate deterministic source/scope hashes and assign explicit freshness states.\n5. Detect duplicates, unresolved/orphan relationship endpoints, stale records and canonical identity conflicts.\n6. Distinguish source-verified relationships from inferred relationships.\n7. Publish a reproducible completeness/freshness report with exact source revisions and read-back evidence.\n8. UNKNOWN or partial coverage remains UNKNOWN/INCOMPLETE; no inferred completion percentage.",
+      "priority": "high",
+      "column_semantic_key": "intake",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/63",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/supabase/migrations/20261126050958_universal_ecosystem_atlas_v1.sql",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/supabase/migrations/20261126051036_universal_ecosystem_atlas_security_indexes_v1.sql",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/main/supabase/migrations/20261126051339_universal_ecosystem_atlas_graph_navigation_v1.sql"
+      ],
+      "dependencies": [],
+      "extra": {
+        "workstream": "UNIVERSAL_ECOSYSTEM_ATLAS",
+        "observed_state": "SCHEMA_MIGRATIONS_PRESENT_IN_LIVE_HISTORY; SOURCE_COMPLETENESS_NOT_ACCEPTED",
+        "observed_on": "2026-11-28",
+        "status_basis": "Migrations are recorded in Supabase migration history; no full pagination-complete per-source read-back is established by that fact alone.",
+        "authority": "HSO Atlas source registry and source providers",
+        "next_action": "Define source denominators and collect full cursor-exhaustion/read-back receipts."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/44",
+      "source_revision": "2026-11-26T05:49:37Z",
+      "title": "P0 · Plugin and Skill Migration: close source-to-runtime evidence for all catalog entries",
+      "description": "Issue #44 owns migration closure. The source ledger PR #47 preserves 869 file-blob paths and 859 unique content groups, while the earlier 864 denominator still has a +5 discrepancy. The crosswalk shows path matches do not prove instruction-content parity or runtime invocation; several source identities remain unresolved. Catalog presence is not migration acceptance.",
+      "acceptance_criteria": "1. Reconcile the 869-versus-864 denominator using immutable source trees; do not delete paths to force a historical count.\n2. Exhaust the 289-skill metadata crosswalk and record exact path/blob/source revision, package read-back and content parity status for every applicable skill.\n3. Identify canonical source repositories or preserve explicit NOT_IDENTIFIED/PRIVATE_ACCESS_PENDING states.\n4. Verify licensing/redistribution rights independently before distribution or installation.\n5. Record installation receipts, named-host activation and actual invocation receipts separately from source/metadata presence.\n6. Every package has an explicit blocker/owner/next action; no unsupported SYNCED/VERIFIED status.\n7. Close only when all relevant evidence planes pass or have an approved explicit exclusion.",
+      "priority": "critical",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/44",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/47",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/45"
+      ],
+      "dependencies": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/47",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/12"
+      ],
+      "extra": {
+        "workstream": "PLUGIN_SKILL_MIGRATION",
+        "observed_state": "OPEN; DENOMINATOR_DISCREPANCY; SOURCE_AND_RUNTIME_PARITY_INCOMPLETE",
+        "observed_on": "2026-11-28",
+        "status_basis": "Issue #44 is open; PR #47 identifies +5 path discrepancy and unresolved parity/source mappings; PR #45 is a read-only watchdog rather than runtime proof.",
+        "authority": "Each canonical child repository + HSO catalog/ECIG",
+        "next_action": "Reconcile source ledger denominator and work through each evidence plane with exact immutable pins."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/12",
+      "source_revision": "c5f9ff54fbd933f108ed53c3a0e2e45937249ac0",
+      "title": "P0 · Distribution and Cross-Platform Adapter: establish rights-cleared package eligibility",
+      "description": "PR #12 adds a source/rights registry and validator. Its recorded baseline is 23 identities with five pinned sources, 15 unidentified, two incomplete and one legacy redirect. Zero packages are marked installable. Public repository visibility or a registry entry is not permission to redistribute or evidence of a working host adapter.",
+      "acceptance_criteria": "1. Obtain independent rights-holder evidence for every package before redistributing or publishing an installer.\n2. Reconcile exact canonical source, license, NOTICE, package version and source/package parity for every identity.\n3. Keep USER/PRIVATE packages private and out of public bundles unless explicit authorization exists.\n4. Implement a named host adapter only after package rights, package integrity, host protocol and permission scope are established.\n5. Verify installation receipt, host activation and actual runtime invocation independently.\n6. Distribution resolver excludes unknown rights, incomplete source, stale packages and unverified adapters.\n7. Any claimed installable package has immutable source/package digests and a real host acceptance receipt.",
+      "priority": "critical",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/12",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/44",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/docs/DISTRIBUTION-ARCHITECTURE.md",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/catalog/distribution-registry.json"
+      ],
+      "dependencies": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/44"
+      ],
+      "extra": {
+        "workstream": "DISTRIBUTION_CROSS_PLATFORM_ADAPTERS",
+        "observed_state": "RIGHTS_VALIDATOR_SOURCE_PRESENT; ZERO_INSTALLABLE_AT_RECORDED_BASELINE",
+        "observed_on": "2026-11-28",
+        "status_basis": "PR #12 records 0 installable identities and multiple unresolved rights/source states; host activation is separate.",
+        "authority": "Rights holder + HSO distribution governance + host owner",
+        "next_action": "Complete rights review and package/source parity before enabling any platform distribution."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/58",
+      "source_revision": "f7633fd66b55b6e6275df9223af8fd53b070301f",
+      "title": "P1 · CI/CD and Mission Control: close OIDC/Vault deployment and event read-back",
+      "description": "PR #58 reconstructs deployed Mission Control Edge Function source baselines, adds GitHub OIDC verification and Vault-backed HSO_SYNC_TOKEN retrieval. The PR states this does not itself deploy functions or prove live OIDC event ingestion/reconciliation. Mission Control remains NOT_VERIFIED until deployed source hashes and runtime receipts match.",
+      "acceptance_criteria": "1. Independent review validates the OIDC issuer/audience, repository/ref/workflow/event allowlist and expiry checks.\n2. Merge/rebase and exact-head CI pass without bypassing required approvals.\n3. Deploy only the reconciled Edge Function bundles and read back active function versions/source hashes.\n4. Run a real authorized GitHub OIDC event ingestion and verify delivery ID, payload hash and database inbox read-back.\n5. Replay the same event and verify no duplicate side effects.\n6. Run scheduled reconciliation and verify idempotent read-back.\n7. Keep Mission Control NOT_VERIFIED until all runtime receipts pass.",
+      "priority": "high",
+      "column_semantic_key": "in_progress",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/58",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/29",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/docs/NOTION-DOCUMENTATION.md"
+      ],
+      "dependencies": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/29"
+      ],
+      "extra": {
+        "workstream": "CI_CD_MISSION_CONTROL",
+        "observed_state": "OIDC_VAULT_SOURCE_REPAIR_PR_OPEN; EDGE_DEPLOYMENT_AND_READBACK_NOT_ACCEPTED",
+        "observed_on": "2026-11-28",
+        "status_basis": "PR #58 changes source and workflow auth but explicitly defers deployment and live event/reconciliation proof.",
+        "authority": "HSO Mission Control + Supabase Vault/OIDC",
+        "next_action": "Complete exact-head review, merge under governance, deploy source and run real event/read-back tests."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/29",
+      "source_revision": "dec8bee2ffcb1ea41e85bc1e7f4eb4bc6f5523d4",
+      "title": "P1 · Security: authenticate webhook deliveries and reject replay/duplicate events",
+      "description": "PR #29 proposes timestamp-bound HMAC-SHA256 delivery signatures, bounded request bodies, constant-time comparison, duplicate delivery handling and fail-closed configuration for scheduled reconciliation. It is still a draft and not production-deployed. Keep webhook authentication and OIDC trust boundaries explicit rather than treating one as proof of the other.",
+      "acceptance_criteria": "1. Exact-head Deno and Python tests pass and the PR receives independent security review.\n2. Valid signed deliveries are accepted; invalid signature, expired timestamp, tampered body and wrong key are rejected.\n3. Duplicate delivery IDs and idempotency keys produce no repeated state mutation.\n4. HSO_WEBHOOK_SIGNING_SECRET and HSO_SYNC_TOKEN are separate protected secrets and are never logged.\n5. GitHub Actions fails closed when endpoint or credentials are absent.\n6. Deploy only after source/secret reconciliation; verify live signed request and database read-back.\n7. Verify a rejected replay has no downstream reconciliation side effects.",
+      "priority": "high",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/29",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/58"
+      ],
+      "dependencies": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/58"
+      ],
+      "extra": {
+        "workstream": "WEBHOOK_SECURITY",
+        "observed_state": "DRAFT_PR; NOT_DEPLOYED",
+        "observed_on": "2026-11-28",
+        "status_basis": "PR #29 is draft/non-mergeable in the observed review state and has no live delivery/read-back receipt.",
+        "authority": "HSO webhook ingress security contract",
+        "next_action": "Resolve PR review blockers, provision distinct secrets and run live replay acceptance after deployment."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/47",
+      "source_revision": "7f39494f2c87e23132d7264f8efcf360f4d38ab2",
+      "title": "P1 · Source ledger and 289-skill crosswalk: reconcile path denominator and content parity",
+      "description": "PR #47 records 869 file-blob paths, 859 unique content-addressed blob groups and a +5 discrepancy against an earlier 864 denominator. The 289-skill crosswalk has 56 unique path-name matches still pending content parity, 31 without an exact skill path match and 201 without identified canonical source repositories. This ledger is evidence inventory, not proof of all migration stages.",
+      "acceptance_criteria": "1. Preserve the complete observed 869-path inventory while reconciling the five-path discrepancy against the prior extraction.\n2. Record exact source commit/tree, file path, blob SHA, file mode and content digest.\n3. Validate every mapped skill's actual content against the canonical package/source; name/path match alone is insufficient.\n4. Keep unresolved/unknown rows explicit and link each to a follow-up owner/issue.\n5. Reconcile source/package version drift without rewriting immutable historical source pins.\n6. Publish denominator decision and reproducible validator results.\n7. Feed verified results into Issue #44 without promoting runtime or install readiness.",
+      "priority": "high",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/47",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/44"
+      ],
+      "dependencies": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/44"
+      ],
+      "extra": {
+        "workstream": "SOURCE_LEDGER_SKILL_CROSSWALK",
+        "observed_state": "SOURCE_LEDGER_PRESENT; +5_DENOMINATOR_DISCREPANCY; CONTENT_PARITY_PENDING",
+        "observed_on": "2026-11-28",
+        "status_basis": "PR #47 intentionally preserves 869 paths and leaves the earlier 864-count discrepancy unresolved.",
+        "authority": "Immutable Git trees and canonical package read-back",
+        "next_action": "Reconcile extraction provenance and complete per-skill blob/content parity."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/25",
+      "source_revision": "d78ab36063157e1a13bd89dd93a7eb732007818c",
+      "title": "P1 · HSMART–HSO UEDE integration contract: obtain GOV-01 disposition",
+      "description": "PR #25 defines HSMART and HSO as mutually developing platforms with separate canonical repositories; UEDE coordinates roadmap-directed development, PRE remains roadmap authority, HSO supplies capabilities and HSMART supplies shared platform services after acceptance. This is documentation/contract work only; it does not deploy UEDE or merge repositories.",
+      "acceptance_criteria": "1. GOV-01 independent review gives explicit APPROVE/REVISE/HOLD disposition on exact PR head.\n2. Confirm HSMART and HSO remain separate source-of-truth repositories with explicit consumer/provider contracts.\n3. Define UEDE coordination boundary, PRE roadmap authority and capability acceptance gates.\n4. Verify no circular dependency or authority conflict with HSO/HSAR/PRE and HSMART platform services.\n5. Record decisions and evidence references in canonical governance documentation.\n6. Do not claim UEDE is deployed or cross-host execution is live until a named runtime adapter and actual receipts exist.",
+      "priority": "medium",
+      "column_semantic_key": "review",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/25",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/d78ab36063157e1a13bd89dd93a7eb732007818c/architecture/UNIFIED-HSMART-HSO-UEDE-CONTRACT.md",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/d78ab36063157e1a13bd89dd93a7eb732007818c/architecture/UEDE-HSO-CAPABILITY-AUDIT-2026-11-25.md"
+      ],
+      "dependencies": [],
+      "extra": {
+        "workstream": "HSMART_HSO_UEDE",
+        "observed_state": "ARCHITECTURE_CONTRACT_PR_OPEN; GOVERNANCE_DISPOSITION_REQUIRED",
+        "observed_on": "2026-11-28",
+        "status_basis": "PR #25 is documentation-only and explicitly requires GOV-01 disposition; no UEDE runtime deployment is claimed.",
+        "authority": "HSMART and HSO repository owners; PRE for roadmap authority",
+        "next_action": "Obtain independent GOV-01 disposition and update the contract from the accepted decision."
+      }
+    },
+    {
+      "source_work_item_id": "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/64",
+      "source_revision": "2026-11-28T04:00:04Z",
+      "title": "P0 · Kanban Done gate: require independent, revision-bound completion evidence",
+      "description": "A Done column exists in the current Kanban source, but the source branch does not yet implement a PostgreSQL-level completion-evidence guard. The UI and MCP routes now fail closed for direct Done moves/creates and source-sync plans, but a direct Data API write could still bypass those guards. This issue is the production acceptance blocker for completion state.",
+      "acceptance_criteria": "1. Create an append-only completion-evidence record bound to workspace, board, card, exact card revision and source revision.\n2. Require a canonical HTTPS evidence locator, evidence type, exact source commit/release/workflow run, SHA-256 digest, observed result, verifier identity, verification timestamp and audit reference.\n3. Require verifier/actor separation; AI agents cannot mint their own PASS evidence.\n4. Enforce transition rules in PostgreSQL so MCP, frontend, sync RPCs and direct Data API writes are all covered.\n5. Reject missing, stale, mismatched, revoked or non-PASS evidence.\n6. Add SQL/RLS/MCP/UI tests for create, move, sync, replay, revision mismatch, actor/verifier separation and soft-archive cases.\n7. Only after development migration, security review, exact read-back and runtime tests pass may Done transitions be enabled.",
+      "priority": "critical",
+      "column_semantic_key": "blocked",
+      "evidence_refs": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/issues/64",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/59",
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/blob/feat/pre-kanban-mcp-backend-20261128/docs/PRE-KANBAN-MCP-ARCHITECTURE.md"
+      ],
+      "dependencies": [
+        "https://github.com/hsaidno-cpu/Hypersystem-Orchestrator/pull/59"
+      ],
+      "extra": {
+        "workstream": "KANBAN_COMPLETION_EVIDENCE",
+        "observed_state": "UI_AND_MCP_GUARDS_SOURCE_ADDED; DATABASE_GATE_NOT_IMPLEMENTED",
+        "observed_on": "2026-11-28",
+        "status_basis": "Frontend/MCP source rejects Done, but there is no deployed database trigger/verified evidence table. Direct Data API path is not yet covered.",
+        "authority": "Independent verifier + HSO access policy; PRE remains roadmap authority",
+        "next_action": "Implement migration using Supabase CLI in a development branch, review RLS and triggers, test all write paths, then deploy only with separate approval."
+      }
+    }
+  ]
+}
