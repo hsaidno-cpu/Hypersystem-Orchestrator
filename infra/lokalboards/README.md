@@ -1,7 +1,7 @@
 # HSO LokalBoards deployment
 
 This directory contains a deployment template for running the upstream
-[ L o k a l B o a r d s ](https://github.com/florian-strasser/LokalBoards)
+[LokalBoards](https://github.com/florian-strasser/LokalBoards)
 application as a separate HSO work-management service.
 
 **This is deployment configuration, not a live installation.** A persistent
@@ -62,7 +62,7 @@ infrastructure/billing decision.
 
    ```bash
    curl -fsS http://127.0.0.1:3000/api/health
-   curl -fsS "${NUXT_BOARDS_URL}/api/health"
+   curl -fsS "https://<your-lokalboards-domain>/api/health"
    ```
 
    The expected response is HTTP 200 with application and database status
