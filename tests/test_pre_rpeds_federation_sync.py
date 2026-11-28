@@ -83,6 +83,17 @@ class PreRpedsOidcTests(unittest.TestCase):
         self.assertEqual(observed["authorization"], "Bearer runner-ephemeral-capability")
         self.assertEqual(observed["timeout"], 15)
 
+    def test_oidc_request_rejects_untrusted_request_endpoint(self):
+        with self.assertRaises(RuntimeError):
+            request_oidc_token(
+                "https://example.supabase.co/functions/v1/pre-core-federation",
+                {
+                    "ACTIONS_ID_TOKEN_REQUEST_URL": "https://attacker.example/steal",
+                    "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "runner-ephemeral-capability",
+                },
+                opener=lambda *_args, **_kwargs: self.fail("untrusted endpoint must not be called"),
+            )
+
     def test_reconcile_post_uses_bearer_oidc_without_hmac_header(self):
         observed = {}
         def opener(request, timeout):
