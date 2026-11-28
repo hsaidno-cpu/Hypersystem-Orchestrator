@@ -15,12 +15,14 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 const DEFAULT_COLUMNS = [
+  { name: "Intake", semantic_key: "intake", color: "gray" },
   { name: "Backlog", semantic_key: "backlog", color: "gray" },
   { name: "Ready", semantic_key: "ready", color: "blue" },
   { name: "In Progress", semantic_key: "in_progress", color: "yellow" },
   { name: "Blocked", semantic_key: "blocked", color: "red" },
   { name: "Review & Verification", semantic_key: "review", color: "purple" },
   { name: "Done", semantic_key: "done", color: "green" },
+  { name: "Archive", semantic_key: "archive", color: "gray" },
 ];
 
 function slugify(value: string) {
@@ -119,7 +121,7 @@ function OAuthConsentPage({ user }: { user: User | null }) {
         <div className="brand-mark">P</div>
         <p className="eyebrow">HSO · AUTHORIZATION GATE</p>
         <h1>Access <span>request</span></h1>
-        <p className="muted">Aplikasi AI pihak ketiga harus meminta persetujuan sebelum memakai identitas Anda untuk mengakses PRE Kanban.</p>
+        <p className="muted">Aplikasi AI pihak ketiga harus meminta persetujuan sebelum memakai identitas Anda untuk mengakses HSO Workboard.</p>
 
         {loading ? (
           <div className="consent-loading"><div className="loading-orbit" /><span className="muted">Memeriksa permintaan otorisasi…</span></div>
@@ -330,14 +332,14 @@ export default function App() {
       p_workspace_id: workspaceId,
       p_name: boardName.trim(),
       p_slug: slug,
-      p_description: "PRE/HSO operational work board",
+      p_description: "HSO Ecosystem Development operating board",
       p_columns: DEFAULT_COLUMNS,
     });
     setLoading(false);
     if (error) return setMessage(error.message);
     const createdBoard = data?.board as Board | undefined;
     setBoardName("");
-    setMessage("Board created with six workflow columns.");
+    setMessage("Board created with eight workflow columns.");
     await loadBoards();
     if (createdBoard?.id) setBoardId(createdBoard.id);
   }
@@ -403,7 +405,7 @@ export default function App() {
         <section className="auth-panel">
           <div className="brand-mark">P</div>
           <p className="eyebrow">HSO · PRE CONTROL PLANE</p>
-          <h1>PRE Kanban</h1>
+          <h1>HSO Workboard</h1>
           <p className="muted">Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to connect this board to the persistent backend.</p>
         </section>
       </main>
@@ -442,7 +444,7 @@ export default function App() {
       <header className="topbar">
         <div className="brand-lockup">
           <div className="brand-mark small">P</div>
-          <div><strong>PRE Kanban</strong><span>HSO Control Plane</span></div>
+          <div><strong>HSO Workboard</strong><span>HSO Control Plane</span></div>
         </div>
         <div className="topbar-right">
           <span className="connection-pill"><i /> Connected</span>
@@ -505,7 +507,7 @@ export default function App() {
         <section className="empty-state">
           <div className="empty-icon">▤</div>
           <h2>Start with a board</h2>
-          <p className="muted">A new board is created with Backlog, Ready, In Progress, Blocked, Review & Verification, and Done.</p>
+          <p className="muted">A new board is created with Intake, Backlog, Ready, In Progress, Blocked, Review & Verification, Done, and Archive.</p>
           <form className="empty-form" onSubmit={createBoard}>
             <input value={boardName} onChange={(event) => setBoardName(event.target.value)} placeholder="e.g. PRE Development" />
             <button className="primary-button" type="submit" disabled={loading || !boardName.trim()}>Create board</button>
@@ -560,7 +562,7 @@ export default function App() {
                         <h4>{card.title}</h4>
                         {card.description && <p>{card.description}</p>}
                         {card.acceptance_criteria && <div className="acceptance"><span>ACCEPTANCE</span>{card.acceptance_criteria}</div>}
-                        <div className="card-footer"><span>{new Date(card.created_at).toLocaleDateString()}</span><span>PRE work item</span></div>
+                        <div className="card-footer"><span>{new Date(card.created_at).toLocaleDateString()}</span><span>HSO work item</span></div>
                         <div className="card-move-mobile">
                           <select value={column.id} onChange={(event) => {
                             const target = columns.find((item) => item.id === event.target.value);
