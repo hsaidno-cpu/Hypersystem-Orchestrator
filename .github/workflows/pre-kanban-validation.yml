@@ -1,0 +1,81 @@
+name: PRE Kanban backend validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "supabase/functions/pre-kanban-mcp/**"
+      - "supabase/migrations/*_pre_kanban_*.sql"
+      - "apps/pre-kanban/**"
+      - "tests/test_pre_kanban_contract.py"
+      - ".github/workflows/pre-kanban-validation.yml"
+  push:
+    branches: [main]
+    paths:
+      - "supabase/functions/pre-kanban-mcp/**"
+      - "supabase/migrations/*_pre_kanban_*.sql"
+      - "apps/pre-kanban/**"
+      - "tests/test_pre_kanban_contract.py"
+      - ".github/workflows/pre-kanban-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pre-kanban-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mcp-edge-function:
+    name: Type-check PRE Kanban MCP Edge Function
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check Edge Function and SDK imports
+        working-directory: supabase/functions/pre-kanban-mcp
+        run: deno check --config deno.json index.ts
+
+  frontend:
+    name: Build PRE Kanban frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/pre-kanban
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+          cache: npm
+          cache-dependency-path: apps/pre-kanban/package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Type-check and build
+        run: npm run build
+
+  contract-tests:
+    name: Verify PRE Kanban contracts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run PRE Kanban contract tests
+        run: python -m unittest discover -s tests -p "test_pre_kanban_contract.py" -v

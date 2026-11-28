@@ -64,6 +64,9 @@ class PreKanbanContractTests(unittest.TestCase):
         self.assertIn("for update", self.sql.lower())
         self.assertIn("kanban_apply_sync_item", self.sql)
         self.assertIn("kanban_ack_sync_outbox", self.sql)
+        self.assertIn("kanban_create_card", self.sql)
+        self.assertIn("kanban_move_card", self.sql)
+        self.assertIn("column_wip_limit_exceeded", self.sql)
 
     def test_card_changes_create_outbox_and_source_updates_suppress_echo(self):
         self.assertIn("capture_card_change_outbox", self.sql)

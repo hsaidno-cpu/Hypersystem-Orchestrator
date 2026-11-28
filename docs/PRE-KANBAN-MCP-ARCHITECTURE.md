@@ -144,6 +144,7 @@ Apply the migrations in order to a disposable/development Supabase branch first:
 2. `20261128020100_pre_kanban_sync_atomic_claim_v1.sql`
 3. `20261128020200_pre_kanban_sync_outbox_v1.sql`
 4. `20261128020300_pre_kanban_outbox_ack_v1.sql`
+5. `20261128020400_pre_kanban_atomic_card_ops_v1.sql`
 
 Run SQL validation, RLS role tests (viewer/member/editor/admin/owner), Supabase Security Advisors, Edge Function type checks, MCP Inspector tests and browser UI tests before any production application.
 
