@@ -1,0 +1,29 @@
+name: Slack command gateway validation
+
+on:
+  push:
+    branches: ["feat/slack-control-gateway-20261126"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check Edge Function
+        run: deno check --config supabase/functions/hso-slack-command-gateway/deno.json supabase/functions/hso-slack-command-gateway/index.ts
+      - name: Run gateway unit tests
+        run: deno test --config supabase/functions/hso-slack-command-gateway/deno.json supabase/functions/hso-slack-command-gateway/handler_test.ts
